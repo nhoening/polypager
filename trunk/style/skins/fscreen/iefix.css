@@ -1,0 +1,9 @@
+/*holds hack for IE hover and focus support
+  strangely, this seems to need the path FROM THE DIRECTORY that the
+  HTML(PHP) LIVES IN, therefore / or admin ... */
+body { behavior:url(cssfocusandhover.htc) !important; }
+#container {
+	margin-left: -380px !important; /*half of width to the left: always centered*/
+	position:absolute; left:50%;
+	width: 760px;
+}
