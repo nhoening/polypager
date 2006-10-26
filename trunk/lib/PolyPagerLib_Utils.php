@@ -412,7 +412,9 @@
 				if ($res) $sys_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
 			}
 			//default for the case that we haven't any data yet
-			if ($sys_info["skin"] == "") $sys_info["skin"] = 'picswap';
+			if ($sys_info["skin"] == "") $sys_info["skin"] = 'picswap-aqua';
+			global $params;
+			$params['values']['skin'] = $sys_info["skin"];
 			//as demo, adminname and password are set
 			if($run_as_demo) {
 				$sys_info["admin_name"] = "admin";

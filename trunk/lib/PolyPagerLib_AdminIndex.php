@@ -62,7 +62,6 @@
 					  `start_page` varchar(120) NOT NULL default '',
 					  `lang` varchar(12) NOT NULL default '',
 					  `skin` varchar(120) NOT NULL default '',
-					  `template` varchar(200) NOT NULL default 'default.php',
 					  `submenus_always_on` tinyint(1) NOT NULL default 0,
 					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0'
 					) TYPE=MyISAM ;";
