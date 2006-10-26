@@ -305,7 +305,7 @@ ol.myresponse
 }
 
 
-#comments .value, .options{
+#comments .value, .options, #search, #toc{
 	border: 1px solid #3f3f3f;
 	padding:10px;
 	background-color:#323232;

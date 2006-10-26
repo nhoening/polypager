@@ -50,27 +50,31 @@ $params["step"] = "all";	//we're showing list views, so show all
 //installation of database
 if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
 	$error = create_sys_Tables($link);
-	$sys_msg = '<div class="sys_msg">'.__('attempted to create sys tables... ');
+	$sys_msg = __('attempted to create sys tables... ');
 	if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
 	else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-	$sys_msg = $sys_msg."</div>\n";
+	$sys_msg = $sys_msg."<br/>\n";
 	
 	/*
 	$error = chmod_dirs($link);
-	$sys_msg = $sys_msg.'<div class="sys_msg">'.__('attempted to chmod directories... ');
+	$sys_msg = $sys_msg.'__('attempted to chmod directories... ');
 	if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
 	else $sys_msg = $sys_msg.__('The dbms reported no errors.');
 	*/
 
 }
 
+if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
+	$sys_msg = $sys_msg.__('Your administratorname or the administratorpassword is empty. You should consider going to the system property section and secure your system!<br/>'."\n");
+}
+
 //template creation
 if ($_POST["template_name"] != "") {
 	$error = executeTemplate($_POST["template_name"], $_POST["page_name"]);
-	$sys_msg = $sys_msg.'<div class="sys_msg">'.__('attempted to create a page by template... ');
+	$sys_msg = $sys_msg.__('attempted to create a page by template... ');
 	if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
 	else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-	$sys_msg = $sys_msg."</div>\n";
+	$sys_msg = $sys_msg."<br/>\n";
 }
 
 $path_to_root_dir = "..";
@@ -88,7 +92,7 @@ function writeData($ind=5) {
 	
 	//sys msg? write it 
 	if ($sys_msg != "") {
-		echo($indent.$sys_msg);
+		echo($indent.'<div class="sys_msg">'.$sys_msg.'</div>'."\n");
 	}
 	
 	/* --------------- show all options  ------------ */
