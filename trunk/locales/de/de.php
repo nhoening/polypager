@@ -28,6 +28,8 @@
 function getTranslation($text) {
 	$translation_table = array(
 /*	admin/index.php	*/
+'Your administratorname or the administratorpassword is empty. You should consider going to the system property section and secure your system!' => 
+	'Der Admminstratorname oder das Passwort ist leer. Sie sollten zu den Systemeinstellungen gehen, um Ihr System abzusichern.',
 'attempted to create sys tables... '	=> 'Es wurde versucht die Systemtabellen zu erstellen... ',
 'attempted to chmod directories... '	=> 'Es wurde versucht die erforderlichen Berechtigungen zu setzen... ',
 'The dbms reported the following error: '	=> 'Das Datenbank-System hat folgenden Fehler gemeldet: ',
@@ -98,7 +100,7 @@ function getTranslation($text) {
 
 /*	admin/edit.php */
 'There is no page specified.'	=> 'Es wurde keine Seite angegeben.',
-'A database-error ocurred:'	=> 'Es ist ein Datenbank-Fehler aufgetreten:',
+'A database-error ocurred...'	=> 'Es ist ein Datenbank-Fehler aufgetreten...',
 'The %s-command was successful'	=> 'Das %s-Kommando war erfolgreich',
 'click to see all administration options' => 'klicken Sie hier, um zur Administrations&uuml;bersicht zu gelangen',
 'click to see the published page' => 'klicken Sie hier, um die bearbeitete Seite zu sehen',
@@ -219,9 +221,9 @@ function getTranslation($text) {
 => 'f&uuml;r diese Seite ist noch keine Tabelle angegeben',
 'there is no table in the database yet'
 => 'es gibt noch keine (nicht-System-)Tabellen in der Datenbank.',
-'here you can specify allowed values for this field (via a comma-separated list). By doing so, this field can also become the group field of its page.'
-=> 'Sie k&ouml;nnen hier erlaubte Werte f&uuml;r das Feld angeben (mit eine KOmma-separierten Liste). Dadurch ist es dann auch m&ouml;glich, dieses Feld als group field f&uuml;r seine Seite auszuw&auml;hlen',
-'you can chose a validation that is checked when you submit a form.'
+'here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. Also, his field can become the group field of its page.'
+=> 'Sie k&ouml;nnen hier erlaubte Werte f&uuml;r das Feld angeben (mit eine Komma-separierten Liste). Dann k&ouml;nnen Sie im Formular immer gem&uuml;tlich aus dieser Liste ausw&auml;hlen. Und es ist dann auch m&ouml;glich, dieses Feld als group field f&uuml;r seine Seite auszuw&auml;hlen',
+'you can chose a validation method that is checked on the content of this field when you submit a form.'
 => 'Sie k&ouml;nnen hier eine Validation ausw&auml;hlen, die zu Pr&uuml;fung verwendet wird, wenn Sie ein Formular abschicken.',
 'check this box when this field contains much data (e.g. long texts). It will then only be shown if the page shows one entry and a link to it otherwise.'
 => 'Machen Sie hier einen Haken wenn der Inhalt des Felds sehr lang werden kann. Dann wird es nur angezeigt, wenn auf der Seite gerade nur einen Eintrag zu sehen ist (ansonsten ein Link)',
@@ -281,7 +283,8 @@ function getTranslation($text) {
 'for admins: edit this entry'	=> 'f&uuml;r Administratoren: Diesen Eintrag bearbeiten',
 'for admins: edit this entry.'	=> 'f&uuml;r Administratoren: Diesen Eintrag bearbeiten.',
 'delete this entry.' => 'Diesen Eintrag l&ouml;schen',
-'make extra statements about fields of this page (a label, a list of possible values etc.)' => 'machen Sie hier Angaben zu Feldern dieser Seite (ein Label, eine Liste mit m&ouml;glichen Werten etc.).',
+'make extra statements about fields of this page (a label, a list of possible values, foreign key relations etc.)' 
+	=> 'machen Sie hier Angaben zu Feldern dieser Seite (ein Label, eine Liste mit m&ouml;glichen Werten, Fremdschl&uuml;sselbeziehungen etc.).',
 'January' => 'Januar',
 'February' => 'Februar',
 'March' => 'M&auml;rz',

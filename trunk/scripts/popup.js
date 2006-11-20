@@ -1,6 +1,6 @@
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas HÃ¶ning
+    Copyright (C) 2006 Nicolas Hšning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -133,8 +133,11 @@ function nudge(x,y)
   }
 
   //down: when I am close to the bottom, move it up
-  if((parseInt(skin.top) + 125) > window.innerHeight) {
-  	temp = parseInt(skin.top) - 125;
+  //I estimate the lines that fit in the width, assuming a char width of 10 pixels
+  // and a (little pessimistic) line height of 20 (That should work for most cases)
+  est_lines = parseInt(get("pup").innerHTML.length / (parseInt(skin.width)/10) );
+  if((parseInt(skin.top) + parseInt(est_lines * 20)) > window.innerHeight) {
+  	temp = parseInt(window.innerHeight) - parseInt(est_lines * 20); //correct
   	if(nav || iex) skin.top = temp;
     if(n_6)skin.top = temp + "px";
   }
@@ -192,6 +195,7 @@ function showCoordinatesInStatusBar(theX, theY) {
 		+ ", popwidth is " + popwidth
 		+ ", skin.left is " + skin.left
 		+ ", skin.top is " + skin.top
+		+ ", skin.height is " + skin.height
 		+ ", our x=" + theX + ", our y=" + theY;
 }
 /* -------------- end of hover box code --------------------- */

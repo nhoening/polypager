@@ -65,7 +65,7 @@ if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
 }
 
 if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
-	$sys_msg = $sys_msg.__('Your administratorname or the administratorpassword is empty. You should consider going to the system property section and secure your system!<br/>'."\n");
+	$sys_msg = $sys_msg.__('Your administratorname or the administratorpassword is empty. You should consider going to the system property section and secure your system!'."</br>\n");
 }
 
 //template creation

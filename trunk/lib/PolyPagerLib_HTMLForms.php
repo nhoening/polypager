@@ -168,8 +168,9 @@
 			$class: CSS class of the Select Element
 			$value: The value that needs to be preselected
 			$valuelist: The comma-separated values to select from ("x,y,z")
+						it can contain key/value pairs like this: ("x:a,y:b,z:c")
 			$dis: true when field should be disabled
-			$js: any javascript you might want to add
+			$js: any javascript you might want to add to the select element
 		*/
 		function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js, $ind=9) {
 			$indent = translateIndent($ind);
@@ -179,11 +180,16 @@
 			echo($indent.'<select id="'.$name.'_input" tabindex="'.$tabindex.'" name="'.$name.'" '.$disabled.' '.$js.' class="'.$class.'">'."\n");
 			$list_arr = explode(",", $valuelist);
 			for($x=0;$x < count($list_arr);$x++){
-			  echo($indent.'	<option value="'); echo($list_arr[$x].'"'); 
-			  if($value == $list_arr[$x]){echo(' selected="true"');} 
-			  echo('>');
-			  echo($list_arr[$x]);
-			  echo($indent.'	</option> '."\n");
+				if (ereg(':',$list_arr[$x])) {
+					$tmp = explode(':',$list_arr[$x]);
+					$key = chop($tmp[0]);
+					$val = chop($tmp[1]);
+				} else{
+					$key = $list_arr[$x]; $val = $list_arr[$x];
+				}
+				echo($indent.'	<option value="'.$key.'"'); 
+				if($value == $val){echo(' selected="true"');} 
+				echo('>'.$val.'</option> '."\n");
 			}
 			echo($indent.'</select>'."\n");
 		}
@@ -258,7 +264,7 @@
 						echo('<tr><td></td><td class="data"><input type="hidden" name="_formfield_'.$f['name'].'" value="'.$preval.'"/></td></tr>'."\n");
 					} else {
 						echo($indent.'				<tr>'."\n");
-						echo($indent.'			<td><label for="'.$f['name'].'_input">');
+						echo($indent.'			<td class="label"><label for="'.$f['name'].'_input">');
 						if ($f['label'] != "") echo($f['label'].':'); else echo(__($f['name'].':'));
 						if ($f["help"] != "") writeHelpLink($indent, $f["help"]);
 						echo($indent.'</label></td>'."\n");
@@ -322,7 +328,7 @@
 						if(in_array($f["name"],$consistency_fields)) {
 							echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$row[$f['name']].'"/>'."\n");
 						}
-						echo($indent.'			<td><label for="'.$f['name'].'_input">');
+						echo($indent.'			<td class="label"><label for="'.$f['name'].'_input">');
 						if ($f['label'] != "") echo($f['label'].':'); else echo(__($f['name'].':'));
 						if ($f["help"] != "") writeHelpLink($indent, $f["help"]);	
 						echo($indent.'</label></td>'."\n");

@@ -6,6 +6,11 @@
 --BUT: please execute them chronologically, one version after the
 --other
 
+-- 0.9.7
+ALTER TABLE `_sys_fields` ADD `foreign_key_to` VARCHAR( 200 ) NOT NULL ,
+ADD `on_update` VARCHAR( 20 ) NOT NULL ,
+ADD `on_delete` VARCHAR( 20 ) NOT NULL ;
+
 -- 0.9.6
 ALTER TABLE `_sys_sys` DROP `template` 
 
