@@ -137,7 +137,7 @@
 		
 		
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_singlepages` (
-					  `id` tinyint(4) NOT NULL auto_increment,
+					  `id` int(11) NOT NULL auto_increment,
 					  `name` varchar(120)  NOT NULL default '',
 					  `in_menue` tinyint(1) NOT NULL default '0',
 					  `menue_index` mediumint(9) NOT NULL default '1',
@@ -155,7 +155,7 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_multipages` (
-					  `id` tinyint(4) NOT NULL auto_increment,
+					  `id` int(11) NOT NULL auto_increment,
 					  `name` varchar(60) NOT NULL default '',
 					  `tablename` varchar(60) NOT NULL default '',
 					  `in_menue` tinyint(1) NOT NULL default '1',
@@ -195,8 +195,11 @@
 					  `valuelist` varchar(255) NOT NULL default '',
 					  `validation` varchar(60) NOT NULL default '',
 					  `not_brief` tinyint(1) NOT NULL default '0',
+					  `foreign_key_to` varchar(200) NOT NULL,
+					  `on_update` varchar(20) NOT NULL,
+					  `on_delete` varchar(20) NOT NULL,
 					  PRIMARY KEY  (`id`)
-					) TYPE=MyISAM AUTO_INCREMENT=1 ;";
+					) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -316,7 +319,7 @@
 		and $params["values"]["old_formfield_name"] != "") {
 			if ($params["page"] == '_sys_singlepages'){
 					//update sections
-					if ($params["cmd"] == "edit") {
+					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
 						$query = "UPDATE _sys_sections SET pagename = '".$params["values"]["name"]."'".
 							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
 					} else {
@@ -324,8 +327,8 @@
 					}
 					if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
 					$res = mysql_query($query, getDBLink());
-					$fehler_nr = $fehler_nr.mysql_errno(getDBLink());
-					$fehler_text = $fehler_text.mysql_error(getDBLink());
+					$fehler_nr .= mysql_errno(getDBLink());
+					$fehler_text .= mysql_error(getDBLink());
 					
 					if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_sections...</div>'); }
 			}
@@ -334,30 +337,57 @@
 					if ($params["cmd"] == "edit") {
 						$query = "UPDATE _sys_comments SET pagename = '".$params["values"]["name"]."'".
 							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
-					} else {
+					} else if ($params["values"]["name"] != $params["values"]["old_formfield_name"]){
 						$query = "DELETE FROM _sys_comments WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
 					}
 					$res = mysql_query($query, getDBLink());
-					$fehler_nr = $fehler_nr.mysql_errno(getDBLink());
-					$fehler_text = $fehler_text.mysql_error(getDBLink());
+					$fehler_nr .= mysql_errno(getDBLink());
+					$fehler_text .= mysql_error(getDBLink());
 					if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
 					if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_comments...</div>'); }
 
-			}
-			if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
+
 					//update feed list
 					if ($params["cmd"] == "delete") {
 						$query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
 					}
-					if ($params["cmd"] == "edit") {
+					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
 						$query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
 							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
 					}
 					$res = mysql_query($query, getDBLink());
-					$fehler_nr = $fehler_nr.mysql_errno(getDBLink());
-					$fehler_text = $fehler_text.mysql_error(getDBLink());
+					$fehler_nr .= mysql_errno(getDBLink());
+					$fehler_text .= mysql_error(getDBLink());
 					if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
 					if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
+					
+					//update field list
+					if ($params["cmd"] == "delete") {
+						$query = "DELETE FROM _sys_fields WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+					}
+					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
+						$query = "UPDATE _sys_fields SET pagename = '".$params["values"]["name"]."'".
+							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+					}
+					$res = mysql_query($query, getDBLink());
+					$fehler_nr .= mysql_errno(getDBLink());
+					$fehler_text .= mysql_error(getDBLink());
+					if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+					if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_fields...</div>'); }
+					
+					//update foreign keys
+					if ($params["cmd"] == "delete") {
+						$query = "UPDATE _sys_fields SET foreign_key_to = '' WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
+					}
+					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
+						$query = "UPDATE _sys_fields SET foreign_key_to = '".$params["values"]["name"]."'".
+							" WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
+					}
+					$res = mysql_query($query, getDBLink());
+					$fehler_nr .= mysql_errno(getDBLink());
+					$fehler_text .= mysql_error(getDBLink());
+					if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+					if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_foreign keys...</div>'); }
 			}
 		}
 	}
@@ -391,7 +421,7 @@
 				$page_selector = $params["group"];
 			}
 			echo($indent.'			<option value="">--'.__('select page').'--</option>'."\n");
-			$pages = (($topic != 'content') ? getMultipages() : getPages());
+			$pages =  getPages();
 			foreach ($pages as $p) {
 				if ($page_selector == $p["name"]) $selected = "selected='selected'"; else $selected = "";
 				echo($indent.'			<option '.$selected.' value="'.$p["name"].'">'.$p["name"].'</option>'."\n");
@@ -465,7 +495,7 @@
 			$error_nr = mysql_errno($link);
 			if ($error_nr != 0) {
 				$fehler_text = mysql_error($link);
-				echo($indent.'	<span class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</span>'."\n");
+				echo($indent.'	<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
 				writeFooter();
 				
 			} else {

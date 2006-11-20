@@ -57,14 +57,23 @@ $entity = getEntity($params["page"]);
 		if (($params["cmd"] == "edit" or $params["cmd"] == "entry") and $params["page"] == "_sys_sys") $sys_info = "";
 
 		$query = getEditQuery($params["cmd"], "");
-
-		//now run db manipulation queries
-		$res = mysql_query($query, getDBLink());
-		$fehler_nr = mysql_errno(getDBLink());
-
+		echo("Query is: ".$query."<br/>");
+		//now run db manipulation quer(y|ies) - we might get a few because of  foreign keys
+		if ($query != "") {
+			$queries = explode(";",$query);
+			foreach($queries as $q) {
+				echo("running:".$q."<br/>");
+				if ($q!=""){
+					$res = mysql_query($q, getDBLink());
+					$fehler_nr .= mysql_errno(getDBLink());
+					$mysqlerror .= mysql_error(getDBLink());
+				}
+			}
+		} else $fehler_nr = 1;
+		
 		if ($fehler_nr != 0) {
 			$i_manipulated = false;
-			$sys_msg_text = '				<span class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error(getDBLink()).'</span>'."\n";
+			$sys_msg_text = '				<div class="sys_msg">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
 		} else {
 			$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
 			if($debug) { $sys_msg_text = $sys_msg_text.'<div class="debug">I used this query: '.$query.'.</div>'; }
@@ -210,7 +219,7 @@ function writeData($ind=4) {
 				if($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 			if ($fehler_nr != 0) {
 				$fehler_text = mysql_error(getDBLink());
-				echo('				<span class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</span>'."\n");
+				echo('				<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
 			}
 
 			// now write all entries we have (for singlepages these are all sections,

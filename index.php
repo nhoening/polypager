@@ -42,6 +42,7 @@ $link = getDBLink();
 $show_params = getShowParameters();
 $path_to_root_dir = ".";
 
+
 if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 		or ($show_params["page"] != '_sys_comments' and isASysPage($show_params["page"]))) {	//nothing to do
 	$error_msg_text = '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
@@ -74,7 +75,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	
 			if ($fehler_nr != 0) {
 				$i_manipulated = false;
-				$error_msg_text = '				<span class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error($link).'</span>'."\n";
+				$error_msg_text = '				<div class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error($link).'</div>'."\n";
 			} else {
 				$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
 				if ($debug) { $sys_msg_text = $sys_msg_text.'<div class="debug">I used this query: '.$query.'.</div>';}

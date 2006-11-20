@@ -77,8 +77,10 @@ body {
 	height: 130px !important;
 	<?
 	if ($pic == "") {
-		$pictures = scandir_n("../../../user/Style/picswap_bg_pics");
+		$pictures = scandir_n("../../../user/Style/picswap_bg_pics",0,true);
 		$i = count($pictures); //index of bg pic
+		//echo($i);
+		//print_r($pictures);
 		if ($i > 1) {
 			mt_srand((double)microtime()*1000000); //initate mt_rand
 			$i = mt_rand(1, $i-1);	//length of $pictures may vary

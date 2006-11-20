@@ -3,7 +3,7 @@
 	Theme URI: http://www.fahlstad.se
 	Description: A nice theme.
 	Version: 1.0
-	Author: Fredrik Fahlstad
+	Author: Fredrik Fahlstad - rewired for PolyPager by Nicolas Hoening
 	Author URI: http://www.fahlstad.se
 */
 
@@ -305,7 +305,7 @@ ol.myresponse
 }
 
 
-#comments .value, .options, #search, #toc{
+#comments .value, .options, #search, #toc, .list_entry{
 	border: 1px solid #3f3f3f;
 	padding:10px;
 	background-color:#323232;
@@ -380,6 +380,11 @@ form.edit input, form textarea, form button { /*form select {*/
 form.edit input:focus, form textarea:focus, form button.focus{ /*form select:focus {*/
 	border-color:#<?=getColor('dark'); ?>;
 	background-color:#fff;
+}
+
+/*aligning labels right minimizes the time the user needs to scan the form*/
+form td.label{
+	text-align:right;
 }
 
 /*#searchform input

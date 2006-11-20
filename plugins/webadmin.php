@@ -102,7 +102,6 @@
  *
 /* ------------------------------------------------------------------------- */
 
-//------inclusions
 // --------------------------------------- Inclusions
 // PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
 if ( !defined('PATH_SEPARATOR') ) {
@@ -132,8 +131,18 @@ $site_charset = 'auto';
  * For example: './' - the script's directory
  */
 $homedir = './../user';
+// --------- start nh added vars
 $homedir_name = 'user';				//nh: just the name of the dir itself
-$forbidden_file_names = '_mg index.php';	//nh: just the name of files/dirs we hide from the user
+$forbidden_file_names = '_mg index.php,.svn,.DS_Store';	//nh: just the name of files/dirs we hide from the user
+$good_paths = array('/style/skins/picswap/pics/bg/');
+$skins = scandir_n('../style/skins');
+foreach($skins as $s) $good_paths[] = '/style/skins/'.$s.'/';
+$good_files = array(
+ 'template.php', 'user.css'
+);
+$pics = scandir_n('../style/skins/picswap/pics/bg');
+foreach($pics as $f) $good_files[] = $f;
+// --------- end nh added vars
 
 /* Size of the edit textarea
  */
@@ -848,24 +857,39 @@ default:
 /* ------------------------------------------------------------------------- */
 
 function getlist ($directory) {
-	global $delim, $win, $homedir_name, $forbidden_file_names;
+	global $delim, $win, $homedir_name, $forbidden_file_names, $good_paths, $good_files;
 	
 	
 	//echo('<div>$directory is: '.$directory.'</div>');
-	if ($d = @opendir($directory)) {
+	if ($d = @opendir($directory) ){ //&& !in_array($directory,explode(',',$forbidden_dirs))) {
 
 		while (($filename = @readdir($d)) !== false) {
-			//nh: 	this condition was added by me to show only one file
-			//		when we're above the auser directory
+			//nh: 	this conditions were added by me to show only one file
+			//		when we're above the user directory
 			$listit = true;
-			if ((!ereg($homedir_name, $directory) 
-				and !ereg($homedir_name, $filename)) or
-				(($filename != '.' and $filename != '..') and
+			if ( ($filename != '.' and $filename != '..') and
+			    (!ereg($homedir_name, $directory) 	//if home dir not in path 
+				and !ereg($homedir_name, $filename) or	//and not in filename...
+				(										//OR it's forbidden...
 					(ereg($filename, $forbidden_file_names)
-					or ereg($filename, $forbidden_file_names)))
-			) $listit = false;
-
+					or ereg($filename, $forbidden_file_names))))
+			) $listit = false;						// ... hide it!
 			
+			//when we see the home-dir, we don't want to see '..'
+			if ($filename==".." && substr($directory,-1*strlen(getPathFromDocRoot())) == getPathFromDocRoot()) $listit = false;
+
+			// now we're making sure that all the "good" stuff will be shown...
+			foreach($good_paths as $g)
+				if (ereg('/'.$filename.'/',$g)) {	//if file is in good path...
+					//AND also the start of the good path has yet been travelled...
+					if (""!=substr($g,0,strpos($g,$filename)))
+						if(ereg(substr($g,0,strpos($g,$filename)), $directory))	
+							$listit = true;
+				}
+			foreach($good_files as $g)
+				if (ereg($g,$filename)) $listit = true;
+			
+				
 			if ($listit) {
 				$path = $directory . $filename;
 	

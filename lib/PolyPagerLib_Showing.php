@@ -49,7 +49,7 @@
 			if ($max == "") { $max = $_GET["max"]; } //coming in per GET?
 			//reading the number of entries, if not give
 			if ($max == "" and $entity != "" and !(!isASysPage($params["page"]) and isMultipage($params["page"]) and $page_info["tablename"] == "") ) {
-				$query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["name"].";";
+				$query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
 				$res = mysql_query($query, getDBLink());
 				$error_nr = mysql_errno(getDBLink());
 				if ($debug) {echo '				<div class="debug">Query was: '.$query.'</div>'; }
@@ -269,7 +269,7 @@
 
 		else if ((strpos($params["cmd"], "_sys_multipages") > 0)
 			or (strpos($params["cmd"], "_sys_singlepages") > 0)
-			or($entity["name"] == "_sys_pages")) {
+			or($entity["tablename"] == "_sys_pages")) {
 			$theQuery = "SELECT id, name, in_menue FROM _sys_multipages UNION
 							SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
 		}
@@ -281,7 +281,7 @@
 			} else {
 				//--------------------- preparing  --------------------------
 				$a = array();
-				$a[0] = "SELECT * FROM ".$entity["name"]." ";
+				$a[0] = "SELECT * FROM ".$entity["tablename"]." ";
 					
 				if (isMultipage($params["page"])) {
 					//helper vars
@@ -755,9 +755,10 @@
 									$pic = "ceye.gif";
 								}
 								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()"><img src="../style/pics/'.$pic.'"/></a></span>'."\n");
-							//for multipages there can be a link to fields
-							} else if($page == "_sys_multipages") {
-								$linkText = __('make extra statements about fields of this page (a label, a list of possible values etc.)');
+							// a link to fields
+							}
+							if ($params["page"] == "_sys_pages") {
+								$linkText = __('make extra statements about fields of this page (a label, a list of possible values, foreign key relations etc.)');
 								$the_href = '?_sys_fields&amp;group='.$content.'&amp;from=list&amp;topic=fields';
 								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a></span>'."\n");
 							}
@@ -793,7 +794,7 @@
 							}
 						}else{
 							//this id can be used by users to access individual Elements with their CSS 
-							echo($indent.'	<div class="'.$entity["name"].'_'.$f["name"].'">'."\n");
+							echo($indent.'	<div class="'.$entity["tablename"].'_'.$f["name"].'">'."\n");
 		
 							if ($entity["show_labels"] == "1" and !$list_view) {
 								echo($indent.'	<div class="label">');
@@ -827,7 +828,7 @@
 				}
 			}
 		}
-		if (!$list_view and $entity["name"] == "_sys_comments") {
+		if (!$list_view and $entity["tablename"] == "_sys_comments") {
 			echo($indent.'		<div><a href="admin/edit.php?_sys_comments&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'">#</a></div>'."\n");
 		}
 		if (!$list_view and $something_was_not_brief == true and $params["step"] != 1) { 	//show a link to the whole entry
