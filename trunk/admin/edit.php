@@ -130,6 +130,8 @@ function writeData($ind=4) {
 	global $sys_msg_text;
 	global $error_msg_text;	//hopefully empty :-)
 	
+	showAdminOptions();
+	
 	if($debug) {
 		echo('<div class="debug">Query is: '.$query.'</div>');
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');

@@ -853,45 +853,17 @@ function getEntity($page_name) {
 			
 			//fk stuff
 			if (isMultipage($page_name) || isSinglepage($page_name)){
-				$fks = getForeignKeys();
-				foreach ($fks as $fk){
-					$referenced_table = "";
-					$title_field = "";
-					// make field consistent (sent also old values) when a change in them might
+				$ref_tables = getReferencedTableData($entity);
+				foreach ($ref_tables as $rt) { 
+					// make field consistent (send also old values) when a change in them might
 					// trigger cascading changes that PolyPager manages (only pages)
-					if ($fk['ref_page'] == $page_name)
-						$entity['consistency_fields'] .= ','.$fk['ref_field'];
-					// We need a valuelist when one of this fields references another table/page
-					// Get the referenced table and the title field to show
-					// Now, what can we show? Is there a more useful field for
-					// the valuelist than an id or the like? Maybe the title_field
-					// of a page? Let's see if we can get one
-					if ($fk['page'] == $page_name){
-						$page_info = getPageInfo($fk['ref_page']);
-						$referenced_table = $page_info['tablename'];
-						if (isMultipage($fk['ref_page'])) $title_field = $page_info['title_field'];
-						else $title_field = 'heading';
-					} else if ($fk['table'] == $entity['tablename']){
-						$referenced_table = $fk['ref_table'];
-						//in principle, _sys_sections could be referenced - that's easy
-						if ($referenced_table == '_sys_sections') $title_field = 'heading';
-						else {	// more likely are multipages
-							$pk_field = getPKName($referenced_table);
-							$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referenced_table."'";
-							$result = pp_run_query($pq);
-							if (mysql_num_rows($result)>1) $title_field = $pk_field; //no chance of a good choice :-(
-							else { // we have the one page for this table!
-								$row = mysql_fetch_array($result, MYSQL_ASSOC);
-								$title_field = $row['title_field'];
-								if ($title_field=="") $title_field = $pk_field;
-							}
-						}
-					}
-					// now we can get the values we need
-					if ($referenced_table != ""){
-						$q = "SELECT ".$fk['ref_field']." as pk, ".$title_field." as tf FROM ".$referenced_table;
+					if ($rt['fk']['ref_page'] == $page_name)
+						$entity['consistency_fields'] .= ','.$rt['fk']['ref_field'];
+					// get the values we need
+					if ($rt['table_name'] != ""){
+						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM ".$rt['table_name'];
 						//singlepages can operate on the page level whith all data being in one table...
-						if (isSinglepage($fk['ref_page'])) $q .= " WHERE pagename = '".$fk['ref_page']."'";
+						if (isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
 						//echo('query:'.$q."\n");
 						$result = pp_run_query($q);
 						
@@ -903,7 +875,7 @@ function getEntity($page_name) {
 								$used_ids[] = $row['pk'];
 							}
 						}
-						setEntityFieldValue($fk['field'], "valuelist", implode(',',$tmp));
+						setEntityFieldValue($rt['fk']['field'], "valuelist", implode(',',$tmp));
 					}
 				}
 			}
@@ -912,6 +884,85 @@ function getEntity($page_name) {
 	}
 	return $entity;
 }
+
+/*
+	returns an array with "table_name", "title_field" and "fk"
+	for every table that is referenced by this entity via a foreign key "fk"
+*/
+function getReferencedTableData($entity){
+	$fks = getForeignKeys();
+	$tables = array();
+	foreach ($fks as $fk){
+		$referenced_table = "";
+		$title_field = "";
+		// Get the referenced table and the title field to show
+		// Now, what can we show? Is there a more useful field for
+		// the valuelist than an id or the like? Maybe the title_field
+		// of a page? Let's see if we can get one
+		if ($fk['page'] == $entity["pagename"]){
+			$page_info = getPageInfo($fk['ref_page']);
+			$referenced_table = $page_info['tablename'];
+			if (isMultipage($fk['ref_page'])) $title_field = $page_info['title_field'];
+			else $title_field = 'heading';
+		} else if ($fk['table'] == $entity['tablename']){
+			$referenced_table = $fk['ref_table'];
+			//in principle, _sys_sections could be referenced - that's easy
+			if ($referenced_table == '_sys_sections') $title_field = 'heading';
+			else {	// more likely are multipages
+				$pk_field = getPKName($referenced_table);
+				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referenced_table."'";
+				$result = pp_run_query($pq);
+				if (mysql_num_rows($result)>1) $title_field = $pk_field; //no chance of a good choice :-(
+				else { // we have the one page for this table!
+					$row = mysql_fetch_array($result, MYSQL_ASSOC);
+					$title_field = $row['title_field'];
+					if ($title_field=="") $title_field = $pk_field;
+				}
+			}
+		}
+		if ($referenced_table != "")
+			$tables[] = array('fk'=>$fk,'table_name'=>$referenced_table, 'title_field' => $title_field);
+	}
+	return $tables;
+}
+
+/*
+	returns an array with "table_name", "title_field" and "fk"
+	for every table that is referencing to this entity via a foreign key "fk"
+*/
+function getReferencingTableData($entity){
+$fks = getForeignKeys();
+	$tables = array();
+	foreach ($fks as $fk){
+		$referencing_table = "";
+		$title_field = "";
+		if ($fk['ref_page'] == $entity["pagename"]){
+			$page_info = getPageInfo($fk['page']);
+			$referencing_table = $page_info['tablename'];
+			if (isMultipage($fk['page'])) $title_field = $page_info['title_field'];
+			else $title_field = 'heading';
+		} else if ($fk['ref_table'] == $entity['tablename']){
+			$referencing_table = $fk['table'];
+			//in principle, _sys_sections could be referenced - that's easy
+			if ($referencing_table == '_sys_sections') $title_field = 'heading';
+			else {	// more likely are multipages
+				$pk_field = getPKName($referencing_table);
+				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referencing_table."'";
+				$result = pp_run_query($pq);
+				if (mysql_num_rows($result)>1) $title_field = $pk_field; //no chance of a good choice :-(
+				else { // we have the one page for this table!
+					$row = mysql_fetch_array($result, MYSQL_ASSOC);
+					$title_field = $row['title_field'];
+					if ($title_field=="") $title_field = $pk_field;
+				}
+			}
+		}
+		if ($referencing_table != "")
+			$tables[] = array('fk'=>$fk,'table_name'=>$referencing_table, 'title_field' => $title_field);
+	}
+	return $tables;
+}
+
 
 /*gives you an alreay built entity if it is stored in $old_entites (it should)*/
 function getAlreadyBuiltEntity($page_name) {
@@ -942,13 +993,26 @@ function resetLazyData() {
 	$sys_infos = "";
 }
 
-/* looks up the name ofthe pk field*/
+/* looks up the name of the pk field*/
 function getPKName($table){
 	$field_list = mysql_list_fields(getDBName(), $table, getDBLink());
 	for($i=0; $i<mysql_num_fields($field_list); $i++) {
 		//pk
 		if (eregi('primary_key',mysql_field_flags($field_list, $i))) {
 			return mysql_field_name($field_list, $i);
+		}
+	}
+	return "";
+}
+
+/* looks up the type of the pk field*/
+function getPKType($table){
+	$field_list = mysql_list_fields(getDBName(), $table, getDBLink());
+	for($i=0; $i<mysql_num_fields($field_list); $i++) {
+		//pk
+		if (eregi('primary_key',mysql_field_flags($field_list, $i))) {
+			$db_field = mysql_fetch_field($field_list, $i);
+			return $db_field->type;
 		}
 	}
 	return "";
