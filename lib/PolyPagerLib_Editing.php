@@ -206,7 +206,9 @@ function getEditQuery($command, $theID) {
 				//get action for current cmd
 				$action = ($command=='edit')?'on_update':'on_delete';
 				
-				if ($fk[$action] == 'RESTRICT'){ //stop, show error
+				//according to http://dev.mysql.com/doc/refman/5.0/en/innodb-foreign-key-constraints.html,
+				//RESTRICT and NO ACTION both reject deletion in the parent table!
+				if ($fk[$action] == 'RESTRICT' || $fk[$action] == 'NO ACTION'){ 
 				  echo('<div class="sys_msg">operation RESTRICTED according to foreign key '.$fk['name'].'</div>');
 				  return 'ff';
 				}else {	// we really need to work :-(
@@ -230,7 +232,9 @@ function getEditQuery($command, $theID) {
 								$params['values'][$fk['field']] = null;
 							}
 							//add Query with recursicve call
-							$query .= getEditQuery($command,$row[getPKName($referencing_table)]);
+							$tmp = getEditQuery($command,$row[getPKName($referencing_table)]);;
+							if ($tmp == ""); return;	//error
+							$query .= $tmp;
 						}
 					}
 				}
@@ -257,7 +261,7 @@ function getEditQuery($command, $theID) {
 		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
 		$x = 1;
 		foreach($entity["fields"] as $f) {
-			if ($params["values"][$f["name"]] != "") {$queryA[$x] = " ".$f["name"].","; $x++;}
+			if (isset($params["values"][$f["name"]])) {$queryA[$x] = " ".$f["name"].","; $x++;}
 		}
 		$x--;
 		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
@@ -267,7 +271,7 @@ function getEditQuery($command, $theID) {
 		$queryA[count($queryA)] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
-			if ($params["values"][$f["name"]] != "") {
+			if (isset($params["values"][$f["name"]])) {
 				if (isTextType($f["data-type"]) or isDateType($f["data-type"]) or $f["data-type"] == 'time') {
 					$queryA[$x] = " '".$params["values"][$f["name"]]."',";
 				} else {
@@ -303,7 +307,7 @@ function getEditQuery($command, $theID) {
 		$queryA[0] = "UPDATE ".$page_info["tablename"]." SET";
 		$x = 1;
 		foreach($entity["fields"] as $f) {
-			if ($params["values"][$f["name"]] != "") {
+			if (isset($params["values"][$f["name"]])) {
 				if (!isTextType($f["data-type"]) and !isDateType($f["data-type"]) and $f["data-type"] != 'time') $queryA[$x] = " ".$f['name']." = ".$params['values'][$f['name']].",";
 				else $queryA[$x] = " ".$f["name"]." = '".$params["values"][$f['name']]."',";
 				$x++;
