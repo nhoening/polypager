@@ -336,9 +336,7 @@ ol.myresponse
 	padding:0;
 }
 
-
-
-#sidepane ul li {
+#sidepane ul ul li {
 	padding:0;
 	margin:0;
 }
@@ -348,10 +346,11 @@ ol.myresponse
 	font-size: 0.9em;
 }
 
-#sidepane ul ul, #sidepane ul ol {
+#sidepane div div.description{
 	margin-bottom:15px;
 }
-#sidepane ul ul li{
+
+#sidepane div div.entry a, li.link a, ul.fk_link li a{
 	background-image: url(images/bull.gif);
 	background-repeat: no-repeat;
 	background-position: 0 .5em;
@@ -359,6 +358,16 @@ ol.myresponse
 	margin-left:5px;
 }
 
+
+#toc ul {
+	list-style: none;
+}
+#toc .group_heading {
+	font-weight: 800;
+}
+#toc .link{
+	padding-left: 1em;
+}
 
 
 form .search, form .search *

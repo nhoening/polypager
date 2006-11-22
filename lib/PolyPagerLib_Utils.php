@@ -854,7 +854,7 @@ function getEntity($page_name) {
 			//fk stuff
 			if (isMultipage($page_name) || isSinglepage($page_name)){
 				$ref_tables = getReferencedTableData($entity);
-				foreach ($ref_tables as $rt) { 
+				foreach ($ref_tables as $rt) {
 					// make field consistent (send also old values) when a change in them might
 					// trigger cascading changes that PolyPager manages (only pages)
 					if ($rt['fk']['ref_page'] == $page_name)
@@ -864,7 +864,7 @@ function getEntity($page_name) {
 						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM ".$rt['table_name'];
 						//singlepages can operate on the page level whith all data being in one table...
 						if (isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
-						//echo('query:'.$q."\n");
+						//echo('fk . query:'.$q."\n");
 						$result = pp_run_query($q);
 						
 						$tmp = array();
@@ -886,8 +886,11 @@ function getEntity($page_name) {
 }
 
 /*
-	returns an array with "table_name", "title_field" and "fk"
+	returns an array with "table_name", "title_field", "likely_page" and "fk"
 	for every table that is referenced by this entity via a foreign key "fk"
+	likely_page is ther best guess on which page we might find the table 
+	represented (this is only hard when we encounter "real" FKs from the database and
+	one table is represented on several multipages)
 */
 function getReferencedTableData($entity){
 	$fks = getForeignKeys();
@@ -895,6 +898,7 @@ function getReferencedTableData($entity){
 	foreach ($fks as $fk){
 		$referenced_table = "";
 		$title_field = "";
+		$likely_page = "";
 		// Get the referenced table and the title field to show
 		// Now, what can we show? Is there a more useful field for
 		// the valuelist than an id or the like? Maybe the title_field
@@ -904,61 +908,74 @@ function getReferencedTableData($entity){
 			$referenced_table = $page_info['tablename'];
 			if (isMultipage($fk['ref_page'])) $title_field = $page_info['title_field'];
 			else $title_field = 'heading';
+			$likely_page = $fk['ref_page'];
 		} else if ($fk['table'] == $entity['tablename']){
 			$referenced_table = $fk['ref_table'];
 			//in principle, _sys_sections could be referenced - that's easy
-			if ($referenced_table == '_sys_sections') $title_field = 'heading';
+			if ($referenced_table == '_sys_sections') {
+				$title_field = 'heading';
+				$likely_page = $fk['ref_page'];
+			}
 			else {	// more likely are multipages
 				$pk_field = getPKName($referenced_table);
 				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referenced_table."'";
 				$result = pp_run_query($pq);
-				if (mysql_num_rows($result)>1) $title_field = $pk_field; //no chance of a good choice :-(
+				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				if (mysql_num_rows($result)>1) 
+					$title_field = $pk_field; //no chance of a good choice :-(
 				else { // we have the one page for this table!
-					$row = mysql_fetch_array($result, MYSQL_ASSOC);
 					$title_field = $row['title_field'];
 					if ($title_field=="") $title_field = $pk_field;
 				}
+				$likely_page = $row['name'];
 			}
 		}
 		if ($referenced_table != "")
-			$tables[] = array('fk'=>$fk,'table_name'=>$referenced_table, 'title_field' => $title_field);
+			$tables[] = array('fk'=>$fk,'table_name'=>$referenced_table, 'likely_page' => $likely_page , 'title_field' => $title_field);
 	}
 	return $tables;
 }
 
 /*
-	returns an array with "table_name", "title_field" and "fk"
+	returns an array with "table_name", "title_field", "likely_page" and "fk"
 	for every table that is referencing to this entity via a foreign key "fk"
 */
 function getReferencingTableData($entity){
-$fks = getForeignKeys();
+	$fks = getForeignKeys();
 	$tables = array();
 	foreach ($fks as $fk){
 		$referencing_table = "";
 		$title_field = "";
+		$likely_page = "";
 		if ($fk['ref_page'] == $entity["pagename"]){
 			$page_info = getPageInfo($fk['page']);
 			$referencing_table = $page_info['tablename'];
 			if (isMultipage($fk['page'])) $title_field = $page_info['title_field'];
 			else $title_field = 'heading';
+			$likely_page = $fk['page'];
 		} else if ($fk['ref_table'] == $entity['tablename']){
 			$referencing_table = $fk['table'];
 			//in principle, _sys_sections could be referenced - that's easy
-			if ($referencing_table == '_sys_sections') $title_field = 'heading';
+			if ($referencing_table == '_sys_sections') {
+				$title_field = 'heading';
+				$likely_page = $fk['page'];
+			}
 			else {	// more likely are multipages
 				$pk_field = getPKName($referencing_table);
 				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referencing_table."'";
 				$result = pp_run_query($pq);
-				if (mysql_num_rows($result)>1) $title_field = $pk_field; //no chance of a good choice :-(
+				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				if (mysql_num_rows($result)>1) 
+					$title_field = $pk_field; //no chance of a good choice :-(
 				else { // we have the one page for this table!
-					$row = mysql_fetch_array($result, MYSQL_ASSOC);
 					$title_field = $row['title_field'];
 					if ($title_field=="") $title_field = $pk_field;
 				}
+				$likely_page = $row['name'];
 			}
 		}
 		if ($referencing_table != "")
-			$tables[] = array('fk'=>$fk,'table_name'=>$referencing_table, 'title_field' => $title_field);
+			$tables[] = array('fk'=>$fk,'table_name'=>$referencing_table, 'likely_page' => $likely_page ,'title_field' => $title_field);
 	}
 	return $tables;
 }
@@ -1082,7 +1099,7 @@ function addFields($name, $not_for_field_list = "") {
 
 /*
 Searches the database for foreign keys (possible in InnoDB tables, for example)
-and return s an array of them. This is the structure you get:
+and returns an array of them. This is the structure you get:
 
 fks
   |_key - name
@@ -1105,127 +1122,129 @@ NOTE: Pages are views on tables (there can be several multipages for a table and
 	
 According to this, the key-name will be:
 [{table}|{page}]_[{ref_table}|{ref_page}]_{ref_field}
-This helps you to find a foreign key that is interesting.
 */
 $fks = "";
 function getForeignKeys(){
 	global $db,$fks;
 	$tables = mysql_list_tables($db, getDBLink());
 	$num_tables = mysql_num_rows($tables);
-	$fk = array();
 	
-	for($x = 0; $x < $num_tables; $x++){
-		$table = mysql_tablename($tables, $x);
-	
-		$res = pp_run_query("SHOW CREATE TABLE ".$table.";");
-		$row = mysql_fetch_array($res, MYSQL_ASSOC);
-		$create_query = $row['Create Table'];
+	if ($fks == ""){
+		$fk = array();
 		
-		$crlf = "||";
-		// Convert end of line chars to one that we want (note that MySQL doesn't return query it will accept in all cases)
-		if (strpos($create_query, "(\r\n ")) {
-			$create_query = str_replace("\r\n", $crlf, $create_query);
-		} elseif (strpos($create_query, "(\n ")) {
-			$create_query = str_replace("\n", $crlf, $create_query);
-		} elseif (strpos($create_query, "(\r ")) {
-			$create_query = str_replace("\r", $crlf, $create_query);
-		}
+		for($x = 0; $x < $num_tables; $x++){
+			$table = mysql_tablename($tables, $x);
 		
-		// are there any foreign keys to cut out?
-		if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $create_query)) {
-			// Split the query into lines, so we can easily handle it. We know lines are separated by $crlf (done few lines above).
-			$sql_lines = explode($crlf, $create_query);
-			$sql_count = count($sql_lines);
+			$res = pp_run_query("SHOW CREATE TABLE ".$table.";");
+			$row = mysql_fetch_array($res, MYSQL_ASSOC);
+			$create_query = $row['Create Table'];
 			
-			// lets find first line with foreign keys
-			for ($i = 0; $i < $sql_count; $i++) {
-				if (preg_match('@^[\s]*(CONSTRAINT|FOREIGN[\s]+KEY)@', $sql_lines[$i])) {
-					break;
-				}
+			$crlf = "||";
+			// Convert end of line chars to one that we want (note that MySQL doesn't return query it will accept in all cases)
+			if (strpos($create_query, "(\r\n ")) {
+				$create_query = str_replace("\r\n", $crlf, $create_query);
+			} elseif (strpos($create_query, "(\n ")) {
+				$create_query = str_replace("\n", $crlf, $create_query);
+			} elseif (strpos($create_query, "(\r ")) {
+				$create_query = str_replace("\r", $crlf, $create_query);
 			}
 			
-			// If we really found a constraint, fill it contraint array for this field:
-			if ($i != $sql_count) {
-				$first = TRUE;
-				for ($j = $i; $j < $sql_count; $j++) {
-					if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $sql_lines[$j])) {
-						//remove "," at the end 
-						$sql_lines[$j] = preg_replace('@,$@', '', $sql_lines[$j]);
-						$tokens = explode(' ',$sql_lines[$j]);
-						
-						$fk['table'] = $table;
-						
-						$token_count = count($tokens);
-						// Here is an example string to understand the code better:
-						// "CONSTRAINT `verb_phrases_ibfk_1` FOREIGN KEY (`verbid`) 
-						//  REFERENCES `verbs` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE"
-						// We will find out when the next token is interesting
-						// sometimes we'll have to cut stuff like (,) or the like off
-						// with substr()
-						for($k=0; $k<$token_count; $k++){
-							// THE FIELD
-							if ($tokens[$k] == 'KEY') $fk['field'] = substr($tokens[$k + 1],2,-2);
-							
-							// THE CONSTRAINT NAME
-							if ($tokens[$k] == 'CONSTRAINT') $fkname = substr($tokens[$k + 1],1,-1);
-							
-							// WHERE DOES IT POINT?
-							if ($tokens[$k] == 'REFERENCES') {
-								$fk['ref_table'] = substr($tokens[$k + 1],1,-1);
-								$fk['ref_field'] = substr($tokens[$k + 2],2,-2);
-							}
-							
-							// ON UPDATE, ON DELETE
-							//SET and NO have another token!
-							if ($tokens[$k] == 'DELETE') {
-								$fk['on_delete'] = $tokens[$k + 1];
-								if ($tokens[$k + 1] == "SET" || $tokens[$k + 1] == "NO") $fk['on_delete'] .= ' '.$tokens[$k + 2];
-							}
-							if ($tokens[$k] == 'UPDATE') {
-								$fk['on_update'] = $tokens[$k + 1];
-								if ($tokens[$k + 1] == "SET" || $tokens[$k + 1] == "NO") $fk['on_update'] .= ' '.$tokens[$k + 2];
-							}
-							//defaults
-							if ($fk['on_update'] == "") $fk['on_update'] = "CASCADE";
-							if ($fk['on_delete'] == "") $fk['on_delete'] = "RESTRICT";
-							
-							// A MARKER THAT THIS IS REALLY A CONSTRAINT FROM THE DB
-							$fk["in_db"] = 1;
-						}
-						$fks['table_'.$fk['ref_table'].'_'.$fk['field']] = $fk;
-					} else {	// that's all, folks
+			// are there any foreign keys to cut out?
+			if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $create_query)) {
+				// Split the query into lines, so we can easily handle it. We know lines are separated by $crlf (done few lines above).
+				$sql_lines = explode($crlf, $create_query);
+				$sql_count = count($sql_lines);
+				
+				// lets find first line with foreign keys
+				for ($i = 0; $i < $sql_count; $i++) {
+					if (preg_match('@^[\s]*(CONSTRAINT|FOREIGN[\s]+KEY)@', $sql_lines[$i])) {
 						break;
 					}
 				}
-			} // end if we found a constraint
-		} // end if any fks at all
-	} // end for all tables
+				
+				// If we really found a constraint, fill it contraint array for this field:
+				if ($i != $sql_count) {
+					$first = TRUE;
+					for ($j = $i; $j < $sql_count; $j++) {
+						if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $sql_lines[$j])) {
+							//remove "," at the end 
+							$sql_lines[$j] = preg_replace('@,$@', '', $sql_lines[$j]);
+							$tokens = explode(' ',$sql_lines[$j]);
+							
+							$fk['table'] = $table;
+							
+							$token_count = count($tokens);
+							// Here is an example string to understand the code better:
+							// "CONSTRAINT `verb_phrases_ibfk_1` FOREIGN KEY (`verbid`) 
+							//  REFERENCES `verbs` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE"
+							// We will find out when the next token is interesting
+							// sometimes we'll have to cut stuff like (,) or the like off
+							// with substr()
+							for($k=0; $k<$token_count; $k++){
+								// THE FIELD
+								if ($tokens[$k] == 'KEY') $fk['field'] = substr($tokens[$k + 1],2,-2);
+								
+								// THE CONSTRAINT NAME
+								if ($tokens[$k] == 'CONSTRAINT') $fkname = substr($tokens[$k + 1],1,-1);
+								
+								// WHERE DOES IT POINT?
+								if ($tokens[$k] == 'REFERENCES') {
+									$fk['ref_table'] = substr($tokens[$k + 1],1,-1);
+									$fk['ref_field'] = substr($tokens[$k + 2],2,-2);
+								}
+								
+								// ON UPDATE, ON DELETE
+								//SET and NO have another token!
+								if ($tokens[$k] == 'DELETE') {
+									$fk['on_delete'] = $tokens[$k + 1];
+									if ($tokens[$k + 1] == "SET" || $tokens[$k + 1] == "NO") $fk['on_delete'] .= ' '.$tokens[$k + 2];
+								}
+								if ($tokens[$k] == 'UPDATE') {
+									$fk['on_update'] = $tokens[$k + 1];
+									if ($tokens[$k + 1] == "SET" || $tokens[$k + 1] == "NO") $fk['on_update'] .= ' '.$tokens[$k + 2];
+								}
+								//defaults
+								if ($fk['on_update'] == "") $fk['on_update'] = "CASCADE";
+								if ($fk['on_delete'] == "") $fk['on_delete'] = "RESTRICT";
+								
+								// A MARKER THAT THIS IS REALLY A CONSTRAINT FROM THE DB
+								$fk["in_db"] = 1;
+							}
+							$fks['table_'.$fk['ref_table'].'_'.$fk['field']] = $fk;
+						} else {	// that's all, folks
+							break;
+						}
+					}
+				} // end if we found a constraint
+			} // end if any fks at all
+		} // end for all tables
+		
+		// Now look in the _sys_fields data for manually specified foreign keys
+		$query = "SELECT pagename, name, foreign_key_to, on_update, on_delete FROM _sys_fields WHERE foreign_key_to != ''";
+		$res = pp_run_query($query);
+		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
+			$fk = array();
+			$is_multi = isMultiPage($row['pagename']);
 	
-	// Now look in the _sys_fields data for manually specified foreign keys
-	$query = "SELECT pagename, name, foreign_key_to, on_update, on_delete FROM _sys_fields WHERE foreign_key_to != ''";
-	$res = pp_run_query($query);
-	while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
-		$fk = array();
-		$is_multi = isMultiPage($row['pagename']);
-
-		$fk["page"] = $row['pagename'];
-		$fk["field"] = $row["name"];
-		$fk["ref_page"] = $row['foreign_key_to'];
-		if ($is_multi){		//refer automatically to the pk-field
-			$page_info = getPageInfo($row['foreign_key_to']);
-			$fk["ref_field"] = $page_info["pk"];	
-		} else {
-			$fk["ref_field"] = 'id';
+			$fk["page"] = $row['pagename'];
+			$fk["field"] = $row["name"];
+			$fk["ref_page"] = $row['foreign_key_to'];
+			if ($is_multi){		//refer automatically to the pk-field
+				$page_info = getPageInfo($row['foreign_key_to']);
+				$fk["ref_field"] = $page_info["pk"];	
+			} else {
+				$fk["ref_field"] = 'id';
+			}
+			$fk["on_update"] = $row["on_update"];
+			$fk["on_delete"] = $row["on_delete"];
+			$fk["in_db"] = 0;
+			$fks['page_'.$fk["ref_page"].'_'.$fk["field"]]  = $fk;
 		}
-		$fk["on_update"] = $row["on_update"];
-		$fk["on_delete"] = $row["on_delete"];
-		$fk["in_db"] = 0;
-		$fks['page_'.$fk["ref_page"].'_'.$fk["field"]]  = $fk;
+		//echo('<div style="visibility:hidden;height:0px;">');
+		//echo('And here the fk list:<br/>');
+		//print_r($fks);
+		//echo('</div>');
 	}
-	//echo('<div style="visibility:hidden;height:0px;">');
-	//echo('And here the fk list:<br/>');
-	//print_r($fks);
-	//echo('</div>');
 	return $fks;
 }
 

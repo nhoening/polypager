@@ -65,7 +65,8 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 				echo('<div class="debug">cmd: '.$params["cmd"].'</div>');
 			}
 	
-			$query = getEditQuery($params["cmd"], "");
+			$queries = getEditQuery($params["cmd"], "");
+			$query = $queries[0];
 	
 			if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 	

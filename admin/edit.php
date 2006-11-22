@@ -56,11 +56,10 @@ $entity = getEntity($params["page"]);
 		//if system data has been changed, reset $sys_info
 		if (($params["cmd"] == "edit" or $params["cmd"] == "entry") and $params["page"] == "_sys_sys") $sys_info = "";
 
-		$query = getEditQuery($params["cmd"], "");
+		$queries = getEditQuery($params["cmd"], "");
 		echo("Query is: ".$query."<br/>");
 		//now run db manipulation quer(y|ies) - we might get a few because of  foreign keys
-		if ($query != "") {
-			$queries = explode(";",$query);
+		if ($queries != "") {
 			foreach($queries as $q) {
 				echo("running:".$q."<br/>");
 				if ($q!=""){
@@ -85,13 +84,15 @@ $entity = getEntity($params["page"]);
 			resetLazyData();
 			
 			// make a new SELECT Query (we must show something) - later this could get more dynamic
-			$query = getEditQuery("show", "");
+			$queries = getEditQuery("show", "");
+			$query = $queries[0];
 			if($params["cmd"] == "entry") {
 				//here we should show the highest number (that is the one we just inserted)
 				$newID = mysql_insert_id();
-				$query = getEditQuery("show", $newID);
+				$queries = getEditQuery("show", $newID);
 				$params["nr"] = $newID;
 			}
+			$query = $queries[0];
 			
 			//now that we have the new ID, we can feed it
 			if ($params["feed"] == '1') handleFeed($params);
@@ -107,7 +108,8 @@ $entity = getEntity($params["page"]);
 			
 		}
 	} else {
-		$query = getEditQuery($params["cmd"], "");
+		$queries = getEditQuery($params["cmd"], "");
+		$query = $queries[0];
 	}
 // ---------------------------------------
 
