@@ -130,7 +130,7 @@ function getEditParameters() {
 	$params["feed"] = $_POST['_formfield_feedbox'];
 	if ($params["feed"] == "") {$params["feed"] = $_GET["_formfield_feedbox"];}
 	if($params["feed"] == "on"){$params["feed"] = "1";}
-						else{$params["feed"] = "0";}
+	else{$params["feed"] = "0";}
 	
 	//-----------checking Parameters ---------------------------------
 	if ($params["cmd"] != "") {
@@ -185,14 +185,15 @@ function getEditParameters() {
 	builds a query, depending on command.
 	if id is empty, it uses the param id
 	foreign key - relations that point to a field that changes
-	might lead to multiple queries!
+	might lead to multiple queries returned in an array!
 */
 function getEditQuery($command, $theID) {
 	global $params;
 	$entity = getEntity($params["page"]);
 	$page_info = getPageInfo($params["page"]);
 	if ($theID == "") $theID = $params["nr"];
-	$query = "";
+	$query = "";        # we'll build in this string
+	$queries = array(); # and add it to this array we'll return
 	
 	// resolve foreign keys that the user entered (the constraints in the db are 
 	// the dbs thing)
@@ -234,7 +235,7 @@ function getEditQuery($command, $theID) {
 							//add Query with recursicve call
 							$tmp = getEditQuery($command,$row[getPKName($referencing_table)]);;
 							if ($tmp == ""); return;	//error
-							$query .= $tmp;
+							$queries = array_merge($tmp,$queries);
 						}
 					}
 				}
@@ -242,8 +243,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 	}
-	
-	
+		
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -339,7 +339,8 @@ function getEditQuery($command, $theID) {
 	//---------------end show -----------------------------------------
 	
 	$query .= ';';
-	return $query;
+	$queries[] = $query;
+	return $queries;
 }
 
 /*

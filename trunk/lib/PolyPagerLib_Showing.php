@@ -168,7 +168,6 @@
 			if ($glist['valuelist'] != 'standard,') $params["group"] = $page_info["default_group"];
 		}
 		
-		
 		//Search
 		if ($params["cmd"] == "search") {	//search
 			$had_value = false;
@@ -179,25 +178,24 @@
 				if ($search["kw"] == "") $search["kw"] = $_GET["kw"];
 				if ($search["kw"] != "") $had_value = true; 
 			}
-			//if (isMultipage($params["page"])) {
-				if ($entity["search"]["month"] == "1") {
-					$search["m"] = $_POST["m"];
-					if ($search["m"] == "") $search["m"] = $_GET["m"];
-					if ($search["m"] != "") $had_value = true;
+			if ($entity["search"]["month"] == "1") {
+				$search["m"] = $_POST["m"];
+				if ($search["m"] == "") $search["m"] = $_GET["m"];
+				if ($search["m"] != "") $had_value = true;
+			}
+			if ($entity["search"]["year"] == "1" or $entity["search"]["month"] == "1") { 
+				$search["y"] = $_POST["y"];
+				if ($search["y"] == "") $search["y"] = $_GET["y"];
+				if ($search["y"] != "") $had_value = true;
+			}
+			if ($entity["fields"] != "") foreach ($entity["fields"] as $f) {
+				if ($f["valuelist"] != "") {
+					$search[$f["name"]] = $_POST['_search_'.$f["name"]];
+					if ($search[$f["name"]] == "") $search[$f["name"]] = $_GET['_search_'.$f["name"]];
+					if ($search[$f["name"]] != "") $had_value = true;
 				}
-				if ($entity["search"]["year"] == "1" or $entity["search"]["month"] == "1") { 
-					$search["y"] = $_POST["y"];
-					if ($search["y"] == "") $search["y"] = $_GET["y"];
-					if ($search["y"] != "") $had_value = true;
-				}
-				if ($entity["fields"] != "") foreach ($entity["fields"] as $f) {
-					if ($f["valuelist"] != "") {
-						$search[$f["name"]] = $_POST['_search_'.$f["name"]];
-						if ($search[$f["name"]] == "") $search[$f["name"]] = $_GET['_search_'.$f["name"]];
-						if ($search[$f["name"]] != "") $had_value = true;
-					}
-				}
-			//}
+			}
+			
 			if ($had_value) $params["search"] = $search;
 		}
 		if ($debug) { echo('				<div class="debug">page param is: '.$params["page"].', topic param is: '.$params["topic"].'</div>'."\n"); }
@@ -570,6 +568,11 @@
 		} else {return $text;}	//no hit - simply return
 	}
 	
+	/* build a valid (in terms of SGML) ID attribute from the given text */
+	function buildValidIDFrom($text){
+		return str_replace(' ','_',$text); # not really implemented, use regexes
+	}
+	
 	/* writes an index of contents
 	*/
 	function writeToc($res, $show, $ind=4) {
@@ -610,6 +613,27 @@
 			if ($as_toc) { 
 				$html_type = "ul";
 				$html_type2 = "li";
+				// foreign keys linking here? show them in the tree
+				$rt = getReferencingTableData($entity);
+				// first we collect the data that might be linking here
+				if (count($rt)>0){
+					for($x=0;$x<count($rt);$x++) { 
+						// get the values we need
+						if ($rt[$x]['table_name'] != ""){
+							$q = "SELECT ".getPKName($rt[$x]['table_name'])." as pk, ".$rt[$x]['title_field']." as tf, ".$rt[$x]['fk']['field']." as f FROM ".$rt[$x]['table_name'];
+							//singlepages can operate on the page level whith all data being in one table...
+							if (isSinglepage($rt[$x]['fk']['page'])) $q .= " WHERE pagename = '".$rt[$x]['fk']['page']."'";
+							$fk_result = pp_run_query($q);
+							$fk_rows = array();
+							while($fk_row = mysql_fetch_array($fk_result, MYSQL_ASSOC)) {
+								$fk_row['fk_page'] = $rt[$x]['likely_page']; //we'll need this to point there
+								$fk_rows[] = $fk_row;
+							}
+							$rt[$x]['rows'] = $fk_rows;
+						}
+					}
+					
+				}
 			}else {
 				$html_type = "div";
 				$html_type2 = "h2";
@@ -649,9 +673,19 @@
 			if ($as_toc) {	//we need only titles here
 				$name = $row[$entity["title_field"]];
 				$name = htmlentities($name);
-				echo($indent.'	<li class="link">-<a href="#'.str_replace(' ', '_', $name).'">'.$name.'</a></li>'."\n");
+				echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
+				// show referencing table stuff
+				echo($indent.'		<ul class="fk_link">'."\n");
+				for ($x=0;$x<count($rt);$x++){
+					foreach($fk_rows as $fk_row){
+						if ($row[$rt[$x]['fk']['ref_field']] == $fk_row['f']) 
+							echo($indent.'			<li><a href="?'.$fk_row['fk_page'].'&amp;nr='.$fk_row['pk'].'">'.$fk_row['tf'].'</a></li>'."\n");
+					}
+				}
+				echo($indent.'		</ul>'."\n");
 			} else {	//here we need some sophisticated stuff
-				writeEntry($row, 5, $listview);
+				$next_ind = $ind + 1;
+				writeEntry($row, $next_ind, $listview);
 			}
 		}
 		
@@ -696,7 +730,7 @@
 			$name = $row[$entity["title_field"]];
 			//text that doesn't come from a text area still must be escaped
 			$name = htmlentities($name);
-			if ($entity["title_field"] != "") echo($indent.'	<a class="target" id="'.str_replace(' ', '_', $name).'"></a>'."\n");
+			if ($entity["title_field"] != "") echo($indent.'	<a class="target" id="'.buildValidIDFrom($name).'"></a>'."\n");
 		}
 		
 		$briefly = false;	//turns true when some fields are not shown
@@ -796,8 +830,8 @@
 							//this id can be used by users to access individual Elements with their CSS 
 							echo($indent.'	<div class="'.$entity["tablename"].'_'.$f["name"].'">'."\n");
 		
-							if ($entity["show_labels"] == "1" and !$list_view) {
-								echo($indent.'	<div class="label">');
+							if ($entity["show_labels"] == "1" and !$list_view and $f["name"] != $entity["title_field"]) {
+								echo($indent.'		<div class="label">');
 								if ($f['label'] != "") echo($f['label']); else echo($f['name']);
 								echo('</div>'."\n");
 							}
