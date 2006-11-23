@@ -77,7 +77,7 @@ body {
 	height: 130px !important;
 	<?
 	if ($pic == "") {
-		$pictures = scandir_n("../../../user/Style/picswap_bg_pics",0,true);
+		$pictures = scandir_n("pics/bg",0,true);
 		$i = count($pictures); //index of bg pic
 		//echo($i);
 		//print_r($pictures);
@@ -88,7 +88,7 @@ body {
 		}
 		$pic = $pictures[$i-1];
 	}
-	echo("	background:url(../../../user/Style/picswap_bg_pics/".$pic.") top left no-repeat; /* 800x130 */\n");
+	echo("	background:url(pics/bg/".$pic.") top left no-repeat; /* 800x130 */\n");
 	?>
 	border-top-width: 5px;
 	border-left-width: 1px;
