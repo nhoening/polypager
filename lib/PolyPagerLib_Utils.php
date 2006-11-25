@@ -486,22 +486,28 @@ function getEntity($page_name) {
 
 				$entity = addFields($entity["tablename"]);
 				$skindirs = scandir_n('../style/skins');
+				$skindirs_wo_picswap = array();
 				for($x=0;$x<count($skindirs);$x++){	//picswap gets extra handling in PolyPagerLib_HTMLFraming
-					if ($skindirs[$x] == 'picswap') {
-						$skindirs = array_splice($skindirs,$x-1,1);
-						break;
-					}
+					if ($skindirs[$x] != 'picswap') $skindirs_wo_picswap[] = $skindirs[$x];
 				}
-				$dirs = implode(",",$skindirs);
-				$dirs = str_replace(",,", ",",$dirs);
-				$dirs = $dirs.",picswap-aqua,picswap-fall,picswap-uptight,picswap-saarpreme";
+				
+				//if we had picswap, now put in the four artificial colorset-duimmies
+				if (count($skindirs) != count($skindirs_wo_picswap)){
+					$skindirs = $skindirs_wo_picswap;
+					$dirs = implode(",",$skindirs);
+					$dirs = str_replace(",,", ",",$dirs);
+					$dirs = $dirs.",picswap-aqua,picswap-fall,picswap-uptight,picswap-saarpreme";
+				}else{
+					$dirs = implode(",",$skindirs);
+				}
+				
 				setEntityFieldValue("skin", "valuelist", $dirs);
-				$sys_info = getSysInfo();
+				
+				
 
 				setEntityFieldValue("lang", "valuelist", "en,de");
 				setEntityFieldValue("start_page", "valuelist", implode(',', getPageNames()));
 				setEntityFieldValue("feed_amount", "validation", 'number');
-				setEntityFieldValue("template", "valuelist", implode(",", scandir_n('../style/templates')));
 				
 				global $run_as_demo;
 				if ($run_as_demo) {
@@ -1164,7 +1170,6 @@ function getForeignKeys(){
 				
 				// If we really found a constraint, fill it contraint array for this field:
 				if ($i != $sql_count) {
-					$first = TRUE;
 					for ($j = $i; $j < $sql_count; $j++) {
 						if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $sql_lines[$j])) {
 							//remove "," at the end 
