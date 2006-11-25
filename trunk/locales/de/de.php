@@ -28,8 +28,10 @@
 function getTranslation($text) {
 	$translation_table = array(
 /*	admin/index.php	*/
-'Your administratorname or the administratorpassword is empty. You should consider going to the system property section and secure your system!' => 
-	'Der Admminstratorname oder das Passwort ist leer. Sie sollten zu den Systemeinstellungen gehen, um Ihr System abzusichern.',
+'Your administrator-name or the administrator-password is empty. You should consider going to the ' =>
+	'Der Admminstratorname oder das Passwort ist leer. Sie sollten zu den ',
+'system property section' => 'Systemeinstellungen',
+' and secure your system!' => ' gehen, um Ihr System abzusichern.',
 'attempted to create sys tables... '	=> 'Es wurde versucht die Systemtabellen zu erstellen... ',
 'attempted to chmod directories... '	=> 'Es wurde versucht die erforderlichen Berechtigungen zu setzen... ',
 'The dbms reported the following error: '	=> 'Das Datenbank-System hat folgenden Fehler gemeldet: ',
