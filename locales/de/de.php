@@ -29,7 +29,7 @@ function getTranslation($text) {
 	$translation_table = array(
 /*	admin/index.php	*/
 'Your administrator-name or the administrator-password is empty. You should consider going to the ' =>
-	'Der Admminstratorname oder das Passwort ist leer. Sie sollten zu den ',
+	'Der Adminstratorname oder das Passwort ist leer. Sie sollten zu den ',
 'system property section' => 'Systemeinstellungen',
 ' and secure your system!' => ' gehen, um Ihr System abzusichern.',
 'attempted to create sys tables... '	=> 'Es wurde versucht die Systemtabellen zu erstellen... ',
@@ -388,6 +388,8 @@ function getTranslation($text) {
 'template:' => 'Template:',
 'submenus_always_on:' => 'Untermen&uuml;s statisch anzeigen:',
 'link_to_gallery_in_menu:' => 'Link zur Galerie im Men&uuml;:',
+'gallery_name:'=> 'Name der Galerie:',  	
+'gallery_index:'=> 'Galerie im Menu an Stelle:',
 
 //system pagenames
 '_sys_comments' => 'Kommentare',

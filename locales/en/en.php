@@ -63,6 +63,8 @@ function getTranslation($text) {
 'lang:' => 'language:',
 'submenus_always_on:' => 'submenus are always on:',
 'link_to_gallery_in_menu:' => 'show link to gallery in menu:',
+'gallery_name:'=> 'gallery name:',  	
+'gallery_index:'=> 'gallerys order index:',
 	
 //system pagenames
 '_sys_comments' => 'Comments',

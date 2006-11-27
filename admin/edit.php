@@ -47,79 +47,80 @@ $area = "_admin";
 $params = getEditParameters();
 $entity = getEntity($params["page"]);
 
-// -------------------- maybe we need a data manipulation FIRST
-// -------------------- afterwards we'll select data to show
-	$i_manipulated = true;	//positive assumption
-	
-	if ($params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {
-
-		//if system data has been changed, reset $sys_info
-		if (($params["cmd"] == "edit" or $params["cmd"] == "entry") and $params["page"] == "_sys_sys") $sys_info = "";
-
-		$queries = getEditQuery($params["cmd"], "");
-		echo("Query is: ".$query."<br/>");
-		//now run db manipulation quer(y|ies) - we might get a few because of  foreign keys
-		if ($queries != "") {
-			foreach($queries as $q) {
-				echo("running:".$q."<br/>");
-				if ($q!=""){
-					$res = mysql_query($q, getDBLink());
-					$fehler_nr .= mysql_errno(getDBLink());
-					$mysqlerror .= mysql_error(getDBLink());
-				}
-			}
-		} else $fehler_nr = 1;
+if ($params["page"] != "" and isAKnownPage($params["page"])){
+	// -------------------- maybe we need a data manipulation FIRST
+	// -------------------- afterwards we'll select data to show
+		$i_manipulated = true;	//positive assumption
 		
-		if ($fehler_nr != 0) {
-			$i_manipulated = false;
-			$sys_msg_text = '				<div class="sys_msg">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
-		} else {
-			$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
-			if($debug) { $sys_msg_text = $sys_msg_text.'<div class="debug">I used this query: '.$query.'.</div>'; }
+		if ($params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {
+	
+			//if system data has been changed, reset $sys_info
+			if (($params["cmd"] == "edit" or $params["cmd"] == "entry") and $params["page"] == "_sys_sys") $sys_info = "";
+	
+			$queries = getEditQuery($params["cmd"], "");
 			
-			//ensure consistency
-			ensureConsistency($params);
+			//now run db manipulation quer(y|ies) - we might get a few because of  foreign keys
+			if ($queries != "") {
+				foreach($queries as $q) {
+					if ($q!=""){
+						echo("running edit Query: ".$q."<br/>");
+						$res = mysql_query($q, getDBLink());
+						$fehler_nr .= mysql_errno(getDBLink());
+						$mysqlerror .= mysql_error(getDBLink());
+					}
+				}
+			} else $fehler_nr = 1;
 			
-			//reset lazy data - so all we show is fresh
-			resetLazyData();
-			
-			// make a new SELECT Query (we must show something) - later this could get more dynamic
-			$queries = getEditQuery("show", "");
-			$query = $queries[0];
-			if($params["cmd"] == "entry") {
-				//here we should show the highest number (that is the one we just inserted)
-				$newID = mysql_insert_id();
-				$queries = getEditQuery("show", $newID);
-				$params["nr"] = $newID;
-			}
-			$query = $queries[0];
-			
-			//now that we have the new ID, we can feed it
-			if ($params["feed"] == '1') handleFeed($params);
-			
-			
-			// now we switch to another command (see getEditParameters() for documentation)
-			if(isMultipage($params["page"])) {
-				if($params["cmd"] == "delete") $params["cmd"]="new"; else $params["cmd"]="show";
+			if ($fehler_nr != 0) {
+				$i_manipulated = false;
+				$sys_msg_text = '				<div class="sys_msg">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
 			} else {
-				if($params["cmd"] == "delete") $params["cmd"]="show";
-			}
+				$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
+				if($debug) { $sys_msg_text = $sys_msg_text.'<div class="debug">I used this query: '.$query.'.</div>'; }
 				
-			
+				//ensure consistency
+				ensureConsistency($params);
+				
+				//reset lazy data - so all we show is fresh
+				resetLazyData();
+				
+				// make a new SELECT Query (we must show something) - later this could get more dynamic
+				$queries = getEditQuery("show", "");
+				$query = $queries[0];
+				if($params["cmd"] == "entry") {
+					//here we should show the highest number (that is the one we just inserted)
+					$newID = mysql_insert_id();
+					$queries = getEditQuery("show", $newID);
+					$params["nr"] = $newID;
+				}
+				$query = $queries[0];
+				
+				//now that we have the new ID, we can feed it
+				if ($params["feed"] == '1') handleFeed($params);
+				
+				
+				// now we switch to another command (see getEditParameters() for documentation)
+				if(isMultipage($params["page"])) {
+					if($params["cmd"] == "delete") $params["cmd"]="new"; else $params["cmd"]="show";
+				} else {
+					if($params["cmd"] == "delete") $params["cmd"]="show";
+				}
+					
+				
+			}
+		} else {
+			$queries = getEditQuery($params["cmd"], "");
+			$query = $queries[0];
 		}
-	} else {
-		$queries = getEditQuery($params["cmd"], "");
-		$query = $queries[0];
-	}
-// ---------------------------------------
+	// ---------------------------------------
+}else{
+	$title = __('unknown page').': '.$params["page"];
+	$error_msg_text = '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
+}
 
 if ($params["nr"] == "") $params["nr"] = $newID;
 $path_to_root_dir = "..";
 
-if ($params["page"] == "" or !isAKnownPage($params["page"])) {	//nothing to do
-	$title = __('unknown page').': '.$params["page"];
-	$error_msg_text = '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
-}
 
 /* the function that writes out the data */
 function writeData($ind=4) {

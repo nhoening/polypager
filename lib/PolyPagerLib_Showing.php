@@ -44,22 +44,24 @@
 		if ($debug) {echo '				<div class="debug">getting max for:|'.$params["page"].'| and I know it:'.isAKnownPage($params["page"]).'</div>'; }
 		if ($params["page"] != '_sys_pages' and isAKnownPage($params["page"])) {
 			$entity = getEntity($params["page"]);
-			$page_info = getPageInfo($params["page"]);
-			$max = $_POST["max"];	//get max from request - POST
-			if ($max == "") { $max = $_GET["max"]; } //coming in per GET?
-			//reading the number of entries, if not give
-			if ($max == "" and $entity != "" and !(!isASysPage($params["page"]) and isMultipage($params["page"]) and $page_info["tablename"] == "") ) {
-				$query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
-				$res = mysql_query($query, getDBLink());
-				$error_nr = mysql_errno(getDBLink());
-				if ($debug) {echo '				<div class="debug">Query was: '.$query.'</div>'; }
-				if ($error_nr != 0) {
-					$fehler_text = mysql_error(getDBLink());
-					echo "				<br />DB-Error: $fehler_text<br />\n";
-					
+			if ($entity['pk'] != "") {
+				$page_info = getPageInfo($params["page"]);
+				$max = $_POST["max"];	//get max from request - POST
+				if ($max == "") { $max = $_GET["max"]; } //coming in per GET?
+				//reading the number of entries, if not give
+				if ($max == "" and $entity != "" and !(!isASysPage($params["page"]) and isMultipage($params["page"]) and $page_info["tablename"] == "") ) {
+					$query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
+					$res = mysql_query($query, getDBLink());
+					$error_nr = mysql_errno(getDBLink());
+					if ($debug) {echo '				<div class="debug">Query was: '.$query.'</div>'; }
+					if ($error_nr != 0) {
+						$fehler_text = mysql_error(getDBLink());
+						echo "				<br />DB-Error: $fehler_text<br />\n";
+						
+					}
+					$row = mysql_fetch_array($res, MYSQL_ASSOC);
+					$max = $row["maxnr"];
 				}
-				$row = mysql_fetch_array($res, MYSQL_ASSOC);
-				$max = $row["maxnr"];
 			}
 		}
 		if ($max == "") $max = "0";	//better than nothing, and indeed, there is nothing
@@ -108,7 +110,7 @@
 		$params = array();
 		
 		//-------------------------topic (for admin list)
-		$params["topic"] = $_POST[topic];
+		$params["topic"] = $_POST['topic'];
 		if ($params["topic"] == "") {$params["topic"] = $_GET[topic];}
 		
 		//------------------------ the page name
@@ -125,80 +127,84 @@
 			$sys_info = getSysInfo();
 			$params["page"] = $sys_info["start_page"];
 		}
-		//-------------------------nr param
-		$params["nr"] = $_POST[nr];	//starting point
-		if ($params["nr"] == "") $params["nr"] = $_GET[nr];  //coming in per GET?
-		//pages need a max nr
-		$params["max"] = getMaxNr($params);
-		if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
-
-		//-------------------------cmd param
-		$params["cmd"] = $_POST[cmd];		//commands: show|search|Show month|Show year
-		if ($params["cmd"] == "") {$params["cmd"] = $_GET[cmd];}
-		if ($params["cmd"] == "") {$params["cmd"] = "show";}	//(default)
-				
-		$entity = getEntity($params["page"]);
-
-		//-------------------------step param
-		$default_step = $entity["step"];				//show this much on a page, could be a number or "all"
-		if ($default_step == "") $default_step = "all";
-		//1. normally one should be shown - but now we show all, briefly
-		if ($default_step == "1" and ($_POST["nr"] == "" and $_GET["nr"] == "")) $params["step"] = "all";
-		//2. a nr is given - show only this entry
-		if ($_POST["nr"] != "" or $_GET["nr"] != "") $params["step"] = "1";
-		//3. coming in explicitly
-		if ($_GET["step"] != "") $params["step"] = $_GET["step"];	//coming in per GET?
-		if ($_POST["step"] != "") $params["step"] = $_POST["step"]; //coming in per POST?
-		//nothing found yet? use default
-		if ($params["step"] == "") $params["step"] = $default_step;
 		
-		//-------------------------group param
-		$params["group"] = $_GET["group"];	//show only this group
-		if ($params["group"] == "") { $params["group"] = $_POST["group"]; } //coming in per POST?
-		if ($params["group"] == "" and isSinglepage($params["page"])) {	
-			//in singlepages, group is called anothe name for db reasons
-			$params["group"] = $_GET["the_group"];
-			if ($params["group"] == "") { $params["group"] = $_POST["the_group"]; }
-		}
-		//take default group if there hasn't been a special one requested
-		if ($params["group"] == "" and $params["nr"] == "") {
-			$page_info = getPageInfo($params["page"]);
-			$glist = getEntityField('the_group');
-			//default group when the user had a choice between groups for this page
-			if ($glist['valuelist'] != 'standard,') $params["group"] = $page_info["default_group"];
-		}
-		
-		//Search
-		if ($params["cmd"] == "search") {	//search
-			$had_value = false;
-			$search = array();
-			if ($entity["search"]["range"] == "1") {}//range has no parameters we haven't covered already
-			if ($entity["search"]["keyword"] == "1") {
-				$search["kw"] = $_POST["kw"];
-				if ($search["kw"] == "") $search["kw"] = $_GET["kw"];
-				if ($search["kw"] != "") $had_value = true; 
+		//only go on if we know the page
+		if ($params["page"] != "" and isAKnownPage($params["page"])){
+			//-------------------------nr param
+			$params["nr"] = $_POST[nr];	//starting point
+			if ($params["nr"] == "") $params["nr"] = $_GET[nr];  //coming in per GET?
+			//pages need a max nr
+			$params["max"] = getMaxNr($params);
+			if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
+	
+			//-------------------------cmd param
+			$params["cmd"] = $_POST[cmd];		//commands: show|search|Show month|Show year
+			if ($params["cmd"] == "") {$params["cmd"] = $_GET[cmd];}
+			if ($params["cmd"] == "") {$params["cmd"] = "show";}	//(default)
+					
+			$entity = getEntity($params["page"]);
+	
+			//-------------------------step param
+			$default_step = $entity["step"];				//show this much on a page, could be a number or "all"
+			if ($default_step == "") $default_step = "all";
+			//1. normally one should be shown - but now we show all, briefly
+			if ($default_step == "1" and ($_POST["nr"] == "" and $_GET["nr"] == "")) $params["step"] = "all";
+			//2. a nr is given - show only this entry
+			if ($_POST["nr"] != "" or $_GET["nr"] != "") $params["step"] = "1";
+			//3. coming in explicitly
+			if ($_GET["step"] != "") $params["step"] = $_GET["step"];	//coming in per GET?
+			if ($_POST["step"] != "") $params["step"] = $_POST["step"]; //coming in per POST?
+			//nothing found yet? use default
+			if ($params["step"] == "") $params["step"] = $default_step;
+			
+			//-------------------------group param
+			$params["group"] = $_GET["group"];	//show only this group
+			if ($params["group"] == "") { $params["group"] = $_POST["group"]; } //coming in per POST?
+			if ($params["group"] == "" and isSinglepage($params["page"])) {	
+				//in singlepages, group is called anothe name for db reasons
+				$params["group"] = $_GET["the_group"];
+				if ($params["group"] == "") { $params["group"] = $_POST["the_group"]; }
 			}
-			if ($entity["search"]["month"] == "1") {
-				$search["m"] = $_POST["m"];
-				if ($search["m"] == "") $search["m"] = $_GET["m"];
-				if ($search["m"] != "") $had_value = true;
-			}
-			if ($entity["search"]["year"] == "1" or $entity["search"]["month"] == "1") { 
-				$search["y"] = $_POST["y"];
-				if ($search["y"] == "") $search["y"] = $_GET["y"];
-				if ($search["y"] != "") $had_value = true;
-			}
-			if ($entity["fields"] != "") foreach ($entity["fields"] as $f) {
-				if ($f["valuelist"] != "") {
-					$search[$f["name"]] = $_POST['_search_'.$f["name"]];
-					if ($search[$f["name"]] == "") $search[$f["name"]] = $_GET['_search_'.$f["name"]];
-					if ($search[$f["name"]] != "") $had_value = true;
-				}
+			//take default group if there hasn't been a special one requested
+			if ($params["group"] == "" and $params["nr"] == "") {
+				$page_info = getPageInfo($params["page"]);
+				$glist = getEntityField('the_group');
+				//default group when the user had a choice between groups for this page
+				if ($glist['valuelist'] != 'standard,') $params["group"] = $page_info["default_group"];
 			}
 			
-			if ($had_value) $params["search"] = $search;
+			//Search
+			if ($params["cmd"] == "search") {	//search
+				$had_value = false;
+				$search = array();
+				if ($entity["search"]["range"] == "1") {}//range has no parameters we haven't covered already
+				if ($entity["search"]["keyword"] == "1") {
+					$search["kw"] = $_POST["kw"];
+					if ($search["kw"] == "") $search["kw"] = $_GET["kw"];
+					if ($search["kw"] != "") $had_value = true; 
+				}
+				if ($entity["search"]["month"] == "1") {
+					$search["m"] = $_POST["m"];
+					if ($search["m"] == "") $search["m"] = $_GET["m"];
+					if ($search["m"] != "") $had_value = true;
+				}
+				if ($entity["search"]["year"] == "1" or $entity["search"]["month"] == "1") { 
+					$search["y"] = $_POST["y"];
+					if ($search["y"] == "") $search["y"] = $_GET["y"];
+					if ($search["y"] != "") $had_value = true;
+				}
+				if ($entity["fields"] != "") foreach ($entity["fields"] as $f) {
+					if ($f["valuelist"] != "") {
+						$search[$f["name"]] = $_POST['_search_'.$f["name"]];
+						if ($search[$f["name"]] == "") $search[$f["name"]] = $_GET['_search_'.$f["name"]];
+						if ($search[$f["name"]] != "") $had_value = true;
+					}
+				}
+				
+				if ($had_value) $params["search"] = $search;
+			}
+			if ($debug) { echo('				<div class="debug">page param is: '.$params["page"].', topic param is: '.$params["topic"].'</div>'."\n"); }
 		}
-		if ($debug) { echo('				<div class="debug">page param is: '.$params["page"].', topic param is: '.$params["topic"].'</div>'."\n"); }
 		return $params;
 	}
 	
@@ -234,6 +240,10 @@
 		$sys_info = getSysInfo();
 		global $debug;
 		
+		if ($entity['pk'] == "") {
+			echo('<div class="sys_msg">'.__('This table has no primary key!').'</div>');
+			return "";
+		}
 		// ---------- first the easy cases: 
 		
 		// all comments
@@ -254,8 +264,6 @@
 						ORDER BY insert_date ASC";
 		}
 		
-		
-		
 		// feeds
 		else if (strpos($params["cmd"], "_sys_feed") > 0) {
 			$entity = getEntity("_sys_feed");
@@ -264,7 +272,6 @@
 		}
 		
 		// pages - always select all of them (user doesn't have to see the distinction)
-
 		else if ((strpos($params["cmd"], "_sys_multipages") > 0)
 			or (strpos($params["cmd"], "_sys_singlepages") > 0)
 			or($entity["tablename"] == "_sys_pages")) {
@@ -278,9 +285,31 @@
 				$theQuery = 'SELECT * FROM _sys_sys WHERE 1=2';	//just a valid joke
 			} else {
 				//--------------------- preparing  --------------------------
+				
+				// are we linking to pages/tables via foreign keys?
+				$references = getReferencedTableData($entity);
+				$ref_fields = array();
+				foreach($references as $r)$ref_fields[$r['fk']['field']] = $r['fk']['ref_table'].'||'.$r['title_field'];
+	
 				$a = array();
-				$a[0] = "SELECT * FROM ".$entity["tablename"]." ";
-					
+				$a[0] = "SELECT "; 
+				$a[0] .= $entity["tablename"].'.'.$entity['pk'].",";
+				foreach($entity['fields'] as $f){
+					// prefer title from referenced values over referencing ones!
+					if (in_array($f['name'],array_keys($ref_fields))) {
+						$ref = explode('||',$ref_fields[$f['name']]);
+						$a[0] .= $ref[0].'.'.$ref[1].' as '.$f['name'].",";
+					}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
+				}
+				
+				$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
+				
+				$a[0] .= " FROM ".$entity["tablename"].",";
+				foreach($references as $r) $a[0] .= $r['fk']['ref_table'].",";
+				
+				$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
+				$a[0] .= " ";
+				
 				if (isMultipage($params["page"])) {
 					//helper vars
 					if ($params["step"] != "all") {
@@ -295,18 +324,18 @@
 					
 					//normal query for "show"			
 					
-					if ($entity["pk_type"] == "int") $a[1] = " WHERE ".$entity["pk"]." >= $prev AND ".$entity["pk"]." <= ".$next." ";
-					else $a[1] = " WHERE ".$entity["pk"]." = ".$params["nr"];
+					if ($entity["pk_type"] == "int") $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
+					else $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
 					//show a group rather than id range
 					if ($params["group"] != "" and $params["group"] != "_sys_all") {
-						$a[1] = " WHERE ".$entity["group"]["field"]." = '".$params["group"]."'";
+						$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
 					}
 				} else if (isSinglepage($pagename)) {
-					$a[1] = "WHERE pagename = '$pagename' $pub";
-					if ($params["nr"] != "") $a[1] = $a[1]." AND id = ".$params["nr"];
+					$a[1] = "WHERE _sys_sections.pagename = '$pagename' $pub";
+					if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
 					if ($params["group"] != "" and $params["group"] != "_sys_all" and $sys_info["submenus_always_on"] != 0) {
 						//"standard" entries are -per definition- always shown!
-						$a[1] = $a[1]." AND (the_group = '".$params["group"]."' OR the_group = 'standard')";
+						$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR the_group = 'standard')";
 					}
 				}
 				if($params["search"] != "") {
@@ -320,13 +349,13 @@
 							//if december, increment year for enddate, else only the month
 							if ($month == "") {
 								$nextYear = $year + 1;
-								$a[count($a)] = " ".$entity["dateField"]["name"]." >= '$year-01-01' AND ".$entity["dateField"]["name"]." < '$nextYear-01-01' ";
+								$a[count($a)] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
 							} else if ($month == "12") {
 								$nextYear = $year + 1;
-								$a[count($a)] = " ".$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["dateField"]["name"]." < '$nextYear-01-01' ";
+								$a[count($a)] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
 							} else {
 								$nextMonth = $month + 1;
-								$a[count($a)] = " ".$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["dateField"]["name"]." < '$year-$nextMonth-01' ";
+								$a[count($a)] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$year-$nextMonth-01' ";
 							}
 						}
 					}
@@ -343,7 +372,7 @@
 								foreach($entity["fields"] as $f) {
 									if(isTextType($f["data-type"])) {
 										//BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
-										$a[count($a)] = " lcase(".$f["name"].") LIKE '%$keyword_lower%' OR ";
+										$a[count($a)] = " lcase(".$entity["tablename"].'.'.$f["name"].") LIKE '%$keyword_lower%' OR ";
 									}
 								}
 								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-3,-1);	//the last OR has to go
@@ -358,10 +387,7 @@
 					
 						//if we have a specified valuelist and the name of the field is a name of a search param...
 						if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "")
-							//((isMultipage($params["page"]) and $f["valuelist"] != "") or 
-							//(isSinglepage($params["page"]) and $page_info["grouplist"] != ""))
 						   {
-						  
 							if (count($a) != 2) $a[count($a)] = " AND ";
 							$a[count($a)] = $f["name"]." = '".$params["search"][$f["name"]]."'";
 							
@@ -375,23 +401,28 @@
 				}
 				
 				if($only_published and $entity["publish_field"] != "") {	//publish - Flag
-					$a[count($a)] = " AND ".$entity["publish_field"]." = 1";
+					$a[] = " AND ".$entity["tablename"].'.'.$entity["publish_field"]." = 1";
 				}
+
+				//link tables referenced by foreign keys
+				foreach($references as $r) $a[] .= " AND ".$entity["tablename"].".".$r['fk']['field']."=".$r['fk']['ref_table'].".".$r['fk']['ref_field'];
+				
 				$theQuery = implode('',$a);
 				
 				//ORDER BY: 1. grouping, 2. order_by
 				$b = array();
 				$b[0] = $theQuery;
 				if ($entity["group"] == "") $b[1] = " ORDER BY ";
-				else $b[1] = " ORDER BY ".$entity["group"]["field"]." ".$entity["group"]["order"].", ";
-				if ($entity["order_by"] == "") $b[2] = $entity["pk"]." DESC;";
-				else $b[2] = $entity["order_by"]." ".$entity["order_order"].";";
+				else $b[1] = " ORDER BY ".$entity["tablename"].'.'.$entity["group"]["field"]." ".$entity["group"]["order"].", ";
+				if ($entity["order_by"] == "") $b[2] = $entity["tablename"].'.'.$entity["pk"]." DESC;";
+				else $b[2] = $entity["tablename"].'.'.$entity["order_by"]." ".$entity["order_order"].";";
 				
 				
 				$theQuery = implode('',$b);
 			}
 		}
 		if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
+		echo($theQuery);
 		return $theQuery;
 	}
 	
@@ -566,11 +597,6 @@
 			$result[$i_a +1] = substr($text, $index + $kwlen, strlen($text) - $index);
 			return implode('', $result);
 		} else {return $text;}	//no hit - simply return
-	}
-	
-	/* build a valid (in terms of SGML) ID attribute from the given text */
-	function buildValidIDFrom($text){
-		return str_replace(' ','_',$text); # not really implemented, use regexes
 	}
 	
 	/* writes an index of contents
@@ -802,7 +828,7 @@
 							//check if we should give the old name for consistency reasons
 							$consistency_fields = explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];;
-							echo($indent.'		<span class="list_pic"><a onclick="return checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete();" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a></span>'."\n");
+							echo($indent.'		<span class="list_pic"><a onclick="return !checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete();" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a></span>'."\n");
 							echo($indent.'	</div>');
 						}
 						

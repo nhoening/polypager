@@ -75,6 +75,7 @@ function getFeed($amount) {
 	//enrich with text from the tables themselves
 	$i = 0;
 	while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+		//print_r($row);
 		$the_page = getPageInfo($row['thePage']);
 		if ($the_page != "") {
 			//title should be there, gather some content...
@@ -82,6 +83,8 @@ function getFeed($amount) {
 				$res2 = pp_run_query("SELECT bla AS tfield FROM _sys_sections WHERE pagename = '".$row['thePage']."' AND id = ".$row['theID'].";");
 			} else {
 				$field = guessTextField($the_page["tablename"]);
+				if ($field=="") $field = $the_page["title_field"];
+				$entity = getEntity($row['pagename']);
 				$res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
 			}
 			if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {

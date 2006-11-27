@@ -314,18 +314,16 @@ ul#main_menu li.here a, #sub_menus li.here a {
 
 /* ----------------------- typography ---------------------- */
 /* --  1. Links -- */
-a:link {
+a {
 	text-decoration: none;
 	font-weight: bold;
 	color:#<?=getColor('contrast'); ?>;
-	font: 800 15px/19px palatino, georgia;
 }
 
 a:visited {
 	text-decoration: none;
 	font-weight: bold;
 	color:#<?=getColor('contrast'); ?>;
-	font: 800 15px/19px palatino, georgia;
 }
 
 a:hover {
