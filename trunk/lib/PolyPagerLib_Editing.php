@@ -102,82 +102,83 @@ function getEditParameters() {
 		if (strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
 	}
 
-	//get metadata for this page
-	$entity = getEntity($params["page"]);
-
-	//------------------------- command check -------------------------
-	//get command: new|entry|show|edit|delete (the last 3 must come with id!)
-	$params["cmd"] = $_GET["cmd"];
-	if ($params["cmd"] == "") $params["cmd"] = $_POST["cmd"];	//post command
-	//one_entry_only: there is only show(default) and edit
-	if($entity["one_entry_only"] == "1" and $params["cmd"] != "edit" and $params["cmd"] != "new"  and $params["cmd"] != "entry") {
-		$params["cmd"] = "show";
-	}
+	if ($params["page"] != "" and isAKnownPage($params["page"])){
+		//get metadata for this page
+		$entity = getEntity($params["page"]);
 	
-	//-------------------------from param
-	$params["from"] = $_GET["from"];
-	if ($params["from"] == "") { $params["from"] = $_POST["from"]; } //coming in per POST?
-
-	//-------------------------group param
-	$params["group"] = urldecode($_GET["group"]);
-	if ($params["group"] == "") { $params["group"] = urldecode($_POST["group"]); } //coming in per POST?
-
-	//-------------------------topic (for admin list)
-	$params["topic"] = $_POST["topic"];
-	if ($params["topic"] == "") {$params["topic"] = $_GET["topic"];}
-	
-	//-------------------------feed (from checkbox)
-	$params["feed"] = $_POST['_formfield_feedbox'];
-	if ($params["feed"] == "") {$params["feed"] = $_GET["_formfield_feedbox"];}
-	if($params["feed"] == "on"){$params["feed"] = "1";}
-	else{$params["feed"] = "0";}
-	
-	//-----------checking Parameters ---------------------------------
-	if ($params["cmd"] != "") {
-
-		if ($params["cmd"] == "show" or $params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {	//get data
-			$consistency_fields = explode(",",$entity["consistency_fields"]);
-			$values = array();
-			foreach($entity["fields"] as $f) {
-				$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
-				//Booleans umwandeln
-				if ($f["data-type"] == "bool") {
-					if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
-					else{$values[$f["name"]] = "0";}
-				}
-				if(in_array($f["name"],$consistency_fields)) {
-					$values['old_formfield_'.$f["name"]] = filterSQL($_POST['old_formfield_'.$f["name"]]);
-					if ($values['old_formfield_'.$f["name"]] == "") $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
-					//echo("f[old_formfield_name] is:".$values["old_formfield_name"]);
-				}
-				//echo("f[name] is: ".$f["name"]." and values[f[name]] is: ".$values[$f["name"]]."<br/>");
-			}
-			if(isSinglepage($params["page"])) {
-				$values["pagename"] = $params["page"];
-			}
-			$values["time_needed"] = $_POST['_formfield_time_needed'];
-			$params["values"] = $values;
+		//------------------------- command check -------------------------
+		//get command: new|entry|show|edit|delete (the last 3 must come with id!)
+		$params["cmd"] = $_GET["cmd"];
+		if ($params["cmd"] == "") $params["cmd"] = $_POST["cmd"];	//post command
+		//one_entry_only: there is only show(default) and edit
+		if($entity["one_entry_only"] == "1" and $params["cmd"] != "edit" and $params["cmd"] != "new"  and $params["cmd"] != "entry") {
+			$params["cmd"] = "show";
 		}
-
-		//those commands need an entry number
-		if (($params["cmd"] == "show" or $params["cmd"] == "edit" or $params["cmd"] == "delete"
-				or ($params["page"] == "_sys_intros" and $params["cmd"] == "entry"))
-				and $entity["pk"] != "") {
-			$params["nr"] = $_GET['nr'];if ($params["nr"] == "") $params["nr"] = $_POST['nr'];	//can come in both ways
-			if ($params["nr"] == "" and $params["cmd"] == "show") $params["cmd"] = "entry";	//assume new one
-		}
-
-	} else {
-		if (isMultipage($params["page"])) {
-			$params["cmd"] = "new";		//assume new one
+		
+		//-------------------------from param
+		$params["from"] = $_GET["from"];
+		if ($params["from"] == "") { $params["from"] = $_POST["from"]; } //coming in per POST?
+	
+		//-------------------------group param
+		$params["group"] = urldecode($_GET["group"]);
+		if ($params["group"] == "") { $params["group"] = urldecode($_POST["group"]); } //coming in per POST?
+	
+		//-------------------------topic (for admin list)
+		$params["topic"] = $_POST["topic"];
+		if ($params["topic"] == "") {$params["topic"] = $_GET["topic"];}
+		
+		//-------------------------feed (from checkbox)
+		$params["feed"] = $_POST['_formfield_feedbox'];
+		if ($params["feed"] == "") {$params["feed"] = $_GET["_formfield_feedbox"];}
+		if($params["feed"] == "on"){$params["feed"] = "1";}
+		else{$params["feed"] = "0";}
+		
+		//-----------checking Parameters ---------------------------------
+		if ($params["cmd"] != "") {
+	
+			if ($params["cmd"] == "show" or $params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {	//get data
+				$consistency_fields = explode(",",$entity["consistency_fields"]);
+				$values = array();
+				foreach($entity["fields"] as $f) {
+					$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
+					//Booleans umwandeln
+					if ($f["data-type"] == "bool") {
+						if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
+						else{$values[$f["name"]] = "0";}
+					}
+					if(in_array($f["name"],$consistency_fields)) {
+						$values['old_formfield_'.$f["name"]] = filterSQL($_POST['old_formfield_'.$f["name"]]);
+						if ($values['old_formfield_'.$f["name"]] == "") $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
+						//echo("f[old_formfield_name] is:".$values["old_formfield_name"]);
+					}
+					//echo("f[name] is: ".$f["name"]." and values[f[name]] is: ".$values[$f["name"]]."<br/>");
+				}
+				if(isSinglepage($params["page"])) {
+					$values["pagename"] = $params["page"];
+				}
+				$values["time_needed"] = $_POST['_formfield_time_needed'];
+				$params["values"] = $values;
+			}
+	
+			//those commands need an entry number
+			if (($params["cmd"] == "show" or $params["cmd"] == "edit" or $params["cmd"] == "delete"
+					or ($params["page"] == "_sys_intros" and $params["cmd"] == "entry"))
+					and $entity["pk"] != "") {
+				$params["nr"] = $_GET['nr'];if ($params["nr"] == "") $params["nr"] = $_POST['nr'];	//can come in both ways
+				if ($params["nr"] == "" and $params["cmd"] == "show") $params["cmd"] = "entry";	//assume new one
+			}
+	
 		} else {
-			$params["cmd"] = "show";	//assume showing what we have
+			if (isMultipage($params["page"])) {
+				$params["cmd"] = "new";		//assume new one
+			} else {
+				$params["cmd"] = "show";	//assume showing what we have
+			}
 		}
+	
+		//$opt = $_POST[opt];	//indicates what to show next
+		//-----------------end Checking Parameters -----------------------
 	}
-
-	//$opt = $_POST[opt];	//indicates what to show next
-	//-----------------end Checking Parameters -----------------------
-
 	return $params;
 }
 
@@ -261,7 +262,7 @@ function getEditQuery($command, $theID) {
 		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
 		$x = 1;
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]])) {$queryA[$x] = " ".$f["name"].","; $x++;}
+			if (isset($params["values"][$f["name"]]) or $params['nr']=="") {$queryA[$x] = " ".$f["name"].","; $x++;}
 		}
 		$x--;
 		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
@@ -271,7 +272,7 @@ function getEditQuery($command, $theID) {
 		$queryA[count($queryA)] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]])) {
+			if (isset($params["values"][$f["name"]]) or $params['nr']=="") {
 				if (isTextType($f["data-type"]) or isDateType($f["data-type"]) or $f["data-type"] == 'time') {
 					$queryA[$x] = " '".$params["values"][$f["name"]]."',";
 				} else {

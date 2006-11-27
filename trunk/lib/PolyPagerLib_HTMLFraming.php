@@ -158,44 +158,60 @@
 		$sys_info = getSysInfo();
 		
 		$pages = getPages();
-		//sort the pages according to the menue_index before we proceed
+		
+		
+		// are we in the gallery?
 		$in_gallery = false;
 		if (eregi('user'.FILE_SEPARATOR.'Image',getcwd())) { //we're in the gallery
 			$in_gallery = true;
 		}
+		// add the gallery as page in the array, if  alink is wanted
+		if ($sys_info["link_to_gallery_in_menu"] == 1) {
+			$g = array('in_menue'=>'1','menue_index'=>$sys_info['gallery_index'],'name'=>$sys_info['gallery_name'],'gallery'=>True);
+			$pages[] = $g;
+		}
+		//sort the pages according to the menue_index before we proceed
 		uasort($pages, "cmpByMenueIndex");
+		
+		$counter = 1;
 		foreach ($pages as $p) {
 			if($p["in_menue"] == "1") {
-				//actual page menu entry has a special class
-				if (($params["page"] == $p["name"] and !$in_gallery) 
-					and !includedByAdminScript($path_to_root_dir)) {
-					$classAtt = 'here';	
-				}
-				else $classAtt = 'not_here';
-
-				if (isMultipage($p["name"])) {
-					$theLink = "?".$p["name"];
-					$tmp_entity = getEntity($p["name"]);
-					if ($tmp_entity["group"] != "") $has_sub = true;
-					else $has_sub = false;
-				} else {
-					$theLink = "?".$p["name"];
-					if ($sections[$p["name"]] == "") $has_sub = false;
-					else $has_sub = true;
-				}
+				//gallery
+				if ($p['gallery'] == "1"){
+					if ($in_gallery)$classAtt = 'here';
+					else $classAtt = 'not_here';
+					echo($indent.'	<li class="'.$classAtt.'">'.'<a onmouseover="popup(\''.__('click to see pictures').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$path_to_root_dir.'/user/Image">'.$p['name']."</a></li>\n");
+				
+				//normal pages
+				}else {
+					// if actual page menu entry has a special class
+					if (($params["page"] == $p["name"] and !$in_gallery) 
+						and !includedByAdminScript($path_to_root_dir)) {
+						$classAtt = 'here';	
+					}
+					else $classAtt = 'not_here';
 	
-				if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
-					echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'&amp;group=_sys_all">'.$p["name"]."</a></li>\n");
-				} else {
-					echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a"  onmouseover="popup(\''.__('click to see options (re-click to close)').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
+					if (isMultipage($p["name"])) {
+						$theLink = "?".$p["name"];
+						$tmp_entity = getEntity($p["name"]);
+						if ($tmp_entity["group"] != "") $has_sub = true;
+						else $has_sub = false;
+					} else {
+						$theLink = "?".$p["name"];
+						if ($sections[$p["name"]] == "") $has_sub = false;
+						else $has_sub = true;
+					}
+		
+					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
+						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'&amp;group=_sys_all">'.$p["name"]."</a></li>\n");
+					} else {
+						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a"  onmouseover="popup(\''.__('click to see options (re-click to close)').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
+					}
 				}
 			}
+			$counter++;
 		}
-		if ($sys_info["link_to_gallery_in_menu"] == 1) {
-			if ($in_gallery)$classAtt = 'here';
-			else $classAtt = 'not_here';
-			echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a onmouseover="popup(\''.__('click to see pictures').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$path_to_root_dir.'/user/Image">'.__('gallery')."</a></li>\n");
-		}
+		
 		
 		echo($indent.'</ul>'."\n");
 		/* -------------------end writing menues ----------------------------*/

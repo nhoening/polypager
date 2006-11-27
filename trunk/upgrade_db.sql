@@ -11,6 +11,12 @@ ALTER TABLE `_sys_fields` ADD `foreign_key_to` VARCHAR( 200 ) NOT NULL ,
 ADD `on_update` VARCHAR( 20 ) NOT NULL ,
 ADD `on_delete` VARCHAR( 20 ) NOT NULL ;
 
+ALTER TABLE `_sys_sys` ADD `gallery_name` VARCHAR( 120 ) NOT NULL ,
+ADD `gallery_index` SMALLINT NOT NULL DEFAULT '99';
+
+ALTER TABLE `_sys_fields` ADD `label` VARCHAR( 160 ) NOT NULL AFTER `name` ;
+ALTER TABLE `_sys_fields` ADD `order_index` INT( 11 ) NOT NULL DEFAULT '0' AFTER `label` ;
+
 -- 0.9.6
 ALTER TABLE `_sys_sys` DROP `template` 
 

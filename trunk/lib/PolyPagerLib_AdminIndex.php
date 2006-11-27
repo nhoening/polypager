@@ -78,9 +78,11 @@
 					  `start_page` varchar(120) NOT NULL default '',
 					  `lang` varchar(12) NOT NULL default '',
 					  `skin` varchar(120) NOT NULL default '',
-					  `submenus_always_on` tinyint(1) NOT NULL default 0,
-					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0'
-					) TYPE=MyISAM ;";
+					  `submenus_always_on` tinyint(1) NOT NULL default '0',
+					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
+					  `gallery_name` varchar(120) NOT NULL,
+					  `gallery_index` smallint(6) NOT NULL default '99'
+					) ENGINE=MyISAM AUTO_INCREMENT=1 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
@@ -207,6 +209,8 @@
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_fields` (
 					  `id` tinyint(4) NOT NULL auto_increment,
 					  `name` varchar(60) NOT NULL default '',
+					  `label` varchar(160) NOT NULL,
+					  `order_index` int(11) NOT NULL,
 					  `pagename` varchar(60) NOT NULL default '',
 					  `valuelist` varchar(255) NOT NULL default '',
 					  `validation` varchar(60) NOT NULL default '',
@@ -215,7 +219,7 @@
 					  `on_update` varchar(20) NOT NULL,
 					  `on_delete` varchar(20) NOT NULL,
 					  PRIMARY KEY  (`id`)
-					) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;";
+					) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);

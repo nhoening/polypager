@@ -39,44 +39,51 @@ require_once("PolyPagerLib_Showing.php");
 
 // ---------------------------------------
 include('auth.php');
+
 $area = "_admin"; 
 $sys_info = getSysInfo();
 $sys_info["start_page"] = "";
 $link = getDBLink();
 $params = getShowParameters();
 $params["step"] = "all";	//we're showing list views, so show all
+
+
+if ($params["page"] == "" or isAKnownPage($params["page"])){
+	/* --------------- evaluate actions, print message ------------ */
+	//installation of database
+	if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
+		$error = create_sys_Tables($link);
+		$sys_msg = __('attempted to create sys tables... ');
+		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
+		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
+		$sys_msg = $sys_msg."<br/>\n";
+		
+		/*
+		$error = chmod_dirs($link);
+		$sys_msg = $sys_msg.'__('attempted to chmod directories... ');
+		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
+		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
+		*/
 	
-/* --------------- evaluate actions, print message ------------ */
-//installation of database
-if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
-	$error = create_sys_Tables($link);
-	$sys_msg = __('attempted to create sys tables... ');
-	if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
-	else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-	$sys_msg = $sys_msg."<br/>\n";
+	}
 	
-	/*
-	$error = chmod_dirs($link);
-	$sys_msg = $sys_msg.'__('attempted to chmod directories... ');
-	if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
-	else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-	*/
+	if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
+		$sys_msg = $sys_msg.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</br>\n";
+	}
+	
+	//template creation
+	if ($_POST["template_name"] != "") {
+		$error = executeTemplate($_POST["template_name"], $_POST["page_name"]);
+		$sys_msg = $sys_msg.__('attempted to create a page by template... ');
+		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
+		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
+		$sys_msg = $sys_msg."<br/>\n";
+	}
 
+}else{
+	$title = __('unknown page').': '.$params["page"];
+	$sys_msg .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
 }
-
-if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
-	$sys_msg = $sys_msg.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</br>\n";
-}
-
-//template creation
-if ($_POST["template_name"] != "") {
-	$error = executeTemplate($_POST["template_name"], $_POST["page_name"]);
-	$sys_msg = $sys_msg.__('attempted to create a page by template... ');
-	if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
-	else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-	$sys_msg = $sys_msg."<br/>\n";
-}
-
 $path_to_root_dir = "..";
 $title = "Admin Area";
 
@@ -87,7 +94,6 @@ function writeData($ind=5) {
 	global $params;
 	global $sys_msg;
 	
-	//echo('			<div id="data_admin">'."\n");
 	echo($indent.'<h1>Admin Area</h1>'."\n");
 	
 	//sys msg? write it 
@@ -95,18 +101,18 @@ function writeData($ind=5) {
 		echo($indent.'<div class="sys_msg">'.$sys_msg.'</div>'."\n");
 	}
 	
-	showAdminOptions();
-	
-	$topic = $params["topic"];
-	if ($topic != "") {
-		echo($indent.'<h1>-'.__($topic).'-</h1>'."\n");
-	}else{
-		echo($indent.'<h1>'.__($params["page"]).'</h1>'."\n");
+	if ($params["page"] == "" or isAKnownPage($params["page"])){
+		showAdminOptions();
+		
+		$topic = $params["topic"];
+		if ($topic != "") {
+			echo($indent.'<h1>-'.__($topic).'-</h1>'."\n");
+		}else{
+			echo($indent.'<h1>'.__($params["page"]).'</h1>'."\n");
+		}
+		
+		admin_list($ind);
 	}
-	
-	admin_list($ind);
-	
-	//echo('			</div>'."\n");
 }
 
 //now ... we are ready to import a PHP/HTML template

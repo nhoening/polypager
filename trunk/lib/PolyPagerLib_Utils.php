@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '0.9.7';
+$version = '0.9.7.dev';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
@@ -158,6 +158,17 @@ function buildDateTimeString(){
 	return buildDateString(getdate()).' '.buildTimeString(localtime(time() , 1));
 } 
 
+/* build a valid (in terms of SGML) ID attribute from the given text 
+	How? The short answer is that the first character 
+	must be a letter, and any other characters 
+	may be a letter, a digit, ".", or "-".
+*/
+function buildValidIDFrom($text){
+	$text = ereg_replace('([^(a-zA-Z)])(.*)','pp\1\2',$text);
+	$text = ereg_replace('[^a-zA-Z0-9\.-]','-',$text);
+	return $text;
+}
+	
 /* Path to Root dir of this webpage relative to the document root
 	this path should always end with a "/" if it is not empty,
 	and always start with one...*/
@@ -348,9 +359,13 @@ function isAKnownPage($page_name) {
 	else return false;
 }
 
-/* */
+/* return true if it is a sys-page, i.e. represnting system data.
+   Once this checked for a start like "_sys_" but that's not enough security
+*/
 function isASysPage($page_name) {
-	if (strpos($page_name, "_sys_") > -1){
+	$sysp = array('_sys_comments','_sys_sys','_sys_feeds','_sys_fields','_sys_singlepages',
+				'_sys_multipages','_sys_sections','_sys_intros','_sys_pages','_sys_tags');
+	if (in_array($page_name,$sysp)){
 		return true;
 	}
 	else return false;
@@ -526,7 +541,7 @@ function getEntity($page_name) {
 				// no tables: no user input
 				$tables = getTables();
 				if (count($tables) > 0) {
-					setEntityFieldValue("tablename", "valuelist", implode(',', $tables));
+					setEntityFieldValue("tablename", "valuelist", ','.implode(',', $tables));
 				} else {
 					$entity["disabled_fields"] = $entity["disabled_fields"].',tablename';
 					setEntityFieldValue("tablename", "valuelist", __('there is no table in the database yet'));
@@ -856,7 +871,10 @@ function getEntity($page_name) {
 				$entity = addFields($page_name);
 				$entity['tablename'] = $page_names;
 			}
-			
+			else { //this can't be a page or a table !!!
+				echo('<div class="sys_msg">'.$page_name.' is no known page!</div>');
+				return "";
+			}
 			//fk stuff
 			if (isMultipage($page_name) || isSinglepage($page_name)){
 				$ref_tables = getReferencedTableData($entity);
@@ -1099,6 +1117,7 @@ function addFields($name, $not_for_field_list = "") {
 				if($fields[$i]["data_type"] == "int" and $fields[$i]["size"] != 1) $fields[$i]["validation"] = 'number';
 			}
 		}
+		uasort($fields,"cmpByOrderIndexAsc");
 		$entity["fields"] = $fields;
 		return $entity;
 }
