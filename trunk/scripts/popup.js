@@ -48,6 +48,16 @@ if(nav || iex) document.onmousemove = get_mouse;
 // set dynamic coords when the mouse moves
 function get_mouse(e)
 {
+  var x,y;
+  
+  //get X
+  if (iex) x = document.body.scrollLeft + event.clientX;
+  if (nav || n_6) x = e.pageX;
+
+  //get Y
+  if (iex) y = document.body.scrollTop + event.clientY;
+  if (nav || n_6) y = e.pageY;
+  
   // assign style object when not already known
   if (skin == "nothing") {
   	if(nav) skin=document.pup;
@@ -71,20 +81,7 @@ function get_mouse(e)
 	skin.display = "none";	//turn "inline" off now, it widens the page horizontally
 							//when the parked popup is positioned
   }
-  
-  var x,y;
-  
-  //get X
-  if (iex) x = document.body.scrollLeft + event.clientX;
-  if (nav || n_6) x = e.pageX;
 
-  //get Y
-  if (iex) y = document.body.scrollTop + event.clientY;
-  if (nav || n_6) y = e.pageY;
-  
-  //uncomment this to test your coordinates (Moz. FF has disabled changing 
-  //the status bar - go to options to enable it)
-  //showCoordinatesInStatusBar(x,y);
 
   //now set coordinates for our popup - n_6 wants "px", the others not
   //remember: the popup is still hidden
@@ -100,7 +97,10 @@ function get_mouse(e)
   }
   
   nudge(x,y); // avoids edge overflow
-  
+   
+  //uncomment this to test your coordinates (Moz. FF has disabled changing 
+  //the status bar - go to options to enable it)
+  //showCoordinatesInStatusBar(x,y);
 }
 
 // avoid edge overflow
@@ -112,34 +112,41 @@ function nudge(x,y)
   if(n_6 || nav) extreme = window.innerWidth - popwidth - 25;
   extreme -= minMarginToBorder;
   
+  // let's operate on these instead of the real skin
+  newtop = parseInt(skin.top);
+  newleft = parseInt(skin.left);
+  
   // right
-  if(parseInt(skin.left)>extreme)
+  if(newleft>extreme)
   {
-    overflow = parseInt(skin.left) - extreme;
-    temp = parseInt(skin.left);
-    temp -= overflow;
-    if(nav || iex) skin.left = temp;
-    if(n_6) skin.left = temp + "px";
+    //overflow = newleft - extreme;	// this behavior caused flickering ...
+    //newleft -= overflow;			//  when both right and bottom were adjusted
+	newleft -= (parseInt(popwidth) + minMarginToBorder + 20 );
   }
 
-  // left
-  if(parseInt(skin.left)<1)
+  // left - should almost never be a problem - we're drawing the window 
+  // to the right of the mouse per default (maybe corrected by the code above
+  // but then this has the last horizontal word)
+  if(newleft<1)
   {
-    overflow = parseInt(skin.left) - 1;
-    temp = parseInt(skin.left);
-    temp -= overflow;
-    if(nav || iex) skin.left = temp;
-    if(n_6)skin.left = temp + "px";
+    overflow = newleft - 1;
+    newleft -= overflow;
   }
 
   //down: when I am close to the bottom, move it up
   //I estimate the lines that fit in the width, assuming a char width of 10 pixels
   // and a (little pessimistic) line height of 20 (That should work for most cases)
   est_lines = parseInt(get("pup").innerHTML.length / (parseInt(skin.width)/10) );
-  if((parseInt(skin.top) + parseInt(est_lines * 20)) > window.innerHeight) {
-  	temp = parseInt(window.innerHeight) - parseInt(est_lines * 20); //correct
-  	if(nav || iex) skin.top = temp;
-    if(n_6)skin.top = temp + "px";
+  if((newtop + parseInt(est_lines * 20)) > window.innerHeight) {
+  	newtop = parseInt(window.innerHeight) - parseInt(est_lines * 20); //correct
+  }
+  
+  if(nav || iex) {
+	  skin.left = newleft;
+	  skin.top = newtop;
+  }else if(n_6){
+	  skin.left = newleft + "px";
+	  skin.top = newtop + "px";
   }
 }
 
@@ -191,11 +198,9 @@ function showCoordinatesInStatusBar(theX, theY) {
   window.status="browser is " + browser 
 		+ ", window.innerHeight is " + window.innerHeight
 		+ ", window.outerHeight is " + window.outerHeight
-		//+ ", screen.availHeight is " +  screen.availHeight
 		+ ", popwidth is " + popwidth
 		+ ", skin.left is " + skin.left
 		+ ", skin.top is " + skin.top
-		+ ", skin.height is " + skin.height
 		+ ", our x=" + theX + ", our y=" + theY;
 }
 /* -------------- end of hover box code --------------------- */

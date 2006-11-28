@@ -118,6 +118,7 @@ function filterXMLChars($v) {
    convert it with strtotime() beforehand...
 */
 function format_date($timestamp) {
+	if (substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
 	if ($lang == "de")
 		return date('d.m.Y', strtotime($timestamp));
 	else 
@@ -168,7 +169,18 @@ function buildValidIDFrom($text){
 	$text = ereg_replace('[^a-zA-Z0-9\.-]','-',$text);
 	return $text;
 }
-	
+
+/*
+	best guess for that at this point: [A-Za-z0-9_]+
+	maxlength: 64
+	more here: http://dev.mysql.com/doc/refman/5.0/en/legal-names.html
+*/
+function buildValidMySQLTableNameForm($text){
+	$text = ereg_replace('[^a-zA-Z0-9_]','_',$text);
+	return substr($text,0,64);
+}
+
+
 /* Path to Root dir of this webpage relative to the document root
 	this path should always end with a "/" if it is not empty,
 	and always start with one...*/
@@ -363,7 +375,7 @@ function isAKnownPage($page_name) {
    Once this checked for a start like "_sys_" but that's not enough security
 */
 function isASysPage($page_name) {
-	$sysp = array('_sys_comments','_sys_sys','_sys_feeds','_sys_fields','_sys_singlepages',
+	$sysp = array('_sys_comments','_sys_sys','_sys_feed','_sys_fields','_sys_singlepages',
 				'_sys_multipages','_sys_sections','_sys_intros','_sys_pages','_sys_tags');
 	if (in_array($page_name,$sysp)){
 		return true;
@@ -871,10 +883,7 @@ function getEntity($page_name) {
 				$entity = addFields($page_name);
 				$entity['tablename'] = $page_names;
 			}
-			else { //this can't be a page or a table !!!
-				echo('<div class="sys_msg">'.$page_name.' is no known page!</div>');
-				return "";
-			}
+			
 			//fk stuff
 			if (isMultipage($page_name) || isSinglepage($page_name)){
 				$ref_tables = getReferencedTableData($entity);

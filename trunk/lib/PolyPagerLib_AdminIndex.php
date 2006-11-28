@@ -245,6 +245,7 @@
 		global $debug;
 		$link = getDBLink();
 		if ($page_name == "") return __('you should provide a page name!');
+		$shuffpp = str_shuffle('polypager'); // this helps that we most likely don't create tables twice
 		if ($template_name == "") return __('there is no template provided!');
 		else if($template_name == "guestbook") {
 			$query = "INSERT INTO `_sys_singlepages` (`name`, `in_menue`, `menue_index`, 
@@ -267,7 +268,7 @@
 		}
 		else if($template_name == "blog") {
 			//first the actual table
-			$query = "CREATE TABLE `".$page_name."_table` (
+			$query = "CREATE TABLE `".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."` (
 						  `id` bigint(20) NOT NULL auto_increment,
 						  `title` varchar(160) NOT NULL default '',
 						  `bla` blob NOT NULL,
@@ -283,7 +284,7 @@
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `show_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-					VALUES ('".$page_name."', '".$page_name."_table', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
+					VALUES ('".$page_name."', '".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
 				$fehler_text = $fehler_text.mysql_error($link);
@@ -292,7 +293,7 @@
 		}
 		else if($template_name == "faq") {
 			//first the actual table
-			$query = "CREATE TABLE `".$page_name."_table` (
+			$query = "CREATE TABLE `".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."` (
 						  `id` int(12) NOT NULL auto_increment,
 						  `inputdate` datetime NOT NULL default '0000-00-00 00:00:00',
 						  `topic` varchar(200) NOT NULL default '',
@@ -310,7 +311,7 @@
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `show_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-				VALUES ('".$page_name."', '".$page_name."_table', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
+				VALUES ('".$page_name."', '".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
 				$fehler_text = $fehler_text.mysql_error($link);
@@ -471,7 +472,7 @@
 		$entity = getEntity($params["page"], $link);
 		//Links, first for contents
 		if ($params["page"] != "" and $params["topic"] == "content") {
-			$link_text = __('Here you can edit the intro text of this page (this is the text that appears next to all the entries).');
+			$link_text = __('Here you can edit the intro text of this page.');
 			//if (isMultipage($params["page"])) 
 				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr='.$params["page"].'&page='.$params["page"].'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
 			$link_text = __('Here you can insert a new entry for this page.');

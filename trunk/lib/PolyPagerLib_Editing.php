@@ -262,17 +262,20 @@ function getEditQuery($command, $theID) {
 		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
 		$x = 1;
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]]) or $params['nr']=="") {$queryA[$x] = " ".$f["name"].","; $x++;}
+			// add it if its set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
+			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or $entity["pk_type"] != "int") {
+				$queryA[$x] = " ".$f["name"].","; $x++;
+			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
+		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1); //remove comma
 
 		//some tables have a string as pk
-		if ($entity["pk"] != "" and $entity["pk_type"] != "int") $queryA[count($queryA)] = ", ".$entity["pk"];
-		$queryA[count($queryA)] = ") VALUES ( ";
+		if ($entity["pk"] != "" and $entity["pk_type"] != "int") $queryA[] = ", ".$entity["pk"];
+		$queryA[] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]]) or $params['nr']=="") {
+			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or $entity["pk_type"] != "int") {
 				if (isTextType($f["data-type"]) or isDateType($f["data-type"]) or $f["data-type"] == 'time') {
 					$queryA[$x] = " '".$params["values"][$f["name"]]."',";
 				} else {
