@@ -51,8 +51,8 @@ function getTranslation($text) {
 'Here you can make statements about another field.'	=> 'Hier k&ouml;nnen Sie zu einem weiteren Feld Angaben machen.',
 'Here you can insert a new page.'	=> 'Hier k&ouml;nnen Sie eine neue Seite erstellen.',
 'new entry'	=> 'neuer Eintrag',
-'Here you can edit the intro text of this page (this is the text that appears next to all the entries).'	
-	=> 'Hier k&ouml;nnen Sie den Intro-Text dieser Multipage editieren (Das ist der Text, der neben allen Eintr&auml;gen unter &quot;&uuml;ber diese Seite&quot; steht.',
+'Here you can edit the intro text of this page.'	
+	=> 'Hier k&ouml;nnen Sie den Intro-Text dieser Multipage editieren.',
 'show'	=> 'zeige',
 'show intro of page'	=> 'zeige intro der Seite:',
 'page:' => 'Seite:',
@@ -124,9 +124,9 @@ function getTranslation($text) {
 'Here you can edit an entry. You find an HTML Form where you can type in values.&lt;br/&gt;Hit the Save-Button to save your changes to the database.&lt;br/&gt;You can also delete existing entries with the Delete-Button.&lt;br/&gt;&lt;br/&gt; %s'
 	=> 'Hier k&ouml;nnen Sie einen Beitrag bearbeiten. Sie sehen ein HTML Formular, in das Sie Ihre Daten eingeben k&ouml;nnen&lt;br/&gt;Bet&auml;tigen Sie den Speichern-Button um Ihre Eingaben in der Datenbank zu speichern.&lt;br/&gt;Sie k&ouml;nnen auch den L&ouml;schen-Button bet&auml;tigen, um einen bestehenden Eintrag wieder aus der Datenbank zu l&ouml;schen.&lt;br/&gt; %s',
 'How'	=> 'Wie',
-'Here you can edit the impressum (it appears at the bottom of each page).' => 
-	'Hier k&ouml;nnen Sie das Impressum editieren (es erscheint unten auf jeder Seite.)',
-'Here you can edit the %s-page.&lt;br/&gt;&lt;br/&gt; A page consists of sections. One section might be all you need. If so, go ahead and type into the header- and the textfield what you want to publish (uncheck the publish-checkbox if you do not want users to see it yet).&lt;br/&gt;&lt;br/&gt;You can always add other sections if the page grows more complex. Then it might also be useful to check the show-in-submenu checkbosso users can access your structure quickly.' => 'Hier k&ouml;nnen Sie die %s-Seite bearbeiten.&lt;br/&gt;&lt;br/&gt; Eine Seite (hier eine sog. singlepage) besteht aus Sektionen. Eine Sektion ist vielleicht alles was Sie derzeit brauchen. Wenn dem so ist, dann geben Sie jetzt in &Uuml;berschrift- und Textfeld ein, was Sie ver&ouml;ffentlichen wollen (Deaktivieren Sie die ver&ouml;ffentlichen-Checkbox, wenn Sie noch nicht wollen, dass Benutzer diesen Eintrag sehen).&lt;br/&gt;&lt;br/&gt; Sie k&ouml;nnen immer weitere Sektionen hinzuf&uuml;gen wenn die Seite komplexer werden soll. Dann wird es vielleicht auch n&uuml;tzlich sein, die sog. -anw&auml;hlbar im Submen&uuml;- - Checkbox zu aktivieren, damit Benutzer diese Sektionen schon aus dem Men&uuml; heraus anw&auml;hlen k&ouml;nnen.',
+'Here you can edit the impressum.' => 
+	'Hier k&ouml;nnen Sie das Impressum editieren.',
+'Here you can edit the %s-page.&lt;br/&gt;&lt;br/&gt; A page consists of sections. One section might be all you need. If so, go ahead and type into the header- and the textfield what you want to publish (uncheck the publish-checkbox if you do not want users to see it yet).&lt;br/&gt;&lt;br/&gt;You can always add other sections if the page grows more complex. Then it might also be useful to check the show-in-submenu checkbox so users can access your structure quickly.' => 'Hier k&ouml;nnen Sie die %s-Seite bearbeiten.&lt;br/&gt;&lt;br/&gt; Eine Seite (hier eine sog. singlepage) besteht aus Sektionen. Eine Sektion ist vielleicht alles was Sie derzeit brauchen. Wenn dem so ist, dann geben Sie jetzt in &Uuml;berschrift- und Textfeld ein, was Sie ver&ouml;ffentlichen wollen (Deaktivieren Sie die ver&ouml;ffentlichen-Checkbox, wenn Sie noch nicht wollen, dass Benutzer diesen Eintrag sehen).&lt;br/&gt;&lt;br/&gt; Sie k&ouml;nnen immer weitere Sektionen hinzuf&uuml;gen wenn die Seite komplexer werden soll. Dann wird es vielleicht auch n&uuml;tzlich sein, die sog. -anw&auml;hlbar im Submen&uuml;- - Checkbox zu aktivieren, damit Benutzer diese Sektionen schon aus dem Men&uuml; heraus anw&auml;hlen k&ouml;nnen.',
 'Editing intro for page'	=> 'Bearbeitung des Intros f&uuml;r die Seite',
 'Editing system properties'  => 'Systemeigenschaften',
 'DB-Error:'	=> 'Datenbank-Fehler:',
@@ -204,6 +204,7 @@ function getTranslation($text) {
 'click to see this %s from %s'	=> 'klicken Sie hier, um diese(n) %s vom %s zu sehen.',
 'about this page'	=> '&Uuml;ber diese Seite',
 'not set' => 'nicht gesetzt',
+'no date set yet' => 'kein Datum gesetzt',
 'this field is important: it defines which table to use for this page. So much of the field-fields below depend on what is given here, because PolyPager finds the values for those fields in this table.'
 => 'dies ist ein wichtiges Feld: Es definiert, welche Tabelle f&uuml;r diese Seite benutzt wird. Viele der Feld-Felder unten h&auml;ngen davon ab, was Sie hier angeben, denn PolyPager findet die Werte f&uuml;r diese Felder in der Tabelle.',
 'these fields will not be shown to the public. Select fields from the list by clicking on them.' 

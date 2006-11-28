@@ -191,7 +191,7 @@ function writeData($ind=4) {
 				),$publish_info);
 			writeHelpLink($indent, $helptext);
 		}else {
-			$helptext = sprintf(__('Here you can edit the %s-page.&lt;br/&gt;&lt;br/&gt; A page consists of sections. One section might be all you need. If so, go ahead and type into the header- and the textfield what you want to publish (uncheck the publish-checkbox if you do not want users to see it yet).&lt;br/&gt;&lt;br/&gt;You can always add other sections if the page grows more complex. Then it might also be useful to check the show-in-submenu checkbosso users can access your structure quickly.'
+			$helptext = sprintf(__('Here you can edit the %s-page.&lt;br/&gt;&lt;br/&gt; A page consists of sections. One section might be all you need. If so, go ahead and type into the header- and the textfield what you want to publish (uncheck the publish-checkbox if you do not want users to see it yet).&lt;br/&gt;&lt;br/&gt;You can always add other sections if the page grows more complex. Then it might also be useful to check the show-in-submenu checkbox so users can access your structure quickly.'
 				),$params['page']);
 			writeHelpLink($indent, $helptext);
 		}
@@ -202,7 +202,7 @@ function writeData($ind=4) {
 	} else if ($params["page"] == "_sys_sys") {
 		echo('				<h1>'.__('Editing system properties').'</h1>');
 		//link to write impressum
-		$link_text = __('Here you can edit the impressum (it appears at the bottom of each page).');
+		$link_text = __('Here you can edit the impressum.');
 		echo('					&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr=_sys_impressum&page='.$params['page'].'from=list&topic='.$params["topic"].'">'.__('edit impressum').'</a>&nbsp;|&nbsp;'."\n");
 	} else if ($params["page"] == "_sys_multipages" and $params["cmd"] != "new") {
 		echo('				<h1>'.__('Editing a multipage').'</h1>');

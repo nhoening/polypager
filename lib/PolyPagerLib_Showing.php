@@ -422,7 +422,7 @@
 			}
 		}
 		if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
-		echo($theQuery);
+		//echo($theQuery);
 		return $theQuery;
 	}
 	
@@ -832,8 +832,8 @@
 							echo($indent.'	</div>');
 						}
 						
+						// type - dependent operations on field content
 						if (isTextType($f["data-type"])) {
-							//$content = filterXMLChars($content);
 							if ($entity["search"]["keyword"] == "1" and $params["cmd"] == "search" and $params["search"]["kw"] != "") {
 								$content = highlight($params["search"]["kw"], $content);
 							}
@@ -904,7 +904,7 @@
 				echo($indent.'	<span class="admin_link"><a onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
 				if($entity["dateField"]["editlabel"] != "") { //show last editing date
 					if ($row[$entity["dateField"]["editlabel"]] != NULL) {
-						if ($row[$entity["dateField"]["editlabel"]] != '0000-00-00')
+						if ($row[$entity["dateField"]["editlabel"]] != '0000-00-00 00:00:00') //not very specific, is it?
 							echo($indent.'		<span class="last_edited_label">'.__('last edited:').' '.format_date($row[$entity["dateField"]["editlabel"]]).'</span>'."\n");
 					}
 				}
