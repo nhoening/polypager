@@ -111,13 +111,16 @@ function writeFeedDiv($ind=5) {
 	$feed_amount = $sys_info["feed_amount"];
 	if ($feed_amount > 0) {
 		$res = getFeed($feed_amount);
-		echo($indent.'<div id="feeds"><div class="description"><a onmouseover="popup(\''.__('the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.').
-		'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="rss.php">'.__('the latest entries:').'</a></div>'."\n");
+		if ($sys_info['show_public_popups']==1) $text = ' onmouseover="popup(\''.__('the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+		else $text = '';
+		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="rss.php">'.__('the latest entries:').'</a></div>'."\n");
 		for ($x=0;$x<count($res);$x++) {
 			$row = $res[$x];
 			echo($indent.'	<div class="entry">'."\n");
 			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.$row['theContent'];
-			echo($indent.'		<a onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="./?'.$row[thePage].'&amp;nr='.$row[theID].'">');
+			if ($sys_info['show_public_popups']==1) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
+			else $text = '';	
+			echo($indent.'		<a '.$text.'href="./?'.$row['thePage'].'&amp;nr='.$row['theID'].'">');
 			echo($row['theText'].'	</a>'."\n");
 			echo($indent.'	</div>'."\n");
 		}

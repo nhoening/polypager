@@ -83,7 +83,9 @@
 		global $path_to_root_dir;
 		global $params;
 		$sys_info = getSysInfo();
-		echo($indent.'<div id="title"><span id="text"><a href="'.$path_to_root_dir.'">'.$sys_info["title"].'</a></span><a href="'.$path_to_root_dir.'/admin/" onmouseover="popup(\''.__('Administration Page').'\')" onmouseout="kill()" title="" onfocus="this.blur()">#</a></div>'."\n");
+		if ($sys_info['show_public_popups']==1) $text = 'onmouseover="popup(\''.__('Administration Page').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+		else $text = '';
+		echo($indent.'<div id="title"><span id="text"><a href="'.$path_to_root_dir.'">'.$sys_info["title"].'</a></span><a href="'.$path_to_root_dir.'/admin/" '.$text.'>#</a></div>'."\n");
 	}
 	
 	/*this function will provide Code for the footer of each page	*/
@@ -210,7 +212,7 @@
 					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
 						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'&amp;group=_sys_all">'.$p["name"]."</a></li>\n");
 					} else {
-						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a"  onmouseover="popup(\''.__('click to see options (re-click to close)').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
 					}
 				}
 			}
