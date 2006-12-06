@@ -471,17 +471,21 @@
 						if ($prev > 0) {    //earlier entries
 							$theLink = "?".$params["page"]."&amp;nr=".$prev."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params[group];
 							$newPrev = $prev - $step + 1;
-							$theText = sprintf(__('show entries %s through %s'),$newPrev,$prev);
-							echo($indent.'	<a  onmouseover="popup(\''.$theText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$theLink.'">'.__('previous').'</a>|');
+							$sys_info = getSysInfo();
+							if($sys_info['show_public_popups']==1)$theText = ' onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$newPrev,$prev).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+							else $theText = "";
+							echo($indent.'	<a'.$theText.' href="'.$theLink.'">'.__('previous').'</a>|');
 						}else {             //no link to earlier entries possible
 							echo('                 <i>'.__('previous').'</i>|'."\n");
 						}
 						if ($params["nr"] < $params["max"]) {   // link to next entries
 							$theLink = "?".$params["page"]."&amp;nr=".$next."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params["group"];
-							$theText = sprintf(__('show entries %s through %s'),$params["nr"],$next);
-							echo('                 <a  onmouseover="popup(\''.$theText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$theLink.'">'.__('next').'</a>');
+							$sys_info = getSysInfo();
+							if($sys_info['show_public_popups']==1)$theText = 'onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$params["nr"],$next).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+							else $theText = "";
+							echo($indent.'	<a '.$theText.' href="'.$theLink.'">'.__('next').'</a>');
 						}else {         	//no link to later entries possible
-							echo('                 <i>'.__('next').'</i>'."\n");
+							echo($indent.'	<i>'.__('next').'</i>'."\n");
 						}
 						echo('|</div>');
 					}
@@ -815,6 +819,7 @@
 									$pic = "ceye.gif";
 								}
 								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()"><img src="../style/pics/'.$pic.'"/></a></span>'."\n");
+								
 							// a link to fields
 							}
 							if ($params["page"] == "_sys_pages") {
@@ -893,7 +898,7 @@
 		}
 		if (!$list_view and $something_was_not_brief == true and $params["step"] != 1) { 	//show a link to the whole entry
 			$wlink = "?".$params["page"].'&amp;nr='.$row[$entity["pk"]];
-			echo($indent.'	<div class="whole_link"><a onmouseover="popup(\''.__('show this entry in full length').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
+			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
 		}
 		echo("						</div>"."\n");
 
@@ -901,7 +906,10 @@
 			if ($page_info["hide_options"] == "0" ) {
 				echo($indent.'<div class="options">'."\n");
 				echo($indent.'	<span class="edit">'."\n");
-				echo($indent.'	<span class="admin_link"><a onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
+				$sys_info = getSysInfo();
+				if ($sys_info['show_public_popups']==1) $text='onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
+				else $text = "";
+				echo($indent.'	<span class="admin_link"><a '.$text.'href="admin/edit.php?'.$params["page"].'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
 				if($entity["dateField"]["editlabel"] != "") { //show last editing date
 					if ($row[$entity["dateField"]["editlabel"]] != NULL) {
 						if ($row[$entity["dateField"]["editlabel"]] != '0000-00-00 00:00:00') //not very specific, is it?

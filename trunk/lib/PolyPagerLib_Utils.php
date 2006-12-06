@@ -565,6 +565,13 @@ function getEntity($page_name) {
 				setEntityFieldValue("link_to_gallery_in_menu", "formgroup", 'gallery');
 				setEntityFieldValue("gallery_name", "formgroup", 'gallery');
 				setEntityFieldValue("gallery_index", "formgroup", 'gallery');
+				$entity['formgroups']['misc'] = array(3,'hide');
+				setEntityFieldValue("show_public_popups", "formgroup", 'misc');
+				setEntityFieldValue("start_page", "formgroup", 'misc');
+				setEntityFieldValue("feed_amount", "formgroup", 'misc');
+				setEntityFieldValue("lang", "formgroup", 'misc');
+				setEntityFieldValue("skin", "formgroup", 'misc');
+				setEntityFieldValue("submenus_always_on", "formgroup", 'misc');
 				
 				global $run_as_demo;
 				if ($run_as_demo) {
