@@ -60,11 +60,11 @@ function toggleVisibility(theElementID, theLinkID, text_invis, text_vis) {
 	if (el.style.display == 'none' || el.style.display == '') {
 		el.style.display = 'block';
 		theLink.innerHTML = text_vis;
-		theLinkNester.className = 'clicked';
+		if(theLinkNester) theLinkNester.className = 'clicked';
 	} else {
 		el.style.display = 'none';
 		theLink.innerHTML = text_invis;
-		theLinkNester.className = '';
+		if(theLinkNester) theLinkNester.className = '';
 	}
 }
 

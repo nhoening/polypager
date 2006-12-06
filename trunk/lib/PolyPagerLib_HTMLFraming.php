@@ -58,7 +58,12 @@
 			$css = 'picswap/'.$sys_info['skin'].'.css';
 		}else {
 			$skin = $sys_info["skin"];
-			$css = $sys_info["skin"].'/skin.css';
+			$css = $skin.'/skin.css';
+		}
+		//test if the skin can be found, go back to default otherwise
+		if (!file_exists($path_to_root_dir.'/style/skins/'.$css)){
+			$skin = 'picswap';
+			$css = $skin.'/picswap-aqua.css';
 		}
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/skins/'.$css.'" type="text/css"></link>'."\n");
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/user.css" type="text/css"></link>'."\n");
@@ -81,7 +86,7 @@
 		echo($indent.'<div id="title"><span id="text"><a href="'.$path_to_root_dir.'">'.$sys_info["title"].'</a></span><a href="'.$path_to_root_dir.'/admin/" onmouseover="popup(\''.__('Administration Page').'\')" onmouseout="kill()" title="" onfocus="this.blur()">#</a></div>'."\n");
 	}
 	
-	/*this function will provide Code the footer of each page	*/
+	/*this function will provide Code for the footer of each page	*/
 	function writeFooter($ind=3) {
 		$indent = translateIndent($ind);
 		echo($indent.'<div id="bottom">'."\n");
@@ -180,7 +185,7 @@
 				if ($p['gallery'] == "1"){
 					if ($in_gallery)$classAtt = 'here';
 					else $classAtt = 'not_here';
-					echo($indent.'	<li class="'.$classAtt.'">'.'<a onmouseover="popup(\''.__('click to see pictures').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$path_to_root_dir.'/user/Image">'.$p['name']."</a></li>\n");
+					echo($indent.'	<li class="'.$classAtt.'">'.'<a href="'.$path_to_root_dir.'/user/Image">'.$p['name']."</a></li>\n");
 				
 				//normal pages
 				}else {

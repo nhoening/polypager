@@ -207,6 +207,17 @@ function proposeFeeding($tabindex, $value, $ind=11) {
 	echo($indent.'</span>'."\n");
 }
 
+/*	compares two fields, using the formgroup entries
+*    resulting array will be sorted according to the order_index in the formgroup entry
+*/
+function cmpByFormGroup($a, $b) {
+	if ($a['formgroup'] == $b['formgroup']) return 0;
+	$entity = getEntity();	//actual entity
+	if ($entity['formgroups'][''] == "") $entity['formgroups'][''] = array(100,'show');
+	//compare the position of the formgroups on the entitys formgroup array
+	//(indicated at position 0)
+	return ($entity['formgroups'][$a['formgroup']][0] < $entity['formgroups'][$b['formgroup']][0]) ? -1 : 1;
+}
 
 /* writes out an HTML Form for singlepages, multipages and other stuff
 that is described in $entity. It can fill the form with data from $row
@@ -239,7 +250,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	
 	//empty form - we might have values in $params["values"] preconfigured (e.g. for hidden fields) - a little trick convention
 	//             or we can look into the group param value or the field's database defaults
-	if ($params["cmd"] == "new") {
+/*	if ($params["cmd"] == "new") {
 		//let's show that this is NOT a saved entry
 		if ($params["page"] != "_sys_comments"){
 			echo($indent.'<div class="sys_msg">'.__('this item has not yet been inserted into the database!').'</div>');
@@ -247,7 +258,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		$target_nr = $params["nr"]; if ($target_nr == "") $target_nr = $params["values"]["nr"];
 		echo($indent.'<div style="'.$display.'">'."\n");
 		echo($indent.'	<a class="target" name="commentform_anchor"></a>'."\n");
-		echo($indent.'	<form name="new_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.$params["page"].'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'new_form\');"><fieldset><table>'."\n");
+		echo($indent.'	<form name="new_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.$params["page"].'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'new_form\');"><table>'."\n");
 		
 		echo($indent.'		<input type="hidden" name="_formfield_time_needed" value="">'."\n");
 		$index = 1;
@@ -309,25 +320,66 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		echo($indent.'					<button tabindex="'.++$index.'" type="submit" onclick="get(\'the_real_cmd\').value=\'entry\';return checkValues(\''.$params['page'].'\');">'.__('Send').'</button>'."\n");
 		echo($indent.'				</td>');
 		echo($indent.'			</tr></table>'."\n");
-		echo($indent.'	</fieldset></form>'."\n");
+		echo($indent.'	</form>'."\n");
 		echo($indent.'</div>'."\n");
 	} 
-	else {										//form with data
+	else {										//form with data*/
+		//if new, let's show that this is NOT a saved entry
+		if ($params["cmd"] == "new" and $params["page"] != "_sys_comments"){
+			echo($indent.'<div class="sys_msg">'.__('this item has not yet been inserted into the database!').'</div>');
+		}
+		$target_nr = $params["nr"]; if ($target_nr == "") $target_nr = $params["values"]["nr"];
 		$params["nr"] = $row[$entity["pk"]];	//??
+		
 		echo($indent.'<div  display="'.$display.'">'."\n");
-		echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.$params["page"].'&amp;nr='.$params["nr"].'" method="post" onsubmit="return oswald(\'edit_form\');"><fieldset><table>'."\n");
+		if ($params["page"] == "_sys_comments")
+			echo($indent.'	<a class="target" name="commentform_anchor"></a>'."\n");
+		echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.$params["page"].'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 		
 		echo($indent.'		<input type="hidden" name="_formfield_time_needed" value="">'."\n");
 		$index = 1;
+		// sort according to formgroups
+		if ($entity['formgroups']!="") uasort($entity["fields"],"cmpByFormGroup");
+		$lastFormGroup = "xxxxxxxx";
+		if ($entity['formgroups']=="") echo('<table>'); //otherwise a table for each fieldset
+		
 		foreach($entity["fields"] as $f) {
-				
+			// open/close fieldsets according to formgroups
+			if ($entity['formgroups']!="" and $lastFormGroup != "xxxxxxxx" and $lastFormGroup != $f['formgroup']) {
+				echo($indent.'		</table></div></fieldset>'."\n");
+			}
+			if ($entity['formgroups']!="" and $lastFormGroup != $f['formgroup']) {
+				echo($indent.'		<fieldset>');
+				if ($f['formgroup']!="") {
+					echo('<legend>'.__($f['formgroup']));
+					if ($entity['formgroups'][$f['formgroup']][1] == 'hide')
+						echo('<a id="'.$f['formgroup'].'_link" href="javascript:toggleVisibility(\''.$f['formgroup'].'\',\''.$f['formgroup'].'_link\',\''.__('(show)').'\',\''.__('(hide)').'\');">'.__('(show)',$f['formgroup']).'</a>');
+					echo('</legend>');
+				}
+				echo('<div id="'.$f['formgroup'].'"');
+				if ($entity['formgroups'][$f['formgroup']][1] == 'hide') echo(' style="display:none;"');
+				echo('><table>'."\n");
+			}
+			
+			if ($params["cmd"] == "new"){
+				// looking for preconfigured values with following prio: 
+				// 1. in params
+				// 2. in group field 
+				// 3. in db defaults
+				$val = $f["default"];
+				if ($f["name"] == $entity["group"]["field"]) $val = $params["group"];
+				if ($params['values'][$f['name']] != "") $val = $params['values'][$f['name']];
+			}else{
+				$val = $row[$f['name']];
+			}
+			
 			if (in_array($f["name"],$hidden_form_fields) )	{
 				echo($indent.'		<tr><td></td><td class="data"><input type="hidden" name="_formfield_'.$f['name'].'" value="'.$row[$f['name']].'"/></td></tr>'."\n");
 			} else {
 				echo("							<tr>\n");
 				// save old value if its relevant for consistency
-				if(in_array($f["name"],$consistency_fields)) {
-					echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$row[$f['name']].'"/>'."\n");
+				if($params["cmd"] != "new" and in_array($f["name"],$consistency_fields)) {
+					echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$val.'"/>'."\n");
 				}
 				echo($indent.'			<td class="label"><label for="'.$f['name'].'_input">');
 				if ($f['label'] != "") echo($f['label'].':'); else echo(__($f['name'].':'));
@@ -337,14 +389,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 				//if we need a text area, let it span over two columns
 				if(isTextAreaType($f['data-type'])) echo($indent.'			<td></td></tr><tr>'."\n");
 				
-				//hack for FCKeditor: singlepage-textareas must have different names
-				//if there are more than one db-entry - form (is no more the case since veriosn 0.9.0)
-				//if (isSinglepage($params["page"]) and $f['data-type'] == 'blob')  $areaid = $f['name'].''.$row[$entity["pk"]]; else $areaid = $f['name'];
-				$areaid = $f['name'];
-				
 				if (in_array($f['name'],$disabled_fields)) {
 					$dis = true;
-					echo('<input type="hidden" name="_formfield_'.$f["name"].'" value="'.$row[$f['name']].'"/>'."\n");
+					echo('<input type="hidden" name="_formfield_'.$f["name"].'" value="'.$val.'"/>'."\n");
 				} else $dis = false;
 				//if the tablename-field changes, other fields need new data from that table!!
 				if ($params["page"] == '_sys_multipages' and $f['name'] == 'tablename')	{
@@ -355,23 +402,36 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 				if ($f['valuelist'] == "") {
 					echo($indent.'			<td class="data"');
 					if(isTextAreaType($f['data-type'])) echo(' colspan="2" ');
-					echo('>'."\n");writeInputElement($index, $f['data-type'], $f['size'], '_formfield_'.$areaid, $f['class'], $row[$f['name']], $full_editor, $dis, $nind+3);
+					echo('>'."\n");writeInputElement($index, $f['data-type'], $f['size'], '_formfield_'.$f['name'], $f['class'], $val, $full_editor, $dis, $nind+3);
 				} else {
 					echo($indent.'			<td class="data">'."\n");
-					writeOptionList($index, '_formfield_'.$f['name'], $f['class'], $row[$f['name']], $f['valuelist'], $dis, $alert, $nind+3);
+					writeOptionList($index, '_formfield_'.$f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
 				}
 				echo("\n".$indent.'			</td>'."\n"); 
 				echo($indent.'		</tr>'."\n");
+				
+				
+				$lastFormGroup = $f['formgroup'];
+				
 				$index++;
 			}
 		}
 		
+		//close last formgroup?
+		if ($entity['formgroups']!="" and $lastFormGroup != "xxxxxxxx") {
+			echo($indent.'		</table></fieldset>'."\n");
+		}
+		if ($entity['formgroups']=="") echo('</table>'); //otherwise a table for each fieldset
+		
 		//submits
 		//hack for FCKeditor: hidden elements must have different names
-		$real_cmd_name = "the_real_cmd";
-		if (isSinglepage($params["page"]))  $real_cmd_name = $real_cmd_name.''.$row[$entity["pk"]];
-		echo($indent.'		<tr class="submit">'."\n");
-		echo($indent.'			<td><input value="'.$params['nr'].'" name="nr" type="hidden" />'."\n");
+		//$real_cmd_name = "the_real_cmd";
+		//if (isSinglepage($params["page"]))  $real_cmd_name = $real_cmd_name.''.$row[$entity["pk"]];
+		$next_command = 'edit';
+		if($params["cmd"]=="new") $next_command="entry";
+		echo($indent.'		<table><tr class="submit">'."\n");
+		echo($indent.'			<td style="width:50%;">'."\n");
+		if($params["cmd"] != "new") echo($indent.'			<input value="'.$params['nr'].'" name="nr" type="hidden" />'."\n");
 		echo($indent.'			<input value="'.$params['page'].'" name="page" type="hidden" />'."\n");
 		echo($indent.'			<input value="'.$params['topic'].'" name="topic" type="hidden" />'."\n");
 		echo($indent.'			<input value="'.$params['group'].'" name="group" type="hidden" />'."\n");
@@ -379,15 +439,15 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		//echo($indent.'		<td class="form_options"><input type="checkbox" name="opt"/> '.__('show next entry').'</td>'."\n");
 		echo($indent.'			<td class="form_submits">'."\n");
 		if (!ereg('_sys_', $params["page"]))  proposeFeeding(++$index, 0, $nind+3);
-		echo($indent.'				<input type="hidden" id="'.$real_cmd_name.'" name="cmd" value="nothing_yet"/>'."\n");
-		echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\''.$real_cmd_name.'\').value=\'edit\';return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
-		if($entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\''.$real_cmd_name.'\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
+		echo($indent.'				<input type="hidden" id="cmd" name="cmd" value="nothing_yet"/>'."\n");
+		echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\''.$next_command.'\';return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
+		if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
 		echo($indent.'			</td>'."\n");
 		echo($indent.'		</tr>'."\n");
-		echo($indent.'	</table></fieldset></form>'."\n");
+		echo($indent.'	</table></form>'."\n");
 		echo($indent.'</div>'."\n");
 
-	}
+	//}
 	// are tables/pages linking to this entity via foreign keys?
 	$references = getReferencingTableData($entity);
 	foreach($references as $r){

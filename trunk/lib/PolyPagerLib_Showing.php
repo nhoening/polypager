@@ -925,7 +925,7 @@
 						echo($indent.'	<span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
 					}
 				} else {
-					$href='javascript:document.new_form._formfield_name_input.focus();';
+					$href='javascript:document.edit_form._formfield_name_input.focus();';
 					echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
 				}
 			}

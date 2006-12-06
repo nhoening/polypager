@@ -33,7 +33,7 @@
 	}
 	
 	/* --------------- show all options  ------------ */
-	function showAdminOptions(){
+	function showAdminOptions($indent){
 		$the_url = "..";
 		
 		echo($indent.'<div id="admin_options">'.__('Let\'s talk about...').'&nbsp;'."\n");
@@ -80,9 +80,9 @@
 					  `skin` varchar(120) NOT NULL default '',
 					  `submenus_always_on` tinyint(1) NOT NULL default '0',
 					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
-					  `gallery_name` varchar(120) NOT NULL,
+					  `gallery_name` varchar(120) NOT NULL default 'gallery',
 					  `gallery_index` smallint(6) NOT NULL default '99'
-					) ENGINE=MyISAM AUTO_INCREMENT=1 ;";
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
@@ -104,7 +104,7 @@
 					  KEY `publish` (`publish`),
 					  KEY `the_group` (`the_group`),
 					  KEY `input_date` (`input_date`)
-					) TYPE=MyISAM AUTO_INCREMENT=1 ;";
+					) TYPE=MyISAM DEFAULT CHARSET=utf8 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -114,7 +114,7 @@
 					  `tablename` varchar(80) NOT NULL default '',
 					  `intro` blob NOT NULL,
 					  PRIMARY KEY  (`tablename`)
-					) TYPE=MyISAM ;";
+					) TYPE=MyISAM DEFAULT CHARSET=utf8 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -128,7 +128,7 @@
 					  `id` int(11) NOT NULL,
 					  PRIMARY KEY  (`pk`),
 					  KEY `edited_date` (`edited_date`)
-					) TYPE=MyISAM  AUTO_INCREMENT=1 ;";
+					) TYPE=MyISAM DEFAULT CHARSET=utf8  ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -147,7 +147,7 @@
 					  PRIMARY KEY  (`id`),
 					  KEY `pagename` (`pagename`,`pageid`),
 					  KEY `is_spam` (`is_spam`)
-					)  TYPE=MyISAM AUTO_INCREMENT=1 ; ";
+					)  TYPE=MyISAM DEFAULT CHARSET=utf8 ; ";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -156,7 +156,7 @@
 		
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_singlepages` (
 					  `id` int(11) NOT NULL auto_increment,
-					  `name` varchar(120)  NOT NULL default '',
+					  `name` varchar(120) NOT NULL default '',
 					  `in_menue` tinyint(1) NOT NULL default '0',
 					  `menue_index` mediumint(9) NOT NULL default '1',
 					  `commentable` tinyint(1) NOT NULL default '0',
@@ -165,8 +165,9 @@
 					  `hide_toc` tinyint(1) NOT NULL default '0',
 					  `default_group` varchar(60) NOT NULL default '',
 					  `grouplist` varchar(255) NOT NULL default '',
-					  PRIMARY KEY  (`id`)
-					) TYPE=MyISAM AUTO_INCREMENT=1 ;";
+					  PRIMARY KEY  (`id`),
+					  UNIQUE KEY `name` (`name`)
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -179,8 +180,8 @@
 					  `in_menue` tinyint(1) NOT NULL default '1',
 					  `menue_index` mediumint(9) NOT NULL default '0',
 					  `hide_options` tinyint(1) NOT NULL default '0',
-					  `hide_search` tinyint(1) NOT NULL default '0', .
-					  `hide_toc` tinyint(1) NOT NULL default '0',	
+					  `hide_search` tinyint(1) NOT NULL default '0',
+					  `hide_toc` tinyint(1) NOT NULL default '0',
 					  `show_labels` tinyint(1) NOT NULL default '0',
 					  `hidden_fields` varchar(255) NOT NULL default '',
 					  `order_by` varchar(60) NOT NULL default '',
@@ -199,8 +200,9 @@
 					  `search_keyword` tinyint(1) NOT NULL default '1',
 					  `search_range` tinyint(1) NOT NULL default '0',
 					  PRIMARY KEY  (`id`),
+					  UNIQUE KEY `name_2` (`name`),
 					  KEY `name` (`name`,`tablename`,`group_field`)
-					) TYPE=MyISAM AUTO_INCREMENT=1 ;";
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -219,7 +221,7 @@
 					  `on_update` varchar(20) NOT NULL,
 					  `on_delete` varchar(20) NOT NULL,
 					  PRIMARY KEY  (`id`)
-					) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -268,7 +270,7 @@
 		}
 		else if($template_name == "blog") {
 			//first the actual table
-			$query = "CREATE TABLE `".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."` (
+			$query = "CREATE TABLE `".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."` (
 						  `id` bigint(20) NOT NULL auto_increment,
 						  `title` varchar(160) NOT NULL default '',
 						  `bla` blob NOT NULL,
@@ -284,7 +286,7 @@
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `show_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-					VALUES ('".$page_name."', '".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
+					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
 				$fehler_text = $fehler_text.mysql_error($link);
@@ -293,7 +295,7 @@
 		}
 		else if($template_name == "faq") {
 			//first the actual table
-			$query = "CREATE TABLE `".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."` (
+			$query = "CREATE TABLE `".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."` (
 						  `id` int(12) NOT NULL auto_increment,
 						  `inputdate` datetime NOT NULL default '0000-00-00 00:00:00',
 						  `topic` varchar(200) NOT NULL default '',
@@ -311,7 +313,7 @@
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `show_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-				VALUES ('".$page_name."', '".buildValidMySQLTableNameForm($page_name."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
+				VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
 				$fehler_text = $fehler_text.mysql_error($link);
