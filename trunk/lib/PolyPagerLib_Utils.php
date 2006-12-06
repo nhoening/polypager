@@ -1013,43 +1013,45 @@ function getEntity($page_name) {
 function getReferencedTableData($entity){
 	$fks = getForeignKeys();
 	$tables = array();
-	foreach ($fks as $fk){
-		$referenced_table = "";
-		$title_field = "";
-		$likely_page = "";
-		// Get the referenced table and the title field to show
-		// Now, what can we show? Is there a more useful field for
-		// the valuelist than an id or the like? Maybe the title_field
-		// of a page? Let's see if we can get one
-		if ($fk['page'] == $entity["pagename"]){
-			$page_info = getPageInfo($fk['ref_page']);
-			$referenced_table = $page_info['tablename'];
-			if (isMultipage($fk['ref_page'])) $title_field = $page_info['title_field'];
-			else $title_field = 'heading';
-			$likely_page = $fk['ref_page'];
-		} else if ($fk['table'] == $entity['tablename']){
-			$referenced_table = $fk['ref_table'];
-			//in principle, _sys_sections could be referenced - that's easy
-			if ($referenced_table == '_sys_sections') {
-				$title_field = 'heading';
+	if ($fks != "") {
+		foreach ($fks as $fk){
+			$referenced_table = "";
+			$title_field = "";
+			$likely_page = "";
+			// Get the referenced table and the title field to show
+			// Now, what can we show? Is there a more useful field for
+			// the valuelist than an id or the like? Maybe the title_field
+			// of a page? Let's see if we can get one
+			if ($fk['page'] == $entity["pagename"]){
+				$page_info = getPageInfo($fk['ref_page']);
+				$referenced_table = $page_info['tablename'];
+				if (isMultipage($fk['ref_page'])) $title_field = $page_info['title_field'];
+				else $title_field = 'heading';
 				$likely_page = $fk['ref_page'];
-			}
-			else {	// more likely are multipages
-				$pk_field = getPKName($referenced_table);
-				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referenced_table."'";
-				$result = pp_run_query($pq);
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
-				if (mysql_num_rows($result)>1) 
-					$title_field = $pk_field; //no chance of a good choice :-(
-				else { // we have the one page for this table!
-					$title_field = $row['title_field'];
-					if ($title_field=="") $title_field = $pk_field;
+			} else if ($fk['table'] == $entity['tablename']){
+				$referenced_table = $fk['ref_table'];
+				//in principle, _sys_sections could be referenced - that's easy
+				if ($referenced_table == '_sys_sections') {
+					$title_field = 'heading';
+					$likely_page = $fk['ref_page'];
 				}
-				$likely_page = $row['name'];
+				else {	// more likely are multipages
+					$pk_field = getPKName($referenced_table);
+					$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referenced_table."'";
+					$result = pp_run_query($pq);
+					$row = mysql_fetch_array($result, MYSQL_ASSOC);
+					if (mysql_num_rows($result)>1) 
+						$title_field = $pk_field; //no chance of a good choice :-(
+					else { // we have the one page for this table!
+						$title_field = $row['title_field'];
+						if ($title_field=="") $title_field = $pk_field;
+					}
+					$likely_page = $row['name'];
+				}
 			}
+			if ($referenced_table != "")
+				$tables[] = array('fk'=>$fk,'table_name'=>$referenced_table, 'likely_page' => $likely_page , 'title_field' => $title_field);
 		}
-		if ($referenced_table != "")
-			$tables[] = array('fk'=>$fk,'table_name'=>$referenced_table, 'likely_page' => $likely_page , 'title_field' => $title_field);
 	}
 	return $tables;
 }
@@ -1251,7 +1253,7 @@ function getForeignKeys(){
 	$tables = mysql_list_tables($db, getDBLink());
 	$num_tables = mysql_num_rows($tables);
 	
-	if ($fks == ""){
+	if ($fks == "" or count($fks)==0){
 		$fk = array();
 		
 		for($x = 0; $x < $num_tables; $x++){
@@ -1366,6 +1368,8 @@ function getForeignKeys(){
 		//print_r($fks);
 		//echo('</div>');
 	}
+	//return an array so that foreach loops on this will work
+	if ($fks=="") return array();
 	return $fks;
 }
 

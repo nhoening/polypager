@@ -438,7 +438,8 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		echo($indent.'			<input value="'.$params['from'].'" name="from" type="hidden" /></td>'."\n");
 		//echo($indent.'		<td class="form_options"><input type="checkbox" name="opt"/> '.__('show next entry').'</td>'."\n");
 		echo($indent.'			<td class="form_submits">'."\n");
-		if (!ereg('_sys_', $params["page"]))  proposeFeeding(++$index, 0, $nind+3);
+		if($params["cmd"] != "new") $feed = 1; else $feed = 0;
+		if (!ereg('_sys_', $params["page"]))  proposeFeeding(++$index, $feed, $nind+3);
 		echo($indent.'				<input type="hidden" id="cmd" name="cmd" value="nothing_yet"/>'."\n");
 		echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\''.$next_command.'\';return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
 		if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");

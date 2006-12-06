@@ -724,7 +724,7 @@
 			echo($indent.'</'.$html_type.'>'."\n");
 		}
 		//if there was no data, give a hint
-		if ($before_first_entry == true) {
+		if ($before_first_entry == true and !$as_toc) {
 			echo($indent.'<div class="sys_msg">'.__('There is no entry in the database meeting the search criteria...').'</div>'."\n");
 		}
 			//reset result set

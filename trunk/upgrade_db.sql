@@ -25,7 +25,7 @@ ALTER TABLE `_sys_multipages` ADD UNIQUE (
 `name`
 );
 
---ALTER TABLE `_sys_sys` ADD `show_public_popups` TINYINT( 1 ) NOT NULL DEFAULT '1' AFTER `submenus_always_on` ;
+ALTER TABLE `_sys_sys` ADD `show_public_popups` TINYINT( 1 ) NOT NULL DEFAULT '1' AFTER `submenus_always_on` ;
 
 -- 0.9.6
 ALTER TABLE `_sys_sys` DROP `template` 

@@ -79,10 +79,11 @@
 					  `lang` varchar(12) NOT NULL default '',
 					  `skin` varchar(120) NOT NULL default '',
 					  `submenus_always_on` tinyint(1) NOT NULL default '0',
+					  `show_public_popups` tinyint(1) NOT NULL default '1',
 					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
 					  `gallery_name` varchar(120) NOT NULL default 'gallery',
 					  `gallery_index` smallint(6) NOT NULL default '99'
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
