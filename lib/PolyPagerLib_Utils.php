@@ -74,17 +74,18 @@ function pp_run_query($query){
  * NOTE: it also doesn't show hidden files (starting with '.')!
  * @param sort lets you revert-sort the results when it's set to 1 (else: 0)
  * @param only_pics set it to true if you only want pics returned
+ * @param only_dirs set it to true if you only want dirnames returned
  */
-function scandir_n($dir = './', $sort = 0, $only_pics = false) { //(originally scandir is PHP 5)
+function scandir_n($dir = './', $sort = 0, $only_pics = false, $only_dirs = false) { //(originally scandir is PHP 5)
 	$dir_open = @ opendir($dir);
 	if (! $dir_open) return false;
 	
 	$files = array();
-	
 	while (($dir_content = readdir($dir_open)) !== false){
 		if($dir_content != "." && $dir_content != ".." && substr($dir_content,0,1) != '.') 
 			if (!$only_pics or in_array(strtolower(substr($dir_content,-4)),array('.jpg','.gif','.png','tiff')))
-				$files[] = $dir_content;
+				if (!$only_dirs or filetype($dir.'/'.$dir_content)=='dir')
+					$files[] = $dir_content;
 	}
 	if ($sort == 1)
 	   rsort($files, SORT_STRING);
@@ -175,11 +176,29 @@ function buildValidIDFrom($text){
 	maxlength: 64
 	more here: http://dev.mysql.com/doc/refman/5.0/en/legal-names.html
 */
-function buildValidMySQLTableNameForm($text){
+function buildValidMySQLTableNameFrom($text){
 	$text = ereg_replace('[^a-zA-Z0-9_]','_',$text);
 	return substr($text,0,64);
 }
 
+
+/* import a PHP/HTML template.
+   If the skin cannot be found, we default back to picswap
+   remember that templates expect writeData() !
+*/
+function useTemplate($path_to_root_dir){
+	global $area, $path_to_root_dir;
+	$sys_info = getSysInfo();
+	if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
+	else $skin = $sys_info['skin'];
+	$template_path = $path_to_root_dir."/style/skins/".$skin."/template.php";
+	if (file_exists($template_path)){
+		@include($template_path);
+	}else{
+		if($area=='_admin') echo('<div class="sys_msg">'.__('Warning: The selected skin couldn\'t be found.').'</div>');
+		@include($path_to_root_dir."/style/skins/picswap/template.php");
+	}
+}
 
 /* Path to Root dir of this webpage relative to the document root
 	this path should always end with a "/" if it is not empty,
@@ -512,13 +531,13 @@ function getEntity($page_name) {
 				$entity["one_entry_only"] = "1";	//keep it one
 
 				$entity = addFields($entity["tablename"]);
-				$skindirs = scandir_n('../style/skins');
+				$skindirs = scandir_n('../style/skins', 0, false, true);
 				$skindirs_wo_picswap = array();
 				for($x=0;$x<count($skindirs);$x++){	//picswap gets extra handling in PolyPagerLib_HTMLFraming
 					if ($skindirs[$x] != 'picswap') $skindirs_wo_picswap[] = $skindirs[$x];
 				}
 				
-				//if we had picswap, now put in the four artificial colorset-duimmies
+				//if we had picswap, now put in the four artificial colorset-dummies
 				if (count($skindirs) != count($skindirs_wo_picswap)){
 					$skindirs = $skindirs_wo_picswap;
 					$dirs = implode(",",$skindirs);
@@ -529,12 +548,23 @@ function getEntity($page_name) {
 				}
 				
 				setEntityFieldValue("skin", "valuelist", $dirs);
-				
-				
-
 				setEntityFieldValue("lang", "valuelist", "en,de");
 				setEntityFieldValue("start_page", "valuelist", implode(',', getPageNames()));
 				setEntityFieldValue("feed_amount", "validation", 'number');
+				
+				//formgroups
+				$entity['formgroups'] = array();
+				$entity['formgroups']['metadata'] = array(1,'show');
+				setEntityFieldValue("title", "formgroup", 'metadata');
+				setEntityFieldValue("author", "formgroup", 'metadata');
+				setEntityFieldValue("keywords", "formgroup", 'metadata');
+				$entity['formgroups']['admin'] = array(0,'show');
+				setEntityFieldValue("admin_name", "formgroup", 'admin');
+				setEntityFieldValue("admin_pass", "formgroup", 'admin');
+				$entity['formgroups']['gallery'] = array(2,'hide');
+				setEntityFieldValue("link_to_gallery_in_menu", "formgroup", 'gallery');
+				setEntityFieldValue("gallery_name", "formgroup", 'gallery');
+				setEntityFieldValue("gallery_index", "formgroup", 'gallery');
 				
 				global $run_as_demo;
 				if ($run_as_demo) {
@@ -598,7 +628,6 @@ function getEntity($page_name) {
 					setEntityFieldValue("title_field", "valuelist", ','.implode(',', getListOfFields($the_table)));
 					setEntityFieldValue("order_by", "valuelist", ','.implode(',', getListOfFields($the_table)));
 					setEntityFieldValue("group_field", "valuelist", ','.implode(',', getListOfValueListFields($the_table)));
-					//setEntityFieldValue("default_group", "valuelist", ','.$entity["fields"]["group_field"]["valuelist"]);
 					setEntityFieldValue("publish_field", "valuelist", ','.implode(',', getListOfFieldsByDataType($the_table, 'bool')));
 				} else {
 					$entity["disabled_fields"] = $entity["disabled_fields"].',publish_field,date_field,time_field,edited_field,title_field,order_by,group_field';
@@ -607,6 +636,39 @@ function getEntity($page_name) {
 				setEntityFieldValue("menue_index", "validation", 'number');
 				setEntityFieldValue("name", "validation", 'any_text');
 				setEntityFieldValue("tablename", "validation", 'any_text');
+				
+				//formgroups
+				$entity['formgroups'] = array();
+				$entity['formgroups']['name/table'] = array(0,'show');
+				setEntityFieldValue("name", "formgroup", 'name/table');
+				setEntityFieldValue("tablename", "formgroup", 'name/table');
+				$entity['formgroups']['menu'] = array(1,'show');
+				setEntityFieldValue("in_menue", "formgroup", 'menu');
+				setEntityFieldValue("menue_index", "formgroup", 'menu');
+				$entity['formgroups']['what to hide or show'] = array(2,'hide');
+				setEntityFieldValue("hidden_fields", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_options", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_toc", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_search", "formgroup", 'what to hide or show');
+				setEntityFieldValue("show_labels", "formgroup", 'what to hide or show');
+				setEntityFieldValue("show_comments", "formgroup", 'what to hide or show');
+				$entity['formgroups']['fields with special meaning'] = array(3,'hide');
+				setEntityFieldValue("publish_field", "formgroup", 'fields with special meaning');
+				setEntityFieldValue("group_field", "formgroup", 'fields with special meaning');
+				setEntityFieldValue("group_order", "formgroup", 'fields with special meaning');
+				setEntityFieldValue("date_field", "formgroup", 'fields with special meaning');
+				setEntityFieldValue("edited_field", "formgroup", 'fields with special meaning');
+				setEntityFieldValue("title_field", "formgroup", 'fields with special meaning');
+				$entity['formgroups']['search'] = array(4,'hide');
+				setEntityFieldValue("search_month", "formgroup", 'search');
+				setEntityFieldValue("search_year", "formgroup", 'search');
+				setEntityFieldValue("search_keyword", "formgroup", 'search');
+				setEntityFieldValue("search_range", "formgroup", 'search');
+				$entity['formgroups']['misc'] = array(5,'hide');
+				setEntityFieldValue("commentable", "formgroup", 'misc');
+				setEntityFieldValue("step", "formgroup", 'misc');
+				setEntityFieldValue("order_order", "formgroup", 'misc');
+				setEntityFieldValue("order_by", "formgroup", 'misc');
 				
 				//help texts
 				setEntityFieldValue("in_menue", "help", __('when this field is checked, you will find a link to this page in the menu.'));
@@ -650,6 +712,21 @@ function getEntity($page_name) {
 				setEntityFieldValue("name", "validation", 'any_text');
 				
 				$entity["consistency_fields"] = ",name";
+				
+				//formgroups
+				$entity['formgroups'] = array();
+				$entity['formgroups'][''] = array(0,'show');
+				setEntityFieldValue("name", "formgroup", '');
+				$entity['formgroups']['menu'] = array(1,'show');
+				setEntityFieldValue("in_menue", "formgroup", 'menu');
+				setEntityFieldValue("menue_index", "formgroup", 'menu');
+				$entity['formgroups']['what to hide or show'] = array(2,'hide');
+				setEntityFieldValue("hide_options", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_toc", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_search", "formgroup", 'what to hide or show');
+				$entity['formgroups']['misc'] = array(3,'hide');
+				setEntityFieldValue("commentable", "formgroup", 'misc');
+				setEntityFieldValue("grouplist", "formgroup", 'misc');
 				
 				setEntityFieldValue("in_menue", "help", __('when this field is checked, you will find a link to this page in the menu.'));
 				setEntityFieldValue("menue_index", "help", __('this field holds a number which determines the order in which pages that are shown in the menu (see above) are arranged.'));
@@ -730,6 +807,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("on_delete", "valuelist", "RESTRICT,CASCADE,NO ACTION,SET NULL");
 				$entity["title_field"] = "name";
 				$entity["disabled_fields"] .= ",pagename";
+				$entity["hidden_form_fields"] = "foreign_key_to,on_update,on_delete";//this featrue is not clearly defined as from 0.9.7
 				
 				//help texts
 				setEntityFieldValue("valuelist", "help", __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. Also, his field can become the group field of its page.'));
@@ -867,12 +945,12 @@ function getEntity($page_name) {
 					$entity["hidden_form_fields"] .= ','.$entity["timeField"]["name"];
 					$entity["hidden_form_fields"] .= ','.$entity["dateField"]["name"];
 					$entity["hidden_form_fields"] .= ','.$entity["dateField"]["editlabel"];
-					//$entity["hidden_fields"] .=','.$entity["dateField"]["editlabel"];
 					$entity["hidden_fields"] .= ','.$page_info["publish_field"].','.$page_info["edited_field"];
+					//let the hidden fields be filled from the field list
 					$e = array();
 					$e[0] = 'hidden_fields';
 					$e[1] = $entity["hidden_fields"];
-					$entity['fillafromb'][0] = $e;
+					$entity['fillafromb'][] = $e;
 					
 					if($page_info["tablename"] != "") {
 						$entity = addFields($page_info["tablename"]);
@@ -884,7 +962,7 @@ function getEntity($page_name) {
 				$entity['tablename'] = $page_names;
 			}
 			
-			//fk stuff
+			//fk stuff - preselect valuelists
 			if (isMultipage($page_name) || isSinglepage($page_name)){
 				$ref_tables = getReferencedTableData($entity);
 				foreach ($ref_tables as $rt) {
@@ -1103,6 +1181,9 @@ function addFields($name, $not_for_field_list = "") {
 				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"]." and type ".$field["data-type"]."<br/>\n");
 				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
 				if (($field["data-type"] == "int" or $field["data-type"] == "tinyint")and $field["size"] == 1) $field["data-type"] = "bool";
+				//set some defaults
+				$field['formgroup'] = "";
+				
 				$fields[count($fields)] = $field;
 			}
 

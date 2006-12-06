@@ -124,6 +124,7 @@ function getTranslation($text) {
 'Here you can edit an entry. You find an HTML Form where you can type in values.&lt;br/&gt;Hit the Save-Button to save your changes to the database.&lt;br/&gt;You can also delete existing entries with the Delete-Button.&lt;br/&gt;&lt;br/&gt; %s'
 	=> 'Hier k&ouml;nnen Sie einen Beitrag bearbeiten. Sie sehen ein HTML Formular, in das Sie Ihre Daten eingeben k&ouml;nnen&lt;br/&gt;Bet&auml;tigen Sie den Speichern-Button um Ihre Eingaben in der Datenbank zu speichern.&lt;br/&gt;Sie k&ouml;nnen auch den L&ouml;schen-Button bet&auml;tigen, um einen bestehenden Eintrag wieder aus der Datenbank zu l&ouml;schen.&lt;br/&gt; %s',
 'How'	=> 'Wie',
+'edit impressum' => 'Impressum editieren',
 'Here you can edit the impressum.' => 
 	'Hier k&ouml;nnen Sie das Impressum editieren.',
 'Here you can edit the %s-page.&lt;br/&gt;&lt;br/&gt; A page consists of sections. One section might be all you need. If so, go ahead and type into the header- and the textfield what you want to publish (uncheck the publish-checkbox if you do not want users to see it yet).&lt;br/&gt;&lt;br/&gt;You can always add other sections if the page grows more complex. Then it might also be useful to check the show-in-submenu checkbox so users can access your structure quickly.' => 'Hier k&ouml;nnen Sie die %s-Seite bearbeiten.&lt;br/&gt;&lt;br/&gt; Eine Seite (hier eine sog. singlepage) besteht aus Sektionen. Eine Sektion ist vielleicht alles was Sie derzeit brauchen. Wenn dem so ist, dann geben Sie jetzt in &Uuml;berschrift- und Textfeld ein, was Sie ver&ouml;ffentlichen wollen (Deaktivieren Sie die ver&ouml;ffentlichen-Checkbox, wenn Sie noch nicht wollen, dass Benutzer diesen Eintrag sehen).&lt;br/&gt;&lt;br/&gt; Sie k&ouml;nnen immer weitere Sektionen hinzuf&uuml;gen wenn die Seite komplexer werden soll. Dann wird es vielleicht auch n&uuml;tzlich sein, die sog. -anw&auml;hlbar im Submen&uuml;- - Checkbox zu aktivieren, damit Benutzer diese Sektionen schon aus dem Men&uuml; heraus anw&auml;hlen k&ouml;nnen.',
@@ -198,7 +199,9 @@ function getTranslation($text) {
 'choose:' => 'W&auml;hlen Sie:',
 'This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.' =>
 	'Diese Liste ist hier um Ihnen sinnvolle Vorschl&auml;ge zum F&uuml;llen des obigen Listfelds zu geben. Klicken Sie auf einen Eintrag, um ihn in das Feld zu kopieren. Sie k&ouml;nnen auch etwas anderes hineinschreiben, wenn Sie wissen, ob das Sinn macht :-) Der reset-link stellt den Zustand zum Zeitpunkt des letzten Ladens der Seite wieder her.',
-	
+'(show)' => '(zeigen)',
+'(hide)' => '(verstecken)',
+
 /*	lib/GempuxLib_Utils.php	*/
 'the latest entries:'	=> 'Die neuesten Eintr&auml;ge:',
 'click to see this %s from %s'	=> 'klicken Sie hier, um diese(n) %s vom %s zu sehen.',
@@ -222,6 +225,8 @@ function getTranslation($text) {
 'please specify any text here.' => 'Bitte geben Sie hier irgendeinen Text ein.',
 'there is no table specified for this page yet' 
 => 'f&uuml;r diese Seite ist noch keine Tabelle angegeben',
+'Warning: The selected skin couldn\'t be found.'
+=>'Achtung: Die angegebene Skin konnte nicht gefunden werden.',
 'there is no table in the database yet'
 => 'es gibt noch keine (nicht-System-)Tabellen in der Datenbank.',
 'here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. Also, his field can become the group field of its page.'
@@ -329,6 +334,16 @@ function getTranslation($text) {
 'please specify a valid URL here.' =>
 	'bitte geben Sie hier eine valide URL (Web-Adresse) an.',
 	
+/* formgroups*/
+'admin' => 'Admin',
+'metadata' => 'Metadaten',
+'gallery' => 'Galerie',
+'misc' => 'Sonstiges',
+'name/table' => 'Name/Tabelle',
+'menu' => 'Men&uuml;',
+'what to hide or show' => 'Was angezeigt oder versteckt werden soll',
+'fields with special meaning' => 'Felder mit besonderer Bedeutung',
+
 /* Labels */
 //_sys_multipages / _sys_singlepages
 'tablename:' => 'Tabellenname:',

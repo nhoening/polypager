@@ -87,7 +87,6 @@ body {
 	width: 250px; /*(790px(data)-540px(main))*/
 }
 #mainpane {
-	float: right;
 	width: 540px;
 }
 
@@ -337,8 +336,8 @@ table tr.edit td.last_edited_label {
 	width: 100%;
 }
 
-#edit_form fieldset{
-	border: 0;
+#edit_form fieldset table tr td.label{
+	min-width: 170px;
 }
 
 .form_submits{

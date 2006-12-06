@@ -77,10 +77,8 @@ body {
 	height: 130px !important;
 	<?
 	if ($pic == "") {
-		$pictures = scandir_n("pics/bg",0,true);
+		$pictures = scandir_n("pics/bg",0,true,false);
 		$i = count($pictures); //index of bg pic
-		//echo($i);
-		//print_r($pictures);
 		if ($i > 1) {
 			mt_srand((double)microtime()*1000000); //initate mt_rand
 			$i = mt_rand(1, $i-1);	//length of $pictures may vary
@@ -392,7 +390,9 @@ h6 {
 	 float: right;
 }
 .debug {
-	 background-color: red;
+	
+	display:block;
+	background-color: red;
 }
 
 /* -----------------end system styles ---------------------- */

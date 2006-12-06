@@ -135,12 +135,12 @@ $homedir = './../user';
 $homedir_name = 'user';				//nh: just the name of the dir itself
 $forbidden_file_names = '_mg index.php,.svn,.DS_Store';	//nh: just the name of files/dirs we hide from the user
 $good_paths = array('/style/skins/picswap/pics/bg/');
-$skins = scandir_n('../style/skins');
+$skins = scandir_n('../style/skins',0,false,true);
 foreach($skins as $s) $good_paths[] = '/style/skins/'.$s.'/';
 $good_files = array(
  'template.php', 'user.css'
 );
-$pics = scandir_n('../style/skins/picswap/pics/bg');
+$pics = scandir_n('../style/skins/picswap/pics/bg',0,true,false);
 foreach($pics as $f) $good_files[] = $f;
 // --------- end nh added vars
 

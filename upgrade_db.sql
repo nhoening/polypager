@@ -17,6 +17,16 @@ ADD `gallery_index` SMALLINT NOT NULL DEFAULT '99';
 ALTER TABLE `_sys_fields` ADD `label` VARCHAR( 160 ) NOT NULL AFTER `name` ;
 ALTER TABLE `_sys_fields` ADD `order_index` INT( 11 ) NOT NULL DEFAULT '0' AFTER `label` ;
 
+ALTER TABLE `_sys_singlepages` ADD UNIQUE (
+`name`
+);
+
+ALTER TABLE `_sys_multipages` ADD UNIQUE (
+`name`
+);
+
+--ALTER TABLE `_sys_sys` ADD `show_public_popups` TINYINT( 1 ) NOT NULL DEFAULT '1' AFTER `submenus_always_on` ;
+
 -- 0.9.6
 ALTER TABLE `_sys_sys` DROP `template` 
 

@@ -102,7 +102,6 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	$params = $show_params;
 	$entity = getEntity($params["page"]);
 	$query = getQuery(true);
-	$sys_info = getSysInfo();
 
 	if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 
@@ -194,8 +193,6 @@ function writeData($ind=5) {
 	}
 }
 
-//now ... we are ready to import a PHP/HTML template
-if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
-else $skin = $sys_info['skin'];
-@include("style/skins/".$skin."/template.php");
+useTemplate($path_to_root_dir);
+
 ?>

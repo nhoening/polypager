@@ -41,7 +41,6 @@ require_once("PolyPagerLib_Sidepane.php");
 
 // ---------------------------------------
 
-$sys_info = getSysInfo();
 $area = "_admin"; 
 
 $params = getEditParameters();
@@ -63,7 +62,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			if ($queries != "") {
 				foreach($queries as $q) {
 					if ($q!=""){
-						echo("running edit Query: ".$q."<br/>");
 						$res = mysql_query($q, getDBLink());
 						$fehler_nr .= mysql_errno(getDBLink());
 						$mysqlerror .= mysql_error(getDBLink());
@@ -133,7 +131,7 @@ function writeData($ind=4) {
 	global $sys_msg_text;
 	global $error_msg_text;	//hopefully empty :-)
 	
-	showAdminOptions();
+	showAdminOptions($indent.'	');
 	
 	if($debug) {
 		echo('<div class="debug">Query is: '.$query.'</div>');
@@ -154,33 +152,31 @@ function writeData($ind=4) {
 	$title = __('Editing').' '.$params["page"];
 	$entity = getEntity($params["page"]);
 
-	//echo('				<div id="data_admin">'."\n");
-	
 	$page = $params["page"];
 	if ($page == "_sys_singlepages" or $page == "_sys_multipages" or $page == "_sys_intros") $page = "_sys_pages";
 	
 	//showing some navigation links
-	echo('				<ul>'."\n");
+	echo($indent.'	<ul>'."\n");
 	if ($page == "_sys_pages") {	//entry on that  page
 		$pname = $params["values"]["name"];
 		if ($pname == "") $pname = $_GET["name"];
 		if ($pname == "") $pname = $_GET["page"];
-		echo('					<li><a
+		echo($indent.'		<li><a
 			onmouseover="popup(\''.sprintf(__('click to make a new entry on the %s - page'),$pname).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
 			href="edit.php?'.$pname.'&amp;cmd=new&amp;from='.$params["from"].'&topic=content&group='.$params["group"].'">'.__('insert a new entry').'</a></li>'."\n");
 	} else if ($entity["one_entry_only"] != "1"){
-		echo('					<li>'.__('insert a').' <a
+		echo($indent.'		<li>'.__('insert a').' <a
 			onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$params["page"]).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
 			href="edit.php?'.$params["page"].'&amp;cmd=new&amp;from='.$params["from"].'&topic='.$params["topic"].'&group='.$params["group"].'">'.__('new record').'</a></li>'."\n");
 	}
 	
-	if ($params["from"] == "list") echo('					<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.$page.'&topic='.$params["topic"].'&group='.$params["group"].'">'.__('back to list view').'</a></li>'."\n");
-	if ($params["from"] == "admin") echo('					<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
+	if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.$page.'&topic='.$params["topic"].'&group='.$params["group"].'">'.__('back to list view').'</a></li>'."\n");
+	if ($params["from"] == "admin") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
 	$page_info = getPageInfo($params["page"]);
 	if($page_info["in_menue"] == "0" and !strpos($params["page"], "_sys_")) {
-		echo('					<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.$params['page'].'&amp;group='.$params['group'].'">'.__('see the page').'</a></li>'."\n");
+		echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.$params['page'].'&amp;group='.$params['group'].'">'.__('see the page').'</a></li>'."\n");
 	}
-	echo('				</ul>'."\n");
+	echo($indent.'	</ul>'."\n");
 
 	//heading with explanation what to do here
 	if (!isASysPage($params["page"])) {
@@ -197,21 +193,21 @@ function writeData($ind=4) {
 		}
 		echo('</h1>'."\n");
 	} else if ($params["page"] == "_sys_intros") {
-		if ($params["nr"] != '_sys_impressum') echo('				<h1>'.__('Editing intro for page').' '.$params["nr"].'</h1>');
-		else echo('				<h1>'.__('Editing impressum').'</h1>');
+		if ($params["nr"] != '_sys_impressum') echo($indent.'	<h1>'.__('Editing intro for page').' '.$params["nr"].'</h1>."\n"');
+		else echo($indent.'	<h1>'.__('Editing impressum').'</h1>."\n"');
 	} else if ($params["page"] == "_sys_sys") {
-		echo('				<h1>'.__('Editing system properties').'</h1>');
+		echo($indent.'	<h1>'.__('Editing system properties').'</h1>'."\n");
 		//link to write impressum
 		$link_text = __('Here you can edit the impressum.');
-		echo('					&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr=_sys_impressum&page='.$params['page'].'from=list&topic='.$params["topic"].'">'.__('edit impressum').'</a>&nbsp;|&nbsp;'."\n");
+		echo($indent.'		&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr=_sys_impressum&page='.$params['page'].'from=list&topic='.$params["topic"].'">'.__('edit impressum').'</a>&nbsp;|&nbsp;'."\n");
 	} else if ($params["page"] == "_sys_multipages" and $params["cmd"] != "new") {
-		echo('				<h1>'.__('Editing a multipage').'</h1>');
+		echo($indent.'	<h1>'.__('Editing a multipage').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_multipages" and $params["cmd"] == "new") {
-		echo('				<h1>'.__('Creating a multipage').'</h1>');
+		echo($indent.'	<h1>'.__('Creating a multipage').'</h1>'."\n");
 	}  else if ($params["page"] == "_sys_singlepages" and $params["cmd"] != "new") {
-		echo('				<h1>'.__('Editing a singlepage').'</h1>');
+		echo($indent.'	<h1>'.__('Editing a singlepage').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_singlepages" and $params["cmd"] == "new") {
-		echo('				<h1>'.__('Creating a singlepage').'</h1>');
+		echo($indent.'	<h1>'.__('Creating a singlepage').'</h1>'."\n");
 	}
 
 	$iwrote = false; //negative assumption about writeHMLForm
@@ -255,9 +251,6 @@ function writeData($ind=4) {
 	}
 }
 
-//now ... we are ready to import a PHP/HTML template
-if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
-else $skin = $sys_info['skin'];
-@include("../style/skins/".$skin."/template.php");
+useTemplate($path_to_root_dir);
 	
 ?>

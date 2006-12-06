@@ -195,9 +195,9 @@ $img_link['next']    = TRUE;   // Link to the next image from the one displayed.
 $img_link['wrap']    = FALSE;  // Link back to first image from the last one.
 $img_link['wrap_up'] = TRUE;   // Link the last image to the directory above.
 // Other scripts have the following, so some people must like it.
-$img_link['full']  = FALSE;  // If the image is a resized version, link to the
+$img_link['full']  = TRUE;  // If the image is a resized version, link to the
                              // full sized version.  Disables 'next' and 'wrap'.
-$img_link['file']  = FALSE;  // Full size link goes directly to the image file.
+$img_link['file']  = TRUE;  // Full size link goes directly to the image file.
 
 /**
 * Lower Gallery Navigation Row below the image and caption
@@ -3446,9 +3446,6 @@ require_once("PolyPagerLib_Showing.php");
 
 // ---------------------------------------
 
-$sys_info = getSysInfo();
-
-
 $area = "_gallery";
 $path_to_root_dir = "../..";
 $title = "Gallery";
@@ -3676,8 +3673,5 @@ function writeData($ind=1) {
 //---------------- more PolyPager Code -----------
 }
 
-//now ... we are ready to import a PHP/HTML template
-if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
-else $skin = $sys_info['skin'];
-@include("../../style/skins/".$skin."/template.php");
+useTemplate($path_to_root_dir);
 ?>
