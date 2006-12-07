@@ -133,7 +133,7 @@ $site_charset = 'auto';
 $homedir = './../user';
 // --------- start nh added vars
 $homedir_name = 'user';				//nh: just the name of the dir itself
-$forbidden_file_names = '_mg index.php,.svn,.DS_Store';	//nh: just the name of files/dirs we hide from the user
+$forbidden_file_names = 'admin.php,qdig-files,index.php,.svn,.DS_Store';	//nh: just the name of files/dirs we hide from the user
 $good_paths = array('/style/skins/picswap/pics/bg/');
 $skins = scandir_n('../style/skins',0,false,true);
 foreach($skins as $s) $good_paths[] = '/style/skins/'.$s.'/';
@@ -876,7 +876,10 @@ function getlist ($directory) {
 			) $listit = false;						// ... hide it!
 			
 			//when we see the home-dir, we don't want to see '..'
-			if ($filename==".." && substr($directory,-1*strlen(getPathFromDocRoot())) == getPathFromDocRoot()) $listit = false;
+			$dpath = $_SERVER['DOCUMENT_ROOT'];
+			$pfdr = getPathFromDocRoot();
+			if ($pfdr!="/")$dpath.=$pfdr;
+			if ($filename==".." && substr($directory,-1*strlen($dpath)) == $dpath) $listit = false;
 
 			// now we're making sure that all the "good" stuff will be shown...
 			foreach($good_paths as $g)
