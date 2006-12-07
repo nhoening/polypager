@@ -62,7 +62,7 @@ body
 }
 
 #data_gallery #mainpane, #data_admin #mainpane{
-	width: 100% !important;
+	width: 95% !important;
 	min-height: 500px;
 	padding-bottom: 0px;
 	margin-bottom: 0px;
@@ -367,6 +367,7 @@ form .search, form .search *
 }
 
 form fieldset{ border:0;}
+#edit_form fieldset{ border:1px solid grey;;}
 
 form.edit input, form textarea, form button { /*form select {*/
 	background:#eee;

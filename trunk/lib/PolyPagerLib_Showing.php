@@ -298,15 +298,16 @@
 					// prefer title from referenced values over referencing ones!
 					if (in_array($f['name'],array_keys($ref_fields))) {
 						$ref = explode('||',$ref_fields[$f['name']]);
-						$a[0] .= $ref[0].'.'.$ref[1].' as '.$f['name'].",";
+						$a[0] .= $ref[0].'_'.$f['name'].'.'.$ref[1].' as '.$f['name'].",";
 					}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
 				}
 				
 				$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
 				
 				$a[0] .= " FROM ".$entity["tablename"].",";
-				foreach($references as $r) $a[0] .= $r['fk']['ref_table'].",";
-				
+				foreach($references as $r) {
+					$a[0] .= $r['fk']['ref_table']." as ".$r['fk']['ref_table']."_".$r['fk']['field'].",";
+				}
 				$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
 				$a[0] .= " ";
 				
@@ -405,7 +406,7 @@
 				}
 
 				//link tables referenced by foreign keys
-				foreach($references as $r) $a[] .= " AND ".$entity["tablename"].".".$r['fk']['field']."=".$r['fk']['ref_table'].".".$r['fk']['ref_field'];
+				foreach($references as $r) $a[] .= " AND ".$entity["tablename"].".".$r['fk']['field']."=".$r['fk']['ref_table'].'_'.$r['fk']['field'].".".$r['fk']['ref_field'];
 				
 				$theQuery = implode('',$a);
 				
@@ -833,7 +834,7 @@
 							//check if we should give the old name for consistency reasons
 							$consistency_fields = explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];;
-							echo($indent.'		<span class="list_pic"><a onclick="return !checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete();" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a></span>'."\n");
+							echo($indent.'		<span class="list_pic"><a onclick="return checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete();" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a></span>'."\n");
 							echo($indent.'	</div>');
 						}
 						

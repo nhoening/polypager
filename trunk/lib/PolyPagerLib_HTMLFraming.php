@@ -62,8 +62,8 @@
 		}
 		//test if the skin can be found, go back to default otherwise
 		if (!file_exists($path_to_root_dir.'/style/skins/'.$css)){
-			$skin = 'picswap';
-			$css = $skin.'/picswap-aqua.css';
+			$skin = 'fscreen';
+			$css = $skin.'/skin.css';
 		}
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/skins/'.$css.'" type="text/css"></link>'."\n");
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/user.css" type="text/css"></link>'."\n");
@@ -134,10 +134,6 @@
 		if ($fehler_nr!==0) {
 			$fehler_text=mysql_error($dblink);
 			if ($debug) echo('<div class="sys_msg">DB-Error: '.$fehler_text.'</div>'."\n");
-			//this is the first place where we see that sys-tables don't exist!!
-			if (eregi("doesn't exist", $fehler_text) and $params["cmd"] != 'create') {
-				$no_sys_tables = true;
-			}
 		}
 		
 		$sections = array(); //build a 2-dimensional array with 
@@ -313,15 +309,6 @@
 		}
 		echo($indent.'</div>'."\n");
 		/* -------------------end writing submenues -------------------------*/
-		
-		if ($no_sys_tables) {
-			$link_text = __('PolyPager found the database. Very good. <br/>But: it seems that it does not yet have its database configured. By clicking on the following link you can assure that all the tables that PolyPager needs to operate are being created (if they have not been already).<br/>');
-			$link_href = "admin/?&cmd=create";
-			global $area;
-			if ($area == '_admin')$link_href = './?&cmd=create';
-			if ($area == '_gallery') $link_href = '../../admin/?&cmd=create';
-			echo('<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>');
-		}
 		
 	}
 	
