@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '0.9.7.dev';
+$version = '0.9.7';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
@@ -183,12 +183,21 @@ function buildValidMySQLTableNameFrom($text){
 
 
 /* import a PHP/HTML template.
-   If the skin cannot be found, we default back to picswap
+   If the skin cannot be found, we default back to fscreen
    remember that templates expect writeData() !
 */
 function useTemplate($path_to_root_dir){
 	global $area, $path_to_root_dir;
 	$sys_info = getSysInfo();
+	//this is the first place where we see that sys-tables don't exist!!
+	if($sys_info['no_tables']) {
+		$link_text = __('PolyPager found the database. Very good. <br/>But: it seems that it does not yet have its database configured. By clicking on the following link you can assure that all the tables that PolyPager needs to operate are being created (if they have not been already).<br/>');
+		$link_href = "admin/?&cmd=create";
+		global $area;
+		if ($area == '_admin')$link_href = './?&cmd=create';
+		if ($area == '_gallery') $link_href = '../../admin/?&cmd=create';
+		echo('<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>'."\n");
+	}
 	if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
 	else $skin = $sys_info['skin'];
 	$template_path = $path_to_root_dir."/style/skins/".$skin."/template.php";
@@ -196,7 +205,7 @@ function useTemplate($path_to_root_dir){
 		@include($template_path);
 	}else{
 		if($area=='_admin') echo('<div class="sys_msg">'.__('Warning: The selected skin couldn\'t be found.').'</div>');
-		@include($path_to_root_dir."/style/skins/picswap/template.php");
+		@include($path_to_root_dir."/style/skins/fscreen/template.php");
 	}
 }
 
@@ -429,15 +438,32 @@ $sys_info = "";
 function getSysInfo() {
 	global $sys_info;
 	global $run_as_demo;
+	global $params;
 	if ($sys_info == "") {
 		$query = "SELECT * FROM _sys_sys";
 		$res = mysql_query($query, getDBLink());
 		if ($res) $sys_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
 	}
+	$fehler_nr = mysql_errno(getDBLink());
+	if ($fehler_nr!==0) {
+		$fehler_text=mysql_error(getDBLink());
+		//if we didn't find the table and there is no create-command, then 
+		//there doesn't seem to be content in the db...
+		if ($_GET['cmd']!='create' and eregi("doesn't exist", $fehler_text) and $params["cmd"] != 'create') {
+			$sys_info = array();
+			$sys_info['no_tables'] = true; // remember that we didn't see the table
+		}else{
+			$sys_info['no_tables'] = false;
+		}
+	}
+	
 	//default for the case that we haven't any data yet
-	if ($sys_info["skin"] == "") $sys_info["skin"] = 'picswap-aqua';
-	global $params;
+	if ($sys_info["skin"] == "" or $sys_info['no_tables']) {
+		$sys_info["skin"] = 'fscreen';
+	}
+	
 	$params['values']['skin'] = $sys_info["skin"];
+	
 	//as demo, adminname and password are set
 	if($run_as_demo) {
 		$sys_info["admin_name"] = "admin";
@@ -1006,7 +1032,7 @@ function getEntity($page_name) {
 /*
 	returns an array with "table_name", "title_field", "likely_page" and "fk"
 	for every table that is referenced by this entity via a foreign key "fk"
-	likely_page is ther best guess on which page we might find the table 
+	likely_page is the best guess on which page we might find the table 
 	represented (this is only hard when we encounter "real" FKs from the database and
 	one table is represented on several multipages)
 */
@@ -1103,10 +1129,10 @@ function getReferencingTableData($entity){
 
 /*gives you an alreay built entity if it is stored in $old_entites (it should)*/
 function getAlreadyBuiltEntity($page_name) {
-	global $old_entites;
+	global $old_entities;
 	for($x=0;$x<count($old_entites);$x++) {
 		//doesn't work on some servers - for now its turned off
-		//if ($old_entites[$x]["name"] == $page_name) return $old_entites[$x];
+		if ($old_entites[$x]["name"] == $page_name) return $old_entites[$x];
 	}
 	return "";
 }

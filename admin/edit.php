@@ -194,7 +194,7 @@ function writeData($ind=4) {
 		echo('</h1>'."\n");
 	} else if ($params["page"] == "_sys_intros") {
 		if ($params["nr"] != '_sys_impressum') echo($indent.'	<h1>'.__('Editing intro for page').' '.$params["nr"].'</h1>."\n"');
-		else echo($indent.'	<h1>'.__('Editing impressum').'</h1>."\n"');
+		else echo($indent.'	<h1>'.__('Editing impressum').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_sys") {
 		echo($indent.'	<h1>'.__('Editing system properties').'</h1>'."\n");
 		//link to write impressum

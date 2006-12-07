@@ -351,10 +351,10 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 			if ($entity['formgroups']!="" and $lastFormGroup != $f['formgroup']) {
 				echo($indent.'		<fieldset>');
 				if ($f['formgroup']!="") {
-					echo('<legend>'.__($f['formgroup']));
+					echo('<legend>&nbsp;'.__($f['formgroup']));
 					if ($entity['formgroups'][$f['formgroup']][1] == 'hide')
 						echo('<a id="'.$f['formgroup'].'_link" href="javascript:toggleVisibility(\''.$f['formgroup'].'\',\''.$f['formgroup'].'_link\',\''.__('(show)').'\',\''.__('(hide)').'\');">'.__('(show)',$f['formgroup']).'</a>');
-					echo('</legend>');
+					echo('&nbsp;</legend>');
 				}
 				echo('<div id="'.$f['formgroup'].'"');
 				if ($entity['formgroups'][$f['formgroup']][1] == 'hide') echo(' style="display:none;"');
@@ -419,7 +419,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		
 		//close last formgroup?
 		if ($entity['formgroups']!="" and $lastFormGroup != "xxxxxxxx") {
-			echo($indent.'		</table></fieldset>'."\n");
+			echo($indent.'		</table></div></fieldset>'."\n");
 		}
 		if ($entity['formgroups']=="") echo('</table>'); //otherwise a table for each fieldset
 		
