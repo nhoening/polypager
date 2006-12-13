@@ -472,7 +472,7 @@
 		echo($indent.'		<input type="hidden" name="cmd" value="show"/>'."\n");
 		echo($indent.'		<input type="hidden" name="topic" value="'.$topic.'"/>'."\n");
 		
-		$entity = getEntity($params["page"], $link);
+		$entity = getEntity($params["page"]);
 		//Links, first for contents
 		if ($params["page"] != "" and $params["topic"] == "content") {
 			$link_text = __('Here you can edit the intro text of this page.');

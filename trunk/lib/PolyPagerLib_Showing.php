@@ -427,6 +427,17 @@
 		return $theQuery;
 	}
 	
+	/* preserve Markup for text fields
+		the consensus here is that $...; entities are goping
+		to stay, but < and > are preserved (same as Firefox tab titles) 
+	*/
+	function preserveMarkup($content){
+		$content = str_replace(">", "&gt;", $content);
+		$content = str_replace("<", "&lt;", $content);
+		return $content;
+	}
+	
+	
 	/* writes out search options for multipages
 	*	$show   	- true if display property should not be "none" - that means if
 	*				the content of the search form should be visible or just a script link
@@ -703,7 +714,7 @@
 			//this is what we want to do basically...
 			if ($as_toc) {	//we need only titles here
 				$name = $row[$entity["title_field"]];
-				$name = htmlentities($name);
+				$name = preserveMarkup($name);
 				echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
 				// show referencing table stuff
 				echo($indent.'		<ul class="fk_link">'."\n");
@@ -728,8 +739,8 @@
 		if ($before_first_entry == true and !$as_toc) {
 			echo($indent.'<div class="sys_msg">'.__('There is no entry in the database meeting the search criteria...').'</div>'."\n");
 		}
-			//reset result set
-			if (mysql_num_rows($res) > 0)mysql_data_seek($res,0);
+		//reset result set
+		if (mysql_num_rows($res) > 0)mysql_data_seek($res,0);
 		
 	}
 	
@@ -760,7 +771,6 @@
 		if (!$list_view) {	//write an anchor
 			$name = $row[$entity["title_field"]];
 			//text that doesn't come from a text area still must be escaped
-			$name = htmlentities($name);
 			if ($entity["title_field"] != "") echo($indent.'	<a class="target" id="'.buildValidIDFrom($name).'"></a>'."\n");
 		}
 		
@@ -787,16 +797,23 @@
 					}
 					if ((!$list_view or $entity["title_field"] == $f["name"]) and
 						!(in_array($f["name"],$hidden_fields)))	{
-							
+						
+						// type - dependent operations on field content
+						
 						//text that doesn't come from a text area still must be escaped before showing
-						$unescaped_content = $content;
+						$unescaped_content = $content; // save for later
 						if(isTextType($f['data-type']) and !isTextAreaType($f['data-type'])) { 
-							$content = htmlentities($content);
+							$content = preserveMarkup($content);
 						}
 						//format dates
 						if (isDateType($f['data-type'])) {
 							$content = format_date($content);
 						}
+						//boolean into HTML
+						if ($f['data-type'] == "bool") {  
+							if ($content == 1) {$content="yes";} else if ($content == 0) {$content="no";}
+						}
+						
 						
 						if($f["name"] == $entity["title_field"] and $list_view) {	//show some symbols for quick glance
 							echo($indent.'	<div class="adop">');
@@ -838,14 +855,11 @@
 							echo($indent.'	</div>');
 						}
 						
-						// type - dependent operations on field content
+						//highlight search keywords
 						if (isTextType($f["data-type"])) {
 							if ($entity["search"]["keyword"] == "1" and $params["cmd"] == "search" and $params["search"]["kw"] != "") {
 								$content = highlight($params["search"]["kw"], $content);
 							}
-						}
-						if ($f['data-type'] == "bool") {  //boolean into HTML
-							if ($content == 1) {$content="yes";} else if ($content == 0) {$content="no";}
 						}
 						
 						//comments have neat markup
@@ -876,7 +890,7 @@
 							echo($indent.'		<div class="'.$theClass.'">'."\n");
 							echo($indent.'			');	//indent
 							if($f["name"] == $entity["title_field"] and !$list_view) {	//make a link
-								$the_url = '?'.$params["page"].'&amp;nr='.$row["id"];
+								$the_url = '?'.$params["page"].'&amp;nr='.$row[$entity['pk']];
 								echo('<a class="entry_title_link" href="'.$the_url.'">');
 							}
 							
