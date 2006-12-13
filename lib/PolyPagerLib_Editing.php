@@ -244,7 +244,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 	}
-		
+	
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -288,7 +288,7 @@ function getEditQuery($command, $theID) {
 		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
 
 		//some tables have a string as pk - then we take the id param for that
-		if ($entity["pk"] != "" and $entity["pk_type"] != "int") $queryA[count($queryA)] = ", '".$theID."'";
+		if ($entity["pk"] != "" and $entity["pk_type"] != "int") $queryA[count($queryA)] = ", '".$params['values'][$f[$entity["pk"]]]."'";
 
 		$queryA[count($queryA)] = ")";
 		$query .= implode($queryA);

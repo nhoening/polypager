@@ -96,7 +96,7 @@ function scandir_n($dir = './', $sort = 0, $only_pics = false, $only_dirs = fals
 
 /* returns the SQL-filtered string */
 function filterSQL($v) {
-	//we do this only for strings and only if magic quots do not do this
+	//we do this only for strings and only if magic quotes do not do this
 	//already (see http://www.dynamicwebpages.de/php/ref.info.php#ini.magic-quotes-gpc)
 	if (gettype($v) == "string" and get_magic_quotes_gpc() != 1) {
 		return addslashes($v);
@@ -104,15 +104,6 @@ function filterSQL($v) {
 	else return $v;
 }
 
-/* code to escape special chars */
-//returns the filtered string - not needed 29.01.2006
-function filterXMLChars($v) {
-
-	$v = str_replace("&amp;", "&amp;amp;", $v);
-	$v = str_replace("&gt;", "&amp;gt;", $v);
-	$v = str_replace("&lt;", "&amp;lt;", $v);
-	return $v;
-}
 
 /* formats a date string in, for example, "22 Sep 2006"
    needs a timestamp as input, so if you only have a date
@@ -544,10 +535,15 @@ function getEntity($page_name) {
 	if ($page_name == "") return $entity;
 
 	if ($entity == "" or $entity["pagename"] != $page_name) {
-
-		if (getAlreadyBuiltEntity($page_name) != "") {
+		
+		// look for already built entities - we need to build again for 
+		// _sys_multipages - this could be any table
+		if ($page_name != '_sys_multipages' and
+				getAlreadyBuiltEntity($page_name) != "") {
 			$entity = getAlreadyBuiltEntity($page_name);
+			//echo('found entity for '.$page_name."<br/>");
 		} else {
+			//echo('getting entity for '.$page_name."<br/>");
 			$entity = array();
 			$entity["pagename"] = $page_name;
 			
@@ -652,6 +648,7 @@ function getEntity($page_name) {
 						$the_table = substr( $tables_str, 0, strpos( $tables_str, "|" ) );
 					}
 				}
+				
 				if ($the_table != "") {
 					//fill with name fields with suitable type - 
 					//the leading "," preserves one empty entry
@@ -1023,11 +1020,41 @@ function getEntity($page_name) {
 					}
 				}
 			}
-			$old_entities[count($old_entities)] = $entity;
+			$old_entities[] = $entity;
 		}
 	}
 	return $entity;
 }
+
+/*gives you an alreay built entity if it is stored in $old_entities (it should)*/
+function getAlreadyBuiltEntity($page_name) {
+	global $old_entities;
+	if ($old_entities!="")
+		foreach($old_entities as $e){
+			if ($e["pagename"] == $page_name) return $e;
+		}
+	return "";
+}
+
+/* resetting all lazy instantiated stuff - so we get a fresh start
+	use this when you updated the db and you might write more stuff */
+function resetLazyData() {
+	global $singlepages;
+	$singlepages = "";
+	global $singlepage_names;
+	$singlepage_names = "";
+	global $multipages;
+	$multipages = "";
+	global $multipage_names;
+	$multipage_names = "";
+	global $entity;
+	$entity = "";
+	global $old_entities;
+	$old_entities = "";
+	global $sys_infos;
+	$sys_infos = "";
+}
+
 
 /*
 	returns an array with "table_name", "title_field", "likely_page" and "fk"
@@ -1127,35 +1154,6 @@ function getReferencingTableData($entity){
 }
 
 
-/*gives you an alreay built entity if it is stored in $old_entites (it should)*/
-function getAlreadyBuiltEntity($page_name) {
-	global $old_entities;
-	for($x=0;$x<count($old_entites);$x++) {
-		//doesn't work on some servers - for now its turned off
-		if ($old_entites[$x]["name"] == $page_name) return $old_entites[$x];
-	}
-	return "";
-}
-
-/* resetting all lazy instantiated stuff - so we get a fresh start
-	use this when you upddated the db and you might write more stuff */
-function resetLazyData() {
-	global $singlepages;
-	$singlepages = "";
-	global $singlepage_names;
-	$singlepage_names = "";
-	global $multipages;
-	$multipages = "";
-	global $multipage_names;
-	$multipage_names = "";
-	global $entity;
-	$entity = "";
-	global $old_entities;
-	$old_entities = "";
-	global $sys_infos;
-	$sys_infos = "";
-}
-
 /* looks up the name of the pk field*/
 function getPKName($table){
 	$field_list = mysql_list_fields(getDBName(), $table, getDBLink());
@@ -1200,7 +1198,7 @@ function addFields($name, $not_for_field_list = "") {
 
 		$field_list = mysql_list_fields(getDBName(), $name, $link);
 		for($i=0; $i<mysql_num_fields($field_list); $i++) {
-			//pk
+			//pk - not ready for combined primary keys yet !!!
 			if (eregi('primary_key',mysql_field_flags($field_list, $i))) {
 				$entity["pk"] = mysql_field_name($field_list,$i);
 				$entity["pk_type"] = mysql_field_type($field_list,$i);
@@ -1429,9 +1427,10 @@ function getListOfFields($entity_name) {
 		$entity = getEntity($entity_name);
 	} else $entity = getEntity("");
 	$fields = array();
-	for($i=0; $i<count($entity["fields"]); $i++) {
-		$fields[$i] = $entity["fields"][$i]["name"];
+	foreach($entity["fields"] as $f){
+		$fields[] = $f["name"];
 	}
+	$fields[] = $entity["pk"];
 	if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
 	return $fields;
 }
@@ -1446,13 +1445,17 @@ function getListOfFieldsByDataType($entity_name, $data_types) {
 		$entity = getEntity($entity_name);
 	} else $entity = getEntity("");
 	$dfields = array();
-	for($k=0; $k<count($entity["fields"]); $k++) {
-		for($i=0; $i<count($entity["fields"]); $i++) {
-			if ($entity["fields"][$i]["data-type"] == $types[$k]) {
-				$dfields[count($dfields)] = $entity["fields"][$i]["name"];
+	foreach($types as $t) {
+		foreach($entity["fields"] as $f) {
+			if ($f["data-type"] == $t) {
+				$dfields[] = $f["name"];
 			}
 		}
+		if ($entity["pk_type"] == $t) {
+			$dfields[] = $entity["pk"];
+		}
 	}
+	
 	if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
 	return $dfields;
 }

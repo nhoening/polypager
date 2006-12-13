@@ -243,6 +243,11 @@ function checkValues(pageName) {
 					//		results = results + "The field \"" + document.forms[0].<?=$f["name"]?>.name + "\" contains a non-numeric value!\n\n";
 					//	}
 					<?}
+					if($f["data-type"] == 'real') { ?> //this should be implemented as regex! sthg like [[0-9]+\.[0-9]*|[0-9]*\.[0-9]+]
+					//	if (isNaN(document.forms[0]._formfield_<?=$f["name"]?>_input.value)) {
+					//		results = results + "The field \"" + document.forms[0].<?=$f["name"]?>.name + "\" contains a non-numeric value!\n\n";
+					//	}
+					<?}
 					else if(getValidationRegex($f["validation"]) != '') { ?>
 						
 						var field = document.forms[0]._formfield_<?=$f["name"]?>_input;

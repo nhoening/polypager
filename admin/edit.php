@@ -208,7 +208,7 @@ function writeData($ind=4) {
 		echo($indent.'	<h1>'.__('Editing a singlepage').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_singlepages" and $params["cmd"] == "new") {
 		echo($indent.'	<h1>'.__('Creating a singlepage').'</h1>'."\n");
-	}
+	} else echo($indent.'	<h1>'.__($title).'</h1>'."\n");
 
 	$iwrote = false; //negative assumption about writeHMLForm
 	if ($i_manipulated) {	//else we don't need to procede
@@ -217,10 +217,10 @@ function writeData($ind=4) {
 			$res = mysql_query($query, getDBLink());
 			
 			$fehler_nr = mysql_errno(getDBLink());
-				if($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
+				if($debug) { echo($indent.'<div class="debug">Query is: '.$query.'</div>'); }
 			if ($fehler_nr != 0) {
 				$fehler_text = mysql_error(getDBLink());
-				echo('				<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
+				echo($indent.'<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
 			}
 
 			// now write all entries we have (for singlepages these are all sections,
@@ -245,7 +245,7 @@ function writeData($ind=4) {
 				//when we have a number, we should enter a new entry using that!
 				if ($params["nr"] == "") $the_cmd = "new";
 				else $the_cmd = "entry";
-				echo('				<a href="edit.php?'.$params["page"].'&nr='.$params["nr"].'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
+				echo($indent.'	<a href="edit.php?'.$params["page"].'&nr='.$params["nr"].'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
 			}
 		}
 	}

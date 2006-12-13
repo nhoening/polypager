@@ -12,7 +12,7 @@
 	likely that you have to create a database there first.
 */
 $host = "localhost";
-$db = "testdb";
+$db = "story";
 $user = "root";
 $pass = "";
 
