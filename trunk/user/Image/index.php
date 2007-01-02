@@ -62,7 +62,7 @@ $site_lnk_url   = '';           // URL - Using '' will disable the Site Link.
 * If this is set, the text will appear at the bottom of your gallery.
 * See http://www.whatiscopyright.org/ for information about copyrights.
 */
-$copyright['txt'] = 'Images copyright &copy; 2003, 2004, 2005 original creators or assignees. All rights reserved.';
+$copyright['txt'] = '<div style="text-align:left;">All Images &copy; 2003-2006. All rights reserved.</div>';
 
 /**
 * Admin Script
@@ -109,16 +109,14 @@ $dir_nav['fname_ena']  = FALSE;   // Display the filename.
 $dir_nav['cntr_ena']   = TRUE;    // Display the counter.
 $dir_nav['path_delim'] = '&gt;';  // Delimiter between path elements
 $dir_nav['dir_is_new'] = 0 * 24 * 60 * 60; // New if less than this many seconds
-$dir_nav['new_flag']   = '&nbsp;
-      <small style="font-size:8pt; vertical-align:top; padding-bottom:1px; text-decoration:none;
-       font-weight:normal; color:black; background-color:yellow;">&nbsp;New&nbsp;</small>';
+$dir_nav['new_flag']   = '&nbsp;  <small> </small>';
                                   // String to display with dir name if "new"
 $dir_nav['sort_age']   = FALSE;   // Sort directories by time-since-modified
                                   // (most recent first) rather than by alpha.
 $dir_nav['sort_rev']   = FALSE;   // Reverse the sort order of directories.
 $dir_nav['icon']       = FALSE;   // Display a camera icon in directory links.
 $dir_nav['updir_ena']  = TRUE;    // Display an up-one-level link.
-$dir_nav['row_width']  = '100%';  // Width of the Directory Navigation row
+$dir_nav['row_width']  = '90%;';  // Width of the Directory Navigation row
 
 /**
 * Control Bar (Contains visitor preferences: links style and default view)
@@ -146,24 +144,24 @@ $thmb_enable  = TRUE;  // Enable thumbs view.  Safe to leave TRUE.
 $thmb_onfly   = TRUE;  // Create thumbnails 'on the fly' in their
                        // own request so pages load more quickly.
 // Wrapping -- Don't wrap only one or two thumbnails.
-$thmb_row['maxwidth'] = 680;  // Approx. max. width of thumbnails row
-$thmb_row['softwrap'] = 85;   // A percentage, 51 to 99
+$thmb_row['maxwidth'] = 480;  // Approx. max. width of thumbnails row
+$thmb_row['softwrap'] = 51;   // A percentage, 51 to 99
 
 /**
 * Filename and Numeral Text Image Links
 */
 $txtlinks_default = 'none';  // If no text-link type is specified, default
                              // to name, num, or none.
-$namelinks_disa   = FALSE;   // Disable 'names' view option in the Control
+$namelinks_disa   = TRUE;   // Disable 'names' view option in the Control
                              // Bar size chooser.  (Avoids the sidebar.)
 $namelinks_small  = TRUE;    // Use small text for filename links.
 $namelinks_trunc  = 16;      // Number of filename characters to display
 // Numeral Text Image Links
-$nmrl_row['small']   = TRUE;   // Use small text for numeral links.
+$nmrl_row['small']   = FALSE;   // Use small text for numeral links.
 $nmrl_row['pad_top'] = '2px';  // padding above rows of numeral links
 // Wrapping -- Don't wrap only one or two links.
-$nmrl_row['maxcount'] = 23;    // maximum number of numeral links per row
-$nmrl_row['softwrap'] = 85;    // percentage, 51 to 99
+$nmrl_row['maxcount'] = 19;    // maximum number of numeral links per row
+$nmrl_row['softwrap'] = 80;    // percentage, 51 to 99
 
 /**
 * Upper Gallery Navigation Row immediately above the image
@@ -172,13 +170,13 @@ $nmrl_row['softwrap'] = 85;    // percentage, 51 to 99
 */
 $upr_nav['enable']    = TRUE;
 $upr_nav['sizer']     = FALSE;  // Show resizing links.  Overrides 'full_link'.
-$upr_nav['full_link'] = TRUE;  // Show `Full Size' link if image is resized.
+$upr_nav['full_link'] = FALSE;  // Show `Full Size' link if image is resized.
 $upr_nav['prv_next']  = TRUE;   // Show `Previous' / `Next' links.
 $upr_nav['wrap']      = FALSE;  // Wrap at Prev / Next at last / first image.
 $upr_nav['frst_last'] = TRUE;   // Show ` |<< ' and ` >>| ' links.
 $upr_nav['cntr']      = FALSE;  // Show `x of y' counter if no $dir_nav counter.
 $upr_nav['cntr_bold'] = FALSE;  // Bold font for `x of y' message
-$upr_nav['sml_txt']   = FALSE;  // Use small text.
+$upr_nav['sml_txt']   = TRUE;  // Use small text.
 $upr_nav['width']     = '500';  // Width of this navRow's table
 $upr_nav['pad_top']   = '0px';  // Padding above row
 
@@ -206,29 +204,29 @@ $img_link['file']  = TRUE;  // Full size link goes directly to the image file.
 */
 $lwr_nav['enable']    = TRUE;
 $lwr_nav['sizer']     = FALSE;  // Show resizing links.  Overrides 'full_link'.
-$lwr_nav['full_link'] = TRUE;   // Show `Full Size' link if image is resized.
+$lwr_nav['full_link'] = FALSE;   // Show `Full Size' link if image is resized.
 $lwr_nav['prv_next']  = TRUE;   // Show `previous' / `next' links.
 $lwr_nav['wrap']      = FALSE;  //  Wrap at prev / next at last / first image.
 $lwr_nav['frst_last'] = TRUE;   // Show ` |<< ' and ` >>| ' links.
 $lwr_nav['cntr']      = TRUE;   // Show `x of y' counter if no $dir_nav counter.
 $lwr_nav['cntr_bold'] = TRUE;   // Bold font for `x of y' message
-$lwr_nav['sml_txt']   = FALSE;  // Use small text for this navigation row.
+$lwr_nav['sml_txt']   = TRUE;  // Use small text for this navigation row.
 $lwr_nav['width']     = '500';  // Width of this navRow's table
-$lwr_nav['pad_top']   = '2px';  // Padding above row
+$lwr_nav['pad_top']   = '0px';  // Padding above row
 
 /**
 * Gallery Footer Row
 */
 $footer['pad_top']     = '5px';     // Extra space above the footer line
 $site_link_fnt_size    = '0.75em';  // Font size for Site Home Link
-$copyright['fnt_size'] = '0.75em';  // Font size for Copyright Message
+$copyright['fnt_size'] = '7pt';  // Font size for Copyright Message
 $qdig_homelink['ena']  = TRUE;      // Show the Qdig Home link.
-$qdig_homelink['fnt_size'] = '0.75em';  // Qdig Home link Font size
+$qdig_homelink['fnt_size'] = '7pt';  // Qdig Home link Font size
 
 // Color and CSS Style Settings ---------------------------------------+
 // See http://qdig.sourceforge.net/Qdig/ColorSchemes
 
-// HTML Header CSS settings are only effective for stand-alone Qdig.
+// HTML Header CSS settings are only effective for stand-alone Qdig. //BULLSHIT! WATCH THIS CLOSELY!!!
 $header['css_bgcolor']     = '#f8f8f8';  // Page Background
 $header['css_text_color']  = '#333333';  // Text
 $header['css_link_color']  = '#004080';  // Link
@@ -249,22 +247,22 @@ $header['css_thm_opacity'] = '100';      // Setting of 1 to 99 fades thumbs.
                                          // slows rendering speed.)
 $header['css_opacity_moz'] = FALSE;      // Opacity for older gecko browsers
 $header['css_thm_hilite']  = '#f9f99f';  // Hilight border for current-thumb.
-$header['css_thm_hl_w']    = '2px';      // Width of highlight border
+$header['css_thm_hl_w']    = '1px';      // Width of highlight border
 $header['css_user_def']    = '';         // User-defined CSS rules
 // Set these to '' to disable.
 $sidebar_bg_clr         = '#eeeeee';  // Sidebar background
 $sidebar_margin_top     = '4px';      // Margin above the sidebar
 $sidebar_height         = '';         // '' is "auto".  example: '350px'
-$copyright['color']     = '#cccccc';  // Copyright text
-$admin['color']         = '#cccccc';  // Admin link text
-$qdig_homelink['color'] = '#cccccc';  // Qdig Home Link text
-$grayout_color          = '#999999';  // Grayed-out text
+$copyright['color']     = '#999';  // Copyright text
+$admin['color']         = '';  // Admin link text
+$qdig_homelink['color'] = '#999';  // Qdig Home Link text
+$grayout_color          = '';  // Grayed-out text
 // Gallery Table and Image Table (Possibly for an embedded gallery)
 // Use '' for default background color.
 $gallery_table_bg_clr   = '';  // Background color of the gallery table.
 $image_table_bg_clr     = '';  // Background color of image area.
 // Arbitrary code can be inserted before or after the gallery table.
-$pre_gallery            = '';  // User-defined output before gallery
+$pre_gallery            = '<h1>Aufgenommen</h1>';  // User-defined output before gallery
 $post_gallery           = '';  // User-defined output after gallery
 
 
@@ -321,7 +319,7 @@ $default_img_size = '1';  // '1' is medium.  Must be an enabled size.
 /**
 * Thumbnail Image Conversion Settings
 */
-$cnvrt_thmb['size'] = 50;  // Thunbnail image height in pixels.
+$cnvrt_thmb['size'] = 80;  // Thunbnail image height in pixels.
                            // Sizes: 10 is tiny, 20 is small, 35 is medium,
                            //        50 is large, 75 is jumbo
 $cnvrt_thmb['qual'] = 60;  // Thumbnail image quality.  Large thumbnails
@@ -348,18 +346,18 @@ $cnvrt_thmb['prefix']  =         // Filename prefix for thumbnail images.
 */
 $cnvrt_alt['indiv']   = TRUE;   // Convert alternates one-at-a-time rather than
                                 // all the images in a directory at once.
-$cnvrt_alt['mesg_on'] = TRUE;   // Produce a message when an image is converted.
+$cnvrt_alt['mesg_on'] = FALSE;   // Produce a message when an image is converted.
 $cnvrt_alt['no_prof'] = FALSE;  // Strip image profile data to reduce size.
                                 // (May be incompatible with some servers.)
 // small
 $cnvrt_size['0']['prefix']  = 'sml_';
 $cnvrt_size['0']['sharpen'] = '0.6x0.8';
-$cnvrt_size['0']['maxwid']  = 512;
+$cnvrt_size['0']['maxwid']  = 300;
 $cnvrt_size['0']['qual']    = 87;
 // medium
-$cnvrt_size['1']['prefix']  = 'med_';
+$cnvrt_size['1']['prefix']  = 'm_';
 $cnvrt_size['1']['sharpen'] = '0.6x0.8';
-$cnvrt_size['1']['maxwid']  = 640;
+$cnvrt_size['1']['maxwid']  = 500;
 $cnvrt_size['1']['qual']    = 89;
 // large
 $cnvrt_size['2']['prefix']  = 'lrg_';
@@ -395,7 +393,7 @@ $dir_nav['empty_dir_txt']   = 'No gallery!';
 $dir_nav['empty_dir_title_txt']   = 'Sorry, no gallery here.';
 $dir_nav['image_txt']       = 'Image';
 $dir_nav['go_to_txt']       = 'Go to';
-$dir_nav['up_level_txt']    = 'Up&nbsp;a&nbsp;level..';
+$dir_nav['up_level_txt']    = 'Up&nbsp;a&nbsp;level';
 $dir_nav['up_title_txt']    = 'Go up one level';
 $dir_nav['current_txt']     = 'Current location:';
 $dir_nav['prefs_title_txt'] = 'Change your visitor preferences';
@@ -404,15 +402,15 @@ $dir_nav['prefs_txt']       = 'Preferences';
 /**
 * Gallery Navigation Links
 */
-$nav_lnk['prv_txt']   = '&lt;&lt; Previous';
+$nav_lnk['prv_txt']   = '&#139;&#139; previous &#139;&#139;';
 $nav_lnk['prv_msg']   = 'Previous Image';
-$nav_lnk['next_txt']  = 'Next &gt;&gt;';
+$nav_lnk['next_txt']  = '&#155;&#155; next &#155;&#155;';
 $nav_lnk['next_msg']  = 'Next Image';
 $nav_lnk['last_txt1'] = '&lt;&lt; Last';
-$nav_lnk['last_txt2'] = '&gt;&gt;|';
+$nav_lnk['last_txt2'] = ' &nbsp; last &#155;&#155;|';
 $nav_lnk['last_msg']  = 'Last Image';
 $nav_lnk['frst_txt1'] = 'First &gt;&gt;';
-$nav_lnk['frst_txt2'] = '|&lt;&lt;';
+$nav_lnk['frst_txt2'] = '|&#139;&#139; first &nbsp; ';
 $nav_lnk['frst_msg']  = 'First Image';
 $nav_lnk['image']     = 'Image';
 
@@ -423,10 +421,10 @@ $empty_gallery_msg   = 'Empty gallery!';
 
 // Text/Messages for controlView() (links view on control bar)
 $ctrl_links_mesg['links_style'] = 'Links Style:';
-$ctrl_links_mesg['thumbs_txt'] = 'Thumbs';
-$ctrl_links_mesg['names_txt']  = 'Names';
-$ctrl_links_mesg['nums_txt']   = 'Numbers';
-$ctrl_links_mesg['none_txt']   = 'None';
+$ctrl_links_mesg['thumbs_txt'] = '&nbsp; &nbsp; Thumbs  &nbsp; &nbsp;';
+$ctrl_links_mesg['names_txt']  = '&nbsp; &nbsp; Names  &nbsp; &nbsp;';
+$ctrl_links_mesg['nums_txt']   = '&nbsp; &nbsp; Numbers &nbsp; &nbsp;';
+$ctrl_links_mesg['none_txt']   = '&nbsp; &nbsp; None  &nbsp; &nbsp;';
 $ctrl_links_mesg['thumbs_msg'] = 'Switch to Thumbnail Links';
 $ctrl_links_mesg['names_msg']  = 'Switch to Filename Links';
 $ctrl_links_mesg['nums_msg']   = 'Switch to Calendar-Style Links';
@@ -456,10 +454,10 @@ $img_sz_labels['nav']['str2']  = ' version of this image.';
 /**
 * Admin link
 */
-$admin['link_title']  = 'Edit Caption';
-$admin['link_text']   = 'Admin';
-$admin['before_link'] = '(';
-$admin['after_link']  = ')';
+$admin['link_title']  = 'Edit';
+$admin['link_text']   = ' &Omega; ';
+$admin['before_link'] = '<div style="text-align:right;padding:0px 107px 0px 0px;">';
+$admin['after_link']  = '</div>';
 
 /**
 * Image conversion messages (e.g. "Generated a new Large converted image for image.jpg")
@@ -493,7 +491,7 @@ umask(002);
 /**
 * Paranoia Settings
 */
-$safe_captions    = TRUE;   // Disable HTML in Captions.  Convert special
+$safe_captions    = FALSE;   // Disable HTML in Captions.  Convert special
                             // characters (<>&"') to `HTML entities'
 $check_security   = TRUE;   // Perform a security check for world-writability.
 $ignore_dir_links = TRUE;   // Ignore gallery directories if they're symlinks.
@@ -1479,9 +1477,9 @@ function dirnavPath($dir_nav)
 				$str = '<span title="'.$dir_nav['choose_main_title_txt'].'">'
 					.$dir_nav['choose_main_txt'].'</span><br />'."\n";
 			} elseif (empty($imgs)) {
-				$str = '<b>'.$dir_nav['main_txt'].'</b><br />'."\n";
+				$str = ''.$dir_nav['main_txt'].'<br />'."\n";
 			} else {
-				$str = '<b>'.$dir_nav['main_txt'].'</b>'."\n";
+				$str = ''.$dir_nav['main_txt'].''."\n";
 			}
 			if ($dir_nav['fname_ena'] == TRUE && !empty($reqd_image['file'])) {
 				$str .= ' '.$dir_nav['path_delim'].' '.$reqd_image['file'];
@@ -1510,7 +1508,7 @@ EOT;
 EOT;
 		} else {
 		$str .= <<<EOT
-    {$dir_nav['path_delim']} <span title="{$dir_nav['current_txt']} $dirlabel"><b>$dirlabel</b></span>
+    {$dir_nav['path_delim']} <span title="{$dir_nav['current_txt']} $dirlabel"><strong>$dirlabel</strong></span>
 EOT;
 			if ($dir_nav['fname_ena'] == TRUE && $num_imgs > 0) {
 				$str .= ' '.$dir_nav['path_delim'].' '.$reqd_image['file'];
@@ -1552,8 +1550,8 @@ function subdirLinks($dir_nav)
 			$icon = '';
 		}
 		$tag1 = '&nbsp;';
-		$bkt1 = '<b>[</b>';
-		$bkt2 = '<b>]</b>';
+		$bkt1 = '[';
+		$bkt2 = ']';
 		$tag2 = '';
 	} else {
 		$icon = '';
@@ -1728,7 +1726,7 @@ function imageThumbsLinks($thmb_row)
 	}
 	if (isset($imgs) && count($imgs) > 1) {
 		$str = " <!-- thumbnail-image links -->\n";
-		$str .= " <div align=\"center\" style=\"padding-top:2px; white-space:nowrap\">\n";
+		$str .= " <div align=\"center\" style=\"padding-top:40px; white-space:nowrap\">\n";
 		// prepare wrap data
 		$thumbs_width = 0;
 		$thumbs_wrap = 0;
@@ -2152,7 +2150,7 @@ function prevLink($img_num, $nav_wrap)
 		if ($img_num < 1 && $nav_wrap == FALSE) {
 			$txt = $nav_lnk['prv_txt'];
 			$str = <<<EOT
-     <span $styl_grayout><b>$txt</b></span>\n
+     <span $styl_grayout>$txt</span>\n
 EOT;
 			return $str;
 		}
@@ -2186,7 +2184,7 @@ function nextLink($nav_wrap)
 	$num_imgs = count($imgs);
 	if ($reqd_image['num'] + 1 == $num_imgs && $nav_wrap == FALSE) {
 		$str = <<<EOT
-     <span $styl_grayout><b>{$nav_lnk['next_txt']}</b></span>\n
+     <span $styl_grayout>{$nav_lnk['next_txt']}</span>\n
 EOT;
 		return $str;
 	}
@@ -2219,7 +2217,7 @@ function lastLink($reqd_image)
 	if ($num_imgs > 1) {
 		if ($reqd_image['num'] + 1 == $num_imgs) {
 			$str = <<<EOT
-     <span $styl_grayout><b>{$nav_lnk['last_txt2']}</b></span>\n
+     <span $styl_grayout>{$nav_lnk['last_txt2']}</span>\n
 EOT;
 		} else {
 			$last_image_file = $imgs[count($imgs) - 1];
@@ -2243,7 +2241,7 @@ function firstLink($img_num)
 	if (count($imgs) > 1) {
 		if ($img_num == 0) {
 			$str = <<<EOT
-     <span $styl_grayout><b>{$nav_lnk['frst_txt2']}</b></span>\n
+     <span $styl_grayout>{$nav_lnk['frst_txt2']}</span>\n
 EOT;
 		} else {
 			$image = rawurlencode($imgs[0]);
@@ -2330,8 +2328,8 @@ EOT;
 			}
 			if ($nav['cntr'] == TRUE) {
 				if ($nav['cntr_bold'] == TRUE) {
-					$bold_before = '<b>';
-					$bold_after = '</b>';
+					$bold_before = '';
+					$bold_after = '';
 				} else {
 					$bold_before = '';
 					$bold_after = '';
@@ -2477,7 +2475,7 @@ function controlView($ctrl_links_mesg)
 	} else {
 		$str .= "    <div style=\"padding-top:2px;\">\n";
 	}
-	$str .= "     {$ctrl_links_mesg['links_style']} <b>[</b>\n";
+	$str .= "     {$ctrl_links_mesg['links_style']} [\n";
 	if ( $reqd_image['view'] != 'thumbs'
 		&& $convert_readable == TRUE
 		&& $thmb_enable == TRUE)
@@ -2489,7 +2487,7 @@ EOT;
 	} elseif ($convert_readable == TRUE && $thmb_enable == TRUE) {
 		$txt = $ctrl_links_mesg['thumbs_txt'];
 		$str .= <<<EOT
-     <span $styl_grayout><b>$txt</b></span> |\n
+     <span $styl_grayout>$txt</span> |\n
 EOT;
 	}
 	if ( $reqd_image['view'] != 'name' && $namelinks_disa == FALSE ) {
@@ -2500,7 +2498,7 @@ EOT;
 	} elseif ($namelinks_disa == FALSE) {
 		$txt = $ctrl_links_mesg['names_txt'];
 		$str .= <<<EOT
-     <span $styl_grayout><b>$txt</b></span> |\n
+     <span $styl_grayout>$txt</span> |\n
 EOT;
 	}
 	if ( $reqd_image['view'] != 'num') {
@@ -2511,7 +2509,7 @@ EOT;
 	} else {
 		$txt = $ctrl_links_mesg['nums_txt'];
 		$str .= <<<EOT
-     <span $styl_grayout><b>$txt</b></span> |\n
+     <span $styl_grayout>$txt</span> |\n
 EOT;
 	}
 	if ( $reqd_image['view'] != 'none') {
@@ -2522,10 +2520,10 @@ EOT;
 	} else {
 		$txt = $ctrl_links_mesg['none_txt'];
 		$str .= <<<EOT
-     <span $styl_grayout><b>$txt</b></span>\n
+     <span $styl_grayout>$txt</span>\n
 EOT;
 	}
-	$str .= "     <b>]</b>\n";
+	$str .= "     ]\n";
 	if ($ctrl_bar['small'] == TRUE) {
 		$str .= "    </small></div>\n";
 	} else {
@@ -2571,13 +2569,13 @@ function controlSize($labels)
 EOT;
 		} elseif ($disp_size[$x] == TRUE) {
 			$size[] = <<<EOT
-     <span $styl_grayout><b>{$size_info['label']}</b></span>
+     <span $styl_grayout>{$size_info['label']}</span>
 EOT;
 		}
 		$x++;
 	}
 	if (!empty($size)) {
-		$str .= "     &nbsp;{$labels['default_size']} <b>[</b>\n";
+		$str .= "     &nbsp;{$labels['default_size']} [\n";
 		$num_sizes = count($size);
 		$i = 0;
 		foreach($size as $size_str) {
@@ -2587,7 +2585,7 @@ EOT;
 			}
 			$i++;
 		}
-		$str .= "\n     <b>]</b>\n";
+		$str .= "\n     ]\n";
 	} else {
 		$str .= '&nbsp;';
 	}
@@ -2627,7 +2625,7 @@ function navSize($small_b, $labels)
 	}
 	$n = count($disp_size) - 1;
 	$full_size = $cnvrt_size[$n]['label'];
-	$str = $small_on.'<b>[</b>'.$small_off."\n";
+	$str = $small_on.'['.$small_off."\n";
 	$num_sizes = count($disp_size);
 	$num_valid = count($valid_sizes);
 	foreach($disp_size as $i => $enabled) {
@@ -2655,7 +2653,7 @@ function navSize($small_b, $labels)
 EOT;
 		} else {
 			$size_txt[] = <<<EOT
-     $small_on<span $styl_grayout><b>{$size}</b></span>$small_off
+     $small_on<span $styl_grayout>{$size}</span>$small_off
 EOT;
 		}
 	}
@@ -2666,7 +2664,7 @@ EOT;
 		if ($num_to_display > 0) {
 			$str .= " |\n";
 		} else {
-			$str .= "\n     ".$small_on.'<b>]</b>'.$small_off."\n";
+			$str .= "\n     ".$small_on.']'.$small_off."\n";
 		}
 	}
 	return $str;
@@ -2872,7 +2870,7 @@ if (!empty($fs_base_path)) {
 * Start creating diagnostic messages
 */
 if ($diag_messages == TRUE) {
-	$diag_mesgs = "<p><small>\n<b>{$qdig_lang['diag_messages']}:</b><br />\n";
+	$diag_mesgs = "<p><small>\n{$qdig_lang['diag_messages']}:<br />\n";
 	error_reporting(E_ALL);
 } else {
 	$diag_mesgs = '';
@@ -2889,7 +2887,7 @@ if (!empty($chroot_dir)) {
 }
 if (!@is_dir($rootdir)) {
 	exit("<html>\n <body>
-	Chroot directory <b>$chroot_dir</b> doesn't exist.<br />
+	Chroot directory $chroot_dir doesn't exist.<br />
 	Check gallery script configuration.\n </body>\n</html>");
 }
 
@@ -3097,7 +3095,7 @@ if ($check_security == TRUE
 <title>Security Warning</title>
 </head><body>
  <h3 style="color:black; background-color:pink;">Check security.</h3>
- The <b>$path</b> directory appears to be world-writable.<br /><br />
+ The <strong>$path</strong> directory appears to be world-writable.<br /><br />
  See $install_txt for information about setting permissions on the<br />
  directory to something reasonable (like 0755 / drwxr-xr-x).  There is also<br />
  a $setting configuration setting you can use to disable the security<br />
@@ -3109,7 +3107,7 @@ EOT;
 \n<br /><br />If you want to use "777" (rather than "2777") permissions<br />
 you may also want to allow the script to create world-writable<br />
 files using the following File Creation Mask setting:<br />
-<b>umask(000);</b><br />
+<strong>umask(000);</strong><br />
 Doing so will be more convenient but "less secure" than leaving the<br />
 umask setting as it is now. It will also bypass the security check<br />
 that produces this message.
@@ -3446,6 +3444,9 @@ require_once("PolyPagerLib_Showing.php");
 
 // ---------------------------------------
 
+$sys_info = getSysInfo();
+
+
 $area = "_gallery";
 $path_to_root_dir = "../..";
 $title = "Gallery";
@@ -3673,5 +3674,8 @@ function writeData($ind=1) {
 //---------------- more PolyPager Code -----------
 }
 
-useTemplate($path_to_root_dir);
+//now ... we are ready to import a PHP/HTML template
+if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
+else $skin = $sys_info['skin'];
+@include("../../style/skins/".$skin."/template.php");
 ?>

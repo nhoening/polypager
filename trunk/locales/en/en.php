@@ -44,12 +44,12 @@ function getTranslation($text) {
 'date_field:' => 'date-fields:',
 'edited_field:' => 'last-edited-field:',	
 'title_field:' => 'title-field:',
-'show_comments:' => 'show comments:',
-'show_public_popups:' => 'show help-popups in public area:',
+'hide_comments:' => 'hide comments:',
+'hide_public_popups:' => 'hide help-popups in public area:',
 'search_month:' => 'search for month:', 	
 'search_year:' => 'search for year:',
 'search_keyword:' => 'search for keyword:',	
-'show_labels:' => 'show labels:',
+'hide_labels:' => 'hide labels:',
 'search_range:' => 'search range:',
 
 //_sys_fields

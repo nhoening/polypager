@@ -280,7 +280,7 @@
 						  `publish` tinyint(1) NOT NULL default '1',
 						  PRIMARY KEY  (`id`),
 						  KEY `publish` (`publish`)
-						) TYPE=MyISAM;";
+						) TYPE=MyISAM DEFAULT CHARSET=utf8 ;";
 			$res = mysql_query($query, $link);
 			$fehler_nr = $fehler_nr.mysql_errno($link);
 			$fehler_text = $fehler_text.mysql_error($link);
@@ -305,7 +305,7 @@
 						  PRIMARY KEY  (`id`),
 						  KEY `topic` (`topic`),
 						  KEY `inputdate` (`inputdate`)
-						) TYPE=MyISAM ;";
+						) TYPE=MyISAM DEFAULT CHARSET=utf8 ;";
 			$res = mysql_query($query, $link);
 			$fehler_nr = $fehler_nr.mysql_errno($link);
 			$fehler_text = $fehler_text.mysql_error($link);

@@ -42,6 +42,8 @@ function getTranslation($text) {
 	=> 'Wenn Sie auf diesen Link klicken, werden Sie einen Datei-Browser sehen, mit dem Sie Ihre Dateien auf dem Server verwalten k&ouml;nnen (Upload, eigen Ordner usw.). Zu Ihrer groben Orientierung gibt es vier Hauptverzeichnisse f&uuml;r verschiedene Dateitypen (File, Image, Media, Flash).',
 'open file browser'	=> 'Datei-Browser &ouml;ffnen',
 'open list window' => 'Listen-Ansicht &ouml;ffnen',
+'On this page, you can make extra statements about fields, for example a label or a list of possible values. To do this, you need to create an entry for that field first.'
+	=>'Auf dieser Seite k&ouml;nnen Sie Aussagen &uuml;ber Felder machen wie z.B. einen Namen, der als Label verwendet werden soll oder eine Liste mit M&ouml;glichen Werten. Dazu muss erst ein Eintrag f&uuml;r das entsprechende Feld angelegt werden.',
 'By clicking on this link, you can see (and search for) entries of the page you select. Note that this is the only place you will actually see not published entries/sections.' 
 	=> 'Wenn Sie auf diesen Link klicken, werden Sie Listen Ihrer Eintr&auml;ge sehen (und durchsuchen) k&ouml;nnen. Dort geben Sie an, auf welcher Seite Sie nach Eintr&auml;gen suchen. Beachten Sie, dass dies der einzige Ort ist, an dem Sie Eintr&auml;ge sehen k&ouml;nnen, die als nicht &ouml;ffentlich gekennzeichnet wurden.',
 'By clicking on this link, you can see what pages you have and maybe enter new ones or delete some.' 
@@ -229,8 +231,11 @@ function getTranslation($text) {
 =>'Achtung: Die angegebene Skin konnte nicht gefunden werden.',
 'there is no table in the database yet'
 => 'es gibt noch keine (nicht-System-)Tabellen in der Datenbank.',
-'here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. Also, his field can become the group field of its page.'
-=> 'Sie k&ouml;nnen hier erlaubte Werte f&uuml;r das Feld angeben (mit eine Komma-separierten Liste). Dann k&ouml;nnen Sie im Formular immer gem&uuml;tlich aus dieser Liste ausw&auml;hlen. Und es ist dann auch m&ouml;glich, dieses Feld als group field f&uuml;r seine Seite auszuw&auml;hlen',
+'the name of the page.' => 'der Name der Seite',
+'here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.'
+=> 'Sie k&ouml;nnen hier erlaubte Werte f&uuml;r das Feld angeben (mit eine Komma-separierten Liste). Dann k&ouml;nnen Sie im Formular immer gem&uuml;tlich aus dieser Liste ausw&auml;hlen.',
+'[This field is disabled because the database specifies these values]'
+=>'[Dieses Feld is nicht editierbar, da die diese Werte in der Datenbank angegeben sind]',
 'you can chose a validation method that is checked on the content of this field when you submit a form.'
 => 'Sie k&ouml;nnen hier eine Validation ausw&auml;hlen, die zu Pr&uuml;fung verwendet wird, wenn Sie ein Formular abschicken.',
 'check this box when this field contains much data (e.g. long texts). It will then only be shown if the page shows one entry and a link to it otherwise.'
@@ -291,8 +296,8 @@ function getTranslation($text) {
 'for admins: edit this entry'	=> 'f&uuml;r Administratoren: Diesen Eintrag bearbeiten',
 'for admins: edit this entry.'	=> 'f&uuml;r Administratoren: Diesen Eintrag bearbeiten.',
 'delete this entry.' => 'Diesen Eintrag l&ouml;schen',
-'make extra statements about fields of this page (a label, a list of possible values, foreign key relations etc.)' 
-	=> 'machen Sie hier Angaben zu Feldern dieser Seite (ein Label, eine Liste mit m&ouml;glichen Werten, Fremdschl&uuml;sselbeziehungen etc.).',
+'make extra statements about fields of this page (a label, a list of possible values etc.)' 
+	=> 'machen Sie hier Angaben zu Feldern dieser Seite (ein Label, eine Liste mit m&ouml;glichen Werten etc.).',
 'January' => 'Januar',
 'February' => 'Februar',
 'March' => 'M&auml;rz',
@@ -327,8 +332,8 @@ function getTranslation($text) {
 'Are you sure you want to delete this entry?' => 'Sind Sie sicher, dass Sie diesen Eintrag loeschen wollen?',
 'The following of the data you entered do not meet the given specifications:' 
 	=> 'Folgende Eintraege sollten Sie vor dem Speichern noch korrigieren:',
-'a change this field is important for other fields in this form. I therefore suggest a quick reload.'
-	=> 'Eine Aenderung an diesem Feld ist wichtig fuer andere Felder dieses Formulars. Ich schlage also ein zwischenzeitliches Abschicken des Formulars vor, damit die Daten erneuert werden.',
+'a change this field is important for other fields in this form. I therefore would like to reload this page. OK?'
+	=> 'Eine Aenderung an diesem Feld ist wichtig fuer andere Felder dieses Formulars. Ich w&uuml;rde also gerne das Formular neu laden, damit die Daten erneuert werden. OK?',
 'please specify a valid email address here.' =>
 	'Bitte geben Sie eine gueltige email-Adresse an.',
 'please specify a valid URL here.' =>
@@ -365,13 +370,13 @@ function getTranslation($text) {
 'feed:' => 'feed:',
 'step:' => 'Schritt:',
 'commentable:' => 'kommentierbar:',
-'show_comments:' => 'zeige Kommentare:', 	
+'hide_comments:' => 'verstecke Kommentare:', 	
 'taggable:' => 'tags benutzbar:',
 'show_public_popups:' => 'Hilfe-Popups im &ouml;ffentlichen Bereich zeigen:',
 'search_month:' => 'Suche nach Monat:', 	
 'search_year:' => 'Suche nach Jahr:',
 'search_keyword:' => 'Suche nach Keyword:',	
-'show_labels:' => 'zeige Labels:',
+'hide_labels:' => 'verstecke Labels:',
 'search_range:' => 'Suche nach Nummernfolgen:',
 'grouplist:' => 'Gruppen:',
 'publish:' => 'ver&ouml;ffentlichen:',

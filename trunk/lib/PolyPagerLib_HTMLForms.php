@@ -79,7 +79,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		$oFCKeditor->Height = '300' ;
 		$oFCKeditor->Config['CustomConfigurationsPath'] = str_replace("\\", '/', $path).'plugins/fckconfig.php'  ;
 		$oFCKeditor->Create() ;
-	} else if ($type == "varchar" or $type=="string" or $type == "date") {
+	} else if ($type == "varchar" or $type=="string" or $type == "enum" or $type == "set" or $type == "date") {
 		if ($size > 50) {
 			if ($value == "") {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -91,7 +91,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	} else if ($type=="date") {
 		//yet to be implemented in a specific and editable way - up to now (04/06) all dates are handled automatically
 		//we just do the same as for strings (see above)
-	} else if ($type=="int" or $type=="real") {
+	} else if (eregi('int',$type) or $type=="float" or $type=="double" or $type=="decimal") {
 		echo(' size="10" maxlength="'.$size.'" name="'.$name.'" type="text"');
 		if ($value!="") echo(' value="'.$value.'"');
 	} else if ($type=="bool") {
@@ -181,8 +181,12 @@ function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js
 	}
 	echo($indent.'<select id="'.$name.'_input" tabindex="'.$tabindex.'" name="'.$name.'" '.$disabled.' '.$js.' class="'.$class.'">'."\n");
 	$list_arr = explode(",", $valuelist);
+	//in the database, enum and set values must be enclosed by '' - away with that 
+	if ($type == "enum" or $type == "set") 
+		$value = $value = trim($value,'\'');
+		for($x=0;$x < count($list_arr);$x++) $list_arr[$x] = trim($list_arr[$x],'\'');
 	for($x=0;$x < count($list_arr);$x++){
-		if (ereg(':',$list_arr[$x])) {
+		if (ereg(':',$list_arr[$x])) {	//key/value can come in valuelist
 			$tmp = explode(':',$list_arr[$x]);
 			$key = chop($tmp[0]);
 			$val = chop($tmp[1]);
@@ -348,14 +352,14 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	if ($entity['formgroups']!="" and $lastFormGroup != "xxxxxxxx") {
 		echo($indent.'		</table></div></fieldset>'."\n");
 	}
-	if ($entity['formgroups']=="") echo('</table>'); //otherwise a table for each fieldset
+	if ($entity['formgroups']=="") echo($indent.'		</table>'."\n"); //otherwise a table for each fieldset
 	
 	//submits
 	//hack for FCKeditor: hidden elements must have different names
 	//$real_cmd_name = "the_real_cmd";
 	//if (isSinglepage($params["page"]))  $real_cmd_name = $real_cmd_name.''.$row[$entity["pk"]];
 	$next_command = 'edit';
-	if($params["cmd"]=="new") $next_command="entry";
+	if($params["cmd"]=="new") {$next_command="entry";}
 	echo($indent.'		<table><tr class="submit">'."\n");
 	echo($indent.'			<td style="width:50%;">'."\n");
 	if($params["cmd"] != "new") echo($indent.'			<input value="'.$params['nr'].'" name="nr" type="hidden" />'."\n");
@@ -367,7 +371,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'			<td class="form_submits">'."\n");
 	if($params["cmd"] == "new") $feed = 1; else $feed = 0;
 	if (!ereg('_sys_', $params["page"]))  proposeFeeding(++$index, $feed, $nind+3);
-	echo($indent.'				<input type="hidden" id="cmd" name="cmd" value="nothing_yet"/>'."\n");
+	echo($indent.'				<br/><input type="hidden" id="cmd" name="cmd" value="nothing_yet"/>'."\n");
 	echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\''.$next_command.'\';return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
 	if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
 	echo($indent.'			</td>'."\n");

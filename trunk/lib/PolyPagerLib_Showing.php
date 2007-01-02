@@ -27,7 +27,6 @@
 	* getQuery($only_published)
 	* writeToc($res, $show, $ind)
 	* writeSearchForm($show, $ind)
-	* highlight($kw, $text)
 	* writeEntry($row, $indent, $list_view, $ind)
 	* writeEntries($res, $list_view, $as_toc, $ind)
 	* getComments() 
@@ -64,7 +63,7 @@
 				}
 			}
 		}
-		if ($max == "") $max = "0";	//better than nothing, and indeed, there is nothing
+		if ($max == "") $max = "-1";	//better than nothing, and indeed, there is nothing
 		return $max;
 	}
 	
@@ -130,19 +129,25 @@
 		
 		//only go on if we know the page
 		if ($params["page"] != "" and isAKnownPage($params["page"])){
-			//-------------------------nr param
-			$params["nr"] = $_POST[nr];	//starting point
-			if ($params["nr"] == "") $params["nr"] = $_GET[nr];  //coming in per GET?
-			//pages need a max nr
-			$params["max"] = getMaxNr($params);
-			if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
-	
+
 			//-------------------------cmd param
-			$params["cmd"] = $_POST[cmd];		//commands: show|search|Show month|Show year
-			if ($params["cmd"] == "") {$params["cmd"] = $_GET[cmd];}
+			$params["cmd"] = $_POST['cmd'];		//commands: show|_search|Show month|Show year
+			if ($params["cmd"] == "") {$params["cmd"] = $_GET['cmd'];}
 			if ($params["cmd"] == "") {$params["cmd"] = "show";}	//(default)
-					
+			
+			//"_search" at page-place overwrites cmd!
+			if($params['page']=="_search") $params['cmd'] = "_search";
+			
 			$entity = getEntity($params["page"]);
+			
+			//-------------------------nr param
+			$params["nr"] = $_POST['nr'];	//starting point
+			if ($params["nr"] == "") $params["nr"] = $_GET['nr'];  //coming in per GET?
+			//pages with numericm Primaty Key need a max nr
+			if (eregi('int',$entity['pk_type'])){
+				$params["max"] = getMaxNr($params);
+				if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
+			}
 	
 			//-------------------------step param
 			$default_step = $entity["step"];				//show this much on a page, could be a number or "all"
@@ -168,13 +173,13 @@
 			//take default group if there hasn't been a special one requested
 			if ($params["group"] == "" and $params["nr"] == "") {
 				$page_info = getPageInfo($params["page"]);
-				$glist = getEntityField('the_group');
+				$glist = getEntityField('the_group',$params["page"]);
 				//default group when the user had a choice between groups for this page
 				if ($glist['valuelist'] != 'standard,') $params["group"] = $page_info["default_group"];
 			}
 			
 			//Search
-			if ($params["cmd"] == "search") {	//search
+			if ($params["cmd"] == "_search") {	//search
 				$had_value = false;
 				$search = array();
 				if ($entity["search"]["range"] == "1") {}//range has no parameters we haven't covered already
@@ -216,8 +221,8 @@
 		global $params;
 		if ($params["search"] != "") {
 			echo($indent.'<div class="sys_msg" id="searchinfo"><h4>'.__('you searched for:').'</h4><ul>');
-			//foreach($params["search"] as $sf) {
 			foreach($params["search"] as $name => $val) {
+				if ($name=="kw")$name="keyword";
 				if ($val != "") echo($indent.'	<li>'.$name.':'.$val.'</li>');
 			}
 			echo($indent.'</ul></div>');
@@ -225,8 +230,10 @@
 	}
 	 
 	/*
-		build (and return) a MYSQL Query
-		$params: an array of parameters for showing (see getParameters())
+		build (and return) SQL Queries
+		(mostly one, but for site-wise search there might be more)
+		The queries are indexed by the page name in the returned array.
+		(global) $params: an array of parameters for showing (see getParameters())
 		         if anything else than page content is to be shown (i.e.comments,
 				 pages themselves,...), add
 				 what you want to $params["cmd"] !!
@@ -234,197 +241,244 @@
 	*/
 	function getQuery($only_published) {
 		global $params;
-		$entity = getEntity($params["page"]);
 		$pagename = $params["page"];
 		$page_info = getPageInfo($params["page"]);
 		$sys_info = getSysInfo();
 		global $debug;
 		
-		if ($entity['pk'] == "") {
-			echo('<div class="sys_msg">'.__('This table has no primary key!').'</div>');
-			return "";
-		}
-		// ---------- first the easy cases: 
-		
-		// all comments
-		if (strpos($params["cmd"], "_sys_comments_all") > 0) {
-			$entity = getEntity("_sys_comments");
-			$theQuery = "SELECT * FROM _sys_comments
-						WHERE is_spam = 0
-						ORDER BY insert_date DESC";
+		$queries = array();
+		$pagelist = $params["page"];
+		// multiple?
+		if($params['page']=="_search") {
+			if ($params['search']['kw']==""){
+				echo('<div class="sys_msg">'.__('please provide a keyword for your search.').'</div>'."\n");
+				return array();
+			}	
+			// search on every page
+			$pagelist =implode(',',getPageNames());
 		}
 		
-		// comments for one entry
-		else if (strpos($params["cmd"], "_sys_comments") > 0) {
-			$entity = getEntity("_sys_comments");
-			$theQuery = "SELECT * FROM _sys_comments
-						WHERE pagename = '$pagename'
-						AND pageid = ".$params["nr"]."
-						AND is_spam = 0
-						ORDER BY insert_date ASC";
-		}
-		
-		// feeds
-		else if (strpos($params["cmd"], "_sys_feed") > 0) {
-			$entity = getEntity("_sys_feed");
-			$theQuery = "SELECT * FROM _sys_feed 
-						ORDER BY edited_date DESC";
-		}
-		
-		// pages - always select all of them (user doesn't have to see the distinction)
-		else if ((strpos($params["cmd"], "_sys_multipages") > 0)
-			or (strpos($params["cmd"], "_sys_singlepages") > 0)
-			or($entity["tablename"] == "_sys_pages")) {
-			$theQuery = "SELECT id, name, in_menue FROM _sys_multipages UNION
-							SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
-		}
-		
-		else {
-			//if we have a multipage without a table specified, there is nothing we can do
-			if (isMultipage($params["page"]) and !isASysPage($params["page"]) and $page_info["tablename"] == "") {
-				$theQuery = 'SELECT * FROM _sys_sys WHERE 1=2';	//just a valid joke
-			} else {
-				//--------------------- preparing  --------------------------
-				
-				// are we linking to pages/tables via foreign keys?
-				$references = getReferencedTableData($entity);
-				$ref_fields = array();
-				foreach($references as $r)$ref_fields[$r['fk']['field']] = $r['fk']['ref_table'].'||'.$r['title_field'];
-	
-				$a = array();
-				$a[0] = "SELECT "; 
-				$a[0] .= $entity["tablename"].'.'.$entity['pk'].",";
-				foreach($entity['fields'] as $f){
-					// prefer title from referenced values over referencing ones!
-					if (in_array($f['name'],array_keys($ref_fields))) {
-						$ref = explode('||',$ref_fields[$f['name']]);
-						$a[0] .= $ref[0].'_'.$f['name'].'.'.$ref[1].' as '.$f['name'].",";
-					}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
+		foreach (explode(',',$pagelist) as $p){
+			$entity = getEntity($p);
+			if ($entity['pk'] == "") {
+				echo('<div class="sys_msg">'.__('This table has no primary key!').'</div>');
+				return "";
+			}
+			// ---------- first the easy cases: 
+			
+			// all comments
+			if (strpos($params["cmd"], "_sys_comments_all") > 0) {
+				$entity = getEntity("_sys_comments");
+				$theQuery = "SELECT * FROM _sys_comments
+							WHERE is_spam = 0
+							ORDER BY insert_date DESC";
+			}
+			
+			// comments for one entry
+			else if (strpos($params["cmd"], "_sys_comments") > 0) {
+				$entity = getEntity("_sys_comments");
+				$theQuery = "SELECT * FROM _sys_comments
+							WHERE pagename = '$pagename'
+							AND pageid = ".$params["nr"]."
+							AND is_spam = 0
+							ORDER BY insert_date ASC";
+			}
+			
+			// feeds
+			else if (strpos($params["cmd"], "_sys_feed") > 0) {
+				$entity = getEntity("_sys_feed");
+				$theQuery = "SELECT * FROM _sys_feed 
+							ORDER BY edited_date DESC";
+			}
+			
+			// pages - always select all of them (user doesn't have to see the distinction)
+			else if ((strpos($params["cmd"], "_sys_multipages") > 0)
+				or (strpos($params["cmd"], "_sys_singlepages") > 0)
+				or($entity["tablename"] == "_sys_pages")) {
+				$theQuery = "SELECT id, name, in_menue FROM _sys_multipages UNION
+								SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
+			}
+			
+			else {
+				//if we have a multipage without a table specified, there is nothing we can do
+				if (isMultipage($params["page"]) and !isASysPage($params["page"]) and $page_info["tablename"] == "") {
+					echo('<div class="sys_msg">'.__('this complex page has no table specified. Cannot select any data.').'</div>');
+					$theQuery = 'SELECT * FROM _sys_sys WHERE 1=2';	//just a valid joke
 				}
-				
-				$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
-				
-				$a[0] .= " FROM ".$entity["tablename"].",";
-				foreach($references as $r) {
-					$a[0] .= $r['fk']['ref_table']." as ".$r['fk']['ref_table']."_".$r['fk']['field'].",";
-				}
-				$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
-				$a[0] .= " ";
-				
-				if (isMultipage($params["page"])) {
-					//helper vars
-					if ($params["step"] != "all") {
-						$next = $params["nr"] + ($params["step"]-1);
-						$prev = $params["nr"] - ($params["step"]-1);
-					} else {
-						$next = $params["max"];
-						$prev = 0;
-					}
-					if ($prev <= 0) $prev = 0;
-					$date_field = $entity["dateField"];
+				//checking for multiple-fields primary keys - since they are not supported,
+				//we'll select all there is
+				else if ($entity['pk_multiple'] and $params['cmd']!='_search'){
+					if ($params['nr']!="-1") echo('<div class="sys_msg">'.__('selected all entries.').'</div>');
+					$theQuery = "SELECT * FROM ".$entity["tablename"];
+				}else {
+					//--------------------- preparing  --------------------------
 					
-					//normal query for "show"			
+					// are we linking to pages/tables via foreign keys?
+					$references = getReferencedTableData($entity);
+					$ref_fields = array();
+					foreach($references as $r)$ref_fields[$r['fk']['field']] = $r['fk']['ref_table'].'||'.$r['title_field'].'||'.$r['fk']['ref_field'];
+		
+					$a = array();
+					$a[0] = "SELECT "; 
+					$a[0] .= $entity["tablename"].'.'.$entity['pk'].",";
+					foreach($entity['fields'] as $f){
+						// prefer title from referenced values over referencing ones!
+						if (in_array($f['name'],array_keys($ref_fields))) {
+							$ref = explode('||',$ref_fields[$f['name']]);
+							// using subselect so that we get NULL when the refencing field IS NULL
+							$a[0] .= '(SELECT name FROM '.$ref[0].' WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
+							$a[0] .= ' as '.$f['name'].",";
+						}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
+					}
 					
-					if ($entity["pk_type"] == "int") $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
-					else $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
-					//show a group rather than id range
-					if ($params["group"] != "" and $params["group"] != "_sys_all") {
-						$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
+					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
+					
+					$a[0] .= " FROM ".$entity["tablename"].",";
+					foreach($references as $r) {
+						$a[0] .= $r['fk']['ref_table']." as ".$r['fk']['ref_table']."_".$r['fk']['field'].",";
 					}
-				} else if (isSinglepage($pagename)) {
-					$a[1] = "WHERE _sys_sections.pagename = '$pagename' $pub";
-					if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
-					if ($params["group"] != "" and $params["group"] != "_sys_all" and $sys_info["submenus_always_on"] != 0) {
-						//"standard" entries are -per definition- always shown!
-						$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR the_group = 'standard')";
-					}
-				}
-				if($params["search"] != "") {
-					//special case search - new query
-					$a[1] = " WHERE ";
-					if($entity["search"]["year"] == '1' or $entity["search"]["month"] == '1') {
-						if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
-							$month = $params["search"]["m"];
-							$year = $params["search"]["y"];
-							if (count($a) != 2) $a[count($a)] = " AND ";
-							//if december, increment year for enddate, else only the month
-							if ($month == "") {
-								$nextYear = $year + 1;
-								$a[count($a)] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
-							} else if ($month == "12") {
-								$nextYear = $year + 1;
-								$a[count($a)] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
-							} else {
-								$nextMonth = $month + 1;
-								$a[count($a)] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$year-$nextMonth-01' ";
-							}
+					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
+					$a[0] .= " ";
+					
+					if (isMultipage($params["page"])) {
+						//helper vars
+						if ($params["step"] != "all") {
+							$next = $params["nr"] + ($params["step"]-1);
+							$prev = $params["nr"] - ($params["step"]-1);
+						} else {
+							$next = $params["max"];
+							$prev = 0;
+						}
+						if ($prev <= 0) $prev = 0;
+						$date_field = $entity["dateField"];
+						
+						//normal query for "show"
+						if (eregi('int',$entity["pk_type"])) $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
+						else if ($params['nr']!="") $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
+						//show a group rather than id range
+						if ($params["group"] != "" and $params["group"] != "_sys_all") {
+							$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
+						}
+					} else if (isSinglepage($pagename)) {
+						$a[1] = "WHERE _sys_sections.pagename = '$pagename' $pub";
+						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
+						if ($params["group"] != "" and $params["group"] != "_sys_all" and $sys_info["submenus_always_on"] != 0) {
+							//"standard" entries are -per definition- always shown!
+							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR the_group = 'standard')";
 						}
 					}
-					if($entity["search"]["keyword"] == '1') { //Keyword
+					
+					// -- special case search - new query --
+					//Keyword search works page AND sitewide
+					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
 						if ($params["search"]["kw"] != "") {
 							$keyword = $params["search"]["kw"];
 							$keyword_lower = strtolower($keyword);	 //lower/upper-case should not matter in our keyword search!
-							if (count($a) != 2) $a[count($a)] = " AND ";
-							if (strstr($keyword_lower, "delete ") or strstr($keyword_lower, "update ")) { 	//no critical sql code allowed
+							if (count($a) != 2) $a[] = " AND ";
+							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
 								echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
-								$a[count($a)] = " 2=1"; //show nothing
+								$a[] = " 2=1"; //show nothing
 							} else {
-								$a[count($a)] = " (";
+								$a[] = " (";
+								// get all keywords
+								$keyword_lower = str_replace('%20',' ',$keyword_lower);
+								$kws = explode(' ',$keyword_lower);
 								foreach($entity["fields"] as $f) {
-									if(isTextType($f["data-type"])) {
-										//BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
-										$a[count($a)] = " lcase(".$entity["tablename"].'.'.$f["name"].") LIKE '%$keyword_lower%' OR ";
-									}
+									$table_field = $entity["tablename"].'.'.$f['name'];
+									//BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
+									$a[] = " (";
+									foreach($kws as $k)
+										$a[] = " lcase(".$table_field.") LIKE '%$k%' AND ";
+									// replace last AND with OR
+									$a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
+									$a[] = " ) OR";
 								}
 								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-3,-1);	//the last OR has to go
-								$a[count($a)] = ")";
+								$a[] = ")";
 							}
 						}
 					}
-	
-					//valuelisted fields
-					
-					foreach ($entity["fields"] as $f) {
-					
-						//if we have a specified valuelist and the name of the field is a name of a search param...
-						if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "")
-						   {
-							if (count($a) != 2) $a[count($a)] = " AND ";
-							$a[count($a)] = $f["name"]." = '".$params["search"][$f["name"]]."'";
-							
-							//if the field is the group field, we knew that is a request - save it!
-							if ($f["name"] == $entity["group"]["field"]) $params["group"] = $params["search"][$f["name"]];
+					// The other search possibilities work only per page
+					if($params["search"] != "") {
+						$a[1] = " WHERE ";
+						if($entity["search"]["year"] == '1' or $entity["search"]["month"] == '1') {
+							if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
+								$month = $params["search"]["m"];
+								$year = $params["search"]["y"];
+								if (count($a) != 2) $a[] = " AND ";
+								//if december, increment year for enddate, else only the month
+								if ($month == "") {
+									$nextYear = $year + 1;
+									$a[] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
+								} else if ($month == "12") {
+									$nextYear = $year + 1;
+									$a[] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
+								} else {
+									$nextMonth = $month + 1;
+									$a[] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$year-$nextMonth-01' ";
+								}
+							}
 						}
+		
+						//valuelisted fields
+						foreach ($entity["fields"] as $f) {
+						
+							//if we have a specified valuelist and the name of the field is a name of a search param...
+							if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "")
+							   {
+								if (count($a) != 2) $a[] = " AND ";
+								$a[] = $f["name"]." = '".$params["search"][$f["name"]]."'";
+								
+								//if the field is the group field, we knew that is a request - save it!
+								if ($f["name"] == $entity["group"]["field"]) $params["group"] = $params["search"][$f["name"]];
+							}
+						}
+						
+						//if we had nothing, make search query valid at least
+						if (count($a) == 2) $a[2] = "1=2";
+					} 
+					
+					if ($params["cmd"] == "_search" and $a[2] == "1=2") {
+							echo("should be nothing");
 					}
 					
-					//if we had nothing, make search query valid at least
-					if (count($a) == 2) $a[2] = "1=2";
+					if($only_published and $entity["publish_field"] != "") {	//publish - Flag
+						if ($params['search']!="")$a[] = " AND ";
+						else $a[] = " WHERE ";
+						$a[] = $entity["tablename"].'.'.$entity["publish_field"]." = 1";
+					}
+	
+					//link tables referenced by foreign keys
+					//include NULL-values
+					if ($params['search']!=""){
+						foreach($references as $r) $a[] = " AND (".$entity["tablename"].".".$r['fk']['field'].' IS NULL OR '.$entity["tablename"].".".$r['fk']['field']."=".$r['fk']['ref_table'].'_'.$r['fk']['field'].".".$r['fk']['ref_field'].')';
+					}
+					//NULL-values may lead to multiple occurences because we select
+					//from the referenced table (see above), therefore: GROUP
+					if ($references != "" and count($references)>0){
+						$a[] = ' GROUP BY '.$entity["tablename"].'.'.$entity["pk"];
+					}
+					
+					
+					$theQuery = implode('',$a);
+					
+					//ORDER BY: 1. grouping, 2. order_by
+					$b = array();
+					$b[0] = $theQuery;
+					if ($entity["group"] == "") $b[1] = " ORDER BY ";
+					else $b[1] = " ORDER BY ".$entity["tablename"].'.'.$entity["group"]["field"]." ".$entity["group"]["order"].", ";
+					if ($entity["order_by"] == "") $b[2] = $entity["tablename"].'.'.$entity["pk"]." DESC;";
+					else $b[2] = $entity["tablename"].'.'.$entity["order_by"]." ".$entity["order_order"].";";
+					
+					
+					$theQuery = implode('',$b);
 				}
-				
-				if($only_published and $entity["publish_field"] != "") {	//publish - Flag
-					$a[] = " AND ".$entity["tablename"].'.'.$entity["publish_field"]." = 1";
-				}
-
-				//link tables referenced by foreign keys
-				foreach($references as $r) $a[] .= " AND ".$entity["tablename"].".".$r['fk']['field']."=".$r['fk']['ref_table'].'_'.$r['fk']['field'].".".$r['fk']['ref_field'];
-				
-				$theQuery = implode('',$a);
-				
-				//ORDER BY: 1. grouping, 2. order_by
-				$b = array();
-				$b[0] = $theQuery;
-				if ($entity["group"] == "") $b[1] = " ORDER BY ";
-				else $b[1] = " ORDER BY ".$entity["tablename"].'.'.$entity["group"]["field"]." ".$entity["group"]["order"].", ";
-				if ($entity["order_by"] == "") $b[2] = $entity["tablename"].'.'.$entity["pk"]." DESC;";
-				else $b[2] = $entity["tablename"].'.'.$entity["order_by"]." ".$entity["order_order"].";";
-				
-				
-				$theQuery = implode('',$b);
 			}
+			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
+			echo($theQuery);
+			$queries[$p] = $theQuery;
 		}
-		if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
-		//echo($theQuery);
-		return $theQuery;
+		return $queries;
 	}
 	
 	/* preserve Markup for text fields
@@ -575,7 +629,7 @@
 			echo($indent.'				<input type="hidden" name="group" value="'.$params['group'].'" />'."\n");
 			echo($indent.'				<input type="hidden" name="topic" value="'.$params['topic'].'" />'."\n");
 			echo($indent.'				<input type="hidden" name="page" value="'.$params["page"].'"/>'."\n");
-			echo($indent.'				<input type="hidden" name="cmd" value="search"/>'."\n");
+			echo($indent.'				<input type="hidden" name="cmd" value="_search"/>'."\n");
 			echo($indent.'				<button type="submit" class="submit" name="dummy">'.__('search').'</button>'."\n");
 			$helptext = __('Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search.');
 			writeHelpLink($indent, $helptext);
@@ -588,32 +642,6 @@
 		}
 	}
 	
-	
-	/* highlight the search phrase with <span class="high">phrase</span>
-	   with some tricky string operations and return it.
-	   todo: parse for HTML interruptions, make several keywords possible (pass an array?)
-	*/
-	function highlight($kw, $text) {
-		$kwlen = strlen($kw);
-		$kw_lower = strtolower($kw);
-		$text_lower = strtolower($text);	//we'll search occurences in here
-		//$hits holds number of occurences+1 (first element is the search string!)
-		if (eregi($kw, $text, $hits)) {
-			$result = array(); //holds the parts of the result String
-			$i_h = 1;	//counter for hits
-			$i_a = 0;	//counter for the result-array
-			$index = 0;
-			$hit_c = count($hits)+1;
-			while ($i_h < $hit_c) {	
-				$hit_index = strpos($text_lower, $kw_lower, $index);	//next hit
-				$result[$i_a] = substr($text, $index, $hit_index);
-				$result[$i_a +1] = join('',array('<span class="high">',substr($text, $hit_index, $kwlen),'</span>'));
-				$i_h++; $i_a += 2;$index = $hit_index;
-			}
-			$result[$i_a +1] = substr($text, $index + $kwlen, strlen($text) - $index);
-			return implode('', $result);
-		} else {return $text;}	//no hit - simply return
-	}
 	
 	/* writes an index of contents
 	*/
@@ -638,109 +666,112 @@
 	
 	/* does grouping if needed and puts out entries
 	   using writeEntry(). resets the result set when it's done.
-	   $res - the result set
+	   $results - an array of result sets, indexed by page names
 	   $listview - true if an admin list should be written
 	   $as_toc - true if a table of contents should be written
 	*/
-	function writeEntries($res, $listview, $ind=5, $as_toc=false) {
+	function writeEntries($results, $listview, $ind=5, $as_toc=false) {
 		$indent = translateIndent($ind);
 		global $params;
 		global $debug;
 		
-		$entity = getEntity($params["page"]);
-		//all that grouping stuff...
-		if ($entity["group"] != "" or $as_toc) {
-			$group_field_save = "foo";	//initial
-			$before_first_entry = true;
-			if ($as_toc) { 
-				$html_type = "ul";
-				$html_type2 = "li";
-				// foreign keys linking here? show them in the tree
-				$rt = getReferencingTableData($entity);
-				// first we collect the data that might be linking here
-				if (count($rt)>0){
-					for($x=0;$x<count($rt);$x++) { 
-						// get the values we need
-						if ($rt[$x]['table_name'] != ""){
-							$q = "SELECT ".getPKName($rt[$x]['table_name'])." as pk, ".$rt[$x]['title_field']." as tf, ".$rt[$x]['fk']['field']." as f FROM ".$rt[$x]['table_name'];
-							//singlepages can operate on the page level whith all data being in one table...
-							if (isSinglepage($rt[$x]['fk']['page'])) $q .= " WHERE pagename = '".$rt[$x]['fk']['page']."'";
-							$fk_result = pp_run_query($q);
-							$fk_rows = array();
-							while($fk_row = mysql_fetch_array($fk_result, MYSQL_ASSOC)) {
-								$fk_row['fk_page'] = $rt[$x]['likely_page']; //we'll need this to point there
-								$fk_rows[] = $fk_row;
-							}
-							$rt[$x]['rows'] = $fk_rows;
-						}
-					}
-					
-				}
-			}else {
-				$html_type = "div";
-				$html_type2 = "h2";
-			}
-			//this is only done by default before the first entry
-			echo($indent.'<'.$html_type.' class="group">'."\n");
-		}else {
-			$before_first_entry = false; //we don't want an error message then
-		}
-		
 		if (!$as_toc) writeSearchInfo();
 		
-		while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-			
-			//more grouping stuff...
-			//if not singlepage, group "standard"
-			if ($entity["group"] != "" or $as_toc) {// and
-				//!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard")){
-				if ($debug) {echo('<div class="debug">group_field_save is '.$group_field_save.' ...row[$entity["group"]["field"]] is '.$row[$entity["group"]["field"]].'</div>'); }
-				if ($before_first_entry == true) {
-					$before_first_entry = false; //indicates we indeed had data
-					//heading
-					if (!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard") and $row[$entity["group"]["field"]] != "")
-						echo($indent.'	<'.$html_type2.' class="group_heading">'.$row[$entity["group"]["field"]].'</'.$html_type2.'>'."\n");
-				} else if ($group_field_save != $row[$entity["group"]["field"]]) {
-					//write end of group div or ul
-					echo($indent.'</'.$html_type.'>'."\n");
-					//write a new group header						
-					echo($indent.'<'.$html_type.' class="group">'."\n");
-					if ($row[$entity["group"]["field"]] != "")
-						echo($indent.'	<'.$html_type2.' class="group_heading">'.$row[$entity["group"]["field"]].'</'.$html_type2.'>'."\n");
-				}
-				//save actual value
-				$group_field_save = $row[$entity["group"]["field"]];
-			}
-			//this is what we want to do basically...
-			if ($as_toc) {	//we need only titles here
-				$name = $row[$entity["title_field"]];
-				$name = preserveMarkup($name);
-				echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
-				// show referencing table stuff
-				echo($indent.'		<ul class="fk_link">'."\n");
-				for ($x=0;$x<count($rt);$x++){
-					foreach($fk_rows as $fk_row){
-						if ($row[$rt[$x]['fk']['ref_field']] == $fk_row['f']) 
-							echo($indent.'			<li><a href="?'.$fk_row['fk_page'].'&amp;nr='.$fk_row['pk'].'">'.$fk_row['tf'].'</a></li>'."\n");
+		foreach (array_keys($results) as $respage){
+			$res = $results[$respage];
+			$entity = getEntity($respage);
+			//all that grouping stuff...
+			if ($entity["group"] != "" or $as_toc) {
+				$group_field_save = "foo";	//initial
+				$before_first_entry = true;
+				if ($as_toc) { 
+					$html_type = "ul";
+					$html_type2 = "li";
+					// foreign keys linking here? show them in the tree
+					$rt = getReferencingTableData($entity);
+					// first we collect the data that might be linking here
+					if (count($rt)>0){
+						for($x=0;$x<count($rt);$x++) { 
+							// get the values we need
+							if ($rt[$x]['table_name'] != ""){
+								$q = "SELECT ".getPKName($rt[$x]['table_name'])." as pk, ".$rt[$x]['title_field']." as tf, ".$rt[$x]['fk']['field']." as f FROM ".$rt[$x]['table_name'];
+								//singlepages can operate on the page level whith all data being in one table...
+								if (isSinglepage($rt[$x]['fk']['page'])) $q .= " WHERE pagename = '".$rt[$x]['fk']['page']."'";
+								$fk_result = pp_run_query($q);
+								$fk_rows = array();
+								while($fk_row = mysql_fetch_array($fk_result, MYSQL_ASSOC)) {
+									$fk_row['fk_page'] = $rt[$x]['likely_page']; //we'll need this to point there
+									$fk_rows[] = $fk_row;
+								}
+								$rt[$x]['rows'] = $fk_rows;
+							}
+						}
+						
 					}
+				}else {
+					$html_type = "div";
+					$html_type2 = "h2";
 				}
-				echo($indent.'		</ul>'."\n");
-			} else {	//here we need some sophisticated stuff
-				$next_ind = $ind + 1;
-				writeEntry($row, $next_ind, $listview);
+				//this is only done by default before the first entry
+				echo($indent.'<'.$html_type.' class="group">'."\n");
+			}else {
+				$before_first_entry = false; //we don't want an error message then
 			}
+			
+			
+			while($row = mysql_fetch_array($res, MYSQL_ASSOC))  {
+				//more grouping stuff...
+				//if not singlepage, group "standard"
+				if ($entity["group"] != "" or $as_toc) {// and
+					//!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard")){
+					if ($debug) {echo('<div class="debug">group_field_save is '.$group_field_save.' ...row[$entity["group"]["field"]] is '.$row[$entity["group"]["field"]].'</div>'); }
+					if ($before_first_entry == true) {
+						$before_first_entry = false; //indicates we indeed had data
+						//heading
+						if (!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard") and $row[$entity["group"]["field"]] != "")
+							echo($indent.'	<'.$html_type2.' class="group_heading">'.$row[$entity["group"]["field"]].'</'.$html_type2.'>'."\n");
+					} else if ($group_field_save != $row[$entity["group"]["field"]]) {
+						//write end of group div or ul
+						echo($indent.'</'.$html_type.'>'."\n");
+						//write a new group header						
+						echo($indent.'<'.$html_type.' class="group">'."\n");
+						if ($row[$entity["group"]["field"]] != "")
+							echo($indent.'	<'.$html_type2.' class="group_heading">'.$row[$entity["group"]["field"]].'</'.$html_type2.'>'."\n");
+					}
+					//save actual value
+					$group_field_save = $row[$entity["group"]["field"]];
+				}
+				//this is what we want to do basically...
+				if ($as_toc) {	//we need only titles here
+					$name = $row[$entity["title_field"]];
+					$name = preserveMarkup($name);
+					echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
+					// show referencing table stuff
+					echo($indent.'		<ul class="fk_link">'."\n");
+					for ($x=0;$x<count($rt);$x++){
+						foreach($fk_rows as $fk_row){
+							if ($row[$rt[$x]['fk']['ref_field']] == $fk_row['f']) 
+								echo($indent.'			<li><a href="?'.$fk_row['fk_page'].'&amp;nr='.$fk_row['pk'].'">'.$fk_row['tf'].'</a></li>'."\n");
+						}
+					}
+					echo($indent.'		</ul>'."\n");
+				} else {	//here we need some sophisticated stuff
+					$next_ind = $ind + 1;
+					writeEntry($row, $respage, $next_ind, $listview);
+				}
+			}
+			
+			//even more grouping stuff...
+			if ($entity["group"] != "" or $as_toc) {	//write end of last group div
+				echo($indent.'</'.$html_type.'>'."\n");
+			}
+			//if there was no data, give a hint
+			if ($before_first_entry == true and !$as_toc) {
+				echo($indent.'<div class="sys_msg">'.__('There is no entry in the database meeting the search criteria...').'</div>'."\n");
+			}
+			//reset result set
+			if (mysql_num_rows($res) > 0)mysql_data_seek($res,0);
 		}
-		
-		//even more grouping stuff...
-		if ($entity["group"] != "" or $as_toc) {	//write end of last group div
-			echo($indent.'</'.$html_type.'>'."\n");
-		}
-		//if there was no data, give a hint
-		if ($before_first_entry == true and !$as_toc) {
-			echo($indent.'<div class="sys_msg">'.__('There is no entry in the database meeting the search criteria...').'</div>'."\n");
-		}
-		//reset result set
-		if (mysql_num_rows($res) > 0)mysql_data_seek($res,0);
 		
 	}
 	
@@ -750,11 +781,11 @@
 	   * $indent - the number of indents to put before
 	   * $list_view - true when only the title field is shown
 	*/
-	function writeEntry($row, $indent, $list_view, $ind=5) {
+	function writeEntry($row, $pagename, $indent, $list_view, $ind=5) {
 		$indent = translateIndent($ind);
 		global $params, $debug;
-		$entity = getEntity($params["page"]);
-		$page_info = getPageInfo($params["page"]);
+		$entity = getEntity($pagename);
+		$page_info = getPageInfo($pagename);
 		
 		//quickhack - normally comments do have a title field but not here
 		if (!$list_view and $params["page"] == '_sys_comments') $entity["title_field"] = "";
@@ -775,10 +806,11 @@
 		}
 		
 		$briefly = false;	//turns true when some fields are not shown
-			
+		
 		if ($entity["fields"] != "") {
 			uasort($entity["fields"], "cmpByOrderIndexAsc");
 			foreach ($entity["fields"] as $f) {
+				
 				if (($entity["group"] == "" or $f["name"] != $entity["group"]["field"]))
 				$content = $row[$f["name"]];
 				if ($f["not_brief"] != "1") {
@@ -818,12 +850,12 @@
 						if($f["name"] == $entity["title_field"] and $list_view) {	//show some symbols for quick glance
 							echo($indent.'	<div class="adop">');
 							//option _sys_pages can be two things.
-							if ($params["page"] == "_sys_pages") {
+							if ($pagename == "_sys_pages") {
 								if (isSinglepage($unescaped_content)) $page = "_sys_singlepages"; 
 								else if (isMultipage($unescaped_content)) $page = "_sys_multipages";
 								else $page = "_sys_singlepages"; //we shouldn't come here, well, take the more probable
 							} else {
-								$page = $params["page"];
+								$page = $pagename;
 							}
 							//make it no longer than 14 words
 							$content = trim(getFirstWords($content, 14));
@@ -840,8 +872,8 @@
 								
 							// a link to fields
 							}
-							if ($params["page"] == "_sys_pages") {
-								$linkText = __('make extra statements about fields of this page (a label, a list of possible values, foreign key relations etc.)');
+							if ($pagename == "_sys_pages") {
+								$linkText = __('make extra statements about fields of this page (a label, a list of possible values etc.)');
 								$the_href = '?_sys_fields&amp;group='.$content.'&amp;from=list&amp;topic=fields';
 								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a></span>'."\n");
 							}
@@ -856,10 +888,10 @@
 						}
 						
 						//highlight search keywords
-						if (isTextType($f["data-type"])) {
-							if ($entity["search"]["keyword"] == "1" and $params["cmd"] == "search" and $params["search"]["kw"] != "") {
-								$content = highlight($params["search"]["kw"], $content);
-							}
+						if ($params['page']=='_search' or ($entity["search"]["keyword"] == "1" and ($params["cmd"] == "_search" or $params['page']=='_search') and $params["search"]["kw"] != "")) {
+							$kws = explode(' ',$params["search"]["kw"]);
+							foreach($kws as $k)
+								$content = eregi_replace('('.$k.')','<span class="high">\1</span>',$content);
 						}
 						
 						//comments have neat markup
@@ -873,16 +905,24 @@
 								echo($indent.'	<span class="comment_prefix">'.$prefix.'</span><span>'.$content.'</span>');
 							}
 						}else{
+							
+							//no div when title is empty
+							if($f["name"] == $entity["title_field"] and $content == "")
+								continue;
+								
 							//this id can be used by users to access individual Elements with their CSS 
 							echo($indent.'	<div class="'.$entity["tablename"].'_'.$f["name"].'">'."\n");
 		
-							if ($entity["show_labels"] == "1" and !$list_view and $f["name"] != $entity["title_field"]) {
+							if ($entity["hide_labels"] == "0" and !$list_view and $f["name"] != $entity["title_field"]) {
 								echo($indent.'		<div class="label">');
 								if ($f['label'] != "") echo($f['label']); else echo($f['name']);
 								echo('</div>'."\n");
 							}
 							
 							//now, finally, the value
+							
+							
+								
 							if($f["name"] == $entity["title_field"]) {
 								$theClass = "title";
 							} else $theClass = "value"; 
@@ -903,7 +943,6 @@
 							
 							echo($indent.'	</div>'."\n");
 						}
-						
 					}
 				}
 			}
@@ -912,10 +951,10 @@
 			echo($indent.'		<div><a href="admin/edit.php?_sys_comments&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'">#</a></div>'."\n");
 		}
 		if (!$list_view and $something_was_not_brief == true and $params["step"] != 1) { 	//show a link to the whole entry
-			$wlink = "?".$params["page"].'&amp;nr='.$row[$entity["pk"]];
+			$wlink = "?".$pagename.'&amp;nr='.$row[$entity["pk"]];
 			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
 		}
-		echo("						</div>"."\n");
+		echo($indent."</div>"."\n");
 
 		if (!$list_view) {
 			if ($page_info["hide_options"] == "0" ) {
@@ -924,7 +963,7 @@
 				$sys_info = getSysInfo();
 				if ($sys_info['show_public_popups']==1) $text='onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 				else $text = "";
-				echo($indent.'	<span class="admin_link"><a '.$text.'href="admin/edit.php?'.$params["page"].'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
+				echo($indent.'	<span class="admin_link"><a '.$text.'href="admin/edit.php?'.$pagename.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
 				if($entity["dateField"]["editlabel"] != "") { //show last editing date
 					if ($row[$entity["dateField"]["editlabel"]] != NULL) {
 						if ($row[$entity["dateField"]["editlabel"]] != '0000-00-00 00:00:00') //not very specific, is it?
@@ -941,10 +980,10 @@
 				else $comment_count = mysql_num_rows($comments);
 				if ($params["step"] != 1) {
 					if($comment_count > 0) {
-						$href = '?'.$params["page"].'&amp;nr='.$params["nr"].'#comments_anchor';
+						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
 						echo($indent.'	<span class="comment_link"><a href="'.$href.'">comments('.$comment_count.')</a></span>'."\n");
 					} else {
-						$href = '?'.$params["page"].'&amp;nr='.$params["nr"].'#commentform_anchor';
+						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
 						echo($indent.'	<span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
 					}
 				} else {
@@ -997,7 +1036,7 @@
 		$params["page"] = "_sys_comments";	
 		//write the results
 		while($row = mysql_fetch_array($comments, MYSQL_ASSOC)) {
-			writeEntry($row, "", false, false);
+			writeEntry($row, '_sys_comments', "", false, false);
 		}
 		
 		//set param back

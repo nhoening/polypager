@@ -79,7 +79,7 @@
 					  `lang` varchar(12) NOT NULL default '',
 					  `skin` varchar(120) NOT NULL default '',
 					  `submenus_always_on` tinyint(1) NOT NULL default '0',
-					  `show_public_popups` tinyint(1) NOT NULL default '1',
+					  `hide_public_popups` tinyint(1) NOT NULL default '0',
 					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
 					  `gallery_name` varchar(120) NOT NULL default 'gallery',
 					  `gallery_index` smallint(6) NOT NULL default '99'
@@ -162,8 +162,8 @@
 					  `menue_index` mediumint(9) NOT NULL default '1',
 					  `commentable` tinyint(1) NOT NULL default '0',
 					  `hide_options` tinyint(1) NOT NULL default '1',
-					  `hide_search` tinyint(1) NOT NULL default '0',
-					  `hide_toc` tinyint(1) NOT NULL default '0',
+					  `hide_search` tinyint(1) NOT NULL default '1',
+					  `hide_toc` tinyint(1) NOT NULL default '1',
 					  `default_group` varchar(60) NOT NULL default '',
 					  `grouplist` varchar(255) NOT NULL default '',
 					  PRIMARY KEY  (`id`),
@@ -181,9 +181,9 @@
 					  `in_menue` tinyint(1) NOT NULL default '1',
 					  `menue_index` mediumint(9) NOT NULL default '0',
 					  `hide_options` tinyint(1) NOT NULL default '0',
-					  `hide_search` tinyint(1) NOT NULL default '0',
-					  `hide_toc` tinyint(1) NOT NULL default '0',
-					  `show_labels` tinyint(1) NOT NULL default '0',
+					  `hide_search` tinyint(1) NOT NULL default '1',
+					  `hide_toc` tinyint(1) NOT NULL default '1',
+					  `hide_labels` tinyint(1) NOT NULL default '1',
 					  `hidden_fields` varchar(255) NOT NULL default '',
 					  `order_by` varchar(60) NOT NULL default '',
 					  `order_order` varchar(12) NOT NULL default '',
@@ -195,7 +195,7 @@
 					  `title_field` varchar(60) NOT NULL default '',
 					  `step` varchar(12) NOT NULL default 'all',
 					  `commentable` tinyint(1) NOT NULL default '0',
-					  `show_comments` tinyint(1) NOT NULL default '1',
+					  `hide_comments` tinyint(1) NOT NULL default '1',
 					  `search_month` tinyint(1) NOT NULL default '0',
 					  `search_year` tinyint(1) NOT NULL default '0',
 					  `search_keyword` tinyint(1) NOT NULL default '1',
@@ -286,7 +286,7 @@
 			$fehler_text = $fehler_text.mysql_error($link);
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
-				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `show_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
+				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, ``, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
 					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
@@ -313,7 +313,7 @@
 			
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
-				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `show_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
+				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, ``, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
 				VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
@@ -445,10 +445,10 @@
 				$page_selector = $params["group"];
 			}
 			echo($indent.'			<option value="">--'.__('select page').'--</option>'."\n");
-			$pages =  getPages();
+			$pages =  getPageNames();
 			foreach ($pages as $p) {
 				if ($page_selector == $p["name"]) $selected = "selected='selected'"; else $selected = "";
-				echo($indent.'			<option '.$selected.' value="'.$p["name"].'">'.$p["name"].'</option>'."\n");
+				echo($indent.'			<option '.$selected.' value="'.$p.'">'.$p.'</option>'."\n");
 			}
 			echo($indent.'		</select>'."\n");
 		} else if ($topic == 'pages') {
@@ -512,17 +512,21 @@
 			if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"].'_all';
 			$params["nr"] = "";	//we want no special entry, but all
 			
-			$query = getQuery($params, false);
+			$queries = getQuery(false);
 			
-			// send query to DBMS now
-			$res = mysql_query($query, $link);
-			$error_nr = mysql_errno($link);
-			if ($error_nr != 0) {
-				$fehler_text = mysql_error($link);
-				echo($indent.'	<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
-				writeFooter();
-				
-			} else {
+			// send show quer(y|ies) to DBMS now
+			$res = array();
+			$fehler_text = "";
+			foreach(array_keys($queries) as $qkey){
+				$res[$qkey] = mysql_query($queries[$qkey], $link);
+				$error_nr = mysql_errno($link);
+				if ($error_nr != 0) {
+					$fehler_text = mysql_error($link);
+					$error_msg_text .= '<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
+				}
+			}
+	
+			if ($fehler_text == "") {
 				
 				if (isMultipage($params["page"]) and $params["max"] == "") { //no other way... db is empty
 					echo($indent.'	<ul id="menu">'."\n");

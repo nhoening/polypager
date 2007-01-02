@@ -106,6 +106,7 @@ function writeData($ind=5) {
 		
 		$topic = $params["topic"];
 		if ($topic != "") {
+			if ($topic=='fields') $h = __('On this page, you can make extra statements about fields, for example a label or a list of possible values. To do this, you need to create an entry for that field first.');
 			echo($indent.'<h1>-'.__($topic).'-</h1>'."\n");
 		}else{
 			echo($indent.'<h1>'.__($params["page"]).'</h1>'."\n");

@@ -177,7 +177,7 @@ body {
 
 #feeds div.description a{
 	/*font-weight: 800;*/
-	background: transparent url(pics/rss.gif) top right no-repeat;
+	background: transparent url(../../pics/rss.gif) top right no-repeat;
 	color: #<?=getColor('contrast'); ?> !important;
 }
 

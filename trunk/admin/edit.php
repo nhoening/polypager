@@ -212,6 +212,8 @@ function writeData($ind=4) {
 
 	$iwrote = false; //negative assumption about writeHMLForm
 	if ($i_manipulated) {	//else we don't need to procede
+		
+		
 		//now, finally, get data from db for filling forms if we need any
 		if ($params["cmd"] != "new") {
 			$res = mysql_query($query, getDBLink());
@@ -223,9 +225,14 @@ function writeData($ind=4) {
 				echo($indent.'<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
 			}
 
-			// now write all entries we have (for singlepages these are all sections,
-			// multipages and others should be only one)
 			while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+				//check for unsupported primary keys in the table used for this page
+				if($page_info['tablename']=='_sys_multipages'){
+					$table_entity = getEntity($row['tablename']);
+					if ($table_entity['pk_multiple'])
+						echo('<div class="sys_msg">'.__('This table uses a primary key combined from multiple fields. This is not supported by PolyPager!').'</div>');
+				}
+				// now write all entries we have 
 				writeHTMLForm($row, "edit.php", true, true, $nind,"edit_form");
 				$iwrote = true;
 			}
