@@ -32,6 +32,11 @@ a.help{
 
 .comment_prefix {padding: 5px;}
 
+/*should be overwritten if it doesn't fit your skin, but better than nothing*/
+.high{
+	border: 1px solid #6ee;
+}
+
 #feedbox, .filler {
 	border: 1px solid grey;
 	padding-left: 3px;

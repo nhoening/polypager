@@ -206,7 +206,7 @@
 					}
 		
 					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
-						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'&amp;group=_sys_all">'.$p["name"]."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
 					} else {
 						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
 					}
@@ -259,7 +259,7 @@
 					//all (because the main menu entry's function now is showing the
 					//submenus)
 					if($sys_info["submenus_always_on"] == 0){
-						echo($indent.'		<li><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group=_sys_all">'.__('all').' '.$p["name"]."</a></li>\n");
+						echo($indent.'		<li><a href="'.$path_to_root_dir.'/?'.$p["name"].'">'.__('all').' '.$p["name"]."</a></li>\n");
 					}
 					$x=0;
 					for(;$x < count($a);$x++){

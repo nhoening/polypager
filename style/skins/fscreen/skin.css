@@ -231,8 +231,8 @@ img { border: none; }
 }
 
 
-.label{height: 12px;color:#0099FE;margin:0;padding:0;}
-.value{height: 12px;margin:0;padding:0;margin-bottom:1em;}
+.label{line-height: 12px;color:#0099FE;margin:0;padding:0;}
+.value{line-height: 12px;margin:0;padding:0;margin-bottom:1em;}
 
 
 textarea { width: 270px; }
@@ -368,7 +368,9 @@ form .search, form .search *
 
 form fieldset{ border:0;}
 #edit_form fieldset{ border:1px solid grey;;}
-
+#edit_form table {
+	width: 700px !important;
+}
 form.edit input, form textarea, form button { /*form select {*/
 	background:#eee;
 	border-width:1px;

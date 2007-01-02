@@ -101,34 +101,36 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	//build Show - Query
 	$params = $show_params;
 	$entity = getEntity($params["page"]);
-	$query = getQuery(true);
+	$queries = getQuery(true);
 
 	if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 
 
-	// send show query to DBMS now
-	$res = mysql_query($query, $link);
-	$error_nr = mysql_errno($link);
-	if ($error_nr != 0) {
-		$fehler_text = mysql_error($link);
-		$error_msg_text .= '<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
+	// send show quer(y|ies) to DBMS now
+	$res = array();
+	foreach(array_keys($queries) as $qkey){
+		$res[$qkey] = mysql_query($queries[$qkey], $link);
+		$error_nr = mysql_errno($link);
+		if ($error_nr != 0) {
+			$fehler_text = mysql_error($link);
+			$error_msg_text .= '<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
+		}
 	}
-
-	if (isMultipage($params["page"]) and $params["max"] == "") { //no other way... db is empty
+	
+	if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
 		$sys_msg_text .= '<div class="sys_msg">'.__('There is no entry in the database yet...').'</div>'."\n";
 		$sys_msg_text .= '<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n";
-	
 	}
 	
 	// set a title
 	// when only one entry is given, we can do some fancy stuff:
-	if ($res != "" and mysql_num_rows($res) == 1) {	//we should have a title
+	if ($res != "" and count($res)==1 and mysql_num_rows($res[$params['page']]) == 1) {	//we should have a title
 		//writing header with a title when we find a good one
-		$row = mysql_fetch_array($res, MYSQL_ASSOC);	//get first one
+		$row = mysql_fetch_array($res[$params['page']], MYSQL_ASSOC);	//get first one
 		$title = $row[$entity["title_field"]];
 		//mark our knowledge in "step" param
 		$params["step"] = "1";
-		mysql_data_seek($res, 0);	//move to initial position again
+		mysql_data_seek($res[$params['page']], 0);	//move to initial position again
 	} else {
 		$title = $params["page"];
 	}
@@ -158,7 +160,7 @@ function writeData($ind=5) {
 	}
 	
 	if ($known_page) {
-		if (isMultipage($params["page"]) and $params["max"] == "") { //no other way... db is empty
+		if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
 			echo($indent.'<ul id="menu">'."\n");
 			echo($indent.'	<div class="sys_msg">'.__('There is no entry in the database yet...').'</div>'."\n");
 			echo($indent.'	<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
@@ -175,17 +177,21 @@ function writeData($ind=5) {
 			//removed by popular request
 			echo($indent.'<h1 style="display:none;">'.$params["page"].'</h1>'."\n");
 			
-			writeSearchForm(false, $nind);
-			writeToc($res, false, $nind);
-	
+			if ($params['page'] != '_search'){
+				writeSearchForm(false, $nind);
+				writeToc($res, false, $nind);
+			}
+			
 			echo($indent.'<div class="show">'."\n");
 			$nind = $ind + 1;
 			writeEntries($res, false, $nind, false);
 			
 			//if there were entries but we did not show all
-			if($debug) echo('<div class="debug">max: '.$params['max'].' step param: '.$params["step"].' show count: '.mysql_num_rows($res).'</div>');
-			if (mysql_num_rows($res) > 0 and $params["step"] != "all" and ($params["step"] < $params['max'] and $params['step'] != 1 )) {
-				echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page.').'<a href="?'.$params["page"].'&step=all"> click</a>'.__(' to see all there are.').'</div>');
+			if (count($res)==1 and $params['page'] != '_search'){
+				if($debug) echo('<div class="debug">max: '.$params['max'].' step param: '.$params["step"].' show count: '.mysql_num_rows($res[$params['page']]).'</div>');
+				if (mysql_num_rows($res[$params['page']]) > 0 and $params["step"] != "all" and ($params["step"] < $params['max'] and $params['step'] != 1 )) {
+					echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page.').'<a href="?'.$params["page"].'&step=all"> click</a>'.__(' to see all there are.').'</div>');
+				}
 			}
 			echo($indent.'</div>'."\n");  //end of class "show"
 			//--------------------- end showing data  --------------

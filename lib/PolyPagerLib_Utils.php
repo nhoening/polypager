@@ -213,13 +213,13 @@ function getPathFromDocRoot() {
 	$path = implode(FILE_SEPARATOR, $folders_from_doc_root);
 	//maybe we're in admin or scripts or so
 	//echo($path."|".strstr($path, 'admin')."|".substr( $path, 0, strpos( $path, "admin" ) )."|");
-	if(strstr($path, 'admin') != false or $path == 'admin')
+	if(eregi('admin',$path) != false or $path == 'admin')
 		{$path = substr( $path, 0, strpos( $path, "admin" ) ) ;}
-	if(strstr($path, 'scripts') != false or $path == 'scripts')
+	if(eregi('scripts',$path) != false or $path == 'scripts')
 		{$path =  substr( $path, 0, strpos( $path, "scripts" ) ) ;}
-	if(strstr($path, 'plugins')!= false or $path == 'plugins')
+	if(eregi('plugins',$path)!= false or $path == 'plugins')
 		{$path =  substr( $path, 0, strpos( $path, "plugins" ) ) ;}
-	if(strstr($path, 'user') != false or $path == 'user')
+	if(eregi('user',$path) != false or $path == 'user')
 		{$path =  substr( $path, 0, strpos( $path, "user" ) ) ;}
 	if ($path == "") $path = FILE_SEPARATOR;
 	if (substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
@@ -232,6 +232,18 @@ function getPathFromDocRoot() {
 function writeHelpLink($indent, $helptext) {
 	echo($indent.'<a class="help" onmouseover="popup(\''.$helptext.'\')" onmouseout="kill()" title="" onfocus="this.blur()" >&nbsp;&nbsp;&nbsp;&nbsp;</a>'."\n");
 }
+
+/*	compares two names
+*    resulting array will be sorted ascending
+*/
+function cmpByName($a, $b) {
+	$an = strtolower($a);
+	$bn = strtolower($b);
+	if ($an == $bn) return 0;
+	return ($an < $bn) ? -1 : 1;
+}
+
+
 
 /*	compares two array entries, using the order_index entries
 *    resulting array will be sorted descending
@@ -351,9 +363,11 @@ function getPages() {
 	return array_merge(getSinglepages(), getMultipages());
 }
 
-/*returns all pagenames*/
+/*returns all pagenames, sorted alphabetically*/
 function getPageNames() {
-	return array_merge(getSinglepageNames(), getMultipageNames());
+	$all = array_merge(getSinglepageNames(), getMultipageNames());
+	uasort($all,'cmpByName');
+	return $all;
 }
 
 /* get Pagename accorsing to a number */
@@ -386,11 +400,11 @@ function isMultipage($page_name) {
 
 /* returns true if the page is known by the system */
 function isAKnownPage($page_name) {
-	if (isSinglepage($page_name) or isMultipage($page_name)) return true;
+	if (isSinglepage($page_name) or isMultipage($page_name) or $page_name=="_search") return true;
 	else return false;
 }
 
-/* return true if it is a sys-page, i.e. represnting system data.
+/* return true if it is a sys-page, i.e. representing system data.
    Once this checked for a start like "_sys_" but that's not enough security
 */
 function isASysPage($page_name) {
@@ -411,7 +425,7 @@ function isDateType($type) {
 
 /* returns wether this MySQL type is a text type*/
 function isTextType($type) {
-	if($type == "string" or $type == "varchar" or $type == "blob" or $type == "longtext" or $type=="longblob")
+	if($type == "string" or $type == "varchar" or $type == "blob" or $type == "longtext" or $type=="longblob" or $type == "set" or $type == "enum")
 		return true;
 	else return false;
 }
@@ -541,9 +555,7 @@ function getEntity($page_name) {
 		if ($page_name != '_sys_multipages' and
 				getAlreadyBuiltEntity($page_name) != "") {
 			$entity = getAlreadyBuiltEntity($page_name);
-			//echo('found entity for '.$page_name."<br/>");
 		} else {
-			//echo('getting entity for '.$page_name."<br/>");
 			$entity = array();
 			$entity["pagename"] = $page_name;
 			
@@ -576,19 +588,19 @@ function getEntity($page_name) {
 				
 				//formgroups
 				$entity['formgroups'] = array();
-				$entity['formgroups']['metadata'] = array(1,'show');
+				$entity['formgroups']['metadata'] = array(1,'hide');
 				setEntityFieldValue("title", "formgroup", 'metadata');
 				setEntityFieldValue("author", "formgroup", 'metadata');
 				setEntityFieldValue("keywords", "formgroup", 'metadata');
-				$entity['formgroups']['admin'] = array(0,'show');
+				$entity['formgroups']['admin'] = array(0,'hide');
 				setEntityFieldValue("admin_name", "formgroup", 'admin');
 				setEntityFieldValue("admin_pass", "formgroup", 'admin');
 				$entity['formgroups']['gallery'] = array(2,'hide');
 				setEntityFieldValue("link_to_gallery_in_menu", "formgroup", 'gallery');
 				setEntityFieldValue("gallery_name", "formgroup", 'gallery');
 				setEntityFieldValue("gallery_index", "formgroup", 'gallery');
-				$entity['formgroups']['misc'] = array(3,'hide');
-				setEntityFieldValue("show_public_popups", "formgroup", 'misc');
+				$entity['formgroups']['misc'] = array(3,'show');
+				setEntityFieldValue("hide_public_popups", "formgroup", 'misc');
 				setEntityFieldValue("start_page", "formgroup", 'misc');
 				setEntityFieldValue("feed_amount", "formgroup", 'misc');
 				setEntityFieldValue("lang", "formgroup", 'misc');
@@ -614,7 +626,7 @@ function getEntity($page_name) {
 				if (count($tables) > 0) {
 					setEntityFieldValue("tablename", "valuelist", ','.implode(',', $tables));
 				} else {
-					$entity["disabled_fields"] = $entity["disabled_fields"].',tablename';
+					$entity["disabled_fields"] .= $entity["disabled_fields"].',tablename';
 					setEntityFieldValue("tablename", "valuelist", __('there is no table in the database yet'));
 				}
 				$entity["consistency_fields"] = "name";
@@ -660,8 +672,10 @@ function getEntity($page_name) {
 					setEntityFieldValue("group_field", "valuelist", ','.implode(',', getListOfValueListFields($the_table)));
 					setEntityFieldValue("publish_field", "valuelist", ','.implode(',', getListOfFieldsByDataType($the_table, 'bool')));
 				} else {
-					$entity["disabled_fields"] = $entity["disabled_fields"].',publish_field,date_field,time_field,edited_field,title_field,order_by,group_field';
+					$entity["disabled_fields"] .= ',publish_field,date_field,time_field,edited_field,title_field,order_by,group_field';
 				}
+				
+				$entity["hidden_form_fields"] .= ',hide_comments';
 				
 				setEntityFieldValue("menue_index", "validation", 'number');
 				setEntityFieldValue("name", "validation", 'any_text');
@@ -680,8 +694,8 @@ function getEntity($page_name) {
 				setEntityFieldValue("hide_options", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_toc", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_search", "formgroup", 'what to hide or show');
-				setEntityFieldValue("show_labels", "formgroup", 'what to hide or show');
-				setEntityFieldValue("show_comments", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_labels", "formgroup", 'what to hide or show');
+				setEntityFieldValue("hide_comments", "formgroup", 'what to hide or show');
 				$entity['formgroups']['fields with special meaning'] = array(3,'hide');
 				setEntityFieldValue("publish_field", "formgroup", 'fields with special meaning');
 				setEntityFieldValue("group_field", "formgroup", 'fields with special meaning');
@@ -701,6 +715,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("order_by", "formgroup", 'misc');
 				
 				//help texts
+				setEntityFieldValue("name", "help", __('the name of the page.'));
 				setEntityFieldValue("in_menue", "help", __('when this field is checked, you will find a link to this page in the menu.'));
 				setEntityFieldValue("menue_index", "help", __('this field holds a number which determines the order in which pages that are shown in the menu (see above) are arranged.'));
 				setEntityFieldValue("commentable", "help", __('when this field is checked, entries on this page will be commentable by users.'));
@@ -719,13 +734,13 @@ function getEntity($page_name) {
 				setEntityFieldValue("title_field", "help", __('this field will be used as title field. It will therefore look different to the others.'));
 				setEntityFieldValue("feed", "help", __('if this field is checked, new entries of this page will be fed. That means they will be listed under the latest entries (right on the page) and they will be available via RSS. BUT: this will only work if you have selected a title-field AND a date-field !!!'));
 				setEntityFieldValue("step", "help", __('here you specify how many entries should be shown on one page. You can use a number or simply all'));
-				setEntityFieldValue("show_comments", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
+				setEntityFieldValue("hide_comments", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
 				setEntityFieldValue("taggable", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
 				setEntityFieldValue("search_month", "help", __('if this field is checked, users can search for entries of this page made in a particular month.'));
 				setEntityFieldValue("search_year", "help", __('if this field is checked, users can search for entries of this page made in a particular year.'));
 				setEntityFieldValue("search_keyword", "help", __('if this field is checked, users can search for entries of this page by typing in a keyword.'));
 				setEntityFieldValue("search_range", "help", __('if this field is checked, users can navigate through entries of this page using previous- and next-links. Only use this when your entries are ordered by (see field order_by, above) the primary key of the table.'));
-				setEntityFieldValue("show_labels", "help", __('if this field is checked, the label of each field is shown.'));
+				setEntityFieldValue("hide_labels", "help", __('if this field is checked, the label of each field is shown.'));
 			}
 			//	metadata for singlepages
 			else if ($page_name == "_sys_singlepages") {
@@ -758,6 +773,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("commentable", "formgroup", 'misc');
 				setEntityFieldValue("grouplist", "formgroup", 'misc');
 				
+				setEntityFieldValue("name", "help", __('the name of the page.'));
 				setEntityFieldValue("in_menue", "help", __('when this field is checked, you will find a link to this page in the menu.'));
 				setEntityFieldValue("menue_index", "help", __('this field holds a number which determines the order in which pages that are shown in the menu (see above) are arranged.'));
 				setEntityFieldValue("commentable", "help", __('when this field is checked, entries on this page will be commentable by users.'));
@@ -783,6 +799,11 @@ function getEntity($page_name) {
 				$entity["pk"] = "id";
 				$entity["pk_type"] = "int";
 			}
+			//this is to make sitewide search work
+			else if ($page_name == "_search") {
+				$s = array('range'=>0, 'keyword'=>1, 'month'=>1, 'year'=>1);
+				$entity["search"] =$s;
+			}
 			//	table for feeds
 			else if ($page_name == "_sys_feed") {
 				$entity["tablename"] = "_sys_feed";
@@ -803,12 +824,11 @@ function getEntity($page_name) {
 				$entity["tablename"] = "_sys_fields";
 
 				$entity = addFields($entity["tablename"]);
-
+				
 				$group = array("field"=>"pagename",
 								"order"=>"DESC");
 				$entity["group"] = $group;
-				global $params;
-				$fields = getListOfFields($params["group"]);
+				$fields = getListOfFields($_GET["group"]);
 				if (count($fields) > 0) {
 					// when field options of simple pages are edited by 
 					// the users, I prefer to not show'em all
@@ -827,7 +847,7 @@ function getEntity($page_name) {
 						setEntityFieldValue("name", "valuelist", $flist);
 					}else setEntityFieldValue("name", "valuelist", implode(',', $fields));
 				} else {
-					$entity["disabled_fields"] = $entity["disabled_fields"].',name';
+					$entity["disabled_fields"] .= ',name';
 					setEntityFieldValue("name", "valuelist", __('there is no table specified for this page yet'));
 				}
 				setEntityFieldValue("pagename", "valuelist", implode(',', getPageNames()));
@@ -836,11 +856,20 @@ function getEntity($page_name) {
 				setEntityFieldValue("on_update", "valuelist", "SET NULL,NO ACTION,CASCADE,RESTRICT");
 				setEntityFieldValue("on_delete", "valuelist", "RESTRICT,CASCADE,NO ACTION,SET NULL");
 				$entity["title_field"] = "name";
+				
 				$entity["disabled_fields"] .= ",pagename";
-				$entity["hidden_form_fields"] = "foreign_key_to,on_update,on_delete";//this featrue is not clearly defined as from 0.9.7
+				//enum or set fields have a valuelist in the db: make it impossible to change
+				$f = getEntityField($_GET["name"],$_GET["group"]);
+				$t = __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.');
+				if($f['data-type']=="enum" or $f['data-type']=="set"){
+					$entity["disabled_fields"] .= ',valuelist';
+					$t = __('[This field is disabled because the database specifies these values]').$t;
+					setEntityFieldValue("valuelist", "help", $t);
+				}
+				
+				$entity["hidden_form_fields"] = "foreign_key_to,on_update,on_delete";//this feature is not clearly defined as from 0.9.7
 				
 				//help texts
-				setEntityFieldValue("valuelist", "help", __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. Also, his field can become the group field of its page.'));
 				setEntityFieldValue("validation", "help", __('you can chose a validation method that is checked on the content of this field when you submit a form.'));
 				setEntityFieldValue("not_brief", "help", __('check this box when this field contains much data (e.g. long texts). It will then only be shown if the page shows one entry and a link to it otherwise.'));
 				setEntityFieldValue("order_index", "help", __('when shown, the fields of an entry are ordered by the order in their table (0 to n). you can change the order index for this field here.'));
@@ -853,7 +882,7 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_comments") {
 				$entity["tablename"] = "_sys_comments";
 
-				$entity["show_labels"] = "0";											
+				$entity["hide_labels"] = "0";											
 				$entity["hidden_fields"] = "pagename,pageid,is_spam";
 				$entity["hidden_form_fields"] = "pagename,pageid,insert_date,insert_time,is_spam";
 				
@@ -883,7 +912,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("comment", "label", __("Comment"));
 				
 				//setEntityFieldValue("email", "validation", "email");
-				//to strict - people can write what they want here...
+				//too strict - people can write what they want here...
 				//setEntityFieldValue("www", "validation", "url");
 				setEntityFieldValue("name", "validation", "any_text");
 			}
@@ -892,7 +921,7 @@ function getEntity($page_name) {
 				//echo("$page_name is a singlepage!!");
 				$entity["tablename"] = '_sys_sections';
 
-				$entity["show_labels"] = "no";
+				$entity["hide_labels"] = "no";
 				$entity["title_field"] = 'heading';
 				$entity["publish_field"] = 'publish';
 				$entity["order_by"] = 'order_index';
@@ -931,7 +960,7 @@ function getEntity($page_name) {
 				if ($page_info != "") {		//else this makes no sense
 					$entity["tablename"] = $page_info["tablename"];
 					$entity["step"] = $page_info["step"];
-					$entity["show_labels"] = $page_info["show_labels"];
+					$entity["hide_labels"] = $page_info["hide_labels"];
 					$entity["order_by"] = $page_info["order_by"];
 					$entity["order_order"] = $page_info["order_order"];
 					$entity["feed"] = $page_info["feed"];
@@ -989,7 +1018,7 @@ function getEntity($page_name) {
 			}
 			else if (in_array($page_name, getTables())) {
 				$entity = addFields($page_name);
-				$entity['tablename'] = $page_names;
+				$entity['tablename'] = $page_name;
 			}
 			
 			//fk stuff - preselect valuelists
@@ -1190,12 +1219,69 @@ function addFields($name, $not_for_field_list = "") {
 		$fields = array();
 		$entity = getEntity("");	//getting the actual entity
 		$page_info = getPageInfo("");
-		//echo("addFields for ".$name);
+		global $db;
+		//echo("<br/>addFields for ".$name);
 
 		$link = getDBLink();
-
+		
 		//first, we see what we find in the database's metadata
-
+		$query = " SELECT
+                    COLUMN_NAME,
+					COLUMN_KEY,
+                    COLUMN_TYPE,
+					CHARACTER_MAXIMUM_LENGTH,
+					NUMERIC_PRECISION,
+                    COLUMN_DEFAULT,
+                    EXTRA,
+                    COLUMN_COMMENT
+               FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$entity["tablename"]."' AND TABLE_SCHEMA = '".$db."'";
+		$res = pp_run_query($query);
+		$i = 0;
+		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
+			//primary key
+			if ($row['COLUMN_KEY']=='PRI') {
+				if ($entity['pk']!=""){ // seems to be a 2-field PK - not supported!
+					$entity['pk_multiple'] = true;
+				}
+				$entity["pk"] = $row['COLUMN_NAME'];	//overwriting the first!
+				$entity["pk_type"] = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['COLUMN_TYPE']);
+			}
+			if (!eregi($row['COLUMN_NAME'],$not_for_field_list) and $row['EXTRA']!='auto_increment') {
+				//determine length
+				$len = $row['CHARACTER_MAXIMUM_LENGTH'];
+				if ($len=="NULL") $len = $row['NUMERIC_PRECISION'];
+				//support sets or enums, 
+				//but we save the valuelist - PolyPager can handle those
+				if (eregi('^set\(',$row['COLUMN_TYPE']) or eregi('^enum\(',$row['COLUMN_TYPE'])){
+					$type = preg_replace('@\((\'[a-z0-9]+\'\,?)+(\'[a-z0-9]+\')\)$@', '', $row['COLUMN_TYPE']);
+					eregi('\((\'.+\'\,)+(\'.+\')\)$',$row['COLUMN_TYPE'],$hits);
+					$valuelist = implode(',',array_slice($hits,1));
+					$valuelist = str_replace(",,", ",",$valuelist);
+				}else{
+					$type = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['COLUMN_TYPE']);
+					$valuelist = "";
+				}
+				$field = array("name"=>$row['COLUMN_NAME'],
+						"data-type"=>$type,
+						"size"=>$len,
+						"order_index"=>''.$i,
+						"help"=>$row['COLUMN_COMMENT'],
+						"default"=>$row['COLUMN_DEFAULT'],
+						"valuelist"=>$valuelist);
+				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data-type"]."<br/>\n");
+				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
+				if (($row['COLUMN_TYPE'] == "int(1)" or $row['COLUMN_TYPE'] == "tinyint(1)")) $field["data-type"] = "bool";
+				
+				//set some defaults
+				$field['formgroup'] = "";
+				
+				$fields[count($fields)] = $field;
+				
+				$i++;
+			}
+			
+		}
+		/*
 		$field_list = mysql_list_fields(getDBName(), $name, $link);
 		for($i=0; $i<mysql_num_fields($field_list); $i++) {
 			//pk - not ready for combined primary keys yet !!!
@@ -1203,15 +1289,18 @@ function addFields($name, $not_for_field_list = "") {
 				$entity["pk"] = mysql_field_name($field_list,$i);
 				$entity["pk_type"] = mysql_field_type($field_list,$i);
 			}
-						
+			
+			
 			$db_field = mysql_fetch_field($field_list, $i);
+			if ($entity['pagename']=="verbs") print_r($db_field);
 			if (!eregi(mysql_field_name($field_list,$i),$not_for_field_list) and !eregi('primary_key',mysql_field_flags($field_list, $i))) {
 				$field = array("name"=>$db_field->name,
 						"data-type"=>$db_field->type,
 						"size"=>mysql_field_len($field_list,$i),
 						"order_index"=>''.$i,
+						"help"=>$db_field->comment,
 						"default"=>$db_field->def);
-				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"]." and type ".$field["data-type"]."<br/>\n");
+				echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data-type"]."<br/>\n");
 				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
 				if (($field["data-type"] == "int" or $field["data-type"] == "tinyint")and $field["size"] == 1) $field["data-type"] = "bool";
 				//set some defaults
@@ -1221,7 +1310,9 @@ function addFields($name, $not_for_field_list = "") {
 			}
 
 		}
-
+		
+		*/
+		
 		//now we enrich with data from the _sys_fields table
 
 		$query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
@@ -1233,11 +1324,12 @@ function addFields($name, $not_for_field_list = "") {
 				if ($fields[$i]["name"] == $row["name"]) {
 					$fields[$i]["label"] = $row["label"];
 					$fields[$i]["validation"] = $row["validation"];
-					$fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
+					if ($fields[$i]["valuelist"]=="")	//if from db (set/enum-type), it shouldn't be overwritten
+						$fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
 					$fields[$i]["not_brief"] = $row["not_brief"];
 					$fields[$i]["order_index"] = $row["order_index"];
 				}
-				if($fields[$i]["data_type"] == "int" and $fields[$i]["size"] != 1) $fields[$i]["validation"] = 'number';
+				if(eregi('int',$fields[$i]["data_type"]) and $fields[$i]["size"] != 1) $fields[$i]["validation"] = 'number';
 			}
 		}
 		uasort($fields,"cmpByOrderIndexAsc");
@@ -1412,10 +1504,10 @@ function setEntityFieldValue($f_name, $attr_name, $attr_value) {
 	}
 }
 
-/*gets an array with field data*/
-function getEntityField($fname) {
-	global $entity;
-	if($entity["fields"] != "") foreach ($entity["fields"] as $f) if ($f["name"] == $fname) return $f;
+/*gets an array with field data from an already fetched entity*/
+function getEntityField($fname,$ename) {
+	$old_entity = getAlreadyBuiltEntity($ename);
+	if($old_entity["fields"] != "") foreach ($old_entity["fields"] as $f) if ($f["name"] == $fname) return $f;
 	return "";
 }
 
