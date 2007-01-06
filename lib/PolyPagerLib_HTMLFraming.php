@@ -234,7 +234,7 @@
 				or (isSinglePage($p["name"]) and $page_info["grouplist"] != "")) {
 					//display submenu for $p["name"] with group entries
 					if(isMultipage($p["name"])) {
-						$efield = getEntityField($tmp_entity["group"]["field"]);
+						$efield = getEntityField($tmp_entity["group"]["field"],$tmp_entity['pagename']);
 						$gfield = $efield["valuelist"];
 					}
 					//for singlepages, all groups without "standard" (is not in 

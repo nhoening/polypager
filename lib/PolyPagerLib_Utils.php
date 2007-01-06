@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '0.9.7';
+$version = '0.9.8';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
@@ -1220,57 +1220,75 @@ function addFields($name, $not_for_field_list = "") {
 		$entity = getEntity("");	//getting the actual entity
 		$page_info = getPageInfo("");
 		global $db;
-		//echo("<br/>addFields for ".$name);
 
 		$link = getDBLink();
 		
-		//first, we see what we find in the database's metadata
-		$query = " SELECT
-                    COLUMN_NAME,
-					COLUMN_KEY,
-                    COLUMN_TYPE,
-					CHARACTER_MAXIMUM_LENGTH,
-					NUMERIC_PRECISION,
-                    COLUMN_DEFAULT,
-                    EXTRA,
-                    COLUMN_COMMENT
-               FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$entity["tablename"]."' AND TABLE_SCHEMA = '".$db."'";
+		// -- first, we see what we find in the database's metadata
+		
+		//test for Information_schema.columns (SQL-92 standard)
+		$client_api = explode('.', mysql_get_client_info()); 
+		if ($client_api[0] == '5'){
+			//test for existence of/access to INFORMATION_SCHEMA database
+			$result = pp_run_query("DESCRIBE information_schema.COLUMNS");
+			if ($result && mysql_num_rows($result) )//or !("Access denied")) { // information_schema exists
+				//we align the columns that we'd also find in the "SHOW COLUMNS"-
+				//Query (see below) to the standard query with " AS "
+				$query = " SELECT
+							COLUMN_NAME AS `Field`,
+							COLUMN_KEY AS `Key`,
+							COLUMN_TYPE AS `Type`,
+							CHARACTER_MAXIMUM_LENGTH,
+							NUMERIC_PRECISION,
+							COLUMN_DEFAULT AS `Default`,
+							EXTRA AS `Extra`,
+							COLUMN_COMMENT
+					   FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$entity["tablename"]."' AND TABLE_SCHEMA = '".$db."'";
+		}
+		//if we can't use it, do it the old way, with less fields sadly
+		if ($query=="") 
+			$query = "SHOW COLUMNS FROM ".$entity["tablename"]." FROM ".$db; 
+		
 		$res = pp_run_query($query);
 		$i = 0;
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
 			//primary key
-			if ($row['COLUMN_KEY']=='PRI') {
+			if ($row['Key']=='PRI') {
 				if ($entity['pk']!=""){ // seems to be a 2-field PK - not supported!
 					$entity['pk_multiple'] = true;
 				}
-				$entity["pk"] = $row['COLUMN_NAME'];	//overwriting the first!
-				$entity["pk_type"] = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['COLUMN_TYPE']);
+				$entity["pk"] = $row['Field'];	//overwriting the first!
+				$entity["pk_type"] = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
 			}
-			if (!eregi($row['COLUMN_NAME'],$not_for_field_list) and $row['EXTRA']!='auto_increment') {
+			if (!eregi($row['Field'],$not_for_field_list) and $row['Extra']!='auto_increment') {
 				//determine length
 				$len = $row['CHARACTER_MAXIMUM_LENGTH'];
 				if ($len=="NULL") $len = $row['NUMERIC_PRECISION'];
+				//those fields are not there when we said SHOW COLUMNS, so...
+				if ($len=="") {
+					eregi('[0-9]+',$row['Type'],$hits);
+					$len = $hits[0]; 
+				}
 				//support sets or enums, 
 				//but we save the valuelist - PolyPager can handle those
-				if (eregi('^set\(',$row['COLUMN_TYPE']) or eregi('^enum\(',$row['COLUMN_TYPE'])){
-					$type = preg_replace('@\((\'[a-z0-9]+\'\,?)+(\'[a-z0-9]+\')\)$@', '', $row['COLUMN_TYPE']);
-					eregi('\((\'.+\'\,)+(\'.+\')\)$',$row['COLUMN_TYPE'],$hits);
+				if (eregi('^set\(',$row['Type']) or eregi('^enum\(',$row['Type'])){
+					$type = preg_replace('@\((\'[a-z0-9]+\'\,?)+(\'[a-z0-9]+\')\)$@', '', $row['Type']);
+					eregi('\((\'.+\'\,)+(\'.+\')\)$',$row['Type'],$hits);
 					$valuelist = implode(',',array_slice($hits,1));
 					$valuelist = str_replace(",,", ",",$valuelist);
 				}else{
-					$type = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['COLUMN_TYPE']);
+					$type = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
 					$valuelist = "";
 				}
-				$field = array("name"=>$row['COLUMN_NAME'],
+				$field = array("name"=>$row['Field'],
 						"data-type"=>$type,
 						"size"=>$len,
 						"order_index"=>''.$i,
 						"help"=>$row['COLUMN_COMMENT'],
-						"default"=>$row['COLUMN_DEFAULT'],
+						"default"=>$row['Default'],
 						"valuelist"=>$valuelist);
 				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data-type"]."<br/>\n");
 				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
-				if (($row['COLUMN_TYPE'] == "int(1)" or $row['COLUMN_TYPE'] == "tinyint(1)")) $field["data-type"] = "bool";
+				if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) $field["data-type"] = "bool";
 				
 				//set some defaults
 				$field['formgroup'] = "";
@@ -1281,39 +1299,8 @@ function addFields($name, $not_for_field_list = "") {
 			}
 			
 		}
-		/*
-		$field_list = mysql_list_fields(getDBName(), $name, $link);
-		for($i=0; $i<mysql_num_fields($field_list); $i++) {
-			//pk - not ready for combined primary keys yet !!!
-			if (eregi('primary_key',mysql_field_flags($field_list, $i))) {
-				$entity["pk"] = mysql_field_name($field_list,$i);
-				$entity["pk_type"] = mysql_field_type($field_list,$i);
-			}
-			
-			
-			$db_field = mysql_fetch_field($field_list, $i);
-			if ($entity['pagename']=="verbs") print_r($db_field);
-			if (!eregi(mysql_field_name($field_list,$i),$not_for_field_list) and !eregi('primary_key',mysql_field_flags($field_list, $i))) {
-				$field = array("name"=>$db_field->name,
-						"data-type"=>$db_field->type,
-						"size"=>mysql_field_len($field_list,$i),
-						"order_index"=>''.$i,
-						"help"=>$db_field->comment,
-						"default"=>$db_field->def);
-				echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data-type"]."<br/>\n");
-				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
-				if (($field["data-type"] == "int" or $field["data-type"] == "tinyint")and $field["size"] == 1) $field["data-type"] = "bool";
-				//set some defaults
-				$field['formgroup'] = "";
-				
-				$fields[count($fields)] = $field;
-			}
-
-		}
 		
-		*/
-		
-		//now we enrich with data from the _sys_fields table
+		// -- now we enrich with data from the _sys_fields table
 
 		$query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
 		$res = mysql_query($query, $link);

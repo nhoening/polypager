@@ -108,7 +108,7 @@
 		
 		$params = array();
 		
-		//-------------------------topic (for admin list)
+		//------------------------ topic (for admin list)
 		$params["topic"] = $_POST['topic'];
 		if ($params["topic"] == "") {$params["topic"] = $_GET[topic];}
 		
@@ -119,9 +119,12 @@
 			//the "page" param will be just the first in GET Requests (so we can write http://www.bla.com/?mypage)
 			$query_array = explode('&', $_SERVER["QUERY_STRING"]);
 			$params["page"] = urldecode($query_array[0]);
-			//if "page=" is given we can handle this, too
-			if (strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
+			if ($params["page"]=="page=") $params["page"] = "";
+			//if "page=" is given we should handle this, too
+			if ($_GET["page"]!="") $params["page"] = urldecode($_GET["page"]);
 		}
+		
+		//now we just take the start page if there is no one given
 		if ($params["page"] == "") {
 			$sys_info = getSysInfo();
 			$params["page"] = $sys_info["start_page"];
@@ -443,7 +446,7 @@
 					}
 					
 					if($only_published and $entity["publish_field"] != "") {	//publish - Flag
-						if ($params['search']!="")$a[] = " AND ";
+						if ($params['search']!="" or $params['page']!='_search') $a[] = " AND ";
 						else $a[] = " WHERE ";
 						$a[] = $entity["tablename"].'.'.$entity["publish_field"]." = 1";
 					}
@@ -475,7 +478,7 @@
 				}
 			}
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
-			echo($theQuery);
+			//echo($theQuery);
 			$queries[$p] = $theQuery;
 		}
 		return $queries;
@@ -566,7 +569,7 @@
 				echo('                 			<br />'."\n");
 			}
 			$theAction = "?".$params["page"];
-			echo($indent.'	<form class="search" action="'.$theAction.'" method="post"><fieldset>'."\n");
+			echo($indent.'	<form class="search" action="'.$theAction.'" method="get"><fieldset>'."\n");
 	
 			if ($entity["search"]["month"] == "1") { //search for a date
 				echo($indent.'		<div class="search_option">'."\n");
@@ -606,7 +609,7 @@
 				echo($indent.'		<div class="search_option">'."\n");
 				echo($indent.'			<span class="search_toggle"><a id="search_kw_link" href="javascript:toggle_ability(\'search_kw\');">&nbsp;&nbsp;&nbsp;&nbsp;</a></span>'."\n");
 				if ($params["search"]["kw"] == "") echo('            						'.__('for keyword:').' <input class="search_kw" disabled="disabled" type="text" size="12" maxlength="24" name="kw"/>'."\n");
-				else echo('            			'.__('with keyword:').' <input class="search_kw" disabled="disabled" type="text" size="12" maxlength="24" name="kw" value="'.$params[search][kw].'"/>'."\n");
+				else echo('            			'.__('with keyword:').' <input class="search_kw" disabled="disabled" type="text" size="12" maxlength="24" name="kw" value="'.$params['search']['kw'].'"/>'."\n");
 				echo($indent.'		</div>'."\n");
 			}
 			//search fields for valuelists
@@ -631,7 +634,7 @@
 			echo($indent.'				<input type="hidden" name="page" value="'.$params["page"].'"/>'."\n");
 			echo($indent.'				<input type="hidden" name="cmd" value="_search"/>'."\n");
 			echo($indent.'				<button type="submit" class="submit" name="dummy">'.__('search').'</button>'."\n");
-			$helptext = __('Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search.');
+			$helptext = __('Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search. Several keywords are implicitely connected by AND.');
 			writeHelpLink($indent, $helptext);
 			echo($indent.'		</fieldset>'."\n");
 			echo($indent.'		'."\n");
@@ -966,8 +969,9 @@
 				echo($indent.'	<span class="admin_link"><a '.$text.'href="admin/edit.php?'.$pagename.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
 				if($entity["dateField"]["editlabel"] != "") { //show last editing date
 					if ($row[$entity["dateField"]["editlabel"]] != NULL) {
-						if ($row[$entity["dateField"]["editlabel"]] != '0000-00-00 00:00:00') //not very specific, is it?
-							echo($indent.'		<span class="last_edited_label">'.__('last edited:').' '.format_date($row[$entity["dateField"]["editlabel"]]).'</span>'."\n");
+						$ed = format_date($row[$entity["dateField"]["editlabel"]]);
+						if ($ed != __('no date set yet')) 
+							echo($indent.'		<span class="last_edited_label">'.__('last edited:').' '.$ed.'</span>'."\n");
 					}
 				}
 			}

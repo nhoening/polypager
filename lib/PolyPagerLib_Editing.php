@@ -344,7 +344,7 @@ function getEditQuery($command, $theID) {
 	
 	$query .= ';';
 	$queries[] = $query;
-	print_r($queries);
+	//print_r($queries);
 	return $queries;
 }
 
@@ -365,7 +365,7 @@ function getEditQuery($command, $theID) {
 		
 		//if bigger than max_entries, delete oldest
 		if ($count > ($max_entries-1)){
-			$res = pp_run_query("SELECT MAX(edited_date) AS maxed FROM _sys_feed;");
+			$res = pp_run_query("SELECT MIN(edited_date) AS maxed FROM _sys_feed;");
 			$row = mysql_fetch_array($res, MYSQL_ASSOC);
 			$res = pp_run_query("DELETE FROM _sys_feed WHERE edited_date = '".$row['maxed']."';");
 		}

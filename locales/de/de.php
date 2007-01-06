@@ -281,8 +281,8 @@ function getTranslation($text) {
 
 /*	lib/GempuxLib_Showing.php	*/
 'please do not use SQL Code here in your keyword search...'	=> 'bitte benutzen Sie keine SQL-Schl&uuml;sselw&ouml;rter in Ihrer Stichwortsuche',
-'Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search.'
-	=> 'Sie k&ouml;nnen hier nach Eintr&auml;gen suchen. Sie sehen verschiedene Optionen, die Ihnen helfen, Ihre Suche nach einem Eintrag dieser Seite zu spezifieren&lt;br/&gt; Klicken Sie auf das Symbol zur Linken der Option, um Sie in Ihrer Suche aufzunehemn bzw. sie auszuschliessen.',
+'Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search. Several keywords are implicitely connected by AND.'
+	=> 'Sie k&ouml;nnen hier nach Eintr&auml;gen suchen. Sie sehen verschiedene Optionen, die Ihnen helfen, Ihre Suche nach einem Eintrag dieser Seite zu spezifieren&lt;br/&gt; Klicken Sie auf das Symbol zur Linken der Option, um Sie in Ihrer Suche aufzunehemn bzw. sie auszuschliessen. Mehrere Schl&uuml;sselw&ouml;rter werden implizit mit UND verbunden.',
 'you are seeing Nr %s (in whole there are %s entries)'	=> 'Sie sehen Nr %s (im Ganzen sind es %s Eintr&auml;ge)',
 'you are seeing Nr %s through Nr %s (in whole there are %s entries)'	=> 'Sie sehen Nr %s bis %s (im Ganzen sind es %s Eintr&auml;ge)',
 'show entries %s through %s'	=> 'zeige Eintr&auml;ge %s bis %s',

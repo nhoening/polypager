@@ -47,7 +47,6 @@ $link = getDBLink();
 $params = getShowParameters();
 $params["step"] = "all";	//we're showing list views, so show all
 
-
 if ($params["page"] == "" or isAKnownPage($params["page"])){
 	/* --------------- evaluate actions, print message ------------ */
 	//installation of database
