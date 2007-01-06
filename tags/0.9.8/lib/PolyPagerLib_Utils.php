@@ -1223,14 +1223,25 @@ function addFields($name, $not_for_field_list = "") {
 
 		$link = getDBLink();
 		
+		//do we know where to look at all?
+		if ($entity["tablename"] == "") {
+			$entity['fields'] = array();
+			return $entity;
+		}
+		
 		// -- first, we see what we find in the database's metadata
 		
 		//test for Information_schema.columns (SQL-92 standard)
 		$client_api = explode('.', mysql_get_client_info()); 
 		if ($client_api[0] == '5'){
 			//test for existence of/access to INFORMATION_SCHEMA database
-			$result = pp_run_query("DESCRIBE information_schema.COLUMNS");
-			if ($result && mysql_num_rows($result) )//or !("Access denied")) { // information_schema exists
+			$info_schema_accessible = false;
+			$db_list = mysql_list_dbs(getDBLink());
+			while ($row = mysql_fetch_object($db_list)) {
+				//echo($row->Database."<br/>");
+				if ($row->Database == "information_schema") $info_schema_accessible = true;
+			}
+			if ($info_schema_accessible) // information_schema exists
 				//we align the columns that we'd also find in the "SHOW COLUMNS"-
 				//Query (see below) to the standard query with " AS "
 				$query = " SELECT
@@ -1246,8 +1257,8 @@ function addFields($name, $not_for_field_list = "") {
 		}
 		//if we can't use it, do it the old way, with less fields sadly
 		if ($query=="") 
-			$query = "SHOW COLUMNS FROM ".$entity["tablename"]." FROM ".$db; 
-		
+			$query = "SHOW COLUMNS FROM ".$entity["tablename"];//." FROM ".$db; 
+		//echo("query:".$query);
 		$res = pp_run_query($query);
 		$i = 0;
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
