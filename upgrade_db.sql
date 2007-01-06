@@ -8,8 +8,8 @@
 
 -- 0.9.8
 
-ALTER TABLE `_sys_sys` CHANGE `show_public_popups` `hide_public_popups` TINYINT( 1 ) NOT NULL DEFAULT '1'
-ALTER TABLE `_sys_multipages` CHANGE `show_labels` `hide_labels` TINYINT( 1 ) NOT NULL DEFAULT '0'
+ALTER TABLE `_sys_sys` CHANGE `show_public_popups` `hide_public_popups` TINYINT( 1 ) NOT NULL DEFAULT '1';
+ALTER TABLE `_sys_multipages` CHANGE `show_labels` `hide_labels` TINYINT( 1 ) NOT NULL DEFAULT '0';
 
 
 -- 0.9.7
