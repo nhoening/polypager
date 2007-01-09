@@ -11,8 +11,12 @@
 ALTER TABLE `_sys_sys` CHANGE `show_public_popups` `hide_public_popups` TINYINT( 1 ) NOT NULL DEFAULT '1';
 ALTER TABLE `_sys_multipages` CHANGE `show_labels` `hide_labels` TINYINT( 1 ) NOT NULL DEFAULT '0';
 
-UPDATE `_sys_multipages` SET hide_labels = 1 WHERE hide_labels = 0;
+UPDATE `_sys_multipages` SET hide_labels = 2 WHERE hide_labels = 0;
 UPDATE `_sys_multipages` SET hide_labels = 0 WHERE hide_labels = 1;
+UPDATE `_sys_multipages` SET hide_labels = 1 WHERE hide_labels = 2;
+UPDATE `_sys_sys` SET hide_public_popups = 2 WHERE hide_public_popups = 0;
+UPDATE `_sys_sys` SET hide_public_popups = 0 WHERE hide_public_popups = 1;
+UPDATE `_sys_sys` SET hide_public_popups = 1 WHERE hide_public_popups = 2;
 
 -- 0.9.7
 ALTER TABLE `_sys_fields` ADD `foreign_key_to` VARCHAR( 200 ) NOT NULL ,
