@@ -1,6 +1,0 @@
-[in trunk]
-svn export . ../export
-cd ../export
-zip -r ../PolyPager_0_9_7.zip *
-tar -cf ../PolyPager_0_9_7.tar *
-gzip -S .gz --best ../PolyPager_0_9_7.tar 
