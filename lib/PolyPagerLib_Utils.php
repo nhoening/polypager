@@ -518,15 +518,20 @@ function getPageInfo($page_name) {
 
 
 
-/*  an entity is basically some data structure.
-	this method gets a multidimensional array for the metadata of pages.
+/*  This function gets a multidimensional array for the metadata of pages.
+    An entity is basically some data structure. Here, it is all you might want 
+    to know when you deal with a page (but you can also call this function with
+    a tablename to get its structure).
 	
-	it  gets data from the database, but it is also the place
-	to add process information about entites this system handles.
+	It gets data from the database (from the table that holds the page's data and
+    the table that describes the page), but this function is also the place
+	to add process information about pages taht this system handles.
 	Because we might ask for the entity multiple times while working
 	on a request, we store the variable outside.
 	
 	Here are some features explained:
+    $entity["tablename"]: the table containing the data this page shows
+    $entity["pagename"]: the pagename
 	$entity["hidden_form_fields"]": hides form fields from the editing user 
 		(mostly the admin). Some fields are hereby hidden
 		that are of no interest to the user.
@@ -537,11 +542,34 @@ function getPageInfo($page_name) {
 	$entity["disabled_fields"]":  like hidden_form_fields, but a disabled field
 		is shown in addition to the hidden field (so the value is send, you can see it, 
 		but not edit it)
-	$entity["dateField"] = array("name"=>".*", "editlabel"=>".*");
-	$entity["timeField"] =  array("name"=>".*");
+	$entity["date_field"] = array("name"=>".*", "editlabel"=>".*");
+	$entity["time_field"] =  array("name"=>".*");
+    $entity["title_field"]: The field to be used for the title of each entry
+    $entity["fields"]: a multidimensional array with metadata for each field in 
+                        the table containing the data to show. See addFields()
+                        for more details.
+    $entity["one_entry_only"]: if 1, PolyPager will make it impossible to create a second entry
+    $entity['formgroups']: an associated array of groups in which form fields should be put.
+                       For example:
+                       $entity['formgroups']['admin'] = array(0,'hide');
+                       This formgroup is called "admin", its order index within 
+                       the other formgroups is 0 and it's initially shown.
+                       In the $entity["fields"] - array, each field can get a formgroup assigned
+                       (see addFields())
+    $entiy["pk"]: the name of the primary key - field
+    $entiy["pk-type"]: the type of the primary key - field
+    $entity["hide_labels"]: if 1, labels will not be shown
+    $entity["publish_field"]: the name of the (boolean, i.e. tinyint(1)) - field
+                        that stores if this entry should be published
+    $entity["order_by"]: name of the field which will be order criteria
+    $entity["search"]: an array describing what search is possible on this page.
+                        For example, here we search for keywords only:
+                        array("range"=>0,"month"=>0,"year"=>0,"keyword"=>1)
+    $edntity["fillafromb"]: a is a field name and b is alist of values. In the form,
+                            PolyPager will provide javascript to fill the field a with values from list b 
 */
 $entity = "";		//stores the actual entity
-$old_entities = "";	//stores entites we already built
+$old_entities = "";	//stores entites we already built within this request
 function getEntity($page_name) {
 	global $entity;
 	global $old_entities;
@@ -564,7 +592,7 @@ function getEntity($page_name) {
 				$entity["tablename"] = "_sys_sys";		//there is no _sys_sys - table
 				$entity["one_entry_only"] = "1";	//keep it one
 
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 				$skindirs = scandir_n('../style/skins', 0, false, true);
 				$skindirs_wo_picswap = array();
 				for($x=0;$x<count($skindirs);$x++){	//picswap gets extra handling in PolyPagerLib_HTMLFraming
@@ -616,7 +644,7 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_multipages") {
 				$entity["tablename"] = "_sys_multipages";
 
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 
 				$entity["title_field"] = "name";
 				setEntityFieldValue("order_order", "valuelist", "ASC,DESC");
@@ -746,7 +774,7 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_singlepages") {
 				$entity["tablename"] = "_sys_singlepages";
 
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 				
 				$entity["hidden_fields"] = "default_group";
 				$entity["hidden_form_fields"] = "default_group";
@@ -808,7 +836,7 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_feed") {
 				$entity["tablename"] = "_sys_feed";
 				$entity["title_field"] = "title";
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 				$entity["disabled_fields"] = "pagename";
 				$entity["hidden_form_fields"] = "edited_date"; 
 			}
@@ -817,13 +845,13 @@ function getEntity($page_name) {
 				$entity["tablename"] = "_sys_intros";
 				$entity["one_entry_only"] = "1";	//keep it one
 
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 			}
 			//	table for fields
 			else if ($page_name == "_sys_fields") {
 				$entity["tablename"] = "_sys_fields";
 
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 				
 				$group = array("field"=>"pagename",
 								"order"=>"DESC");
@@ -889,20 +917,20 @@ function getEntity($page_name) {
 				$entity["order_by"] = "insert_date";
 				$entity["order_order"] = "ASC";
 					
-				//dateField
-				$dateField = array("name"=>"insert_date",
+				//date_field
+				$date_field = array("name"=>"insert_date",
 								 "show"=>"1");
-				$entity["dateField"] = $dateField;
-				$timeField = array("name"=>"insert_time",
+				$entity["date_field"] = $date_field;
+				$time_field = array("name"=>"insert_time",
 								 "show"=>"1",);
-				$entity["timeField"] = $timeField;
+				$entity["time_field"] = $time_field;
 				$entity["title_field"] = "comment";
 				
 				$group = array("field"=>"pagename",
 								   "order"=>"DESC");
 				$entity["group"] = $group;
 					
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 				
 				setEntityFieldValue("insert_date", "label", __("Date"));
 				setEntityFieldValue("insert_time", "label", __("Time"));
@@ -928,13 +956,13 @@ function getEntity($page_name) {
 				$entity["hidden_fields"] = "in_submenu,pagename,order_index,publish,the_group,edited_date,input_date,input_time";
 				$entity["hidden_form_fields"] = ",pagename,input_date,input_time,edited_date";
 				
-				//dateField + timeField
-				$entity["dateField"] = array("name"=>"input_date",
+				//date_field + time_field
+				$entity["date_field"] = array("name"=>"input_date",
 								 "editlabel"=>"edited_date");
-				$entity["timeField"] = array("name"=>"input_time");
+				$entity["time_field"] = array("name"=>"input_time");
 					
 				$entity["search"] = array("keyword" => "1");
-				$entity = addFields($entity["tablename"]);
+				$entity = addFields($entity,$entity["tablename"]);
 				$page_info = getPageInfo($page_name);
 				//now we populate the value list for group with what 
 				//might have been typed into the singlepage form - 
@@ -963,8 +991,6 @@ function getEntity($page_name) {
 					$entity["hide_labels"] = $page_info["hide_labels"];
 					$entity["order_by"] = $page_info["order_by"];
 					$entity["order_order"] = $page_info["order_order"];
-					$entity["feed"] = $page_info["feed"];
-
 
 					//search array, only if there is something to search
 					if(! ($page_info["search_range"] == "0" and $page_info["search_month"] == "0"
@@ -989,11 +1015,11 @@ function getEntity($page_name) {
 						$entity["group"] = $group;
 					}
 
-					//dateField - only if there is one specified
+					//date_field - only if there is one specified
 					if($page_info["date_field"] != "") {
-						$dateField = array("name"=>$page_info["date_field"],
+						$date_field = array("name"=>$page_info["date_field"],
 										 "editlabel"=>$page_info["edited_field"]);
-						$entity["dateField"] = $dateField;
+						$entity["date_field"] = $date_field;
 					}
 
 					$entity["title_field"] = $page_info["title_field"];
@@ -1001,9 +1027,9 @@ function getEntity($page_name) {
 					if ($entity["title_field"] == "") $entity["title_field"] = $entity["fields"][0]["name"];
 					
 					//hide those from input
-					$entity["hidden_form_fields"] .= ','.$entity["timeField"]["name"];
-					$entity["hidden_form_fields"] .= ','.$entity["dateField"]["name"];
-					$entity["hidden_form_fields"] .= ','.$entity["dateField"]["editlabel"];
+					$entity["hidden_form_fields"] .= ','.$entity["time_field"]["name"];
+					$entity["hidden_form_fields"] .= ','.$entity["date_field"]["name"];
+					$entity["hidden_form_fields"] .= ','.$entity["date_field"]["editlabel"];
 					$entity["hidden_fields"] .= ','.$page_info["publish_field"].','.$page_info["edited_field"];
 					//let the hidden fields be filled from the field list
 					$e = array();
@@ -1012,13 +1038,14 @@ function getEntity($page_name) {
 					$entity['fillafromb'][] = $e;
 					
 					if($page_info["tablename"] != "") {
-						$entity = addFields($page_info["tablename"]);
+						$entity = addFields($entity,$page_info["tablename"]);
 					}
 				}
 			}
+            // if it was no page, maybe it's a table - return the info from addFields($entity,)
 			else if (in_array($page_name, getTables())) {
-				$entity = addFields($page_name);
-				$entity['tablename'] = $page_name;
+                $entity['tablename'] = $page_name;
+				$entity = addFields($entity,$page_name);
 			}
 			
 			//fk stuff - preselect valuelists
@@ -1052,6 +1079,10 @@ function getEntity($page_name) {
 			$old_entities[] = $entity;
 		}
 	}
+    
+    // guess title field if not set
+    if ($entity["title_field"]=="") $entity["title_field"] = guessTextField($entity,false);
+    
 	return $entity;
 }
 
@@ -1209,22 +1240,36 @@ function getPKType($table){
 }
 
 /* gets an array with field metadata from the db, replaces (!) the field array
-	in the actual entity and returns it 
+	in the actual entity with it. Sets the primary key info in the entity
+    and returns the entity. 
 	params:
+    entity: the entity to add to
 	name: the table name
 	not_for_field_list: this space-separated list contains names of fields that should not
 						be added - maybe because they are mentioned somewhere else already 
+    
+    You can expect these fields to be filled:
+    "data-type" - the MySQL data type
+    "size" - the size, depending on the type
+    "order_index" - index in which order the field will be displayed
+    "help" - a help terxt for this field
+    "default" - the default value from the DB
+    "valuelist" - a comma separated list of posiible values
+    "name" - the name of this field
+    "label" - a label to show in forms
+    "validation" - a validation method (see getValidationMsg() below)
+    "not_brief" - if 1, and several entries are shown, then this field will not be shown
+                because it's too long (there will be a link to the whole entry)
 */
-function addFields($name, $not_for_field_list = "") {
+function addFields($entity,$name, $not_for_field_list = "") {
 		$fields = array();
-		$entity = getEntity("");	//getting the actual entity
 		$page_info = getPageInfo("");
 		global $db;
 
 		$link = getDBLink();
 		
 		//do we know where to look at all?
-		if ($entity["tablename"] == "") {
+		if ($name == "") {
 			$entity['fields'] = array();
 			return $entity;
 		}
@@ -1568,21 +1613,28 @@ function getListOfValueListFields($entity_name) {
 	return $dfields;
 }
 
+
+/* Get the title of an entry.
+   Takes a database result row, finds the title field and returns the content.
+   Makes sure its not too long... (maybe the title_field had to be guessed and
+   it's a long text or blob)
+*/
+function getTitle($entity,$row){
+    return getFirstWords($row[$entity['title_field']], 30);
+}
+
 /*
  * guesses what field might be containing the
  * interesting text in the named entity
  * (used for RSS)
  */
-function guessTextField($entity_name) {
-	$the_field = "";
-	if ($entity_name != "") {
-		global $entity;
-		$actual_entity = $entity;	//save it
-		$entity = getEntity($entity_name);
-	} else $entity = getEntity("");
+function guessTextField($entity, $prefer_long_text=true) {
+	$the_field = "";                              
 	//first blob field ?
 	for($i=0; $i<count($entity["fields"]); $i++) {
-		if (isTextAreaType($entity["fields"][$i]["data-type"])) {
+        $dt = $entity["fields"][$i]["data-type"];
+		if (($prefer_long_text and isTextAreaType($dt)) or
+            (!$prefer_long_text and isTextType($dt))) {
 			$the_field = $entity["fields"][$i]["name"];
 			break;
 		}
@@ -1590,14 +1642,14 @@ function guessTextField($entity_name) {
 	//else: first text field ?
 	if ($the_field == "")
 		for($i=0; $i<count($entity["fields"]); $i++) {
-			if (isTextType($entity["fields"][$i]["data_type"])) {
-				$the_field = $entity["fields"]["name"];
+            $dt = $entity["fields"][$i]["data-type"];
+			if (($prefer_long_text and isTextType($dt)) or
+                (!$prefer_long_text and isTextAreaType($dt))) {
+				$the_field = $entity["fields"][$i]["name"];
 				break;
 			}
 		}
 		
-	if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
-	
 	return $the_field;
 }
 

@@ -127,7 +127,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	if ($res != "" and count($res)==1 and mysql_num_rows($res[$params['page']]) == 1) {	//we should have a title
 		//writing header with a title when we find a good one
 		$row = mysql_fetch_array($res[$params['page']], MYSQL_ASSOC);	//get first one
-		$title = $row[$entity["title_field"]];
+		$title = getTitle($entity,$row);
 		//mark our knowledge in "step" param
 		$params["step"] = "1";
 		mysql_data_seek($res[$params['page']], 0);	//move to initial position again

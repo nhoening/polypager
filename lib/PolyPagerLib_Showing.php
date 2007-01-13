@@ -353,7 +353,7 @@
 							$prev = 0;
 						}
 						if ($prev <= 0) $prev = 0;
-						$date_field = $entity["dateField"];
+						$date_field = $entity["date_field"];
 						
 						//normal query for "show"
 						if (eregi('int',$entity["pk_type"])) $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
@@ -363,7 +363,7 @@
 							$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
 						}
 					} else if (isSinglepage($pagename)) {
-						$a[1] = "WHERE _sys_sections.pagename = '$pagename' $pub";
+						$a[1] = "WHERE _sys_sections.pagename = '$pagename'";
 						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
 						if ($params["group"] != "" and $params["group"] != "_sys_all" and $sys_info["submenus_always_on"] != 0) {
 							//"standard" entries are -per definition- always shown!
@@ -377,7 +377,7 @@
 						if ($params["search"]["kw"] != "") {
 							$keyword = $params["search"]["kw"];
 							$keyword_lower = strtolower($keyword);	 //lower/upper-case should not matter in our keyword search!
-							if (count($a) != 2) $a[] = " AND ";
+							if (count($a) == 2) $a[] = " AND ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
 								echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
 								$a[] = " 2=1"; //show nothing
@@ -396,29 +396,31 @@
 									$a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
 									$a[] = " ) OR";
 								}
-								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-3,-1);	//the last OR has to go
+								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
 								$a[] = ")";
 							}
 						}
 					}
+
 					// The other search possibilities work only per page
 					if($params["search"] != "") {
-						$a[1] = " WHERE ";
+						//if ($params['search']!="" or $params['page']!='_search') $a[] = " AND ";
+						//else $a[] = " WHERE ";
 						if($entity["search"]["year"] == '1' or $entity["search"]["month"] == '1') {
 							if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
 								$month = $params["search"]["m"];
 								$year = $params["search"]["y"];
-								if (count($a) != 2) $a[] = " AND ";
+								if (count($a) == 2) $a[] = " AND ";
 								//if december, increment year for enddate, else only the month
 								if ($month == "") {
 									$nextYear = $year + 1;
-									$a[] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
+									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$nextYear-01-01' ";
 								} else if ($month == "12") {
 									$nextYear = $year + 1;
-									$a[] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$nextYear-01-01' ";
+									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$nextYear-01-01' ";
 								} else {
 									$nextMonth = $month + 1;
-									$a[] = " ".$entity["tablename"].'.'.$entity["dateField"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["dateField"]["name"]." < '$year-$nextMonth-01' ";
+									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$year-$nextMonth-01' ";
 								}
 							}
 						}
@@ -541,7 +543,7 @@
 							$theLink = "?".$params["page"]."&amp;nr=".$prev."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params[group];
 							$newPrev = $prev - $step + 1;
 							$sys_info = getSysInfo();
-							if($sys_info['show_public_popups']==1)$theText = ' onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$newPrev,$prev).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+							if($sys_info['hide_public_popups']==0)$theText = ' onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$newPrev,$prev).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 							else $theText = "";
 							echo($indent.'	<a'.$theText.' href="'.$theLink.'">'.__('previous').'</a>|');
 						}else {             //no link to earlier entries possible
@@ -550,7 +552,7 @@
 						if ($params["nr"] < $params["max"]) {   // link to next entries
 							$theLink = "?".$params["page"]."&amp;nr=".$next."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params["group"];
 							$sys_info = getSysInfo();
-							if($sys_info['show_public_popups']==1)$theText = 'onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$params["nr"],$next).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+							if($sys_info['hide_public_popups']==0)$theText = 'onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$params["nr"],$next).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 							else $theText = "";
 							echo($indent.'	<a '.$theText.' href="'.$theLink.'">'.__('next').'</a>');
 						}else {         	//no link to later entries possible
@@ -746,7 +748,7 @@
 				}
 				//this is what we want to do basically...
 				if ($as_toc) {	//we need only titles here
-					$name = $row[$entity["title_field"]];
+					$name = getTitle($entity,$row);
 					$name = preserveMarkup($name);
 					echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
 					// show referencing table stuff
@@ -803,7 +805,7 @@
 		else echo($indent.'<div class="list_entry">'."\n");
 		
 		if (!$list_view) {	//write an anchor
-			$name = $row[$entity["title_field"]];
+			$name = getTitle($entity,$row);
 			//text that doesn't come from a text area still must be escaped
 			if ($entity["title_field"] != "") echo($indent.'	<a class="target" id="'.buildValidIDFrom($name).'"></a>'."\n");
 		}
@@ -882,7 +884,7 @@
 							}
 							$the_href = 'edit.php?'.$page.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
 							echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a></span>'."\n");
-							$the_href = 'edit.php?'.$page.'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].$group_forward.'&amp;old_formfield_name='.$row[$entity["title_field"]].'&amp;from=list&amp;topic='.$params["topic"];
+							$the_href = 'edit.php?'.$page.'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].$group_forward.'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
 							//check if we should give the old name for consistency reasons
 							$consistency_fields = explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];;
@@ -964,12 +966,12 @@
 				echo($indent.'<div class="options">'."\n");
 				echo($indent.'	<span class="edit">'."\n");
 				$sys_info = getSysInfo();
-				if ($sys_info['show_public_popups']==1) $text='onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
+				if ($sys_info['hide_public_popups']==0) $text='onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 				else $text = "";
 				echo($indent.'	<span class="admin_link"><a '.$text.'href="admin/edit.php?'.$pagename.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'">#</a></span>'."\n");
-				if($entity["dateField"]["editlabel"] != "") { //show last editing date
-					if ($row[$entity["dateField"]["editlabel"]] != NULL) {
-						$ed = format_date($row[$entity["dateField"]["editlabel"]]);
+				if($entity["date_field"]["editlabel"] != "") { //show last editing date
+					if ($row[$entity["date_field"]["editlabel"]] != NULL) {
+						$ed = format_date($row[$entity["date_field"]["editlabel"]]);
 						if ($ed != __('no date set yet')) 
 							echo($indent.'		<span class="last_edited_label">'.__('last edited:').' '.$ed.'</span>'."\n");
 					}

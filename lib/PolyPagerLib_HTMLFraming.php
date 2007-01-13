@@ -68,7 +68,7 @@
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/skins/'.$css.'" type="text/css"></link>'."\n");
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/user.css" type="text/css"></link>'."\n");
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/basestyles.css" type="text/css"></link>'."\n");
-		echo($indent.'	<!--[if gte IE 5]>'."\n");
+		echo($indent.'	<!--[if lte IE 6]>'."\n");
 		echo($indent.'		<link href="'.$path_to_root_dir.'/style/skins/'.$skin.'/iefix.css" rel="stylesheet" type="text/css"/>'."\n");
 		echo($indent.'	<![endif]-->'."\n");
 		if ($sys_info["feed_amount"] > 0) {
@@ -83,7 +83,7 @@
 		global $path_to_root_dir;
 		global $params;
 		$sys_info = getSysInfo();
-		if ($sys_info['show_public_popups']==1) $text = 'onmouseover="popup(\''.__('Administration Page').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+		if ($sys_info['hide_public_popups']==0) $text = 'onmouseover="popup(\''.__('Administration Page').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 		else $text = '';
 		echo($indent.'<div id="title"><span id="text"><a href="'.$path_to_root_dir.'">'.$sys_info["title"].'</a></span><a href="'.$path_to_root_dir.'/admin/" '.$text.'>#</a></div>'."\n");
 	}
