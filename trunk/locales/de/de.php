@@ -372,7 +372,7 @@ function getTranslation($text) {
 'commentable:' => 'kommentierbar:',
 'hide_comments:' => 'verstecke Kommentare:', 	
 'taggable:' => 'tags benutzbar:',
-'show_public_popups:' => 'Hilfe-Popups im &ouml;ffentlichen Bereich zeigen:',
+'hide_public_popups:' => 'Hilfe-Popups im &ouml;ffentlichen Bereich nicht zeigen:',
 'search_month:' => 'Suche nach Monat:', 	
 'search_year:' => 'Suche nach Jahr:',
 'search_keyword:' => 'Suche nach Keyword:',	

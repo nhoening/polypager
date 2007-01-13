@@ -248,14 +248,14 @@ function getEditQuery($command, $theID) {
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
-		if ($entity["dateField"] != ""){
+		if ($entity["date_field"] != ""){
 			$time = buildTimeString(localtime(time() , 1));
-			$params["values"][$entity["dateField"]["name"]] = buildDateString(getdate());
-			$f = getEntityField($entity["dateField"]["name"],$entity['pagename']);
+			$params["values"][$entity["date_field"]["name"]] = buildDateString(getdate());
+			$f = getEntityField($entity["date_field"]["name"],$entity['pagename']);
 			if ($f["data-type"] == "datetime") {
-				$params["values"][$entity["dateField"]["name"]] = $params["values"][$entity["dateField"]["name"]]." ".$time;
-			}else if($entity["timeField"] != "") {
-				$params["values"][$entity["timeField"]["name"]] = $time;
+				$params["values"][$entity["date_field"]["name"]] = $params["values"][$entity["date_field"]["name"]]." ".$time;
+			}else if($entity["time_field"] != "") {
+				$params["values"][$entity["time_field"]["name"]] = $time;
 			}
 		}
 		$queryA = array();
@@ -297,14 +297,14 @@ function getEditQuery($command, $theID) {
 
 	//------------------- edit ------------------------------------
 	else if ($command == "edit") {			// UPDATE Query
-		if ($entity["dateField"]["editlabel"] != ""){
+		if ($entity["date_field"]["editlabel"] != ""){
 			$time = buildTimeString(localtime(time() , 1));
-			$params["values"][$entity["dateField"]["editlabel"]] = buildDateString(getdate());
-			$f = getEntityField($entity["dateField"]["editlabel"],$entity['pagename']);
+			$params["values"][$entity["date_field"]["editlabel"]] = buildDateString(getdate());
+			$f = getEntityField($entity["date_field"]["editlabel"],$entity['pagename']);
 			if ($f["data-type"] == "datetime") {
-				$params["values"][$entity["dateField"]["editlabel"]] = $params["values"][$entity["dateField"]["editlabel"]]." ".$time;
-			}else if($entity["timeField"] != "") {
-				$params["values"][$entity["timeField"]["editlabel"]] = $time;
+				$params["values"][$entity["date_field"]["editlabel"]] = $params["values"][$entity["date_field"]["editlabel"]]." ".$time;
+			}else if($entity["time_field"] != "") {
+				$params["values"][$entity["time_field"]["editlabel"]] = $time;
 			}
 		}
 		$queryA = array();
@@ -372,6 +372,9 @@ function getEditQuery($command, $theID) {
 		//insert the new one
 		$title = "";
 		if ($entity['title_field'] != "") $title = $params['values'][$entity['title_field']];
+		$tfield = guessTextField($entity);
+		if ($title == "" and $tfield != "") $title = getFirstWords($params['values'][$tfield],50);
+		
 		//we know if the entry is new or was updated
 		if ($params["cmd"] == "edit") $title = '['.__('update').'] '.$title;
 		$query = "INSERT INTO _sys_feed (edited_date, title, pagename, id) VALUES ";

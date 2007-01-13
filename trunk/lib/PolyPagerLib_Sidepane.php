@@ -82,9 +82,9 @@ function getFeed($amount) {
 			if (isSinglePage($row['thePage'])) {
 				$res2 = pp_run_query("SELECT bla AS tfield FROM _sys_sections WHERE pagename = '".$row['thePage']."' AND id = ".$row['theID'].";");
 			} else {
-				$field = guessTextField($the_page["tablename"]);
+                $entity = getEntity($row['pagename']);
+				$field = guessTextField($entity);
 				if ($field=="") $field = $the_page["title_field"];
-				$entity = getEntity($row['pagename']);
 				$res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
 			}
 			if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
@@ -111,14 +111,14 @@ function writeFeedDiv($ind=5) {
 	$feed_amount = $sys_info["feed_amount"];
 	if ($feed_amount > 0) {
 		$res = getFeed($feed_amount);
-		if ($sys_info['show_public_popups']==1) $text = ' onmouseover="popup(\''.__('the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+		if ($sys_info['hide_public_popups']==0) $text = ' onmouseover="popup(\''.__('the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 		else $text = '';
 		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="rss.php">'.__('the latest entries:').'</a></div>'."\n");
 		for ($x=0;$x<count($res);$x++) {
 			$row = $res[$x];
 			echo($indent.'	<div class="entry">'."\n");
 			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.$row['theContent'];
-			if ($sys_info['show_public_popups']==1) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
+			if ($sys_info['hide_public_popups']==0) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 			else $text = '';	
 			echo($indent.'		<a '.$text.'href="./?'.$row['thePage'].'&amp;nr='.$row['theID'].'">');
 			echo($row['theText'].'	</a>'."\n");
