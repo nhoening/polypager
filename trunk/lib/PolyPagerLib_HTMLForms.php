@@ -48,7 +48,8 @@ require_once("fckeditor.php");
 function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full_editor, $dis, $ind=9) {
 	global $params;
 	$indent = translateIndent($ind);
-	
+	//echo("type:".$type);
+    
 	//write Opening Tag and JS Calls
 	$inputType = "input";
 	if(isTextAreaType($type)) $inputType = "textarea";
@@ -60,15 +61,8 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	if ($inputType != "textarea") echo('<'.$inputType.' id="'.$name.'_input" tabindex="'.$tabindex.'"');
 	
 	//now all inner stuff (attributes, value...)
-	//list of MySQL-types: varchar|date|int|bool|longtext|blob|longblob|float|double|decimal
-	//(the last three translate to 'real')
+    
 	if ($inputType == "textarea")	{
-		/*
-		$value=filterXMLChars($value);	//make HTML Code visible in editing mode
-		echo(' rows="5" cols="70" name="'.$name.'">');
-		if ($value == "") echo('...');	//without any data we have strange behavior in IE and Opera
-		else echo($value);
-		*/
 		$oFCKeditor = new FCKeditor($name);
 		if (!$full_editor) $oFCKeditor->ToolbarSet = 'Basic';
 		$path = getPathFromDocRoot();
@@ -79,7 +73,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		$oFCKeditor->Height = '300' ;
 		$oFCKeditor->Config['CustomConfigurationsPath'] = str_replace("\\", '/', $path).'plugins/fckconfig.php'  ;
 		$oFCKeditor->Create() ;
-	} else if ($type == "varchar" or $type=="string" or $type == "enum" or $type == "set" or $type == "date") {
+	} else if (isTextType($type) or isDateType($type)) {
 		if ($size > 50) {
 			if ($value == "") {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -88,9 +82,11 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 			else {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
 		}
 		
-	} else if ($type=="date") {
+	} else if (isDateType($type)) {
 		//yet to be implemented in a specific and editable way - up to now (04/06) all dates are handled automatically
 		//we just do the same as for strings (see above)
+        //we add a calendar, though (see below)
+        
 	} else if (eregi('int',$type) or $type=="float" or $type=="double" or $type=="decimal") {
 		echo(' size="10" maxlength="'.$size.'" name="'.$name.'" type="text"');
 		if ($value!="") echo(' value="'.$value.'"');
@@ -107,6 +103,11 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	}
 	if ($inputType != "textarea") echo('/>'."\n");
 	
+    //calendar fields
+    if (isDateType($type)){
+        echo('<button id="_datefield_setter'.$name.'">...</button>');
+    }
+    
 	//do we fill this field from a list?
 	$entity = getentity(getMultipageNameByNr($params['nr']));
 	if ($entity != "" and $entity["fillafromb"] != ''){
@@ -119,7 +120,8 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 			if('_formfield_'.$f[0] == $name) writeFiller($f, $fields, $value, $name.'_input', $indent);
 		}
 	}
-		
+	
+    
 	//finished
 }
 
@@ -147,6 +149,8 @@ function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
 		echo("\n".$indent."</div>\n");
 	}
 }
+
+
 
 /*
  returns an array containing only what was not in both input arrays (and is)
@@ -259,8 +263,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	if ($params["cmd"] == "new" and $params["page"] != "_sys_comments"){
 		echo($indent.'<div class="sys_msg">'.__('this item has not yet been inserted into the database!').'</div>');
 	}
-	$target_nr = $params["nr"]; if ($target_nr == "") $target_nr = $params["values"]["nr"];
-	$params["nr"] = $row[$entity["pk"]];	//??
+	$target_nr = $params["nr"]; 
+    if ($target_nr == "") $target_nr = $params["values"]["nr"];
+	if ($target_nr == "") $target_nr = $row[$entity["pk"]];
 	
 	echo($indent.'<div  display="'.$display.'">'."\n");
 	if ($params["page"] == "_sys_comments")
@@ -323,7 +328,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 			echo($indent.'</label></td>'."\n");
 			
 			//if we need a text area, let it span over two columns
-			if(isTextAreaType($f['data-type'])) echo($indent.'			<td></td></tr><tr>'."\n");
+			if(isTextAreaType($f['data_type'])) echo($indent.'			<td></td></tr><tr>'."\n");
 			
 			if (in_array($f['name'],$disabled_fields)) {
 				$dis = true;
@@ -337,8 +342,8 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 			
 			if ($f['valuelist'] == "") {
 				echo($indent.'			<td class="data"');
-				if(isTextAreaType($f['data-type'])) echo(' colspan="2" ');
-				echo('>'."\n");writeInputElement($index, $f['data-type'], $f['size'], '_formfield_'.$f['name'], $f['class'], $val, $full_editor, $dis, $nind+3);
+				if(isTextAreaType($f['data_type'])) echo(' colspan="2" ');
+				echo('>'."\n");writeInputElement($index, $f['data_type'], $f['size'], '_formfield_'.$f['name'], $f['class'], $val, $full_editor, $dis, $nind+3);
 			} else {
 				echo($indent.'			<td class="data">'."\n");
 				writeOptionList($index, '_formfield_'.$f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
@@ -382,12 +387,45 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'			</td>'."\n");
 	echo($indent.'		</tr>'."\n");
 	echo($indent.'	</table></form>'."\n");
+    
+    // for date fields: add calendar (popup)
+    foreach($entity['fields'] as $f){
+        if (isDateType($f['data_type']) and !eregi($f['name'],$entity["hidden_form_fields"])){
+            echo($indent.'	<script type="text/javascript">'."\n");
+            echo($indent.'	Calendar.setup('."\n");
+            echo($indent.'	{'."\n");
+            echo($indent.'	inputField  : "_formfield_'.$f['name'].'_input",         // ID of the input field'."\n");
+            echo($indent.'  step        :    1,      //include year'."\n");
+            //echo($indent.'  cache        :   true,      //cache object'."\n");
+            if (isTimeType($f['data_type'])) 
+                echo($indent.'  showsTime      :    true,'."\n");
+            echo($indent.'  firstDay       :   0,      //0-6'."\n");
+            echo($indent.'	ifFormat    : "'.getDateFormat($f['data_type']).'",    // the date format'."\n");
+            echo($indent.'	button      : "_datefield_setter_formfield_'.$f['name'].'"       // ID of the button'."\n");
+            echo($indent.'	}'."\n");
+            echo($indent.'	);'."\n");
+            echo($indent.'	</script>'."\n");
+        }
+    }
+    
 	echo($indent.'</div>'."\n");
 
+        
 	// are tables/pages linking to this entity via foreign keys?
 	$references = getReferencingTableData($entity);
 	foreach($references as $r){
 		echo('<div class="sys_msg">there is sthg linking here: table "'.$r['table_name'].'", page is "'.$r['likely_page'].'"</div>');
 	}
 }	//end function writeHTMLForm()
+
+/*get format string for the calendar*/
+function getDateFormat($type){
+    switch($type){
+        case 'date': return '%Y-%m-%d';
+        case 'datetime': return '%Y-%m-%d %I:%M:%S';
+        case 'time': case 'timestamp': return '%I:%M:%S';
+        case 'year': return '%Y';
+        default: return '';
+    }
+}
 ?>

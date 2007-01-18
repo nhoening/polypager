@@ -142,7 +142,7 @@ function getEditParameters() {
 				foreach($entity["fields"] as $f) {
 					$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
 					//Booleans umwandeln
-					if ($f["data-type"] == "bool") {
+					if ($f["data_type"] == "bool") {
 						if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
 						else{$values[$f["name"]] = "0";}
 					}
@@ -193,6 +193,7 @@ function getEditQuery($command, $theID) {
 	$entity = getEntity($params["page"]);
 	$page_info = getPageInfo($params["page"]);
 	if ($theID == "") $theID = $params["nr"];
+    if ($theID == "") $theID = $params["values"][$entity["pk"]];
 	$query = "";        # we'll build in this string
 	$queries = array(); # and add it to this array we'll return
 	
@@ -252,7 +253,7 @@ function getEditQuery($command, $theID) {
 			$time = buildTimeString(localtime(time() , 1));
 			$params["values"][$entity["date_field"]["name"]] = buildDateString(getdate());
 			$f = getEntityField($entity["date_field"]["name"],$entity['pagename']);
-			if ($f["data-type"] == "datetime") {
+			if ($f["data_type"] == "datetime") {
 				$params["values"][$entity["date_field"]["name"]] = $params["values"][$entity["date_field"]["name"]]." ".$time;
 			}else if($entity["time_field"] != "") {
 				$params["values"][$entity["time_field"]["name"]] = $time;
@@ -262,8 +263,8 @@ function getEditQuery($command, $theID) {
 		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
 		$x = 1;
 		foreach($entity["fields"] as $f) {
-			// add it if its set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
-			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or !eregi('int',$entity["pk_type"])) {
+			// add it if it is set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
+			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or !isNumericType($entity["pk_type"])) {
 				$queryA[$x] = " ".$f["name"].","; $x++;
 			}
 		}
@@ -271,12 +272,13 @@ function getEditQuery($command, $theID) {
 		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1); //remove comma
 
 		//some tables have a string as pk
-		if ($entity["pk"] != "" and !eregi('int',$entity["pk_type"])) $queryA[] = ", ".$entity["pk"];
+		//if ($entity["pk"] != "" and !isNumericType($entity["pk_type"])) $queryA[] = ", ".$entity["pk"];
+        
 		$queryA[] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or !eregi('int',$entity["pk_type"])) {
-				if (isTextType($f["data-type"]) or isDateType($f["data-type"]) or $f["data-type"] == 'time') {
+			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or !isNumericType($entity["pk_type"])) {
+				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time') {
 					$queryA[$x] = " '".$params["values"][$f["name"]]."',";
 				} else {
 					$queryA[$x] = " ".$params["values"][$f["name"]].",";
@@ -286,9 +288,6 @@ function getEditQuery($command, $theID) {
 		}
 		$x--;
 		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
-
-		//some tables have a string as pk - then we take the id param for that
-		if ($entity["pk"] != "" and !eregi('int',$entity["pk_type"])) $queryA[count($queryA)] = ", '".$params['values'][$f[$entity["pk"]]]."'";
 
 		$queryA[count($queryA)] = ")";
 		$query .= implode($queryA);
@@ -301,7 +300,7 @@ function getEditQuery($command, $theID) {
 			$time = buildTimeString(localtime(time() , 1));
 			$params["values"][$entity["date_field"]["editlabel"]] = buildDateString(getdate());
 			$f = getEntityField($entity["date_field"]["editlabel"],$entity['pagename']);
-			if ($f["data-type"] == "datetime") {
+			if ($f["data_type"] == "datetime") {
 				$params["values"][$entity["date_field"]["editlabel"]] = $params["values"][$entity["date_field"]["editlabel"]]." ".$time;
 			}else if($entity["time_field"] != "") {
 				$params["values"][$entity["time_field"]["editlabel"]] = $time;
@@ -312,7 +311,7 @@ function getEditQuery($command, $theID) {
 		$x = 1;
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]])) {
-				if (!isTextType($f["data-type"]) and !isDateType($f["data-type"]) and $f["data-type"] != 'time') $queryA[$x] = " ".$f['name']." = ".$params['values'][$f['name']].",";
+				if (!isTextType($f["data_type"]) and !isDateType($f["data_type"]) and $f["data_type"] != 'time') $queryA[$x] = " ".$f['name']." = ".$params['values'][$f['name']].",";
 				else $queryA[$x] = " ".$f["name"]." = '".$params["values"][$f['name']]."',";
 				$x++;
 			}
@@ -320,7 +319,7 @@ function getEditQuery($command, $theID) {
 		$x--;
 		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
 		if ($entity["pk"] != "") {
-			if (eregi('int',$entity["pk_type"])) $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = $theID";
+			if (isNumericType($entity["pk_type"])) $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = $theID";
 			else $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = '".$theID."'";
 		}
 		$query .= implode($queryA);
@@ -330,21 +329,21 @@ function getEditQuery($command, $theID) {
 	//------------------- delete ----------------------------------
 	else if ($command == "delete") {	// DELETE Query
 		$query .= "DELETE FROM ".$page_info["tablename"];
-		if ($entity["pk"] != "" and eregi('int',$entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
+		if ($entity["pk"] != "" and isNumericType($entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
 		else if ($entity["pk"] != "") $query .= " WHERE ".$entity["pk"]." = '".$theID."'";
 	}
 	//---------------end delete -----------------------------------
 	//------------------- show ----------------------------------------
 	else if ($command == "show") {		// SELECT Query
 		$query .= "SELECT * FROM ".$page_info["tablename"];
-		if ($entity["pk"] != "" and eregi('int',$entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
+		if ($entity["pk"] != "" and isNumericType($entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
 		else if ($entity["pk"] != "") $query .= " WHERE ".$entity["pk"]." = '".$theID."'";
 	}
 	//---------------end show -----------------------------------------
 	
 	$query .= ';';
 	$queries[] = $query;
-	//print_r($queries);
+	print_r($queries);
 	return $queries;
 }
 

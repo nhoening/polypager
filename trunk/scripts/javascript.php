@@ -238,12 +238,12 @@ function checkValues(pageName) {
 			if ($fields != "") {
 				foreach($fields as $f) {
 					//it seems there is a problem here for hidden fields ???
-					if($f["data-type"] == 'int' or $f["validation"] == 'number') { ?>
+					if($f["data_type"] == 'int' or $f["validation"] == 'number') { ?>
 					//	if (isNaN(document.forms[0]._formfield_<?=$f["name"]?>_input.value)) {
 					//		results = results + "The field \"" + document.forms[0].<?=$f["name"]?>.name + "\" contains a non-numeric value!\n\n";
 					//	}
 					<?}
-					if($f["data-type"] == 'real') { ?> //this should be implemented as regex! sthg like [[0-9]+\.[0-9]*|[0-9]*\.[0-9]+]
+					if($f["data_type"] == 'real') { ?> //this should be implemented as regex! sthg like [[0-9]+\.[0-9]*|[0-9]*\.[0-9]+]
 					//	if (isNaN(document.forms[0]._formfield_<?=$f["name"]?>_input.value)) {
 					//		results = results + "The field \"" + document.forms[0].<?=$f["name"]?>.name + "\" contains a non-numeric value!\n\n";
 					//	}

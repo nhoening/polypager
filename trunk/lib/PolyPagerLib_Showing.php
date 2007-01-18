@@ -146,8 +146,8 @@
 			//-------------------------nr param
 			$params["nr"] = $_POST['nr'];	//starting point
 			if ($params["nr"] == "") $params["nr"] = $_GET['nr'];  //coming in per GET?
-			//pages with numericm Primaty Key need a max nr
-			if (eregi('int',$entity['pk_type'])){
+			//pages with countable Primary Key need a max nr
+			if (isNumericType($entity['pk_type'])){ //if (eregi('int',$entity['pk_type'])){
 				$params["max"] = getMaxNr($params);
 				if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
 			}
@@ -356,7 +356,7 @@
 						$date_field = $entity["date_field"];
 						
 						//normal query for "show"
-						if (eregi('int',$entity["pk_type"])) $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
+						if (isNumericType($entity["pk_type"])) $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
 						else if ($params['nr']!="") $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
 						//show a group rather than id range
 						if ($params["group"] != "" and $params["group"] != "_sys_all") {
@@ -480,7 +480,7 @@
 				}
 			}
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
-			//echo($theQuery);
+			echo($theQuery);
 			$queries[$p] = $theQuery;
 		}
 		return $queries;
@@ -579,14 +579,14 @@
 				echo($indent.'			'.__('entered in month').' <select class="search_month" disabled="disabled" name="m" >'."\n");	//month input
 				$months = array(__('January'), __('February'), __('March'), __('April'), __('May'), __('June'), __('July'), __('August'), __('September'), __('October'), __('November'), __('December'));
 				$datum = getdate();
-				$actMonth = $datum[mon];
+				$actMonth = $datum['mon'];
 				for ($i = 1; $i <= 12; $i++) {
 					if ( number_format($i) !=  number_format($actMonth)) echo('<option value="'.$i.'">'.$months[$i-1].'</option>'."\n");
 					else echo($indent.'			<option selected="selected" value="'.$i.'">'.$months[$i-1].'</option>'."\n");
 				}
 				echo($indent.'			</select> '.__('of year').' <select class="search_month" disabled="disabled" name="y">'."\n");	//year input
-				$actYear = $datum[year];
-				for ($i = 2000; $i <= $datum[year]; $i++) {
+				$actYear = $datum['year'];
+				for ($i = 2000; $i <= $datum['year']; $i++) {
 					if ($i != $actYear) echo($indent.'			<option>'.$i.'</option>'."\n");
 					else echo($indent.'			<option selected="selected">'.$i.'</option>'."\n");
 				}
@@ -598,8 +598,8 @@
 				echo($indent.'			<span class="search_toggle"><a id="search_year_link" href="javascript:toggle_ability(\'search_year\');">&nbsp;&nbsp;&nbsp;&nbsp;</a></span>'."\n");
 				echo($indent.'		'.__('entered in year').' <select class="search_year" disabled="disabled" name="y">'."\n");	//year input
 				$datum = getdate();
-				$actYear = $datum[year];
-				for ($i = 2000; $i <= $datum[year]; $i++) {
+				$actYear = $datum['year'];
+				for ($i = 2000; $i <= $datum['year']; $i++) {
 					if ($i != $actYear) echo($indent.'			<option>'.$i.'</option>'."\n");
 					else echo($indent.'			<option selected="selected">'.$i.'</option>'."\n");
 				}
@@ -839,15 +839,15 @@
 						
 						//text that doesn't come from a text area still must be escaped before showing
 						$unescaped_content = $content; // save for later
-						if(isTextType($f['data-type']) and !isTextAreaType($f['data-type'])) { 
+						if(isTextType($f['data_type']) and !isTextAreaType($f['data_type'])) { 
 							$content = preserveMarkup($content);
 						}
 						//format dates
-						if (isDateType($f['data-type'])) {
+						if (isDateType($f['data_type'])) {
 							$content = format_date($content);
 						}
 						//boolean into HTML
-						if ($f['data-type'] == "bool") {  
+						if ($f['data_type'] == "bool") {  
 							if ($content == 1) {$content="yes";} else if ($content == 0) {$content="no";}
 						}
 						
