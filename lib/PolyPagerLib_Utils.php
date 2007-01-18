@@ -106,15 +106,15 @@ function filterSQL($v) {
 
 
 /* formats a date string in, for example, "22 Sep 2006"
-   needs a timestamp as input, so if you only have a date
-   convert it with strtotime() beforehand...
 */
 function format_date($timestamp) {
+    //format depends on wether we have a timestamp or not
+    if (strlen($timestamp)>10) $fstr = 'd.m.Y - h:m:s'; else $fstr = 'd.m.Y';
 	if (substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
 	if ($lang == "de")
-		return date('d.m.Y', strtotime($timestamp));
+		return date($fstr, strtotime($timestamp));
 	else 
-		return date('d M Y', strtotime($timestamp));
+		return date($fstr, strtotime($timestamp));
 }
 
 /*
@@ -400,8 +400,7 @@ function isMultipage($page_name) {
 
 /* returns true if the page is known by the system */
 function isAKnownPage($page_name) {
-	if (isSinglepage($page_name) or isMultipage($page_name) or $page_name=="_search") return true;
-	else return false;
+	return (isSinglepage($page_name) or isMultipage($page_name) or $page_name=="_search");
 }
 
 /* return true if it is a sys-page, i.e. representing system data.
@@ -410,31 +409,36 @@ function isAKnownPage($page_name) {
 function isASysPage($page_name) {
 	$sysp = array('_sys_comments','_sys_sys','_sys_feed','_sys_fields','_sys_singlepages',
 				'_sys_multipages','_sys_sections','_sys_intros','_sys_pages','_sys_tags');
-	if (in_array($page_name,$sysp)){
-		return true;
-	}
-	else return false;
+	return (in_array($page_name,$sysp));
 }
 
-/* returns wether this MySQL type is a date type we support*/
+/* returns wether this MySQL type is numeric one */
+function isNumericType($type) {
+	return(eregi('int',$type) or $type=="real" or $type=="float" or $type=="double" or $type=="decimal");
+}
+
+/* returns wether this MySQL type is a date type we support (includes 
+    types that also or only store time !)*/
 function isDateType($type) {
-	if($type == "date" or $type == "datetime")
-		return true;
-	else return false;
+	return($type == "date" or $type == "year" or isTimeType($type));
 }
 
-/* returns wether this MySQL type is a text type*/
+/* returns wether this MySQL type is a date type we support */
+function isTimeType($type) {
+	return($type == "datetime" or $type == "time"  or $type == "timestamp");
+}
+
+
+/* returns wether this MySQL type is a text type */
 function isTextType($type) {
-	if($type == "string" or $type == "varchar" or $type == "blob" or $type == "longtext" or $type=="longblob" or $type == "set" or $type == "enum")
-		return true;
-	else return false;
+	return ($type == "string" or $type == "varchar" or $type == "tinytext" or
+        $type == "set" or $type == "enum" or $type == "char" or isTextAreaType($type));
 }
 
 /* returns wether this MySQL type is a type that PolyPager handles with a text area*/
 function isTextAreaType($type) {
-	if($type=="blob" or $type=="longtext" or $type=="longblob")
-		return true;
-	else return false;
+	return ($type=="blob" or $type=="mediumblob" or $type=="longblob"
+        or $type=="text" or $type=="mediumtext" or $type=="longtext");
 }
 
 /* get system info
@@ -814,13 +818,13 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_pages") {
 				$entity["tablename"] = "_sys_pages";
 					$field1 = array("name"=>"id",
-						"data-type"=>"int",
+						"data_type"=>"int",
 						"size"=>"12");
 					$field2 = array("name"=>"name",
-						"data-type"=>"varchar",
+						"data_type"=>"varchar",
 						"size"=>"60");
 					$field3 = array("name"=>"in_menue",
-						"data-type"=>"bool",
+						"data_type"=>"bool",
 						"size"=>"1");
 				$entity["fields"] = array($field1,$field2,$field3);
 				$entity["title_field"] = "name";
@@ -838,7 +842,7 @@ function getEntity($page_name) {
 				$entity["title_field"] = "title";
 				$entity = addFields($entity,$entity["tablename"]);
 				$entity["disabled_fields"] = "pagename";
-				$entity["hidden_form_fields"] = "edited_date"; 
+				//$entity["hidden_form_fields"] = "edited_date"; 
 			}
 			//	table for intros
 			else if ($page_name == "_sys_intros") {
@@ -889,7 +893,7 @@ function getEntity($page_name) {
 				//enum or set fields have a valuelist in the db: make it impossible to change
 				$f = getEntityField($_GET["name"],$_GET["group"]);
 				$t = __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.');
-				if($f['data-type']=="enum" or $f['data-type']=="set"){
+				if($f['data_type']=="enum" or $f['data_type']=="set"){
 					$entity["disabled_fields"] .= ',valuelist';
 					$t = __('[This field is disabled because the database specifies these values]').$t;
 					setEntityFieldValue("valuelist", "help", $t);
@@ -1115,6 +1119,15 @@ function resetLazyData() {
 	$sys_infos = "";
 }
 
+/*
+    returns true if this entity has a date field
+*/
+function hasDateField($entity){
+    foreach($entity['fields'] as $f){
+        if (isDateType($f['data_type'])) return true;
+    }
+    return false;
+}
 
 /*
 	returns an array with "table_name", "title_field", "likely_page" and "fk"
@@ -1249,7 +1262,7 @@ function getPKType($table){
 						be added - maybe because they are mentioned somewhere else already 
     
     You can expect these fields to be filled:
-    "data-type" - the MySQL data type
+    "data_type" - the MySQL data type
     "size" - the size, depending on the type
     "order_index" - index in which order the field will be displayed
     "help" - a help terxt for this field
@@ -1278,7 +1291,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		
 		//test for Information_schema.columns (SQL-92 standard)
 		$client_api = explode('.', mysql_get_client_info()); 
-		if ($client_api[0] == '5'){
+		if ($client_api[0] >= 5){
 			//test for existence of/access to INFORMATION_SCHEMA database
 			$info_schema_accessible = false;
 			$db_list = mysql_list_dbs(getDBLink());
@@ -1318,11 +1331,12 @@ function addFields($entity,$name, $not_for_field_list = "") {
 			if (!eregi($row['Field'],$not_for_field_list) and $row['Extra']!='auto_increment') {
 				//determine length
 				$len = $row['CHARACTER_MAXIMUM_LENGTH'];
-				if ($len=="NULL") $len = $row['NUMERIC_PRECISION'];
+				if ($len=="" or $len=="NULL") $len = $row['NUMERIC_PRECISION'];
 				//those fields are not there when we said SHOW COLUMNS, so...
-				if ($len=="") {
+				if ($len == "" or $len=="NULL") {
+                    $hits = array();
 					eregi('[0-9]+',$row['Type'],$hits);
-					$len = $hits[0]; 
+					$len = $hits[0];
 				}
 				//support sets or enums, 
 				//but we save the valuelist - PolyPager can handle those
@@ -1336,15 +1350,19 @@ function addFields($entity,$name, $not_for_field_list = "") {
 					$valuelist = "";
 				}
 				$field = array("name"=>$row['Field'],
-						"data-type"=>$type,
+						"data_type"=>$type,
 						"size"=>$len,
 						"order_index"=>''.$i,
 						"help"=>$row['COLUMN_COMMENT'],
 						"default"=>$row['Default'],
 						"valuelist"=>$valuelist);
-				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data-type"]."<br/>\n");
+                        
+                //if default is CURRENT_TIMESTAMP, then rettrieve it
+                if ($type="timestamp" and $row['Default']=="CURRENT_TIMESTAMP") $field['default'] = date("Y-m-d H:i:s");
+                
+				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data_type"]."<br/>\n");
 				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
-				if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) $field["data-type"] = "bool";
+				if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) $field["data_type"] = "bool";
 				
 				//set some defaults
 				$field['formgroup'] = "";
@@ -1582,7 +1600,7 @@ function getListOfFieldsByDataType($entity_name, $data_types) {
 	$dfields = array();
 	foreach($types as $t) {
 		foreach($entity["fields"] as $f) {
-			if ($f["data-type"] == $t) {
+			if ($f["data_type"] == $t) {
 				$dfields[] = $f["name"];
 			}
 		}
@@ -1632,7 +1650,7 @@ function guessTextField($entity, $prefer_long_text=true) {
 	$the_field = "";                              
 	//first blob field ?
 	for($i=0; $i<count($entity["fields"]); $i++) {
-        $dt = $entity["fields"][$i]["data-type"];
+        $dt = $entity["fields"][$i]["data_type"];
 		if (($prefer_long_text and isTextAreaType($dt)) or
             (!$prefer_long_text and isTextType($dt))) {
 			$the_field = $entity["fields"][$i]["name"];
@@ -1642,7 +1660,7 @@ function guessTextField($entity, $prefer_long_text=true) {
 	//else: first text field ?
 	if ($the_field == "")
 		for($i=0; $i<count($entity["fields"]); $i++) {
-            $dt = $entity["fields"][$i]["data-type"];
+            $dt = $entity["fields"][$i]["data_type"];
 			if (($prefer_long_text and isTextType($dt)) or
                 (!$prefer_long_text and isTextAreaType($dt))) {
 				$the_field = $entity["fields"][$i]["name"];

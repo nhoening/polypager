@@ -138,7 +138,7 @@ div.show_entry, div.show_entry_with_options {
 	padding: 4px 1em 4px 1em;
 }
 
-.title {
+.show .title {
 	line-height:23px !important;
 	min-height:23px !important;
 	width: 470px;
@@ -314,13 +314,13 @@ table tr.edit td.last_edited_label {
 /*  ---------------------- forms --------------------------- */
 
 #edit_form {
-	width: 750px !important; /*doesn't seem to work for IE and Opera*/
+	width: 750px !important;
 	float: none;
 	border-width: 1px;
 }
 
 #edit_form table{
-	width: 750px !important; /*doesn't seem to work for IE and Opera*/
+	width: 750px !important;
 }
 
 #commentform { 
@@ -332,7 +332,6 @@ table tr.edit td.last_edited_label {
 }
 
 #edit_form fieldset table tr td.data{
-	/*width: 1000px !important; *//*wiiiide*/
 	width: 100%;
 }
 
@@ -346,7 +345,7 @@ table tr.edit td.last_edited_label {
 	margin: 0px 2px 0px 0px;
 }
 
-form.edit input, form textarea, form button { /*form select {*/
+form.edit input, form textarea, form button { 
 	padding:2px; 
 }
 
@@ -367,5 +366,6 @@ button {
 #comments  div.label, #comments div.value{
 	display:inline !important;
 }
+
 /*  -------------------end comments --------------------------- */
 

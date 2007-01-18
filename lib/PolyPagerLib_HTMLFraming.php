@@ -38,6 +38,7 @@
 		global $title;
 		global $path_to_root_dir;
 		$sys_info = getSysInfo();
+        $entity = getEntity($params['page']);
 		global $version;
 
 		echo($indent.'<head>'."\n");
@@ -47,12 +48,13 @@
 		echo($indent.'	<meta name="DC.creator" content="'.$sys_info["author"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.generator" content="PolyPager Version '.$version.'"/>'."\n");
 		echo($indent.'	<meta name="keywords" content="'.$sys_info["keywords"].'"/>'."\n");
-		if ($path_to_root_dir != ".") echo($indent.'	<meta name="robots" content="noindex, nofollow" />');
+		if ($path_to_root_dir != ".") echo($indent.'	<meta name="robots" content="noindex, nofollow" />'."\n");
 		//echo($indent.'	<meta name="date" content="'.date('Y-m-d').'"></meta>'."\n");
 		echo($indent.'	<link rel="Shortcut Icon" href="/favicon.ico" type="image/x-icon"></link>'."\n");
 		echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/javascript.php"></script>'."\n");
 		echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/popup.js"></script>'."\n");
-		//backdoor hack to get all picswap colorsets
+		
+        //backdoor hack to get all picswap colorsets
 		if (strpos($sys_info['skin'],'picswap')>-1) {
 			$skin = 'picswap';
 			$css = 'picswap/'.$sys_info['skin'].'.css';
@@ -71,6 +73,15 @@
 		echo($indent.'	<!--[if lte IE 6]>'."\n");
 		echo($indent.'		<link href="'.$path_to_root_dir.'/style/skins/'.$skin.'/iefix.css" rel="stylesheet" type="text/css"/>'."\n");
 		echo($indent.'	<![endif]-->'."\n");
+        
+        //include calendar if necessary
+        if (hasDateField($entity) and includedByAdminScript($path_to_root_dir)){
+            echo($indent.'	<style type="text/css">@import url(../plugins/jscalendar-1.0/skins/aqua/theme.css);</style>'."\n");
+            echo($indent.'	<script type="text/javascript" src="../plugins/jscalendar-1.0/calendar.js"></script>'."\n");
+            echo($indent.'	<script type="text/javascript" src="../plugins/jscalendar-1.0/lang/calendar-'.$sys_info['lang'].'.js"></script>'."\n");
+            echo($indent.'	<script type="text/javascript" src="../plugins/jscalendar-1.0/calendar-setup.js"></script>'."\n");
+        }
+        
 		if ($sys_info["feed_amount"] > 0) {
 			echo($indent.'	<link rel="alternate" type="application/rss+xml" title="'.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
 		}
