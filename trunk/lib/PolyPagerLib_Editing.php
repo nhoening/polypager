@@ -1,7 +1,7 @@
 <?php
 /*
 PolyPager - a lean, mean web publishing system
-Copyright (C) 2006 Nicolas Hšning
+Copyright (C) 2006 Nicolas Hï¿½ning
 polypager.nicolashoening.de
 
 This program is free software; you can redistribute it and/or modify
@@ -252,7 +252,7 @@ function getEditQuery($command, $theID) {
 		if ($entity["date_field"] != ""){
 			$time = buildTimeString(localtime(time() , 1));
 			$params["values"][$entity["date_field"]["name"]] = buildDateString(getdate());
-			$f = getEntityField($entity["date_field"]["name"],$entity['pagename']);
+			$f = getEntityField($entity["date_field"]["name"],$entity);
 			if ($f["data_type"] == "datetime") {
 				$params["values"][$entity["date_field"]["name"]] = $params["values"][$entity["date_field"]["name"]]." ".$time;
 			}else if($entity["time_field"] != "") {
@@ -299,7 +299,7 @@ function getEditQuery($command, $theID) {
 		if ($entity["date_field"]["editlabel"] != ""){
 			$time = buildTimeString(localtime(time() , 1));
 			$params["values"][$entity["date_field"]["editlabel"]] = buildDateString(getdate());
-			$f = getEntityField($entity["date_field"]["editlabel"],$entity['pagename']);
+			$f = getEntityField($entity["date_field"]["editlabel"],$entity);
 			if ($f["data_type"] == "datetime") {
 				$params["values"][$entity["date_field"]["editlabel"]] = $params["values"][$entity["date_field"]["editlabel"]]." ".$time;
 			}else if($entity["time_field"] != "") {
