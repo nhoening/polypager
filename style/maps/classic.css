@@ -138,7 +138,7 @@ div.show_entry, div.show_entry_with_options {
 	padding: 4px 1em 4px 1em;
 }
 
-.show .title {
+.show * .title * {
 	line-height:23px !important;
 	min-height:23px !important;
 	width: 470px;

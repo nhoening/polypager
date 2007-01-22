@@ -3441,6 +3441,7 @@ require_once("PolyPagerLib_HTMLFraming.php");
 require_once("PolyPagerLib_AdminIndex.php");
 require_once("PolyPagerLib_Utils.php");
 require_once("PolyPagerLib_Showing.php");
+require_once("PolyPagerLib_Sidepane.php");
 
 // ---------------------------------------
 

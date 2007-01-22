@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-	Copyright (C) 2006 Nicolas Hšning
+	Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
 	This program is free software; you can redistribute it and/or modify
@@ -501,25 +501,48 @@ function getTables() {
 /* get page meta-info for the actual page (single/multipage info)
 */
 $page_info = "";
+$old_page_infos = "";
 function getPageInfo($page_name) {
 	global $page_info;
+    if ($page_name == "") return $page_info;
 	if ($page_info == "" or $page_info["name"] != $page_name) {
-		if (isSinglePage($page_name)) $query = "SELECT * FROM _sys_singlepages";
-		else if (isMultiPage($page_name)) $query = "SELECT * FROM _sys_multipages";
-
-		if ($query != "") {
-			$query = $query." WHERE name = '".$page_name."'";
-			$res = mysql_query($query, getDBLink());
-			$page_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
-		}
-		//adding this if page info is used for queries
-		if(isSinglePage($page_name)) $page_info["tablename"] = '_sys_sections';
-		else if (isASysPage($page_name)) $page_info["tablename"] = $page_name;
+        if (getAlreadyBuiltPageInfo($page_name) != "") {
+			$page_info = getAlreadyBuiltPageInfo($page_name);
+        } else {
+            $page_info = array();
+            if (isSinglePage($page_name)) $query = "SELECT * FROM _sys_singlepages";
+            else if (isMultiPage($page_name)) $query = "SELECT * FROM _sys_multipages";
+            else { //no page? maybe a table. try the first page for this table
+                $pq = "SELECT name FROM _sys_multipages WHERE tablename = '".$page_name."'";
+                $res = pp_run_query($pq);
+                if($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                    $page_name = $row["name"];
+                    $query = "SELECT * FROM _sys_multipages";
+                }
+            }
+            if ($query != "") {
+                $query = $query." WHERE name = '".$page_name."'";
+                $res = mysql_query($query, getDBLink());
+                $page_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
+            }
+            //adding this if page info is used for queries
+            if(isSinglePage($page_name)) $page_info["tablename"] = '_sys_sections';
+            else if (isASysPage($page_name)) $page_info["tablename"] = $page_name;
+        }
 	}
 	
 	return $page_info;
 }
 
+/*gives you an alreay built page_info if it is stored in $old_page_infos (it should)*/
+function getAlreadyBuiltPageInfo($page_name) {
+	global $old_page_infos;
+	if ($old_page_infos!="")
+		foreach($old_page_infos as $p){
+			if ($p["name"] == $page_name) return $p;
+		}
+	return "";
+}
 
 
 /*  This function gets a multidimensional array for the metadata of pages.
@@ -649,7 +672,7 @@ function getEntity($page_name) {
 				$entity["tablename"] = "_sys_multipages";
 
 				$entity = addFields($entity,$entity["tablename"]);
-
+                
 				$entity["title_field"] = "name";
 				setEntityFieldValue("order_order", "valuelist", "ASC,DESC");
 				setEntityFieldValue("group_order", "valuelist", "ASC,DESC");
@@ -701,7 +724,7 @@ function getEntity($page_name) {
 					setEntityFieldValue("edited_field", "valuelist", ','.implode(',', getListOfFieldsByDataType($the_table, 'date,datetime')));
 					setEntityFieldValue("title_field", "valuelist", ','.implode(',', getListOfFields($the_table)));
 					setEntityFieldValue("order_by", "valuelist", ','.implode(',', getListOfFields($the_table)));
-					setEntityFieldValue("group_field", "valuelist", ','.implode(',', getListOfValueListFields($the_table)));
+					setEntityFieldValue("group_field", "valuelist", ','.implode(',', getListOfFields($the_table)));
 					setEntityFieldValue("publish_field", "valuelist", ','.implode(',', getListOfFieldsByDataType($the_table, 'bool')));
 				} else {
 					$entity["disabled_fields"] .= ',publish_field,date_field,time_field,edited_field,title_field,order_by,group_field';
@@ -891,7 +914,7 @@ function getEntity($page_name) {
 				
 				$entity["disabled_fields"] .= ",pagename";
 				//enum or set fields have a valuelist in the db: make it impossible to change
-				$f = getEntityField($_GET["name"],$_GET["group"]);
+				$f = getEntityField($_GET["name"],$entity);
 				$t = __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.');
 				if($f['data_type']=="enum" or $f['data_type']=="set"){
 					$entity["disabled_fields"] .= ',valuelist';
@@ -1018,7 +1041,7 @@ function getEntity($page_name) {
 									 "order"=>$page_info["group_order"]);
 						$entity["group"] = $group;
 					}
-
+                    
 					//date_field - only if there is one specified
 					if($page_info["date_field"] != "") {
 						$date_field = array("name"=>$page_info["date_field"],
@@ -1044,11 +1067,24 @@ function getEntity($page_name) {
 					if($page_info["tablename"] != "") {
 						$entity = addFields($entity,$page_info["tablename"]);
 					}
+                    
+                    //get valuelist for group field if none is set
+                    $f = getEntityField($entity['group']['field'],$entity);
+                    if ($entity["group"] != "" and $f['valuelist'] == ""){
+                        $q = "SELECT ".$entity['group']['field']." FROM ".$entity['tablename']." GROUP BY ".$entity["group"]['field'];
+                        $res = pp_run_query($q);
+                        $group_vals = array();
+                        while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
+                            $group_vals[] = $row[$entity['group']['field']];
+                        setEntityFieldValue($entity['group']['field'], 'valuelist', implode(',',$group_vals));
+                    } 
+                    
 				}
 			}
             // if it was no page, maybe it's a table - return the info from addFields($entity,)
 			else if (in_array($page_name, getTables())) {
                 $entity['tablename'] = $page_name;
+                $entity['pagename'] = $page_name;
 				$entity = addFields($entity,$page_name);
 			}
 			
@@ -1115,6 +1151,8 @@ function resetLazyData() {
 	$entity = "";
 	global $old_entities;
 	$old_entities = "";
+    global $old_page_infos;
+	$old_page_infos = "";
 	global $sys_infos;
 	$sys_infos = "";
 }
@@ -1276,7 +1314,7 @@ function getPKType($table){
 */
 function addFields($entity,$name, $not_for_field_list = "") {
 		$fields = array();
-		$page_info = getPageInfo("");
+		$page_info = getPageInfo($entity['pagename']);
 		global $db;
 
 		$link = getDBLink();
@@ -1375,12 +1413,10 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		}
 		
 		// -- now we enrich with data from the _sys_fields table
-
 		$query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
-		$res = mysql_query($query, $link);
-		
+		$res = pp_run_query($query);
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-			for($i=0; $i<count($fields); $i++) {
+			for($i=0;$i<count($fields);$i++){
 				
 				if ($fields[$i]["name"] == $row["name"]) {
 					$fields[$i]["label"] = $row["label"];
@@ -1395,6 +1431,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		}
 		uasort($fields,"cmpByOrderIndexAsc");
 		$entity["fields"] = $fields;
+        
 		return $entity;
 }
 
@@ -1565,10 +1602,9 @@ function setEntityFieldValue($f_name, $attr_name, $attr_value) {
 	}
 }
 
-/*gets an array with field data from an already fetched entity*/
-function getEntityField($fname,$ename) {
-	$old_entity = getAlreadyBuiltEntity($ename);
-	if($old_entity["fields"] != "") foreach ($old_entity["fields"] as $f) if ($f["name"] == $fname) return $f;
+/*gets an array with field data from the entity*/
+function getEntityField($fname,$entity) {
+	if($entity["fields"] != "") foreach ($entity["fields"] as $f) if ($f["name"] == $fname) return $f;
 	return "";
 }
 
@@ -1622,7 +1658,6 @@ function getListOfValueListFields($entity_name) {
 	} else $entity = getEntity("");
 	$dfields = array();
 	for($i=0; $i<count($entity["fields"]); $i++) {
-
 		if ($entity["fields"][$i]["valuelist"] != '') {
 			$dfields[count($dfields)] = $entity["fields"][$i]["name"];
 		}

@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -166,17 +166,19 @@
 			if ($params["step"] == "") $params["step"] = $default_step;
 			
 			//-------------------------group param
-			$params["group"] = $_GET["group"];	//show only this group
+            echo($_GET["group"]);
+			$params["group"] = urldecode($_GET["group"]);	//show only this group
+            echo($params["group"]);
 			if ($params["group"] == "") { $params["group"] = $_POST["group"]; } //coming in per POST?
 			if ($params["group"] == "" and isSinglepage($params["page"])) {	
-				//in singlepages, group is called anothe name for db reasons
+				//in singlepages, group is called another name for db reasons
 				$params["group"] = $_GET["the_group"];
 				if ($params["group"] == "") { $params["group"] = $_POST["the_group"]; }
 			}
 			//take default group if there hasn't been a special one requested
 			if ($params["group"] == "" and $params["nr"] == "") {
-				$page_info = getPageInfo($params["page"]);
-				$glist = getEntityField('the_group',$params["page"]);
+				//$page_info = getPageInfo($params["page"]);
+				//$glist = getEntityField('the_group',);
 				//default group when the user had a choice between groups for this page
 				if ($glist['valuelist'] != 'standard,') $params["group"] = $page_info["default_group"];
 			}

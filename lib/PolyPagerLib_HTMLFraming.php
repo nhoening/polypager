@@ -2,7 +2,7 @@
 
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -245,7 +245,7 @@
 				or (isSinglePage($p["name"]) and $page_info["grouplist"] != "")) {
 					//display submenu for $p["name"] with group entries
 					if(isMultipage($p["name"])) {
-						$efield = getEntityField($tmp_entity["group"]["field"],$tmp_entity['pagename']);
+						$efield = getEntityField($tmp_entity["group"]["field"],$tmp_entity);
 						$gfield = $efield["valuelist"];
 					}
 					//for singlepages, all groups without "standard" (is not in 
@@ -277,7 +277,7 @@
 						if ($a[$x] != "") {
 							//test if THIS group was selected
 							if ($a[$x] == $params["group"]) $classAtt="here"; else $classAtt="not_here";
-							echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group='.$a[$x].'">'.$a[$x].'</a></li>'."\n");
+							echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group='.urlencode($a[$x]).'">'.$a[$x].'</a></li>'."\n");
 						}
 					}
 					if ($x==0) {	//ul yhould not be empty - that's not valid'

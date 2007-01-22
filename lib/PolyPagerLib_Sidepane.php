@@ -1,7 +1,7 @@
 <?
 	/*
 		PolyPager - a lean, mean web publishing system
-	    Copyright (C) 2006 Nicolas Hšning
+	    Copyright (C) 2006 Nicolas Hï¿½ning
 		polypager.nicolashoening.de
 		
 	    This program is free software; you can redistribute it and/or modify
@@ -93,8 +93,8 @@ function getFeed($amount) {
 					$row['theText'] = getFirstWords($row2['tfield'],6);
 				}
 				$row['theContent'] = str_replace('\'', '\\\'', getFirstWords($row2['tfield'],70));
-				$feeds[$i++] = $row;
 			}
+		        $feeds[$i++] = $row;
 		}
 	}
 	
@@ -119,8 +119,9 @@ function writeFeedDiv($ind=5) {
 			echo($indent.'	<div class="entry">'."\n");
 			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.$row['theContent'];
 			if ($sys_info['hide_public_popups']==0) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
-			else $text = '';	
-			echo($indent.'		<a '.$text.'href="./?'.$row['thePage'].'&amp;nr='.$row['theID'].'">');
+			else $text = '';
+            global $path_to_root_dir;
+			echo($indent.'		<a '.$text.'href="./'.$path_to_root_dir.'/?'.$row['thePage'].'&amp;nr='.$row['theID'].'">');
 			echo($row['theText'].'	</a>'."\n");
 			echo($indent.'	</div>'."\n");
 		}

@@ -26,8 +26,8 @@
 			</div>
 
 			<div id="data<?=$area?>">
-		
-<?php if($area == '') { ?>
+
+<?php if($area == '' or $area=='_gallery') { ?>
 				<div id="sidepane">
 <?php writeIntroDiv();?>
 <?php writeFeedDiv();?>
