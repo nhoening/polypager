@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -240,12 +240,13 @@ echo('<!ENTITY yuml   "&#255;"> <!-- latin small letter y with diaeresis,
 //echo('>'."\n");
 
 
-echo('<rss version="0.91">'."\n");
+echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
 echo('		<title>'.$sys_info["title"].'</title>'."\n");
 echo('		<link>http://'.$url.'</link>'."\n");
 echo('		<description>a website by '.$sys_info["author"].'</description>'."\n");
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
+echo('		<generator>PolyPager '.$version.'</generator>'."\n");
 
 $res = getFeed($sys_info["feed_amount"]);
 
@@ -254,7 +255,10 @@ for ($x=0; $x < count($res); $x++) {
 	echo('		<item>'."\n");
 	echo('			<title><![CDATA['.$row["theText"].']]></title>'."\n");
 	echo('			<link>http://'.$url.'?'.$row["thePage"].'&amp;nr='.$row["theID"].'</link>'."\n");
-	echo('			<description><![CDATA['.$row["theContent"].']]></description>'."\n");echo('		</item>'."\n");
+	echo('			<description><![CDATA['.$row["theContent"].']]></description>'."\n");
+	echo('			<pubDate>'.date('r',strtotime($row["theDate"])).'</pubDate>'."\n");
+	echo('			<guid isPermaLink="true">http://'.$url.'?'.$row["thePage"].'&amp;nr='.$row["theID"].'</guid>'."\n");
+    echo('		</item>'."\n");
 }
 echo('	</channel>'."\n");
 echo('</rss>'."\n");

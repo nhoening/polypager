@@ -141,7 +141,7 @@ body {
 	padding: 1px;
 }
 
-#sidepane #feeds .entry, #sidepane #intro .entry {
+#sidepane #feeds .entry, #sidepane #intro .entry, #searchbox{
 	background-color: #<?=getColor('dark'); ?>;
 }
 
@@ -452,6 +452,14 @@ table tr.edit td.last_edited_label {
 }
 #toc .link{
 	padding-left: 1em;
+}
+
+#searchbox{
+    text-align:center;
+    margin: 5 0 10 0;
+}
+#searchbox button, #searchbox input{
+    color: black !important;
 }
 /* ----------------end search ------------------------------ */
 

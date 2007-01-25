@@ -82,7 +82,8 @@ function getFeed($amount) {
 			if (isSinglePage($row['thePage'])) {
 				$res2 = pp_run_query("SELECT bla AS tfield FROM _sys_sections WHERE pagename = '".$row['thePage']."' AND id = ".$row['theID'].";");
 			} else {
-                $entity = getEntity($row['pagename']);
+                $entity = getEntity($row['thePage']);
+                
 				$field = guessTextField($entity);
 				if ($field=="") $field = $the_page["title_field"];
 				$res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
