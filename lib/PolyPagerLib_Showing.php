@@ -130,6 +130,13 @@
 			$params["page"] = $sys_info["start_page"];
 		}
 		
+
+        //one more exception: if there is no page butcommand is _search, 
+        //let's help the user out and conduct pagewise search
+        if (($params["page"]=="" or $params["page"]=='cmd=_search') and $_GET["cmd"]=="_search")
+            $params["page"] = "_search";
+
+        
 		//only go on if we know the page
 		if ($params["page"] != "" and isAKnownPage($params["page"])){
 
@@ -166,9 +173,9 @@
 			if ($params["step"] == "") $params["step"] = $default_step;
 			
 			//-------------------------group param
-            echo($_GET["group"]);
+            
 			$params["group"] = urldecode($_GET["group"]);	//show only this group
-            echo($params["group"]);
+            
 			if ($params["group"] == "") { $params["group"] = $_POST["group"]; } //coming in per POST?
 			if ($params["group"] == "" and isSinglepage($params["page"])) {	
 				//in singlepages, group is called another name for db reasons
@@ -205,8 +212,8 @@
 				}
 				if ($entity["fields"] != "") foreach ($entity["fields"] as $f) {
 					if ($f["valuelist"] != "") {
-						$search[$f["name"]] = $_POST['_search_'.$f["name"]];
-						if ($search[$f["name"]] == "") $search[$f["name"]] = $_GET['_search_'.$f["name"]];
+						$search[$f["name"]] = $_POST[''.$f["name"]];
+						if ($search[$f["name"]] == "") $search[$f["name"]] = $_GET[''.$f["name"]];
 						if ($search[$f["name"]] != "") $had_value = true;
 					}
 				}
@@ -345,6 +352,9 @@
 					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
 					$a[0] .= " ";
 					
+                    //let'S track if we saif "WHERE"
+                    $said_where = false;
+                    
 					if (isMultipage($params["page"])) {
 						//helper vars
 						if ($params["step"] != "all") {
@@ -358,28 +368,38 @@
 						$date_field = $entity["date_field"];
 						
 						//normal query for "show"
-						if (isNumericType($entity["pk_type"])) $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
-						else if ($params['nr']!="") $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
+						if (isNumericType($entity["pk_type"])) {
+                            $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
+                            $said_where = true;
+                        }else if ($params['nr']!="") {
+                            $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
+                            $said_where = true;
+                        }
 						//show a group rather than id range
 						if ($params["group"] != "" and $params["group"] != "_sys_all") {
 							$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
+                            $said_where = false;
 						}
 					} else if (isSinglepage($pagename)) {
 						$a[1] = "WHERE _sys_sections.pagename = '$pagename'";
 						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
-						if ($params["group"] != "" and $params["group"] != "_sys_all" and $sys_info["submenus_always_on"] != 0) {
+						if ($params["group"] != "" and $params["group"] != "_sys_all"){ // and $sys_info["submenus_always_on"] != 0) {
 							//"standard" entries are -per definition- always shown!
 							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR the_group = 'standard')";
 						}
+                        $said_where = true;
 					}
 					
+                    
 					// -- special case search - new query --
 					//Keyword search works page AND sitewide
 					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
 						if ($params["search"]["kw"] != "") {
 							$keyword = $params["search"]["kw"];
 							$keyword_lower = strtolower($keyword);	 //lower/upper-case should not matter in our keyword search!
-							if (count($a) == 2) $a[] = " AND ";
+							//if (count($a) == 2) $a[] = " AND ";
+                            if ($said_where) $a[] = " AND ";
+                            else $a[] = " WHERE ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
 								echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
 								$a[] = " 2=1"; //show nothing
@@ -412,7 +432,9 @@
 							if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
 								$month = $params["search"]["m"];
 								$year = $params["search"]["y"];
-								if (count($a) == 2) $a[] = " AND ";
+                                
+								if ($said_where) $a[] = " AND ";
+                                else $a[] = " WHERE ";
 								//if december, increment year for enddate, else only the month
 								if ($month == "") {
 									$nextYear = $year + 1;
@@ -429,14 +451,14 @@
 		
 						//valuelisted fields
 						foreach ($entity["fields"] as $f) {
-						
+                            
 							//if we have a specified valuelist and the name of the field is a name of a search param...
-							if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "")
-							   {
-								if (count($a) != 2) $a[] = " AND ";
+							if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") {
+								if ($said_where) $a[] = " AND ";
+                                else $a[] = " WHERE ";
 								$a[] = $f["name"]." = '".$params["search"][$f["name"]]."'";
 								
-								//if the field is the group field, we knew that is a request - save it!
+								//if the field is the group field, we knew that is a request - save it for later!
 								if ($f["name"] == $entity["group"]["field"]) $params["group"] = $params["search"][$f["name"]];
 							}
 						}
@@ -489,7 +511,7 @@
 	}
 	
 	/* preserve Markup for text fields
-		the consensus here is that $...; entities are goping
+		the consensus here is that $...; entities are going
 		to stay, but < and > are preserved (same as Firefox tab titles) 
 	*/
 	function preserveMarkup($content){
@@ -574,7 +596,7 @@
 			}
 			$theAction = "?".$params["page"];
 			echo($indent.'	<form class="search" action="'.$theAction.'" method="get"><fieldset>'."\n");
-	
+            echo($indent.'      <input type="hidden" name="cmd" value="_search"/>'."\n");
 			if ($entity["search"]["month"] == "1") { //search for a date
 				echo($indent.'		<div class="search_option">'."\n");
 				echo($indent.'			<span class="search_toggle"><a id="search_month_link" href="javascript:toggle_ability(\'search_month\');">&nbsp;&nbsp;&nbsp;&nbsp;</a></span>'."\n");
@@ -622,7 +644,7 @@
 					echo('                     				<!--'.$f['name'].'search-->'."\n");
 					echo($indent.'		<div class="search_option">'."\n");
 					echo($indent.'			<span class="search_toggle"><a id="search_'.$f['name'].'_link" href="javascript:toggle_ability(\'search_'.$f['name'].'\');">&nbsp;&nbsp;&nbsp;&nbsp;</a></span>'."\n");
-					echo($indent.'			'.$f["name"].': <select class="search_'.$f['name'].'" disabled="disabled" name="_search_'.$f['name'].'">'."\n");	//input
+					echo($indent.'			'.$f["name"].': <select class="search_'.$f['name'].'" disabled="disabled" name="'.$f['name'].'">'."\n");	//input
 					$vals = explode(',', $f["valuelist"]);
 					foreach ($vals as $v) {
 						if ($v != $params["search"][$f["name"]]) echo('<option>'.$v.'</option>'."\n");
@@ -632,12 +654,11 @@
 					echo($indent.'		</div>'."\n");
 				}
 			}
-			echo($indent.'				<input type="hidden" name="max" value="'.$params['max'].'" />'."\n");
-			echo($indent.'				<input type="hidden" name="group" value="'.$params['group'].'" />'."\n");
-			echo($indent.'				<input type="hidden" name="topic" value="'.$params['topic'].'" />'."\n");
+			//echo($indent.'				<input type="hidden" name="max" value="'.$params['max'].'" />'."\n");    //those make the URL ugly and/or disturb search
+			//echo($indent.'				<input type="hidden" name="group" value="'.$params['group'].'" />'."\n");
+			if ($params['topic']!="") echo($indent.'				<input type="hidden" name="topic" value="'.$params['topic'].'" />'."\n");
 			echo($indent.'				<input type="hidden" name="page" value="'.$params["page"].'"/>'."\n");
-			echo($indent.'				<input type="hidden" name="cmd" value="_search"/>'."\n");
-			echo($indent.'				<button type="submit" class="submit" name="dummy">'.__('search').'</button>'."\n");
+            echo($indent.'				<input type="submit" class="submit" value="'.__('search').'"/>'."\n");
 			$helptext = __('Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search. Several keywords are implicitely connected by AND.');
 			writeHelpLink($indent, $helptext);
 			echo($indent.'		</fieldset>'."\n");
@@ -730,7 +751,7 @@
 				//more grouping stuff...
 				//if not singlepage, group "standard"
 				if ($entity["group"] != "" or $as_toc) {// and
-					//!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard")){
+					
 					if ($debug) {echo('<div class="debug">group_field_save is '.$group_field_save.' ...row[$entity["group"]["field"]] is '.$row[$entity["group"]["field"]].'</div>'); }
 					if ($before_first_entry == true) {
 						$before_first_entry = false; //indicates we indeed had data
@@ -754,14 +775,16 @@
 					$name = preserveMarkup($name);
 					echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
 					// show referencing table stuff
-					echo($indent.'		<ul class="fk_link">'."\n");
-					for ($x=0;$x<count($rt);$x++){
-						foreach($fk_rows as $fk_row){
-							if ($row[$rt[$x]['fk']['ref_field']] == $fk_row['f']) 
-								echo($indent.'			<li><a href="?'.$fk_row['fk_page'].'&amp;nr='.$fk_row['pk'].'">'.$fk_row['tf'].'</a></li>'."\n");
-						}
-					}
-					echo($indent.'		</ul>'."\n");
+                    if (count($rt)>0){
+                        echo($indent.'		<ul class="fk_link">'."\n");
+                        for ($x=0;$x<count($rt);$x++){
+                            foreach($fk_rows as $fk_row){
+                                if ($row[$rt[$x]['fk']['ref_field']] == $fk_row['f']) 
+                                    echo($indent.'			<li><a href="?'.$fk_row['fk_page'].'&amp;nr='.$fk_row['pk'].'">'.$fk_row['tf'].'</a></li>'."\n");
+                            }
+                        }
+                        echo($indent.'		</ul>'."\n");
+                    }
 				} else {	//here we need some sophisticated stuff
 					$next_ind = $ind + 1;
 					writeEntry($row, $respage, $next_ind, $listview);

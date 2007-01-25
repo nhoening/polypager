@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '0.9.8';
+$version = '0.9.9';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
@@ -782,7 +782,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("order_by", "help", __('here you can choose which field should be the order criterium.'));
 				setEntityFieldValue("order_order", "help", __('ASC stands for ascending. Take numbers for an example: lowest numbers will come first, highest last. DESC means descending and works the other way round'));
 				setEntityFieldValue("publish_field", "help", __('this field will be used to switch if the entry should be public or not'));
-				setEntityFieldValue("group_field", "help", __('this field will be used by PolyPager to group entries of this page. It will also be used to create sumenu entries (so the visitor can select what to see quickly) and search criteria. Note that PolyPager lists only fields that have a valuelist assigned (you can do this in the fields section for that page).'));
+				setEntityFieldValue("group_field", "help", __('this field will be used by PolyPager to group entries of this page. It will also be used to create sumenu entries (so the visitor can select what to see quickly) and search criteria.'));
 				setEntityFieldValue("group_order", "help", __('ASC stands for ascending. Take numbers for an example: lowest numbers will come first, highest last. DESC means descending and works the other way round'));
 				setEntityFieldValue("date_field", "help", __('this (date)field stores the time its entry was created.'));
 				setEntityFieldValue("edited_field", "help", __('this (date)field would display when the last change to its entry took place.'));
