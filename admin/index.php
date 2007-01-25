@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -64,10 +64,6 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
 		*/
 	
-	}
-	
-	if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
-		$sys_msg = $sys_msg.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</br>\n";
 	}
 	
 	//template creation

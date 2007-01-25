@@ -175,7 +175,12 @@ function getEditParameters() {
 				$params["cmd"] = "show";	//assume showing what we have
 			}
 		}
-	
+        
+        // some links carry the primary key implicitely
+        if (!isset($params["values"][$entity["pk"]])) {
+                $params["values"][$entity["pk"]] = $params["nr"];
+        }
+    
 		//$opt = $_POST[opt];	//indicates what to show next
 		//-----------------end Checking Parameters -----------------------
 	}
@@ -246,6 +251,8 @@ function getEditQuery($command, $theID) {
 		}
 	}
 	
+
+
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -264,7 +271,7 @@ function getEditQuery($command, $theID) {
 		$x = 1;
 		foreach($entity["fields"] as $f) {
 			// add it if it is set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
-			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or !isNumericType($entity["pk_type"])) {
+			if (isset($params["values"][$f["name"]])) {
 				$queryA[$x] = " ".$f["name"].","; $x++;
 			}
 		}
@@ -277,7 +284,7 @@ function getEditQuery($command, $theID) {
 		$queryA[] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]]) or $params['nr']=="" or !isNumericType($entity["pk_type"])) {
+			if (isset($params["values"][$f["name"]]) ) {
 				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time') {
 					$queryA[$x] = " '".$params["values"][$f["name"]]."',";
 				} else {
