@@ -2,7 +2,7 @@
 	
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -133,6 +133,8 @@ function writeData($ind=4) {
 	
 	showAdminOptions($indent.'	');
 	
+    echo($indent.'<h1>Admin Area</h1>'."\n");
+    
 	if($debug) {
 		echo('<div class="debug">Query is: '.$query.'</div>');
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
@@ -171,7 +173,7 @@ function writeData($ind=4) {
 	}
 	
 	if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.$page.'&topic='.$params["topic"].'&group='.$params["group"].'">'.__('back to list view').'</a></li>'."\n");
-	if ($params["from"] == "admin") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
+	if ($params["from"] == "admin" and $params["page"]!="_sys_sys") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
 	$page_info = getPageInfo($params["page"]);
 	if($page_info["in_menue"] == "0" and !strpos($params["page"], "_sys_")) {
 		echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.$params['page'].'&amp;group='.$params['group'].'">'.__('see the page').'</a></li>'."\n");
@@ -193,7 +195,7 @@ function writeData($ind=4) {
 		}
 		echo('</h1>'."\n");
 	} else if ($params["page"] == "_sys_intros") {
-		if ($params["nr"] != '_sys_impressum') echo($indent.'	<h1>'.__('Editing intro for page').' '.$params["nr"].'</h1>."\n"');
+		if ($params["nr"] != '_sys_impressum') echo($indent.'	<h1>'.__('Editing intro for page').' '.$params["nr"].'</h1>'."\n");
 		else echo($indent.'	<h1>'.__('Editing impressum').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_sys") {
 		echo($indent.'	<h1>'.__('Editing system properties').'</h1>'."\n");

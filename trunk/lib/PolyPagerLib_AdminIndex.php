@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,11 @@
 	function showAdminOptions($indent){
 		$the_url = "..";
 		
+        $sys_info = getSysInfo();
+        if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
+            echo('<div class="sys_msg">'.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</div>\n");
+        }
+    
 		echo($indent.'<div id="admin_options">'.__('Let\'s talk about...').'&nbsp;'."\n");
 		echo($indent.'	<a href="edit.php?_sys_sys&amp;from=admin">'.__('the system').'</a>&nbsp;|&nbsp;'."\n");
 		$linkText = __('By clicking on this link, you will see a file browser where you can upload files and create folders to store what you need. There are directories for different types of files (File, Image, Media, Flash).');
