@@ -29,6 +29,11 @@
 
 <?php if($area == '' or $area=='_gallery') { ?>
 				<div id="sidepane">
+
+<?php 
+    $sys_info = getSysInfo();
+    writeSearchBox($sys_info["keywords"]);
+?>
 <?php writeIntroDiv();?>
 <?php writeFeedDiv();?>
 				</div>

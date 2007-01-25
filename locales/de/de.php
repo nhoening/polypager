@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -216,8 +216,8 @@ function getTranslation($text) {
 => 'diese Felder sind &ouml;ffentlich nicht zu sehen. W&auml;hlen Sie Felder aus der untenstehenden Liste aus.',
 'this field will be used to switch if the entry should be public or not' 
 => 'dieses Feld wird benutzt werden, um den jeweiligen Eintrag sichtbar bzw. unsichtbar zu machen.',
-'this field will be used by PolyPager to group entries of this page. It will also be used to create sumenu entries (so the visitor can select what to see quickly) and search criteria. Note that PolyPager lists only fields that have a valuelist assigned (you can do this in the fields section for that page).'
-=> 'dieses Feld wird von PolyPager genutzt werden, um Eintr&auml;ge zu gruppieren. Es wird auch verwendet, um Untermen&uuml;-Eintr&auml;ge anzubieten (damit der Besucher besser aus dem Men&uuml; w&auml;hlen kann) und sinnvolle Suchkriterien zu erstellen. Achtung: PolyPager wird hier nur Felder zur Auswahl zeigen, die eine Werteliste mit mehreren Werten haben (Sie k&ouml;nnen so eine im Admin-Bereich erstellen).',
+'this field will be used by PolyPager to group entries of this page. It will also be used to create sumenu entries (so the visitor can select what to see quickly) and search criteria.'
+=> 'dieses Feld wird von PolyPager genutzt werden, um Eintr&auml;ge zu gruppieren. Es wird auch verwendet, um Untermen&uuml;-Eintr&auml;ge anzubieten (damit der Besucher besser aus dem Men&uuml; w&auml;hlen kann) und sinnvolle Suchkriterien zu erstellen.',
 'this (date)field stores the time its entry was created.' 
 => 'dieses Feld speichert das Erstellungsdatum.',
 'this (date)field would display when the last change to its entry took place.' 
@@ -316,6 +316,9 @@ function getTranslation($text) {
 'for keyword:' => 'nach Stichwort:',
 'with keyword:' => 'mit Stichwort:',
 'search' => 'Suchen',
+'Search this site for:' => 'Suche:',
+'Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).'
+    => 'Geben Sie ein oder mehrere Suchw&ouml;rter an (mehrere Suchw&ouml;rter werden mit dem UND-Operator verbunden).',
 'wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.'
 	=> 'Wow, Sie haben Ihren Kommentar schnell eingegeben. So schnell, dass ich Sie als Maschine klassifiziert habe, und Ihren Kommentar als Spam. Letzterer wurde nicht gespeichert.',
 'Your text contains tags that are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;. Your comment has not been saved.'

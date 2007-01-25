@@ -520,7 +520,29 @@
 		return $content;
 	}
 	
-	
+    /*  Write a little search box that performs a sitewide keyword search
+        In addition, it displays links to searches for the provides keywords
+        @keywords a comma separated list of keywords
+    */
+	function writeSearchBox($keywords, $ind=4){
+        $indent = translateIndent($ind);
+        echo($indent.'<div id="searchbox">'.__('Search this site for:')."<br/>\n");
+        global $path_to_root_dir;
+        $keywords = explode(',',$keywords);
+        $l = array();
+        foreach ($keywords as $kw)
+            if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
+        echo(implode(',',$l));
+        $helptext = __('Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).');
+        echo($indent.'    <form action="." method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" name="kw"/><button type="submit">go</button>');
+        writeHelpLink($indent, $helptext);
+        echo('</form>'."\n");
+            
+        echo($indent.'</div>'."\n");
+    }
+    
+    
+    
 	/* writes out search options for multipages
 	*	$show   	- true if display property should not be "none" - that means if
 	*				the content of the search form should be visible or just a script link

@@ -13,6 +13,7 @@
 		
 <?php if($area == '') { ?>
 				<div id="sidepane">
+<?php writeSearchBox('');?>
 <?php writeIntroDiv();?>
 <?php writeFeedDiv();?>
 				</div>
