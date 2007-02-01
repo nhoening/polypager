@@ -28,7 +28,7 @@
 	*/
 	function writeDocType($ind=0) {
 		$indent = translateIndent($ind);
-		echo($indent.'<?xml version="1.0" encoding="ISO-8859-1"?>'."\n"); 
+		echo($indent.'<?xml version="1.0" encoding="utf-8"?>'."\n"); 
 		echo($indent.'<!DOCTYPE html
 			PUBLIC "-//W3C//DTD XHTML 1.0 STRICT//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n");
 	}

@@ -32,7 +32,7 @@
 
 <?php 
     $sys_info = getSysInfo();
-    writeSearchBox($sys_info["keywords"]);
+    writeSearchBox("");
 ?>
 <?php writeIntroDiv();?>
 <?php writeFeedDiv();?>

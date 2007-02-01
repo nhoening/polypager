@@ -504,7 +504,7 @@
 				}
 			}
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
-			echo($theQuery);
+			//echo($theQuery);
 			$queries[$p] = $theQuery;
 		}
 		return $queries;

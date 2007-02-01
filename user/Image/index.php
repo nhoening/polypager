@@ -379,7 +379,7 @@ $cnvrt_size['4']['prefix']  = '../';
 * Header
 */
 $header['lang_code'] = 'en';
-$header['charset']   = 'iso-8859-1';
+$header['charset']   = 'utf-8';
 
 /**
 * Directory Navigation

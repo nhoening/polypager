@@ -456,7 +456,9 @@ table tr.edit td.last_edited_label {
 
 #searchbox{
     text-align:center;
-    margin: 5 0 10 0;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding-bottom:3px;
 }
 #searchbox button, #searchbox input{
     color: black !important;

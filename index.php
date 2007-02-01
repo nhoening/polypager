@@ -19,7 +19,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
 
-header( 'Content-Type: text/html; charset=iso-8859-1' );
+header( 'Content-Type: text/html; charset=utf-8' );
 
 // PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
 if ( !defined('PATH_SEPARATOR') ) {
