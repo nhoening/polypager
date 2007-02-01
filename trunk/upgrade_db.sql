@@ -8,8 +8,8 @@
 
 -- 0.9.9
 
-ALTER TABLE `_sys_fields` CHANGE `order_index` `order_index` INT( 11 ) NOT NULL DEFAULT '1'
-ALTER TABLE `_sys_sections` CHANGE `the_group` `the_group` VARCHAR( 120 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'standard'
+ALTER TABLE `_sys_fields` CHANGE `order_index` `order_index` INT( 11 ) NOT NULL DEFAULT '1';
+ALTER TABLE `_sys_sections` CHANGE `the_group` `the_group` VARCHAR( 120 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'standard';
 
 -- 0.9.8
 
