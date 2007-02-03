@@ -43,7 +43,7 @@
 
 		echo($indent.'<head>'."\n");
 		echo($indent.'	<title>'.$title.' - '.$sys_info["title"].'</title>'."\n");
-		echo($indent.'	<meta http-equiv="Content-type" content="text/html; charset=iso-8859-1"/>'."\n");
+		echo($indent.'	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>'."\n");
 		echo($indent.'	<meta name="description" content="'.$sys_info["title"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.creator" content="'.$sys_info["author"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.generator" content="PolyPager Version '.$version.'"/>'."\n");

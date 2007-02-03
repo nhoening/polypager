@@ -511,7 +511,7 @@
 	}
 	
 	/* preserve Markup for text fields
-		the consensus here is that $...; entities are going
+		the consensus here is that &...; entities are going
 		to stay, but < and > are preserved (same as Firefox tab titles) 
 	*/
 	function preserveMarkup($content){

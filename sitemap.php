@@ -71,7 +71,7 @@ foreach ($pages as $p) {
             echo('		<loc>http://'.$url.'?'.$p.'&amp;nr='.$row["theID"].'</loc>'."\n");
             if ($row["theDate"]!="") echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate"])).'</lastmod>'."\n");
             echo('		<changefreq>weekly</changefreq>'."\n");
-            if ($prio < 1 and $entity["publish_field"] != "" and $row["pub"] == '1') $prio = 0.8;
+            if ($prio < 1 and $entity["publish_field"] != "" and $row["pub"] == '1') $prio = 0.7;
             echo('		<priority>'.$prio.'</priority>'."\n");
             echo('	</url>'."\n");
             $prio = prioH($p);
