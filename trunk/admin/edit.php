@@ -131,9 +131,10 @@ function writeData($ind=4) {
 	global $sys_msg_text;
 	global $error_msg_text;	//hopefully empty :-)
 	
-	showAdminOptions($indent.'	');
 	
     echo($indent.'<h1>Admin Area</h1>'."\n");
+    
+    showAdminOptions($indent.'	');
     
 	if($debug) {
 		echo('<div class="debug">Query is: '.$query.'</div>');
