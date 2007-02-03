@@ -291,7 +291,7 @@
 			$fehler_text = $fehler_text.mysql_error($link);
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
-				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, ``, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
+				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `hide_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
 					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
