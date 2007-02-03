@@ -45,9 +45,9 @@ $url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
 
 echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
-echo('		<title>'.$sys_info["title"].'</title>'."\n");
+echo('		<title><![CDATA['.$sys_info["title"].']]></title>'."\n");
 echo('		<link>http://'.$url.'</link>'."\n");
-echo('		<description>a website by '.$sys_info["author"].'</description>'."\n");
+echo('		<description><![CDATA[a website by '.$sys_info["author"].']]></description>'."\n");
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
 echo('		<generator>PolyPager '.$version.'</generator>'."\n");
 
