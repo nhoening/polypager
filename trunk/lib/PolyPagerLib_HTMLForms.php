@@ -145,7 +145,7 @@ function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
 		writeHelpLink($indent, $helptext);
 		echo($indent.'(<a onclick="reset(\''.$inp_name.'\');">'.__('reset').'</a>) - '."\n");
 		for($i = 0; $i < count($b); $i++) {
-			echo('<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\')">'.trim($b[$i]).'</a>&nbsp;-&nbsp;');
+			echo($indent.'<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\')">'.trim($b[$i]).'</a>&nbsp; - &nbsp;');
 		}
 		echo("\n".$indent."</div>\n");
 	}
