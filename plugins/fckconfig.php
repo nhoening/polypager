@@ -17,7 +17,7 @@ FCKConfig.EditorAreaCSS = '<?echo(str_replace("\\",'/',getPathFromDocRoot()).'pl
 //$sys_info = getSysInfo();
 //FCKConfig.EditorAreaCSS = '<?echo(str_replace("\\",'/',getPathFromDocRoot()).'style/skin/'.$sys_info['skin'].'/');?>skin.css' ;
 
-FCKConfig.Plugins.Add( 'autogrow' ) ;
+//FCKConfig.Plugins.Add( 'autogrow' ) ;
 //FCKConfig.AutoGrowMax = 700 ;	//this leads to flickering
 
 //FCKConfig.Plugins.Add('fckEmbedMovies') ;

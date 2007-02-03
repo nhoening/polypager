@@ -57,9 +57,11 @@ foreach ($pages as $p) {
     if (isMultipage($p)){
         $query = "SELECT ".$entity['pk']." AS theID, ".$entity['title_field']." AS theTitle";
         if ($entity['publish_field']!="") $query .= ", ".$entity['publish_field']." AS pub ";
+        if ($entity['date_field']!="") $query .= ", ".$entity['date_field']["name"]." AS theDate1 ";
+        if ($entity['date_field']["editlabel"]!="") $query .= ", ".$entity['date_field']["editlabel"]." AS theDate2 ";
         $res = pp_run_query($query."  FROM " . $entity['tablename']);
     }else if (isSinglepage($p)){
-        $res = pp_run_query("SELECT id AS theID, heading AS theTitle, input_date AS theDate, publish AS pub FROM ".$entity['tablename']." WHERE pagename='".$p."'");
+        $res = pp_run_query("SELECT id AS theID, heading AS theTitle, input_date AS theDate1, edited_date AS theDate2, publish AS pub FROM ".$entity['tablename']." WHERE pagename='".$p."'");
     }
 
     $prio = prioH($p);
@@ -69,7 +71,10 @@ foreach ($pages as $p) {
         if ($entity["publish_field"] == "" or ($entity["publish_field"] != "" and $row["pub"] == '1')){
             echo('	<url>'."\n");
             echo('		<loc>http://'.$url.'?'.$p.'&amp;nr='.$row["theID"].'</loc>'."\n");
-            if ($row["theDate"]!="") echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate"])).'</lastmod>'."\n");
+            //prefer last edited date over input date
+            if ($row["theDate2"]!="" and $row["theDate2"]!="NULL" and substr($row['theDate2'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate2"])).'</lastmod>'."\n");
+            else if ($row["theDate1"]!="" and$row["theDate1"]!="NULL" and substr($row['theDate1'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate1"])).'</lastmod>'."\n");
+   
             echo('		<changefreq>weekly</changefreq>'."\n");
             if ($prio < 1 and $entity["publish_field"] != "" and $row["pub"] == '1') $prio = 0.7;
             echo('		<priority>'.$prio.'</priority>'."\n");
