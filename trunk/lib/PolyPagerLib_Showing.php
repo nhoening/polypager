@@ -526,7 +526,7 @@
         In addition, it displays links to searches for the provides keywords
         @keywords a comma separated list of keywords
     */
-	function writeSearchBox($keywords, $ind=4){
+	function writeSearchBox($keywords="", $ind=4){
         $indent = translateIndent($ind);
         echo($indent.'<div id="searchbox">'.__('Search this site for:')."<br/>\n");
         global $path_to_root_dir;
