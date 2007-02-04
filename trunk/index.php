@@ -135,7 +135,9 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 		mysql_data_seek($res[$params['page']], 0);	//move to initial position again
 	} else {
 		$title = $params["page"];
+        if ($params["page"] == "_search") $title = __('Search');
 	}
+    
 }
 
 /* the function that writes out the data */
