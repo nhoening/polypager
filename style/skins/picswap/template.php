@@ -27,13 +27,10 @@
 
 			<div id="data<?=$area?>">
 
-<?php if($area == '' or $area=='_gallery') { ?>
+<?php if($area == '') { ?>
 				<div id="sidepane">
 
-<?php 
-    $sys_info = getSysInfo();
-    writeSearchBox("");
-?>
+<?php writeSearchBox();?>
 <?php writeIntroDiv();?>
 <?php writeFeedDiv();?>
 				</div>

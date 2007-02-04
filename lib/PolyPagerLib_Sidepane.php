@@ -134,6 +134,7 @@ function writeFeedDiv($ind=5) {
 	(if there is one in the database)
 */
 function writeIntroDiv($ind=4) {
+    
 	$indent = translateIndent($ind);
 	
 	global $run_as_demo;
