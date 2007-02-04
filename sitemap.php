@@ -18,15 +18,17 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
-$sys_info = getSysInfo();
-header("Content-type: text/xml; charset=".$sys_info["encoding"]);
+
 //this PHP generates thesitemap
 
-echo('<?xml version="1.0" encoding="'.$sys_info["encoding"].'"?>'."\n");
 
 $path = './lib/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 include("./lib/PolyPagerLib_Utils.php");
+
+$sys_info = getSysInfo();
+header("Content-type: text/xml; charset=".$sys_info["encoding"]);
+echo('<?xml version="1.0" encoding="'.$sys_info["encoding"].'"?>'."\n");
 
 $link = getDBLink();
 
