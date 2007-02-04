@@ -28,7 +28,8 @@
 	*/
 	function writeDocType($ind=0) {
 		$indent = translateIndent($ind);
-		echo($indent.'<?xml version="1.0" encoding="utf-8"?>'."\n"); 
+        $sys_info = getSysInfo();
+		echo($indent.'<?xml version="1.0" encoding="'.$sys_info['encoding'].'"?>'."\n"); 
 		echo($indent.'<!DOCTYPE html
 			PUBLIC "-//W3C//DTD XHTML 1.0 STRICT//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n");
 	}
@@ -43,7 +44,7 @@
 
 		echo($indent.'<head>'."\n");
 		echo($indent.'	<title>'.$title.' - '.$sys_info["title"].'</title>'."\n");
-		echo($indent.'	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>'."\n");
+		echo($indent.'	<meta http-equiv="Content-type" content="text/html; charset='.$sys_info['encoding'].'"/>'."\n");
 		echo($indent.'	<meta name="description" content="'.$sys_info["title"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.creator" content="'.$sys_info["author"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.generator" content="PolyPager Version '.$version.'"/>'."\n");

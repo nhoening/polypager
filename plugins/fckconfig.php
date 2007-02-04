@@ -1,12 +1,13 @@
 <?
-	header( 'Content-Type: text/javascript; charset=utf-8' );
+    $sys_info = getSysInfo();
+	header( 'Content-Type: text/javascript; charset='.$sys_info['encoding'].'' );
 
 	// FILE SEPARATOR
 	if ( !defined('FILE_SEPARATOR') ) {
 		define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 	}
 	include_once('..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
-	$sys_info = getSysInfo();
+	
 ?>
 FCKConfig.AutoDetectLanguage	= false ;
 FCKConfig.DefaultLanguage		= '<? echo($sys_info["lang"]) ?>' ;

@@ -536,7 +536,7 @@ $fs_base_path  = '';  // Filesystem path to the root dir of the gallery.
 /**
 * Et-cetera
 */
-$excl_dirs[] = 'Private';         // Ignore a directory with its name
+$excl_dirs[] = 'private';         // Ignore a directory with its name
 $excl_dirs[] = 'qdig-converted';  // included here.  Do not  end these
 $excl_dirs[] = '';                // name(s) with '/'.
 $excl_imgs[] = 'qdig-bg.jpg';     // Ignore any image with its name

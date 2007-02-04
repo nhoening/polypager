@@ -263,7 +263,8 @@
 		// multiple?
 		if($params['page']=="_search") {
 			if ($params['search']['kw']==""){
-				echo('<div class="sys_msg">'.__('please provide a keyword for your search.').'</div>'."\n");
+                global $sys_msg_text;
+				$sys_msg_text .= '<div class="sys_msg">'.__('please provide a keyword for your search.').'</div>';
 				return array();
 			}	
 			// search on every page
@@ -273,7 +274,8 @@
 		foreach (explode(',',$pagelist) as $p){
 			$entity = getEntity($p);
 			if ($entity['pk'] == "") {
-				echo('<div class="sys_msg">'.__('This table has no primary key!').'</div>');
+				global $sys_msg_text;
+				$sys_msg_text .= '<div class="sys_msg">'.__('This table has no primary key!').'</div>';
 				return "";
 			}
 			// ---------- first the easy cases: 
@@ -534,7 +536,7 @@
             if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
         echo(implode(',',$l));
         $helptext = __('Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).');
-        echo($indent.'    <form action="." method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" name="kw"/><button type="submit">go</button>');
+        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.str_replace('+',' ', $_GET["kw"]).'" name="kw"/><button type="submit">go</button>');
         writeHelpLink($indent, $helptext);
         echo('</form>'."\n");
             
