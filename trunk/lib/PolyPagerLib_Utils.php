@@ -655,6 +655,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("gallery_name", "formgroup", 'gallery');
 				setEntityFieldValue("gallery_index", "formgroup", 'gallery');
 				$entity['formgroups']['misc'] = array(3,'show');
+                setEntityFieldValue("encoding", "formgroup", 'misc');
 				setEntityFieldValue("hide_public_popups", "formgroup", 'misc');
 				setEntityFieldValue("start_page", "formgroup", 'misc');
 				setEntityFieldValue("feed_amount", "formgroup", 'misc');
@@ -1379,7 +1380,8 @@ function addFields($entity,$name, $not_for_field_list = "") {
 				//support sets or enums, 
 				//but we save the valuelist - PolyPager can handle those
 				if (eregi('^set\(',$row['Type']) or eregi('^enum\(',$row['Type'])){
-					$type = preg_replace('@\((\'[a-z0-9]+\'\,?)+(\'[a-z0-9]+\')\)$@', '', $row['Type']);
+					$type = preg_replace('@\((\'.+\'\,?)+(\'.+\')\)$@', '', $row['Type']);
+                    //$type = preg_replace('@\(\'[a-z0-9]+\'\)$@', '', $row['Type']);
 					eregi('\((\'.+\'\,)+(\'.+\')\)$',$row['Type'],$hits);
 					$valuelist = implode(',',array_slice($hits,1));
 					$valuelist = str_replace(",,", ",",$valuelist);

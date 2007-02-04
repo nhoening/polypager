@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas H�ning
+    Copyright (C) 2006 Nicolas Höning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -19,8 +19,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
 
-header( 'Content-Type: text/html; charset=utf-8' );
-
 // PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
 if ( !defined('PATH_SEPARATOR') ) {
     define('PATH_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? ';' : ':');
@@ -35,6 +33,10 @@ require_once("PolyPagerLib_HTMLFraming.php");
 require_once("PolyPagerLib_Utils.php");
 require_once("PolyPagerLib_Sidepane.php");
 require_once("PolyPagerLib_Showing.php");
+
+$sys_info = getSysInfo();
+header( 'Content-Type: text/html; charset='.$sys_info['encoding'].'' );
+
 
 // ---------------------------------------
 $area = ""; //one of '', '_admin', '_gallery' - makes your template flexible if you want
@@ -166,8 +168,6 @@ function writeData($ind=5) {
 			echo($indent.'	<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
 			echo($indent.'</ul><ul class="menuend"/>'."\n");
 		} else {
-			//we asssembled this while inserting a comment
-			echo($sys_msg_text);
 			
 			//you could type in a too high number - senseless 
 			if (!$i_manipulated and $params["nr"] > $params["max"]) { $params["nr"] = $params["max"]; echo('<div class="sys_msg">'.__('the chosen number was too high - showing newest').'</div>');};

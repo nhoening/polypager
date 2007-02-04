@@ -19,9 +19,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
 
-header( 'Content-Type: text/html; charset=utf-8' );
-
-
 // --------------------------------------- Inclusions
 // PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
 if ( !defined('PATH_SEPARATOR') ) {
@@ -37,11 +34,14 @@ require_once("PolyPagerLib_AdminIndex.php");
 require_once("PolyPagerLib_Utils.php");
 require_once("PolyPagerLib_Showing.php");
 
+$sys_info = getSysInfo();
+header( 'Content-Type: text/html; charset='.$sys_info['encoding'].'' );
+
 // ---------------------------------------
 include('auth.php');
 
 $area = "_admin"; 
-$sys_info = getSysInfo();
+
 $sys_info["start_page"] = "";
 $link = getDBLink();
 $params = getShowParameters();

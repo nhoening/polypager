@@ -170,7 +170,7 @@ $htpasswd = '.htpasswd';
 
 /* ------------------------------------------------------------------------- */
 
-header( 'Content-Type: text/html; charset=utf-8' );
+header( 'Content-Type: text/html; charset='.$sys_info["encoding"].'' );
 
 if (get_magic_quotes_gpc()) {
 	array_walk($_GET, 'strip');
@@ -1683,7 +1683,7 @@ function getwords ($lang) {
 'execute' => 'ausfÃ¼hren',
 
 'create_symlink' => 'Symlink erstellen',
-'delete' => 'lšschen',
+'delete' => 'lï¿½schen',
 'rename' => 'umbenennen',
 'move' => 'verschieben',
 'copy' => 'kopieren',
@@ -1714,9 +1714,9 @@ function getwords ($lang) {
 'already_exists' => '"[%1]" existiert bereits.',
 'created' => '"[%1]" wurde erstellt.',
 'not_created' => '"[%1]" konnte nicht erstellt werden.',
-'really_delete' => 'Sollen folgende Dateien wirklich gelšscht werden?',
-'deleted' => "Folgende Dateien wurden gelšscht:\n[%1]",
-'not_deleted' => "Folgende Dateien konnten nicht gelšscht werden:\n[%1]",
+'really_delete' => 'Sollen folgende Dateien wirklich gelï¿½scht werden?',
+'deleted' => "Folgende Dateien wurden gelï¿½scht:\n[%1]",
+'not_deleted' => "Folgende Dateien konnten nicht gelï¿½scht werden:\n[%1]",
 'rename_file' => 'Benenne Datei um:',
 'renamed' => '"[%1]" wurde in "[%2]" umbenannt.',
 'not_renamed' => '"[%1] konnte nicht in "[%2]" umbenannt werden.',
