@@ -109,7 +109,7 @@ function filterSQL($v) {
 */
 function format_date($timestamp) {
     //format depends on wether we have a timestamp or not
-    if (strlen($timestamp)>10) $fstr = 'd.m.Y - h:m:s'; else $fstr = 'd.m.Y';
+    if (strlen($timestamp)>10) $fstr = 'd M Y - h:m a'; else $fstr = 'd M Y';
 	if (substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
 	if ($lang == "de")
 		return date($fstr, strtotime($timestamp));
@@ -1675,7 +1675,7 @@ function getListOfValueListFields($entity_name) {
    it's a long text or blob)
 */
 function getTitle($entity,$row){
-    return getFirstWords($row[$entity['title_field']], 30);
+    return trim(getFirstWords($row[$entity['title_field']], 30));
 }
 
 /*

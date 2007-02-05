@@ -71,10 +71,9 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			
 			if ($fehler_nr != 0) {
 				$i_manipulated = false;
-				$sys_msg_text = '				<div class="sys_msg">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
+				$sys_msg_text .= '				<div class="sys_msg">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
 			} else {
 				$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
-				if($debug) { $sys_msg_text = $sys_msg_text.'<div class="debug">I used this query: '.$query.'.</div>'; }
 				
 				//ensure consistency
 				ensureConsistency($params);

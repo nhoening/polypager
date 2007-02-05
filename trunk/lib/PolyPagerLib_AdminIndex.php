@@ -379,20 +379,20 @@
                         if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
                         if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_comments...</div>'); }
                     }
-
+                    echo("1");
 					//update feed list
 					if ($params["cmd"] == "delete") {
-						$query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+						$query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."';";
 					}
 					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
 						$query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
 							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
 					}
                     if ($query!="") {
-                        $res = mysql_query($query, getDBLink());
+                        $res = pp_run_query($query);
                         $fehler_nr .= mysql_errno(getDBLink());
                         $fehler_text .= mysql_error(getDBLink());
-                        if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+                        if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
                         if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
 					}
                     
