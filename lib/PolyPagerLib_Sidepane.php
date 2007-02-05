@@ -75,15 +75,13 @@ function getFeed($amount) {
 	//enrich with text from the tables themselves
 	$i = 0;
 	while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-		//print_r($row);
 		$the_page = getPageInfo($row['thePage']);
-		if ($the_page != "") {
+		if ($the_page["name"] != "") {
 			//title should be there, gather some content...
 			if (isSinglePage($row['thePage'])) {
 				$res2 = pp_run_query("SELECT bla AS tfield FROM _sys_sections WHERE pagename = '".$row['thePage']."' AND id = ".$row['theID'].";");
 			} else {
                 $entity = getEntity($row['thePage']);
-                
 				$field = guessTextField($entity);
 				if ($field=="") $field = $the_page["title_field"];
 				$res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
@@ -95,7 +93,7 @@ function getFeed($amount) {
 				}
 				$row['theContent'] = str_replace('\'', '\\\'', getFirstWords($row2['tfield'],70));
 			}
-		        $feeds[$i++] = $row;
+		    $feeds[$i++] = $row;
 		}
 	}
 	
