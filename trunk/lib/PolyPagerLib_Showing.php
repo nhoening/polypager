@@ -36,19 +36,19 @@
 	
 	/* returns the highest entry number of the entity's table
 	*/
-	function getMaxNr($params) {
+	function getMaxNr($page) {
 		global $_POST;
 		global $_GET;
 		global $debug;
-		if ($debug) {echo '				<div class="debug">getting max for:|'.$params["page"].'| and I know it:'.isAKnownPage($params["page"]).'</div>'; }
-		if ($params["page"] != '_sys_pages' and isAKnownPage($params["page"])) {
-			$entity = getEntity($params["page"]);
+		if ($debug) {echo '				<div class="debug">getting max for:|'.$params["page"].'| and I know it:'.isAKnownPage($page).'</div>'; }
+		if ($page != '_sys_pages' and isAKnownPage($page)) {
+			$entity = getEntity($page);
 			if ($entity['pk'] != "") {
-				$page_info = getPageInfo($params["page"]);
+				$page_info = getPageInfo($page);
 				$max = $_POST["max"];	//get max from request - POST
 				if ($max == "") { $max = $_GET["max"]; } //coming in per GET?
 				//reading the number of entries, if not give
-				if ($max == "" and $entity != "" and !(!isASysPage($params["page"]) and isMultipage($params["page"]) and $page_info["tablename"] == "") ) {
+				if ($max == "" and $entity != "" and !(!isASysPage($page) and isMultipage($page) and $page_info["tablename"] == "") ) {
 					$query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
 					$res = mysql_query($query, getDBLink());
 					$error_nr = mysql_errno(getDBLink());
@@ -155,7 +155,7 @@
 			if ($params["nr"] == "") $params["nr"] = $_GET['nr'];  //coming in per GET?
 			//pages with countable Primary Key need a max nr
 			if (isNumericType($entity['pk_type'])){ //if (eregi('int',$entity['pk_type'])){
-				$params["max"] = getMaxNr($params);
+				$params["max"] = getMaxNr($params["page"]);
 				if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
 			}
 	
@@ -253,8 +253,6 @@
 	*/
 	function getQuery($only_published) {
 		global $params;
-		$pagename = $params["page"];
-		$page_info = getPageInfo($params["page"]);
 		$sys_info = getSysInfo();
 		global $debug;
 		
@@ -272,6 +270,8 @@
 		}
 		
 		foreach (explode(',',$pagelist) as $p){
+            $pagename = $p;
+            $page_info = getPageInfo($p);
 			$entity = getEntity($p);
 			if ($entity['pk'] == "") {
 				global $sys_msg_text;
@@ -315,7 +315,7 @@
 			
 			else {
 				//if we have a multipage without a table specified, there is nothing we can do
-				if (isMultipage($params["page"]) and !isASysPage($params["page"]) and $page_info["tablename"] == "") {
+				if (isMultipage($pagename) and !isASysPage($pagename) and $page_info["tablename"] == "") {
 					echo('<div class="sys_msg">'.__('this complex page has no table specified. Cannot select any data.').'</div>');
 					$theQuery = 'SELECT * FROM _sys_sys WHERE 1=2';	//just a valid joke
 				}
@@ -357,13 +357,13 @@
                     //let'S track if we saif "WHERE"
                     $said_where = false;
                     
-					if (isMultipage($params["page"])) {
+					if (isMultipage($pagename)) {
 						//helper vars
 						if ($params["step"] != "all") {
 							$next = $params["nr"] + ($params["step"]-1);
 							$prev = $params["nr"] - ($params["step"]-1);
 						} else {
-							$next = $params["max"];
+							$next = getMaxNr($pagename);
 							$prev = 0;
 						}
 						if ($prev <= 0) $prev = 0;
@@ -391,7 +391,6 @@
 						}
                         $said_where = true;
 					}
-					
                     
 					// -- special case search - new query --
 					//Keyword search works page AND sitewide
@@ -506,9 +505,9 @@
 				}
 			}
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
-			//echo($theQuery);
 			$queries[$p] = $theQuery;
 		}
+        //print_r($queries);
 		return $queries;
 	}
 	
@@ -705,13 +704,13 @@
 		if ($page_info["hide_toc"] == 0 ) {
 			
 			echo($indent.'<div id="toc">'."\n");
-			echo($indent.'<div id="toc_content_link_nester"><a id="toc_content_link" href="javascript:toggleVisibility(\'toc_content\',\'toc_content_link\', \''.__('show index').'\', \''.__('hide index').'\');">'.__('show index').'</a></div>'."\n");
+			echo($indent.'    <div id="toc_content_link_nester"><a id="toc_content_link" href="javascript:toggleVisibility(\'toc_content\',\'toc_content_link\', \''.__('show index').'\', \''.__('hide index').'\');">'.__('show index').'</a></div>'."\n");
 			$entity = getEntity($params["page"]);
 			if ($show) $display = 'block'; else $display = 'none';
-			echo($indent.'<div id="toc_content" style="display:'.$display.';">'."\n");
+			echo($indent.'    <div id="toc_content" style="display:'.$display.';">'."\n");
 			$nind = $ind + 1;
 			writeEntries($res, false, $nind, true);
-			echo($indent.'</div>'."\n");
+			echo($indent.'    </div>'."\n");
 			echo($indent.'</div>'."\n");
 		}
 	}
@@ -735,7 +734,8 @@
 			//all that grouping stuff...
 			if ($entity["group"] != "" or $as_toc) {
 				$group_field_save = "foo";	//initial
-				$before_first_entry = true;
+				if ($params["page"]!='_search') $before_first_entry = true;
+                else $before_first_entry = false; //if we don't find sthg while searching pagewide, none cares 
 				if ($as_toc) { 
 					$html_type = "ul";
 					$html_type2 = "li";
@@ -841,6 +841,7 @@
 		$entity = getEntity($pagename);
 		$page_info = getPageInfo($pagename);
 		
+        
 		//quickhack - normally comments do have a title field but not here
 		if (!$list_view and $params["page"] == '_sys_comments') $entity["title_field"] = "";
 		
@@ -984,7 +985,7 @@
 							echo($indent.'		<div class="'.$theClass.'">'."\n");
 							echo($indent.'			');	//indent
 							if($f["name"] == $entity["title_field"] and !$list_view) {	//make a link
-								$the_url = '?'.$params["page"].'&amp;nr='.$row[$entity['pk']];
+								$the_url = '?'.$pagename.'&amp;nr='.$row[$entity['pk']];
 								echo('<a class="entry_title_link" href="'.$the_url.'">');
 							}
 							
