@@ -379,7 +379,7 @@
                         if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
                         if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_comments...</div>'); }
                     }
-                    echo("1");
+                    
 					//update feed list
 					if ($params["cmd"] == "delete") {
 						$query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."';";
