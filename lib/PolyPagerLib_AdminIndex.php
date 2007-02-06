@@ -73,44 +73,45 @@
 	function create_sys_Tables() {
 		global $debug;
 		$link = getDBLink();
-		$query = "CREATE TABLE IF NOT EXISTS `_sys_sys` (
-					  `title` varchar(255) NOT NULL default '',
-					  `author` varchar(120) NOT NULL default '',
-					  `keywords` varchar(255) NOT NULL default '',
-					  `admin_name` varchar(120) NOT NULL default '',
-					  `admin_pass` varchar(120) NOT NULL default '',
-					  `feed_amount` tinyint(4) NOT NULL default '7',
-					  `start_page` varchar(120) NOT NULL default '',
-					  `lang` varchar(12) NOT NULL default '',
-					  `skin` varchar(120) NOT NULL default '',
-					  `submenus_always_on` tinyint(1) NOT NULL default '0',
-					  `hide_public_popups` tinyint(1) NOT NULL default '0',
-					  `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
-					  `gallery_name` varchar(120) NOT NULL default 'gallery',
-					  `gallery_index` smallint(6) NOT NULL default '99'
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+		$query = "CREATE TABLE `_sys_sys` (
+                      `title` varchar(255) NOT NULL default '',
+                      `author` varchar(120) NOT NULL default '',
+                      `keywords` varchar(255) NOT NULL default '',
+                      `encoding` enum('utf-8','iso-8859-1') NOT NULL default 'utf-8',
+                      `admin_name` varchar(120) NOT NULL default '',
+                      `admin_pass` varchar(120) NOT NULL default '',
+                      `feed_amount` tinyint(4) NOT NULL default '7',
+                      `start_page` varchar(120) NOT NULL default '',
+                      `lang` varchar(12) NOT NULL default '',
+                      `skin` varchar(120) NOT NULL default '',
+                      `submenus_always_on` tinyint(1) NOT NULL default '0',
+                      `hide_public_popups` tinyint(1) NOT NULL default '0',
+                      `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
+                      `gallery_name` varchar(120) NOT NULL default 'gallery',
+                      `gallery_index` smallint(6) NOT NULL default '99'
+                    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
-		$query = "CREATE TABLE IF NOT EXISTS `_sys_sections` (
-					  `id` bigint(20) NOT NULL auto_increment,
-					  `input_date` datetime NOT NULL,
-					  `edited_date` datetime default NULL,
-					  `pagename` varchar(50) NOT NULL default '',
-					  `heading` varchar(200) NOT NULL default '',
-					  `bla` blob NOT NULL,
-					  `publish` tinyint(1) NOT NULL default '1',
-					  `in_submenu` tinyint(1) NOT NULL default '0',
-					  `order_index` int(11) NOT NULL default '0',
-					  `the_group` varchar(120) NOT NULL default '',
-					  PRIMARY KEY  (`id`),
-					  KEY `page` (`pagename`,`in_submenu`),
-					  KEY `publish` (`publish`),
-					  KEY `the_group` (`the_group`),
-					  KEY `input_date` (`input_date`)
-					) TYPE=MyISAM DEFAULT CHARSET=utf8 ;";
+		$query = "CREATE TABLE `_sys_sections` (
+                      `id` bigint(20) NOT NULL auto_increment,
+                      `input_date` datetime NOT NULL,
+                      `edited_date` datetime default NULL,
+                      `pagename` varchar(50) NOT NULL default '',
+                      `heading` varchar(200) NOT NULL default '',
+                      `bla` blob NOT NULL,
+                      `publish` tinyint(1) NOT NULL default '1',
+                      `in_submenu` tinyint(1) NOT NULL default '0',
+                      `order_index` int(11) NOT NULL default '0',
+                      `the_group` varchar(120) NOT NULL default 'standard',
+                      PRIMARY KEY  (`id`),
+                      KEY `page` (`pagename`,`in_submenu`),
+                      KEY `publish` (`publish`),
+                      KEY `the_group` (`the_group`),
+                      KEY `input_date` (`input_date`)
+                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -214,20 +215,20 @@
 		$fehler_text = $fehler_text.mysql_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 
-		$query = "CREATE TABLE IF NOT EXISTS `_sys_fields` (
-					  `id` tinyint(4) NOT NULL auto_increment,
-					  `name` varchar(60) NOT NULL default '',
-					  `label` varchar(160) NOT NULL,
-					  `order_index` int(11) NOT NULL,
-					  `pagename` varchar(60) NOT NULL default '',
-					  `valuelist` varchar(255) NOT NULL default '',
-					  `validation` varchar(60) NOT NULL default '',
-					  `not_brief` tinyint(1) NOT NULL default '0',
-					  `foreign_key_to` varchar(200) NOT NULL,
-					  `on_update` varchar(20) NOT NULL,
-					  `on_delete` varchar(20) NOT NULL,
-					  PRIMARY KEY  (`id`)
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
+		$query = "CREATE TABLE `_sys_fields` (
+                      `id` tinyint(4) NOT NULL auto_increment,
+                      `name` varchar(60) NOT NULL default '',
+                      `label` varchar(160) NOT NULL,
+                      `order_index` int(11) NOT NULL default '1',
+                      `pagename` varchar(60) NOT NULL default '',
+                      `valuelist` varchar(255) NOT NULL default '',
+                      `validation` varchar(60) NOT NULL default '',
+                      `not_brief` tinyint(1) NOT NULL default '0',
+                      `foreign_key_to` varchar(200) NOT NULL,
+                      `on_update` varchar(20) NOT NULL,
+                      `on_delete` varchar(20) NOT NULL,
+                      PRIMARY KEY  (`id`)
+                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
