@@ -103,7 +103,7 @@
 	/*this function will provide Code for the footer of each page	*/
 	function writeFooter($ind=3) {
 		$indent = translateIndent($ind);
-		echo($indent.'<div id="bottom">'."\n");
+		echo($indent.'<div id="footer">'."\n");
 		$query = "SELECT * FROM _sys_intros WHERE tablename='_sys_impressum'";
 		$res = mysql_query($query, getDBLink());
 		$error_nr = mysql_errno(getDBLink());

@@ -8,12 +8,18 @@ body {
 	word-wrap: break-word;
 }
 
-#top,#bottom { padding:0; margin:0;}
-#bottom {clear:both;float:none;}
+#footer { padding:0; margin:0;}
+#footer {clear:both;float:none;}
 
-#container {
+#container{
 	margin-left: -400px !important; /*half of width to the left: always centered*/
-	position:absolute; left:50%;
+	position:relative; left:50%;
+	width: 800px;
+}
+
+#top, #bottom{
+    margin-left: -400px !important; /*half of width to the left: always centered*/
+	position:relative; left:50%;
 	width: 800px;
 }
 

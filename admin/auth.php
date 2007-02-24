@@ -108,7 +108,7 @@
 						echo(' <body>'."\n");
 						echo('  <div id="container">'."\n");
 						echo('   <div id="data">'."\n");
-						echo('    <div class="sys_msg">'.__('you need to login to access this area').'</div>');
+						echo('    <div class="sys_msg">'.__('you need to login to access this area').'</div>'."\n");
 						echo('    <form id="login_form" action="http://'.$hostname.($path == '/' ? '' : $path).'/auth.php" method="post">'."\n");
 						echo('     <label for="username">Username:</label><input type="text" name="username" />'."\n");
 						echo('     <label for="password">Password:</label><input type="password" name="password" />'."\n");

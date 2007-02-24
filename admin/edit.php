@@ -2,7 +2,7 @@
 	
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas H�ning
+    Copyright (C) 2006 Nicolas Höning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -75,7 +75,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			} else {
 				$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
 				
-				//ensure consistency
 				ensureConsistency($params);
 				
 				//reset lazy data - so all we show is fresh

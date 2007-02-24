@@ -1,0 +1,38 @@
+@import url("../../maps/classic.css");	/* map */
+
+body {
+	font-family: 'Georgia', verdana, sans-serif, arial, helvetica;
+	color: #123; /*a lighter black for text...*/
+	background-color: 000#;
+    background-image: url(pics/uptight/bg.jpg);
+    background-repeat: repeat-x;
+}
+
+#top{
+    height: 31px;
+    background-image: url(pics/maintop.gif);
+}
+
+#container {
+		/*jpg runs with better performance than a gif!*/
+		background-image: url(pics/mainmid.gif);
+}
+
+#bottom{
+    height: 31px;
+    background-image: url(pics/mainbot.gif);
+}
+
+
+#header {
+	height: 130px !important;
+}
+
+#title {
+	text-align: right;
+	font-weight: 800;
+	color: 000#;
+}
+#title a {
+	text-decoration:none;
+}
