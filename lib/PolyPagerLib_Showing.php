@@ -221,7 +221,10 @@
 				if ($had_value) $params["search"] = $search;
 			}
 			if ($debug) { echo('				<div class="debug">page param is: '.$params["page"].', topic param is: '.$params["topic"].'</div>'."\n"); }
-		}
+		}else{
+            $params["topic"] = "content";
+            $params["from"] = "admin";
+        }
 		return $params;
 	}
 	
@@ -527,7 +530,7 @@
     */
 	function writeSearchBox($keywords="", $ind=4){
         $indent = translateIndent($ind);
-        echo($indent.'<div id="searchbox">'.__('Search this site for:')."<br/>\n");
+        echo($indent.'<div id="searchbox"><div class="description">'.__('Search this site for:')."</div>\n");
         global $path_to_root_dir;
         $keywords = explode(',',$keywords);
         $l = array();

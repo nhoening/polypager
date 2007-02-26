@@ -82,7 +82,7 @@ state  |succ.-state     | auto status |with   |with   | options
 function getEditParameters() {
 	global $_POST;
 	global $_GET;
-
+    
 	//PHP 4 uses HTTP_XXX_VARS
 	if (!isset($_SERVER)) {
 		global $HTTP_POST_VARS;
@@ -101,7 +101,7 @@ function getEditParameters() {
 		//if "page=" is given we can handle this, too
 		if (strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
 	}
-
+    
 	if ($params["page"] != "" and isAKnownPage($params["page"])){
 		//get metadata for this page
 		$entity = getEntity($params["page"]);

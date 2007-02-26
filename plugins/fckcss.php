@@ -14,23 +14,21 @@ body {
 	color: #123;
 	background-color: #fff;
 }
+
 p { 
 	margin: 0px; padding: 0px; 
 }
-.Bold
-{
-	font-weight: bold;
-}
 
-.Title
-{
-	font-weight: bold;
-	font-size: 18px;
-	color: #cc3300;
+
+blockquote {
+    border-left: 2px solid grey;
+    margin-left: 1em;
+    padding-left: 1.5em;
+    color: #555;
 }
 
 
-.Code
+.code
 {
 	border: #8b4513 1px solid;
 	padding-right: 5px;
