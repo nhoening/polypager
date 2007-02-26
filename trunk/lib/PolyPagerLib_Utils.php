@@ -109,7 +109,7 @@ function filterSQL($v) {
 */
 function format_date($timestamp) {
     //format depends on wether we have a timestamp or not
-    if (strlen($timestamp)>10) $fstr = 'd M Y - h:i a'; else $fstr = 'd M Y';
+    if (strlen($timestamp)>10) $fstr = 'd M Y - G:i'; else $fstr = 'd M Y';
 	if (substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
 	if ($lang == "de")
 		return date($fstr, strtotime($timestamp));

@@ -395,6 +395,13 @@ h6 {
 	background-color: red;
 }
 
+blockquote {
+    border-left: 2px solid grey;
+    margin-left: 1em;
+    padding-left: 1.5em;
+    color: #555;
+}
+
 /* -----------------end system styles ---------------------- */
 
 /* ------------------- predefined divs --------------------- */

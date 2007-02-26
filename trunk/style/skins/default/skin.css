@@ -4,12 +4,11 @@ body {
 	font-family: 'Georgia', verdana, sans-serif, arial, helvetica;
 	color: #123; /*a lighter black for text...*/
 	background-color: 000#;
-    background-image: url(pics/uptight/bg.jpg);
-    background-repeat: repeat-x;
+    background-image: url(pics/bg.gif);
 }
 
 #top{
-    height: 31px;
+    height: 26px;
     background-image: url(pics/maintop.gif);
 }
 
@@ -19,20 +18,89 @@ body {
 }
 
 #bottom{
-    height: 31px;
+    height: 25px;
     background-image: url(pics/mainbot.gif);
 }
 
-
 #header {
-	height: 130px !important;
+    padding-bottom: 30px;
 }
 
 #title {
+    padding: 0px 20px 0px 20px;
 	text-align: right;
+}
+#title span a {
+    font-size: 2em;
+    font-family: helvetica;
 	font-weight: 800;
-	color: 000#;
 }
-#title a {
+
+/* ----- menus ----- */
+#main_menu{
+    margin-top: 1.5em;
+    margin-right: 1em;
+}
+
+#main_menu li{
+    border-bottom: 1px solid #aaa;
+}
+#main_menu li a, #sub_menus ul li a{
+    text-decoration:none;
+    color: #98b7d1;
+}
+
+#sub_menus ul{
+	margin: 2px 0px 0px 0px;
+}
+
+/* hovering and here */
+#main_menu li:hover, #main_menu li.here, #sub_menus li:hover, #sub_menus li.here {
+	background-color: #84a0b9;
+}
+#main_menu li:hover a, #main_menu li.here a, #sub_menus li:hover a, #sub_menus li.here a {
+	color: #fff !important;
+}
+
+/* ----- headings ----- */
+.title .entry_title_link, #title a, #feeds .description a, #searchbox .description,
+.label{
 	text-decoration:none;
+    color: #999;
 }
+
+.title, #feeds .description, #searchbox .description {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #ccc;
+}
+
+/* ----- system ----- */
+.sys_msg {
+    color: #aaa;
+    border: 1px solid #944;
+    margin: 5px;
+    padding: 5px;
+}
+
+
+/* ----- blockquote ----- */
+blockquote
+{
+	background-image: url(pics/qoute.gif);
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	font-style: italic;
+	padding-top: 1px;
+	padding-right: 0;
+	padding-bottom: 1px;
+	padding-left: 20px;
+	margin-top: 0;
+	margin-right: 20px;
+	margin-bottom: 0;
+	margin-left: 20px;
+}
+
+blockquote p { margin: .7em 0; }
+
