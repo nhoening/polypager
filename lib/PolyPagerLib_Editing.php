@@ -136,11 +136,12 @@ function getEditParameters() {
 		//-----------checking Parameters ---------------------------------
 		if ($params["cmd"] != "") {
 	
-			if ($params["cmd"] == "show" or $params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {	//get data
+			if ($params["cmd"] == "show" or $params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete"  or $params["cmd"] == "preview") {	//get data
 				$consistency_fields = explode(",",$entity["consistency_fields"]);
 				$values = array();
 				foreach($entity["fields"] as $f) {
 					$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
+                    if ($values[$f["name"]] == "") $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
 					//Booleans umwandeln
 					if ($f["data_type"] == "bool") {
 						if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
@@ -350,7 +351,7 @@ function getEditQuery($command, $theID) {
 	
 	$query .= ';';
 	$queries[] = $query;
-	//print_r($queries);
+	print_r($queries);
 	return $queries;
 }
 
