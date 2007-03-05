@@ -48,8 +48,7 @@ require_once("fckeditor.php");
 function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full_editor, $dis, $ind=9) {
 	global $params;
 	$indent = translateIndent($ind);
-	//echo("type:".$type);
-    
+
 	//write Opening Tag and JS Calls
 	$inputType = "input";
 	if(isTextAreaType($type)) $inputType = "textarea";
@@ -258,9 +257,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.' }'."\n");
 	echo($indent.'</script>'."\n");
 	
-	//empty form - we might have values in $params["values"] preconfigured (e.g. for hidden fields) - a little trick convention
-//             or we can look into the group param value or the field's database defaults
-	//if new, let's show that this is NOT a saved entry
+	// empty form - we might have values in $params["values"] preconfigured (e.g. for hidden fields) - a little trick convention
+    // or we can look into the group param value or the field's database defaults
+	// if new, let's show that this is NOT a saved entry
 	if ($params["cmd"] == "new" and $params["page"] != "_sys_comments"){
 		echo($indent.'<div class="sys_msg">'.__('this item has not yet been inserted into the database!').'</div>');
 	}
@@ -277,9 +276,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	$index = 1;
 	// sort according to formgroups
 	if ($entity['formgroups']!="") uasort($entity["fields"],"cmpByFormGroup");
+	else echo('<table>'); //otherwise a table for each fieldset
 	$lastFormGroup = "xxxxxxxx";
-	if ($entity['formgroups']=="") echo('<table>'); //otherwise a table for each fieldset
-	
+    
 	foreach($entity["fields"] as $f) {
 		// open/close fieldsets according to formgroups
 		if ($entity['formgroups']!="" and $lastFormGroup != "xxxxxxxx" and $lastFormGroup != $f['formgroup']) {
@@ -316,7 +315,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		}
 		
 		if (in_array($f["name"],$hidden_form_fields) )	{
-			echo($indent.'		<tr><td></td><td class="data"><input type="hidden" name="_formfield_'.$f['name'].'" value="'.$row[$f['name']].'"/></td></tr>'."\n");
+			echo($indent.'		<tr><td></td><td class="data"><input type="hidden" name="_formfield_'.$f['name'].'" value="'.$val.'"/></td></tr>'."\n");
 		} else {
 			echo("							<tr>\n");
 			// save old value if its relevant for consistency
@@ -365,19 +364,34 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	}
 	if ($entity['formgroups']=="") echo($indent.'		</table>'."\n"); //otherwise a table for each fieldset
 	
-	//submits
-	//hack for FCKeditor: hidden elements must have different names
-	//$real_cmd_name = "the_real_cmd";
-	//if (isSinglepage($params["page"]))  $real_cmd_name = $real_cmd_name.''.$row[$entity["pk"]];
+	// ------ submit section ------
 	$next_command = 'edit';
 	if($params["cmd"]=="new") {$next_command="entry";}
 	echo($indent.'		<table><tr class="submit">'."\n");
 	echo($indent.'			<td style="width:50%;">'."\n");
+    //preview
+    echo($indent.'			<script>'."\n");
+    echo($indent.'			function getValues(){'."\n");
+    echo($indent.'			   var t = \'\';'."\n");
+    foreach ($entity["fields"] as $f){
+        if (isTextAreaType($f["data_type"])) {
+            echo($indent.'		    	   var oEditor = FCKeditorAPI.GetInstance(\'_formfield_'.$f["name"].'\');'."\n");
+            echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(oEditor.GetXHTML(false)) + \'&\';'."\n");
+        }else
+            echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(document.edit_form._formfield_'.$f["name"].'.value) + \'&\';'."\n");
+    }
+    echo($indent.'			   return t;'."\n");
+    echo($indent.'			}</script>'."\n");
+    echo($indent.'			<button onclick="return GB_showFullScreen(\'Preview\', \'../../?'.$params["page"].'&cmd=preview&\' + getValues())">Preview</button>'."\n");
+    //echo($indent.'			<a onclick="GB_showFullScreen(\'../test.php?text=\' + t)" title="Preview">Preview</a>'."\n");
+
+    //hidden values
 	if($params["cmd"] != "new") echo($indent.'			<input value="'.$params['nr'].'" name="nr" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['page'].'" name="page" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['topic'].'" name="topic" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['group'].'" name="group" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['from'].'" name="from" type="hidden" /></td>'."\n");
+    
 	//echo($indent.'		<td class="form_options"><input type="checkbox" name="opt"/> '.__('show next entry').'</td>'."\n");
 	echo($indent.'			<td class="form_submits">'."\n");
 	if($params["cmd"] == "new") $feed = 1; else $feed = 0;
@@ -397,7 +411,6 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
             echo($indent.'	{'."\n");
             echo($indent.'	inputField  : "_formfield_'.$f['name'].'_input",         // ID of the input field'."\n");
             echo($indent.'  step        :    1,      //include year'."\n");
-            //echo($indent.'  cache        :   true,      //cache object'."\n");
             if (isTimeType($f['data_type'])) 
                 echo($indent.'  showsTime      :    true,'."\n");
             echo($indent.'  firstDay       :   0,      //0-6'."\n");
@@ -410,7 +423,6 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     }
     
 	echo($indent.'</div>'."\n");
-
         
 	// are tables/pages linking to this entity via foreign keys?
 	$references = getReferencingTableData($entity);

@@ -65,7 +65,7 @@
 		}
 		//test if the skin can be found, go back to default otherwise
 		if (!file_exists($path_to_root_dir.'/style/skins/'.$css)){
-			$skin = 'fscreen';
+			$skin = 'default';
 			$css = $skin.'/skin.css';
 		}
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/skins/'.$css.'" type="text/css"></link>'."\n");
@@ -83,6 +83,15 @@
             echo($indent.'	<script type="text/javascript" src="../plugins/jscalendar-1.0/calendar-setup.js"></script>'."\n");
         }
         
+        //greybox for previews
+        echo($indent.'	<script type="text/javascript">'."\n");
+        echo($indent.'	var GB_ROOT_DIR = "'.$path_to_root_dir.'/plugins/greybox/";'."\n");
+        echo($indent.'	</script>'."\n");
+        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/AJS.js"></script>'."\n");
+        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/AJS_fx.js"></script>'."\n");
+        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/gb_scripts.js"></script>'."\n");
+        echo($indent.'	<link href="'.$path_to_root_dir.'/plugins/greybox/gb_styles.css" rel="stylesheet" type="text/css" />'."\n");
+
 		if ($sys_info["feed_amount"] > 0) {
 			echo($indent.'	<link rel="alternate" type="application/rss+xml" title="'.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
 		}

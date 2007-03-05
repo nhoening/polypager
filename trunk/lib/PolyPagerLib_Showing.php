@@ -316,6 +316,17 @@
 								SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
 			}
 			
+            // preview - take params from URLS and pretend they came form the database :-)
+            else if ($params["cmd"] == "preview") {
+                require_once("PolyPagerLib_Editing.php");
+                $edit_params = getEditParameters();
+                $theQuery = "SELECT ";
+                foreach ($entity["fields"] as $f){
+                    $theQuery .= "'".$edit_params["values"][$f["name"]]."' AS ".$f["name"].",";
+                }
+                $theQuery = substr_replace($theQuery,'',-1,1);
+            }
+    
 			else {
 				//if we have a multipage without a table specified, there is nothing we can do
 				if (isMultipage($pagename) and !isASysPage($pagename) and $page_info["tablename"] == "") {
@@ -777,7 +788,7 @@
 			while($row = mysql_fetch_array($res, MYSQL_ASSOC))  {
 				//more grouping stuff...
 				//if not singlepage, group "standard"
-				if ($entity["group"] != "" or $as_toc) {// and
+				if ($entity["group"] != "" or $as_toc) {
 					
 					if ($debug) {echo('<div class="debug">group_field_save is '.$group_field_save.' ...row[$entity["group"]["field"]] is '.$row[$entity["group"]["field"]].'</div>'); }
 					if ($before_first_entry == true) {
@@ -1076,7 +1087,7 @@
 		$params["cmd"] = $params["cmd"]." _sys_comments"; 
 		$query = getQuery(true);
 		//run Query
-		$res = mysql_query($query, getDBLink());
+		$res = mysql_query($query[$params["page"]], getDBLink());
 		if (mysql_errno(getDBLink()) == 0) {
 			return $res;
 		} else return "";

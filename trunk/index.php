@@ -103,7 +103,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	//build Show - Query
 	$params = $show_params;
 	$entity = getEntity($params["page"]);
-	$queries = getQuery(true);
+    $queries = getQuery(true);
 
 	if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 
@@ -152,6 +152,7 @@ function writeData($ind=5) {
 	global $error_msg_text;	//hopefully empty :-)
 	global $known_page;
 	
+    
 	//error? write it and return
 	if ($error_msg_text != "") {
 		echo($error_msg_text);
