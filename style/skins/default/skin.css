@@ -16,21 +16,21 @@ h2{
 	font-variant: small-caps;
 	letter-spacing: 3pt;
 	word-spacing: 3pt;
-	color: #999;
+	color: #f80;
 }
 
-a {
-	color: #84a0b9;
+a{
+	color: #e57c00;
 	text-decoration: none;
 }
-
-a:visited{ /*not sure on "visited": sometimes it is helpful, does not look very good, though */
+/*
+a:visited{ not sure on "visited": sometimes it is helpful, does not look very good, though 
 	color: #999
 }
+*/
 
-
-a:hover, a:focus, #feeds .description a:hover, #feeds .description a:focus{
-	color: #666;
+a:hover, a:focus{
+	color: #84a0b9;
 }
 
 ul{
@@ -154,6 +154,15 @@ body {
 	color: #666;
 }
 
+#intro a{
+	color: #e57c00;
+	text-decoration: none;
+}
+
+#intro a:hover, #intro a:focus{
+	color: #84a0b9;
+}	
+
 #searchbox .description,  #intro .description, #feeds .description a{
 	padding: 8px 0px 4px 0px;
 	margin-top:0px !important;
@@ -180,10 +189,16 @@ body {
 	margin-bottom: 2px;
 }
 
+
+
 #feeds .entry a {
 	font-size: 9pt;
+	color: #84a0b9
 }
 
+#feeds .entry a:hover, #feeds .entry a:focus, #feeds .description a:hover, #feeds .description a:focus {
+	color: #e57c00;
+}
 
 /* ----- entries ----- */
 
@@ -205,6 +220,15 @@ body {
 
 #toc, #toc a, #search, #search a{
 	font-size: 10pt;
+}
+
+#search a, #toc a, .admin_link a {
+	color: #84a0b9;
+	text-decoration: none;
+}
+
+#search a:hover, #search a:focus, #toc a:hover, #toc a:focus, .admin_link a:hover, .admin_link a:focus{
+	color: #e57c00;
 }
 
 .title{
@@ -322,3 +346,17 @@ blockquote p { margin: .7em 0; }
     background-repeat: no-repeat;
     margin-bottom: 20px;
 }
+
+.options, .options a{
+	text-align: right;
+	font-size: 10pt;
+}
+
+.options .admin_link{
+	margin-right: 10px;
+}
+
+.options .last_edited_label{
+	text-align:right;
+	font-style:italic;
+	color: #999;}
