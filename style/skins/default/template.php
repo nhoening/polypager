@@ -18,7 +18,7 @@
 <html>
 <?php writeHeader();?>
 	<body>
-        <div id="top">&nbsp;</div>
+        <div id="top"><a href="./"><div id="logo"></div></a></div>
         <div id="container">
 			<div id="header">
 <?php writeTitle();?>
