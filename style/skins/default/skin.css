@@ -45,7 +45,7 @@ a:hover, a:focus{
 }
 
 ul{
-	list-style-type: square;
+	list-style-image: url(./pics/li.gif);
 }
 
 blockquote
@@ -341,6 +341,47 @@ td.label{
 
 /* ----- ppcustoms ----- */
 
+
+#title{
+	display: none;
+}
+
+#main_menu{
+	margin-top: 0em;
+}
+
+#top{
+    height: 99px;
+    background: url(pics/pptop.jpg) top center no-repeat;
+}
+
+#logo{
+	position:absolute;
+    width: 507px;
+    height: 73px;
+    margin: 20px 0px 0px 15px;
+	background: url(./pics/logo.png) top left no-repeat;
+}
+
+#bottom{
+    background-repeat: no-repeat;
+    margin-bottom: 20px;
+}
+
+.options, .options a{
+	text-align: right;
+	font-size: 10pt;
+}
+
+.options .admin_link{
+	margin-right: 10px;
+}
+
+.options .last_edited_label{
+	text-align:right;
+	font-style:italic;
+	color: #999;}
+	
 .bugs_inputdate .label, .bugs_author .label, .bugs_priority .label, .bugs_description .label, .bugs_version .label, .bugs_title .label{
 	font-weight: bold;
 	color: #84a0b9;
@@ -379,43 +420,3 @@ td.label{
 	float: left;
 	margin-right: 4pt;
 }
-
-#title{
-	display: none;
-}
-
-#main_menu{
-	margin-top: 0em;
-}
-
-#top{
-    height: 99px;
-    background: url(pics/pptop.jpg) top center no-repeat;
-}
-
-#logo{
-	position:absolute;
-    width: 536px;
-    height: 90px;
-    margin: 20px 0px 0px 10px;
-	background: url(./pics/logo.jpg) top left no-repeat;
-}
-
-#bottom{
-    background-repeat: no-repeat;
-    margin-bottom: 20px;
-}
-
-.options, .options a{
-	text-align: right;
-	font-size: 10pt;
-}
-
-.options .admin_link{
-	margin-right: 10px;
-}
-
-.options .last_edited_label{
-	text-align:right;
-	font-style:italic;
-	color: #999;}
