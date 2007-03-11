@@ -8,6 +8,7 @@ body {
 	word-wrap: break-word;
 }
 
+
 #footer { padding:0; margin:0;}
 #footer {clear:both;float:none;}
 
@@ -294,6 +295,17 @@ table tr.edit td.last_edited_label {
 #toc_content_link,  #search_content_link {
 	display:block; 
 	padding-right: 4px;
+}
+
+#toc .link{
+	padding-left: 1em;
+}
+
+#searchbox{
+    text-align:center;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding-bottom:3px;
 }
 
 

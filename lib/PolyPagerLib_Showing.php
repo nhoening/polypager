@@ -184,8 +184,7 @@
 			}
 			//take default group if there hasn't been a special one requested
 			if ($params["group"] == "" and $params["nr"] == "") {
-				//$page_info = getPageInfo($params["page"]);
-				//$glist = getEntityField('the_group',);
+				$page_info = getPageInfo($params["page"]);
 				//default group when the user had a choice between groups for this page
 				if ($glist['valuelist'] != 'standard,') $params["group"] = $page_info["default_group"];
 			}
@@ -243,7 +242,20 @@
 			echo($indent.'</ul></div>');
 		}
 	}
-	 
+	
+    /*return text search keywords*/
+    function getSearchKeywords(){
+        global $params;
+        $kws = explode(' ',$params["search"]["kw"]);//TODO: consider ".. .." as one keyword
+        //TODO: eject keywords that are part of others?
+        $sys_info = getSysInfo();
+        for($x=0;$x<count($kws);$x++)
+            $kws[$x] = htmlentities(urldecode($kws[$x]), ENT_QUOTES, $sys_info['encoding']);
+        //print_r($kws);
+        return $kws;
+    }
+    
+    
 	/*
 		build (and return) SQL Queries
 		(mostly one, but for site-wise search there might be more)
@@ -410,8 +422,7 @@
 					//Keyword search works page AND sitewide
 					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
 						if ($params["search"]["kw"] != "") {
-							$keyword = $params["search"]["kw"];
-							$keyword_lower = strtolower($keyword);	 //lower/upper-case should not matter in our keyword search!
+							$keyword_lower = strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
                             if ($said_where) $a[] = " AND ";
                             else $a[] = " WHERE ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
@@ -420,10 +431,9 @@
 							} else {
 								$a[] = " (";
 								// get all keywords
-								$keyword_lower = str_replace('%20',' ',$keyword_lower);
-								$kws = explode(' ',$keyword_lower);
+								$kws = getSearchKeywords();
 								foreach($entity["fields"] as $f) {
-                                    if (isTextType($f["data_type"])){
+                                    //if (isTextType($f["data_type"])){
                                         $table_field = $entity["tablename"].'.'.$f['name'];
                                         //BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
                                         $a[] = " (";
@@ -432,7 +442,7 @@
                                         // replace last AND with OR
                                         $a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
                                         $a[] = " ) OR";
-                                    }
+                                    //}
 								}
 								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
 								$a[] = ")";
@@ -534,6 +544,7 @@
 		return $content;
 	}
 	
+    
     /*  Write a little search box that performs a sitewide keyword search
         In addition, it displays links to searches for the provides keywords
         @keywords a comma separated list of keywords
@@ -748,7 +759,7 @@
 			if ($entity["group"] != "" or $as_toc) {
 				$group_field_save = "foo";	//initial
 				if ($params["page"]!='_search') $before_first_entry = true;
-                else $before_first_entry = false; //if we don't find sthg while searching pagewide, none cares 
+                else $before_first_entry = false; //if we don't find sthg while searching pagewide, noone cares 
 				if ($as_toc) { 
 					$html_type = "ul";
 					$html_type2 = "li";
@@ -787,9 +798,7 @@
 			while($row = mysql_fetch_array($res, MYSQL_ASSOC))  {
                 
                 // ---- filter out text search results that only are found in tags ----
-                $keyword = $params["search"]["kw"];
-				$keyword_lower = str_replace('%20',' ',strtolower($keyword));
-                $kws = explode(' ',$keyword_lower);
+                $kws = getSearchKeywords();
                 if ($params["search"] != "") {
                     $good_hit = false; //negative assumption
                     // date search
@@ -887,7 +896,8 @@
 		if ($params["group"] != "") $group_forward = '&group='.$row[$entity["group"]["field"]];
 		
 		if (!$list_view) {
-			if ($page_info["hide_options"] == 0) echo($indent.'<div class="show_entry_with_options">'."\n");
+			if ($page_info["hide_options"] == 0 and !($params['page']=='_search' or $params["cmd"] == "_search" )) 
+                echo($indent.'<div class="show_entry_with_options">'."\n");
 			else echo($indent.'<div class="show_entry">'."\n");
 		}
 		else echo($indent.'<div class="list_entry">'."\n");
@@ -899,11 +909,21 @@
 		}
 		
 		$briefly = false;	//turns true when some fields are not shown
-		
+		$the_url = '?'.$pagename.'&amp;nr='.$row[$entity['pk']];
+        
 		if ($entity["fields"] != "") {
+            //we always want the title first when we showing search results
+            if($entity["title_field"]!="" and ($params['page']=='_search' or $params["cmd"] == "_search" )) {
+                $title = strip_tags($row[$entity["title_field"]]);
+                foreach(getSearchKeywords() as $k){
+                    $title = eregi_replace(sql_regcase($k),'<span class="high">'.$k.'</span>', $title);
+                }
+                echo('<a href="'.$the_url.'">'.$title.'</a><br/>'."\n");
+            }
+                    
 			uasort($entity["fields"], "cmpByOrderIndexAsc");
 			foreach ($entity["fields"] as $f) {
-				
+
 				if (($entity["group"] == "" or $f["name"] != $entity["group"]["field"]))
 				$content = $row[$f["name"]];
 				if ($f["not_brief"] != "1") {
@@ -912,8 +932,42 @@
 					$not_brief = true;
 					$something_was_not_brief = true;
 				}
+                
+                //first handle search: show only stuff that was searched for
+                if ($params['page']=='_search' or $params["cmd"] == "_search"){
+                    if ($f["name"]!=$entity["title_field"]){
+                        if (
+                            (isDateType($f['data_type']) and ($params["search"]["m"] != "" or $params["search"]["y"] != "")) 
+                            or in_array($f['name'], getListOfValueListFields("")) and ($params["search"][$f['name']]!=""))
+                        {
+                            echo($f['name'].":".$row[$f['name']]."<br/>\n");
+                        }
+                        //highlight search keywords
+                        else if (isTextType($f['data_type']) and $params["search"]["kw"] != "") {
+                            
+                            $content = strip_tags($row[$f['name']]);
+                            foreach(getSearchKeywords() as $k){
+                                $hits = spliti(sql_regcase($k),$content);
+                                $hit_cnt = count($hits);
+                                if($hit_cnt>1){
+                                    for($x=0;$x<$hit_cnt;$x++) $hits[$x] = preg_split('/\s/',$hits[$x], -1);
+                                    for($x=1;$x<$hit_cnt;$x++) {
+                                        echo("...");
+                                        $wrd_cnt = count($hits[$x-1]);
+                                        if($x>0) for($y=6;$y>0;$y--) echo(' '.$hits[$x-1][$wrd_cnt-$y]);
+                                        echo('<span class="high">'.$k.'</span>');
+                                        if($x<$hit_cnt) for($y=0;$y<6;$y++) echo($hits[$x][$y].' ');
+                                        echo('...<br/>'."\n");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                //now to "normal" showing:
 				//show field only when it is brief and not the only entry and not grouping criteria
-				if($f["name"] != $entity["group"]["field"] and ($not_brief == false or $params["step"] == 1)) {
+				}else if($f["name"] != $entity["group"]["field"] and ($not_brief == false or $params["step"] == 1)) {
 					//another obstacle: in $list_view, we only show titles
 					//and: no fields described as "hidden" within the entity or the (multi)page
 					$hidden_fields = explode(",",$entity["hidden_fields"]);
@@ -980,14 +1034,6 @@
 							echo($indent.'	</div>');
 						}
 						
-						//highlight search keywords
-						if ($params['page']=='_search' or ($entity["search"]["keyword"] == "1" and ($params["cmd"] == "_search" or $params['page']=='_search') and $params["search"]["kw"] != "")) {
-							$kws = explode(' ',$params["search"]["kw"]);
-                            $stripped_content = strip_tags($content);
-							foreach($kws as $k)
-								$content = eregi_replace('('.$k.')','<span class="high">\1</span>',$content);
-						}
-						
 						//comments have neat markup
 						if ($params["page"]=='_sys_comments' and $f['name']!='comment'){
 							if ($content != ""){
@@ -1021,7 +1067,6 @@
 							echo($indent.'		<div class="'.$theClass.'">'."\n");
 							echo($indent.'			');	//indent
 							if($f["name"] == $entity["title_field"] and !$list_view) {	//make a link
-								$the_url = '?'.$pagename.'&amp;nr='.$row[$entity['pk']];
 								echo('<a class="entry_title_link" href="'.$the_url.'">');
 							}
 							
@@ -1047,7 +1092,7 @@
 		}
 		echo($indent."</div>"."\n");
 
-		if (!$list_view) {
+		if (!$list_view and  !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == "0" ) {
 				echo($indent.'<div class="options">'."\n");
 				echo($indent.'	<span class="edit">'."\n");

@@ -278,8 +278,10 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	if ($entity['formgroups']!="") uasort($entity["fields"],"cmpByFormGroup");
 	else echo('<table>'); //otherwise a table for each fieldset
 	$lastFormGroup = "xxxxxxxx";
+    $hasTextarea = false;
     
 	foreach($entity["fields"] as $f) {
+        if (isTextareaType($f['data_type'])) $hasTextarea = true;
 		// open/close fieldsets according to formgroups
 		if ($entity['formgroups']!="" and $lastFormGroup != "xxxxxxxx" and $lastFormGroup != $f['formgroup']) {
 			echo($indent.'		</table></div></fieldset>'."\n");
@@ -370,21 +372,22 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'		<table><tr class="submit">'."\n");
 	echo($indent.'			<td style="width:50%;">'."\n");
     //preview
-    echo($indent.'			<script>'."\n");
-    echo($indent.'			function getValues(){'."\n");
-    echo($indent.'			   var t = \'\';'."\n");
-    foreach ($entity["fields"] as $f){
-        if (isTextAreaType($f["data_type"])) {
-            echo($indent.'		    	   var oEditor = FCKeditorAPI.GetInstance(\'_formfield_'.$f["name"].'\');'."\n");
-            echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(oEditor.GetXHTML(false)) + \'&\';'."\n");
-        }else
-            echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(document.edit_form._formfield_'.$f["name"].'.value) + \'&\';'."\n");
+    if ($hasTextarea) {
+        echo($indent.'			<script>'."\n");
+        echo($indent.'			function getValues(){'."\n");
+        echo($indent.'			   var t = \'\';'."\n");
+        foreach ($entity["fields"] as $f){
+            if (isTextAreaType($f["data_type"])) {
+                echo($indent.'		    	   var oEditor = FCKeditorAPI.GetInstance(\'_formfield_'.$f["name"].'\');'."\n");
+                echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(oEditor.GetXHTML(false)) + \'&\';'."\n");
+            }else
+                echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(document.edit_form._formfield_'.$f["name"].'.value) + \'&\';'."\n");
+        }
+        echo($indent.'			   return t;'."\n");
+        echo($indent.'			}</script>'."\n");
+        echo($indent.'			<a href="javascript:show preview" onclick="GB_showFullScreen(\'Preview\', \'../../?'.$params["page"].'&cmd=preview&\' + getValues());">Preview</a>'."\n");
     }
-    echo($indent.'			   return t;'."\n");
-    echo($indent.'			}</script>'."\n");
-    echo($indent.'			<button onclick="return GB_showFullScreen(\'Preview\', \'../../?'.$params["page"].'&cmd=preview&\' + getValues())">Preview</button>'."\n");
-    //echo($indent.'			<a onclick="GB_showFullScreen(\'../test.php?text=\' + t)" title="Preview">Preview</a>'."\n");
-
+    
     //hidden values
 	if($params["cmd"] != "new") echo($indent.'			<input value="'.$params['nr'].'" name="nr" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['page'].'" name="page" type="hidden" />'."\n");
