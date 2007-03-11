@@ -1502,7 +1502,7 @@ function getForeignKeys(){
 					}
 				}
 				
-				// If we really found a constraint, fill it contraint array for this field:
+				// If we really found a constraint, fill the contsraint array for this field:
 				if ($i != $sql_count) {
 					for ($j = $i; $j < $sql_count; $j++) {
 						if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $sql_lines[$j])) {
@@ -1579,10 +1579,6 @@ function getForeignKeys(){
 			$fk["in_db"] = 0;
 			$fks['page_'.$fk["ref_page"].'_'.$fk["field"]]  = $fk;
 		}
-		//echo('<div style="visibility:hidden;height:0px;">');
-		//echo('And here the fk list:<br/>');
-		//print_r($fks);
-		//echo('</div>');
 	}
 	//return an array so that foreach loops on this will work
 	if ($fks=="") return array();

@@ -457,16 +457,7 @@ table tr.edit td.last_edited_label {
 	font-weight: 800;
 	color: #<?=getColor('dark'); ?>;
 }
-#toc .link{
-	padding-left: 1em;
-}
 
-#searchbox{
-    text-align:center;
-    margin-top: 5px;
-    margin-bottom: 20px;
-    padding-bottom:3px;
-}
 #searchbox button, #searchbox input{
     color: black !important;
 }
