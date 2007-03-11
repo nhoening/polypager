@@ -157,7 +157,7 @@ function buildDateTimeString(){
 	may be a letter, a digit, ".", or "-".
 */
 function buildValidIDFrom($text){
-	$text = ereg_replace('([^(a-zA-Z)])(.*)','pp\1\2',$text);
+	$text = ereg_replace('$([^(a-zA-Z)])(.*)','pp\1\2',$text);
 	$text = ereg_replace('[^a-zA-Z0-9\.-]','-',$text);
 	return $text;
 }

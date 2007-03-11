@@ -38,7 +38,9 @@
 		$indent = translateIndent($ind);
 		global $title;
 		global $path_to_root_dir;
+        global $params;
 		$sys_info = getSysInfo();
+        $page_info = getPageInfo($params['page']);
         $entity = getEntity($params['page']);
 		global $version;
 
@@ -84,13 +86,15 @@
         }
         
         //greybox for previews
-        echo($indent.'	<script type="text/javascript">'."\n");
-        echo($indent.'	var GB_ROOT_DIR = "'.$path_to_root_dir.'/plugins/greybox/";'."\n");
-        echo($indent.'	</script>'."\n");
-        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/AJS.js"></script>'."\n");
-        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/AJS_fx.js"></script>'."\n");
-        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/gb_scripts.js"></script>'."\n");
-        echo($indent.'	<link href="'.$path_to_root_dir.'/plugins/greybox/gb_styles.css" rel="stylesheet" type="text/css" />'."\n");
+        if (includedByAdminScript($path_to_root_dir) or ($params["step"]==1) and $page_info["commentable"] == "1") {
+            echo($indent.'	<script type="text/javascript">'."\n");
+            echo($indent.'	 var GB_ROOT_DIR = "'.$path_to_root_dir.'/plugins/greybox/";'."\n");
+            echo($indent.'	</script>'."\n");
+            echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/AJS.js"></script>'."\n");
+            echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/AJS_fx.js"></script>'."\n");
+            echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/greybox/gb_scripts.js"></script>'."\n");
+            echo($indent.'	<link href="'.$path_to_root_dir.'/plugins/greybox/gb_styles.css" rel="stylesheet" type="text/css" />'."\n");
+        }
 
 		if ($sys_info["feed_amount"] > 0) {
 			echo($indent.'	<link rel="alternate" type="application/rss+xml" title="'.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
