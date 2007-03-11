@@ -351,7 +351,7 @@ function getEditQuery($command, $theID) {
 	
 	$query .= ';';
 	$queries[] = $query;
-	print_r($queries);
+	//print_r($queries);
 	return $queries;
 }
 

@@ -368,7 +368,7 @@
 					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
 					$a[0] .= " ";
 					
-                    //let'S track if we saif "WHERE"
+                    //let's track if we saif "WHERE"
                     $said_where = false;
                     
 					if (isMultipage($pagename)) {
@@ -412,7 +412,6 @@
 						if ($params["search"]["kw"] != "") {
 							$keyword = $params["search"]["kw"];
 							$keyword_lower = strtolower($keyword);	 //lower/upper-case should not matter in our keyword search!
-							//if (count($a) == 2) $a[] = " AND ";
                             if ($said_where) $a[] = " AND ";
                             else $a[] = " WHERE ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
@@ -424,14 +423,16 @@
 								$keyword_lower = str_replace('%20',' ',$keyword_lower);
 								$kws = explode(' ',$keyword_lower);
 								foreach($entity["fields"] as $f) {
-									$table_field = $entity["tablename"].'.'.$f['name'];
-									//BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
-									$a[] = " (";
-									foreach($kws as $k)
-										$a[] = " lcase(".$table_field.") LIKE '%$k%' AND ";
-									// replace last AND with OR
-									$a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
-									$a[] = " ) OR";
+                                    if (isTextType($f["data_type"])){
+                                        $table_field = $entity["tablename"].'.'.$f['name'];
+                                        //BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
+                                        $a[] = " (";
+                                        foreach($kws as $k)
+                                            $a[] = " lcase(".$table_field.") LIKE '%$k%' AND ";
+                                        // replace last AND with OR
+                                        $a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
+                                        $a[] = " ) OR";
+                                    }
 								}
 								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
 								$a[] = ")";
@@ -441,8 +442,6 @@
 
 					// The other search possibilities work only per page
 					if($params["search"] != "") {
-						//if ($params['search']!="" or $params['page']!='_search') $a[] = " AND ";
-						//else $a[] = " WHERE ";
 						if($entity["search"]["year"] == '1' or $entity["search"]["month"] == '1') {
 							if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
 								$month = $params["search"]["m"];
@@ -691,8 +690,7 @@
 					echo($indent.'		</div>'."\n");
 				}
 			}
-			//echo($indent.'				<input type="hidden" name="max" value="'.$params['max'].'" />'."\n");    //those make the URL ugly and/or disturb search
-			//echo($indent.'				<input type="hidden" name="group" value="'.$params['group'].'" />'."\n");
+
 			if ($params['topic']!="") echo($indent.'				<input type="hidden" name="topic" value="'.$params['topic'].'" />'."\n");
 			echo($indent.'				<input type="hidden" name="page" value="'.$params["page"].'"/>'."\n");
             echo($indent.'				<input type="submit" class="submit" value="'.__('search').'"/>'."\n");
@@ -742,6 +740,7 @@
 		
 		if (!$as_toc) writeSearchInfo();
 		
+
 		foreach (array_keys($results) as $respage){
 			$res = $results[$respage];
 			$entity = getEntity($respage);
@@ -786,6 +785,31 @@
 			
 			
 			while($row = mysql_fetch_array($res, MYSQL_ASSOC))  {
+                
+                // ---- filter out text search results that only are found in tags ----
+                $keyword = $params["search"]["kw"];
+				$keyword_lower = str_replace('%20',' ',strtolower($keyword));
+                $kws = explode(' ',$keyword_lower);
+                if ($params["search"] != "") {
+                    $good_hit = false; //negative assumption
+                    // date search
+                    if ($entity["search"]["year"] == '1' and eregi('-'.$params["search"]["y"], $row[$entity["date_field"]["name"]])) $good_hit = true;
+                    if ($entity["search"]["month"] == '1' and eregi('-'.$params["search"]["m"].'-', $row[$entity["date_field"]["name"]])) $good_hit = true;
+                    
+                    foreach ($entity["fields"] as $f) {
+                        // valuelisted fields
+                        if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") {
+                            if ($params["search"][$f["name"]] == $row[$f["name"]])  $good_hit = true;
+                        }
+                        // now include non-markup text hits
+                        if ($params["search"]["kw"]!="" and isTextType($f["data_type"])) {
+                            foreach($kws as $kw)
+                                if (eregi($kw, strip_tags($row[$f["name"]]))) $good_hit = true;
+                        }
+                    }
+                    if (!$good_hit) continue;
+                }
+                
 				//more grouping stuff...
 				//if not singlepage, group "standard"
 				if ($entity["group"] != "" or $as_toc) {
@@ -959,6 +983,7 @@
 						//highlight search keywords
 						if ($params['page']=='_search' or ($entity["search"]["keyword"] == "1" and ($params["cmd"] == "_search" or $params['page']=='_search') and $params["search"]["kw"] != "")) {
 							$kws = explode(' ',$params["search"]["kw"]);
+                            $stripped_content = strip_tags($content);
 							foreach($kws as $k)
 								$content = eregi_replace('('.$k.')','<span class="high">\1</span>',$content);
 						}
@@ -989,9 +1014,6 @@
 							}
 							
 							//now, finally, the value
-							
-							
-								
 							if($f["name"] == $entity["title_field"]) {
 								$theClass = "title";
 							} else $theClass = "value"; 
