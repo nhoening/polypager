@@ -6,6 +6,9 @@
 --BUT: please execute them chronologically, one version after the
 --other
 
+-- 1.0rc1
+UPDATE _sys_sections SET the_group = 'standard' WHERE the_group = '';
+
 -- 0.9.9
 
 ALTER TABLE `_sys_fields` CHANGE `order_index` `order_index` INT( 11 ) NOT NULL DEFAULT '1';

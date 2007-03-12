@@ -380,7 +380,7 @@
 					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
 					$a[0] .= " ";
 					
-                    //let's track if we saif "WHERE"
+                    //let's track if we said "WHERE"
                     $said_where = false;
                     
 					if (isMultipage($pagename)) {
@@ -411,9 +411,9 @@
 					} else if (isSinglepage($pagename)) {
 						$a[1] = "WHERE _sys_sections.pagename = '$pagename'";
 						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
-						if ($params["group"] != "" and $params["group"] != "_sys_all"){ // and $sys_info["submenus_always_on"] != 0) {
+						if ($params["group"] != "" and $params["group"] != "_sys_all"){
 							//"standard" entries are -per definition- always shown!
-							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR the_group = 'standard')";
+							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR _sys_sections.the_group = 'standard')";
 						}
                         $said_where = true;
 					}
