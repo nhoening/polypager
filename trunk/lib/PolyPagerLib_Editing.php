@@ -150,9 +150,7 @@ function getEditParameters() {
 					if(in_array($f["name"],$consistency_fields)) {
 						$values['old_formfield_'.$f["name"]] = filterSQL($_POST['old_formfield_'.$f["name"]]);
 						if ($values['old_formfield_'.$f["name"]] == "") $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
-						//echo("f[old_formfield_name] is:".$values["old_formfield_name"]);
 					}
-					//echo("f[name] is: ".$f["name"]." and values[f[name]] is: ".$values[$f["name"]]."<br/>");
 				}
 				if(isSinglepage($params["page"])) {
 					$values["pagename"] = $params["page"];
