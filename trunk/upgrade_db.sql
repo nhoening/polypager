@@ -8,6 +8,7 @@
 
 -- 1.0rc1
 UPDATE _sys_sections SET the_group = 'standard' WHERE the_group = '';
+ALTER TABLE `_sys_sys` ADD `full_feed` TINYINT( 1 ) NOT NULL DEFAULT '1' AFTER `feed_amount` ;
 
 -- 0.9.9
 

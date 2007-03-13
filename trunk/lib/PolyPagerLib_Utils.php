@@ -659,6 +659,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("hide_public_popups", "formgroup", 'misc');
 				setEntityFieldValue("start_page", "formgroup", 'misc');
 				setEntityFieldValue("feed_amount", "formgroup", 'misc');
+                setEntityFieldValue("full_feed", "formgroup", 'misc');
 				setEntityFieldValue("lang", "formgroup", 'misc');
 				setEntityFieldValue("skin", "formgroup", 'misc');
 				setEntityFieldValue("submenus_always_on", "formgroup", 'misc');
