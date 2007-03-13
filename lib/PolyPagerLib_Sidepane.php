@@ -91,7 +91,8 @@ function getFeed($amount) {
 				if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
 					$row['theText'] = getFirstWords($row2['tfield'],6);
 				}
-                $row['theContent'] = $row2['tfield'];
+                if ($sys["full_feed"]=='1') $row['theContent'] = $row2['tfield'];
+                else $row['theContent'] = getFirstWords($row2['tfield'],70);
 			}
 		    $feeds[$i++] = $row;
 		}

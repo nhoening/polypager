@@ -407,6 +407,7 @@ function getTranslation($text) {
 'admin_name:' => 'Administrator-Name:',
 'admin_pass:' => 'Administrator-Kennwort:',
 'feed_amount:' => 'Anzahl von Feeds:',
+'full_feed:' => 'Voller Inhalt im Feed:',
 'start_page:' => 'Startseite:',
 'lang:' => 'Sprache:',
 'skin:' => 'Skin:',

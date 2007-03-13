@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,7 @@ function getTranslation($text) {
 'admin_name:' => 'administrator-name:',
 'admin_pass:' => 'administrator-password:',
 'feed_amount:' => 'number of feeds:',
+'full_feed:' => 'full content in feed:',
 'start_page:' => 'start-page:',
 'lang:' => 'language:',
 'submenus_always_on:' => 'submenus are always on:',
