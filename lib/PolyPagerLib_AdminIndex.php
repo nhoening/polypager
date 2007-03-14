@@ -95,6 +95,13 @@
 		$fehler_text = mysql_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
+        $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
+                                '', 'utf-8', '', '', 12, '', 'en', 'default', 0, 0, 0, '', 99);";
+		$res = mysql_query($query, $link);
+		$fehler_nr = mysql_errno($link);
+		$fehler_text = mysql_error($link);
+		if ($debug) { echo('<br/><span class="debug">Insert Sys_Sys is: '.$query.'<br /></span>'); }
+        
 		$query = "CREATE TABLE `_sys_sections` (
                       `id` bigint(20) NOT NULL auto_increment,
                       `input_date` datetime NOT NULL,
@@ -365,6 +372,17 @@
                     }
 			}
 			if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
+                    //update start page
+                    $sys_info = getSysInfo();
+                    if ($params["values"]["old_formfield_name"] == $sys_info["start_page"]){
+                        $query = "UPDATE _sys_sys SET start_page = '".$params["values"]["name"]."'";
+                        $res = mysql_query($query, getDBLink());
+                        $fehler_nr .= mysql_errno(getDBLink());
+                        $fehler_text .= mysql_error(getDBLink());
+                        if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_sys...</div>'); }
+                    }
+                    
 					//update comments
 					if ($params["cmd"] == "delete") {
 						$query = "DELETE FROM _sys_comments WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
@@ -444,7 +462,7 @@
 		$topic = $params["topic"];
 		
 		
-		echo($indent.'<form action="." name="choiceForm" id="choiceForm" method="post">'."\n");
+		echo($indent.'<form action="." name="choiceForm" id="choiceForm" method="get">'."\n");
 		//option list
 		if ($topic == 'content' or $topic == 'fields') {
 			if ($topic == 'content') {
