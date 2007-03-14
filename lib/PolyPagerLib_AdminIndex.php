@@ -81,6 +81,7 @@
                       `admin_name` varchar(120) NOT NULL default '',
                       `admin_pass` varchar(120) NOT NULL default '',
                       `feed_amount` tinyint(4) NOT NULL default '7',
+                      `full_feed` tinyint(1) NOT NULL default '1',
                       `start_page` varchar(120) NOT NULL default '',
                       `lang` varchar(12) NOT NULL default '',
                       `skin` varchar(120) NOT NULL default '',
@@ -96,7 +97,7 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
         $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', 'utf-8', '', '', 12, '', 'en', 'default', 0, 0, 0, '', 99);";
+                                '', 'utf-8', '', '', 12, 0, '', 'en', 'default', 0, 0, 0, '', 99);";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
