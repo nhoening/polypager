@@ -174,7 +174,7 @@ function buildValidMySQLTableNameFrom($text){
 
 
 /* import a PHP/HTML template.
-   If the skin cannot be found, we default back to fscreen
+   If the skin cannot be found, we default back to default
    remember that templates expect writeData() !
 */
 function useTemplate($path_to_root_dir){
@@ -196,7 +196,7 @@ function useTemplate($path_to_root_dir){
 		@include($template_path);
 	}else{
 		if($area=='_admin') echo('<div class="sys_msg">'.__('Warning: The selected skin couldn\'t be found.').'</div>');
-		@include($path_to_root_dir."/style/skins/fscreen/template.php");
+		@include($path_to_root_dir."/style/skins/default/template.php");
 	}
 }
 
@@ -468,7 +468,7 @@ function getSysInfo() {
 	
 	//default for the case that we haven't any data yet
 	if ($sys_info["skin"] == "" or $sys_info['no_tables']) {
-		$sys_info["skin"] = 'fscreen';
+		$sys_info["skin"] = 'default';
 	}
 	
 	$params['values']['skin'] = $sys_info["skin"];
