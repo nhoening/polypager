@@ -3466,6 +3466,15 @@ function writeData($ind=1) {
 	$sidebar, $no_lnks_view, $omit_navlinks, $img_links_above,
 	$thmb_row, $nmrl_row, $upr_nav, $lwr_nav, $diag_mesgs,
 	$resize_msg,$post_gallery, $header, $orig_wd, $orig_err_rep_level;
+    
+    
+    global $error_msg_text;
+
+    //error? write it and return
+	if ($error_msg_text != "") {
+		echo($error_msg_text);
+		return;
+	}
 // ----------- end PolyPager code ------------
 
 	/**

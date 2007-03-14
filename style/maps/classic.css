@@ -322,7 +322,6 @@ table tr.edit td.last_edited_label {
 }
 
 #no_tables_warning{
-	position:absolute; top:300px;
 	z-index: 100;
 }
 

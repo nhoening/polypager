@@ -146,14 +146,13 @@ function writeData($ind=5) {
 	$nind = $ind + 1;
 	global $res;
 	global $debug;
+    global $known_page;
 	global $i_manipulated;
 	global $params;
 	global $sys_msg_text;
-	global $error_msg_text;	//hopefully empty :-)
-	global $known_page;
-	
-    
-	//error? write it and return
+	global $error_msg_text;
+
+    //error? write it and return
 	if ($error_msg_text != "") {
 		echo($error_msg_text);
 		return;
@@ -163,7 +162,7 @@ function writeData($ind=5) {
 	if ($sys_msg_text != "") {
 		echo($sys_msg_text);
 	}
-	
+    
 	if ($known_page) {
 		if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
 			echo($indent.'<ul id="menu">'."\n");

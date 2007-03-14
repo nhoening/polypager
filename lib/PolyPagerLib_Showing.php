@@ -549,7 +549,7 @@
         In addition, it displays links to searches for the provides keywords
         @keywords a comma separated list of keywords
     */
-	function writeSearchBox($keywords="", $ind=4){
+	function writeSearchBox($keywords="", $ind=5){
         $indent = translateIndent($ind);
         echo($indent.'<div id="searchbox"><div class="description">'.__('Search this site for:')."</div>\n");
         global $path_to_root_dir;
@@ -559,9 +559,9 @@
             if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
         echo(implode(',',$l));
         $helptext = __('Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).');
-        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.str_replace('+',' ', $_GET["kw"]).'" name="kw"/><button type="submit">go</button>');
-        writeHelpLink($indent, $helptext);
-        echo('</form>'."\n");
+        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.str_replace('+',' ', $_GET["kw"]).'" name="kw"/><button type="submit">go</button>'."\n");
+        writeHelpLink($indent.'     ', $helptext);
+        echo($indent.'    </form>'."\n");
             
         echo($indent.'</div>'."\n");
     }
