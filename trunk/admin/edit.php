@@ -129,8 +129,13 @@ function writeData($ind=4) {
 	global $sys_msg_text;
 	global $error_msg_text;	//hopefully empty :-)
 	
-	
     echo($indent.'<h1>Admin Area</h1>'."\n");
+    
+    //error? write it and return
+	if ($error_msg_text != "") {
+		echo($error_msg_text);
+		return;
+	}
     
     showAdminOptions($indent.'	');
     
@@ -139,11 +144,7 @@ function writeData($ind=4) {
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
 	}
 	
-	//error? write it and return
-	if ($error_msg_text != "") {
-		echo($error_msg_text);
-		return;
-	}
+	
 	
 	//sys msg? write it 
 	if ($sys_msg_text != "") {

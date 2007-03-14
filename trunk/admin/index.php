@@ -89,7 +89,14 @@ function writeData($ind=5) {
 	$indent = translateIndent($ind);
 	global $params;
 	global $sys_msg;
-	
+	global $error_msg_text;
+
+    //error? write it and return
+	if ($error_msg_text != "") {
+		echo($error_msg_text);
+		return;
+	}
+    
 	echo($indent.'<h1>Admin Area</h1>'."\n");
 	
 	//sys msg? write it 

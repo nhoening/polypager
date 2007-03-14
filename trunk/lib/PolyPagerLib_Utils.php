@@ -178,8 +178,9 @@ function buildValidMySQLTableNameFrom($text){
    remember that templates expect writeData() !
 */
 function useTemplate($path_to_root_dir){
-	global $area, $path_to_root_dir;
+	global $area, $path_to_root_dir, $error_msg_text;
 	$sys_info = getSysInfo();
+    
 	//this is the first place where we see that sys-tables don't exist!!
 	if($sys_info['no_tables']) {
 		$link_text = __('PolyPager found the database. Very good. <br/>But: it seems that it does not yet have its database configured. By clicking on the following link you can assure that all the tables that PolyPager needs to operate are being created (if they have not been already).<br/>');
@@ -187,7 +188,7 @@ function useTemplate($path_to_root_dir){
 		global $area;
 		if ($area == '_admin')$link_href = './?&cmd=create';
 		if ($area == '_gallery') $link_href = '../../admin/?&cmd=create';
-		echo('<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>'."\n");
+		$error_msg_text .= '<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>'."\n";
 	}
 	if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
 	else $skin = $sys_info['skin'];
