@@ -1332,7 +1332,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		// -- first, we see what we find in the database's metadata
 		
 		//test for Information_schema.columns (SQL-92 standard)
-		$client_api = explode('.', mysql_get_client_info()); 
+		$client_api = explode('.', mysql_get_server_info()); 
 		if ($client_api[0] >= 5){
 			//test for existence of/access to INFORMATION_SCHEMA database
 			$info_schema_accessible = false;

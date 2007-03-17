@@ -72,7 +72,14 @@
 		@param the MySQL link*/
 	function create_sys_Tables() {
 		global $debug;
+        
 		$link = getDBLink();
+        $client_api = explode('.', mysql_get_server_info()); 
+		if ($client_api[0] >= 5) $charsetter = " DEFAULT CHARSET=utf8";
+        else $charsetter = "";
+        
+        if ($debug) echo("create_sys_Tables on api: ".$client_api[0]);
+        
 		$query = "CREATE TABLE `_sys_sys` (
                       `title` varchar(255) NOT NULL default '',
                       `author` varchar(120) NOT NULL default '',
@@ -90,7 +97,7 @@
                       `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
                       `gallery_name` varchar(120) NOT NULL default 'gallery',
                       `gallery_index` smallint(6) NOT NULL default '99'
-                    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+                    ) ENGINE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
@@ -119,7 +126,7 @@
                       KEY `publish` (`publish`),
                       KEY `the_group` (`the_group`),
                       KEY `input_date` (`input_date`)
-                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
+                    ) ENGINE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -129,7 +136,7 @@
 					  `tablename` varchar(80) NOT NULL default '',
 					  `intro` blob NOT NULL,
 					  PRIMARY KEY  (`tablename`)
-					) TYPE=MyISAM DEFAULT CHARSET=utf8 ;";
+					) TYPE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -143,7 +150,7 @@
 					  `id` int(11) NOT NULL,
 					  PRIMARY KEY  (`pk`),
 					  KEY `edited_date` (`edited_date`)
-					) TYPE=MyISAM DEFAULT CHARSET=utf8  ;";
+					) TYPE=MyISAM $charsetter ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -162,7 +169,7 @@
 					  PRIMARY KEY  (`id`),
 					  KEY `pagename` (`pagename`,`pageid`),
 					  KEY `is_spam` (`is_spam`)
-					)  TYPE=MyISAM DEFAULT CHARSET=utf8 ; ";
+					)  TYPE=MyISAM $charsetter ; ";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -182,7 +189,7 @@
 					  `grouplist` varchar(255) NOT NULL default '',
 					  PRIMARY KEY  (`id`),
 					  UNIQUE KEY `name` (`name`)
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
+					) ENGINE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -217,7 +224,7 @@
 					  PRIMARY KEY  (`id`),
 					  UNIQUE KEY `name_2` (`name`),
 					  KEY `name` (`name`,`tablename`,`group_field`)
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+					) ENGINE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
@@ -236,7 +243,7 @@
                       `on_update` varchar(20) NOT NULL,
                       `on_delete` varchar(20) NOT NULL,
                       PRIMARY KEY  (`id`)
-                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;";
+                    ) ENGINE=MyISAM $charsetter ;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
 		$fehler_text = $fehler_text.mysql_error($link);
