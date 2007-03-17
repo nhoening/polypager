@@ -68,8 +68,8 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 	}
 	
 	//template creation
-	if ($_POST["template_name"] != "") {
-		$error = executeTemplate($_POST["template_name"], $_POST["page_name"]);
+	if ($_GET["template_name"] != "") {
+		$error = executeTemplate($_GET["template_name"], $_GET["page_name"]);
 		$sys_msg = $sys_msg.__('attempted to create a page by template... ');
 		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
 		else $sys_msg = $sys_msg.__('The dbms reported no errors.');

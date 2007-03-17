@@ -271,6 +271,19 @@ ul#main_menu li, #sub_menus ul li  {
 	background:transparent;
 }
 
+ul#main_menu li {
+	position:relative; top: 1px;
+}
+
+ul#main_menu li a:link, #sub_menus li a:link {
+	padding-right: 4px;
+	display:block; 
+}
+
+ul#main_menu li a:hover, #sub_menus li a:hover {
+	height: 19px !important;
+}
+
 ul#main_menu li a:link, #sub_menus li a:link {
 	color: #<?=getColor('contrast'); ?> ! important;
 	text-decoration: none;
