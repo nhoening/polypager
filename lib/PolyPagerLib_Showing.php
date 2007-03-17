@@ -1048,7 +1048,8 @@
 								else if ($f['name']=='email') $prefix = "email";
 								else if ($f['name']=='www') {
                                     $prefix = "www";
-                                    $content = '<a href="'.$content.'">'.$content.'</a>';
+                                    if (!strpos("http://", $content)) $content = "http://".$content;
+                                    $content = '<a rel="nofollow" href="'.$content.'">'.$content.'</a>';
                                 }
 								else $prefix = "";
 								echo($indent.'	<span class="comment_prefix">'.$prefix.'</span><span>'.$content.'</span>'."\n");
