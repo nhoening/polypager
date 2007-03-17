@@ -27,7 +27,7 @@
 	* getQuery($only_published)
 	* writeToc($res, $show, $ind)
 	* writeSearchForm($show, $ind)
-	* writeEntry($row, $indent, $list_view, $ind)
+	* writeEntry($row, $pagename, $list_view, $ind)
 	* writeEntries($res, $list_view, $as_toc, $ind)
 	* getComments() 
 	* writeComments($comments, $ind)
@@ -857,8 +857,9 @@
                         echo($indent.'		</ul>'."\n");
                     }
 				} else {	//here we need some sophisticated stuff
-					$next_ind = $ind + 1;
-					writeEntry($row, $respage, $next_ind, $listview);
+					
+					writeEntry($row, $respage, $listview, $ind);
+                    $ind = $ind + 1;
 				}
 			}
 			
@@ -879,10 +880,11 @@
 	/* writes out an entry in a div with class "show_entry"
 	   params:
 	   * $row - the db result row
+       * $pagename - name of the page this appears on
 	   * $indent - the number of indents to put before
 	   * $list_view - true when only the title field is shown
 	*/
-	function writeEntry($row, $pagename, $indent, $list_view, $ind=5) {
+	function writeEntry($row, $pagename, $list_view, $ind=5) {
 		$indent = translateIndent($ind);
 		global $params, $debug;
 		$entity = getEntity($pagename);
@@ -890,7 +892,11 @@
 		
         
 		//quickhack - normally comments do have a title field but not here
-		if (!$list_view and $params["page"] == '_sys_comments') $entity["title_field"] = "";
+        //no options here for comments - takes too much space
+		if (!$list_view and $params["page"] == '_sys_comments') {
+            $entity["title_field"] = "";
+            $page_info["hide_options"] = 1;
+        }
 		
 		//we'll use this to forward that we had a group request
 		if ($params["group"] != "") $group_forward = '&group='.$row[$entity["group"]["field"]];
@@ -1040,9 +1046,12 @@
 								if ($f['name']=='name') $prefix = "from";
 								else if ($f['name']=='insert_date') $prefix = "on";
 								else if ($f['name']=='email') $prefix = "email";
-								else if ($f['name']=='www') $prefix = "www";
+								else if ($f['name']=='www') {
+                                    $prefix = "www";
+                                    $content = '<a href="'.$content.'">'.$content.'</a>';
+                                }
 								else $prefix = "";
-								echo($indent.'	<span class="comment_prefix">'.$prefix.'</span><span>'.$content.'</span>');
+								echo($indent.'	<span class="comment_prefix">'.$prefix.'</span><span>'.$content.'</span>'."\n");
 							}
 						}else{
 							
@@ -1083,17 +1092,17 @@
 				}
 			}
 		}
-		if (!$list_view and $entity["tablename"] == "_sys_comments") {
+		/*if (!$list_view and $entity["tablename"] == "_sys_comments") {
 			echo($indent.'		<div><a href="admin/edit.php?_sys_comments&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'">#</a></div>'."\n");
-		}
+		}*/
 		if (!$list_view and $something_was_not_brief == true and $params["step"] != 1) { 	//show a link to the whole entry
 			$wlink = "?".$pagename.'&amp;nr='.$row[$entity["pk"]];
 			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
 		}
 		echo($indent."</div>"."\n");
-
-		if (!$list_view and  !($params['page']=='_search' or $params["cmd"] == "_search")) {
-			if ($page_info["hide_options"] == "0" ) {
+        
+		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
+			if ($page_info["hide_options"] == 0 ) {
 				echo($indent.'<div class="options">'."\n");
 				echo($indent.'	<span class="edit">'."\n");
 				$sys_info = getSysInfo();
@@ -1173,7 +1182,7 @@
 		$params["page"] = "_sys_comments";	
 		//write the results
 		while($row = mysql_fetch_array($comments, MYSQL_ASSOC)) {
-			writeEntry($row, '_sys_comments', "", false, false);
+			writeEntry($row, '_sys_comments', false, ++$ind);
 		}
 		
 		//set param back

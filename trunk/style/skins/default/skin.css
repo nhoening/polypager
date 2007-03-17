@@ -344,3 +344,18 @@ td.label{
 	padding: 5px 0px;
 }
 
+/* ---- comments ----- */
+#comments .show_entry_with_options, #comments .show_entry{
+    font-size: .7em;
+    border: 1px solid gray;
+    margin-top:20px;
+}
+
+.comment_prefix, ._sys_comments_comment .label {
+    color: #84a0b9;
+}
+
+._sys_comments_comment .value {
+    font-size: 1.2em;
+}
+
