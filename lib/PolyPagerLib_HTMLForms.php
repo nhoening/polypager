@@ -272,11 +272,11 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		echo($indent.'	<a class="target" name="commentform_anchor"></a>'."\n");
 	echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.$params["page"].'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 	
-	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value="">'."\n");
+	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
 	// sort according to formgroups
 	if ($entity['formgroups']!="") uasort($entity["fields"],"cmpByFormGroup");
-	else echo('<table>'); //otherwise a table for each fieldset
+	else echo($indent.'		<table>'."\n"); //otherwise a table for each fieldset
 	$lastFormGroup = "xxxxxxxx";
     $hasTextarea = false;
     
@@ -319,7 +319,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		if (in_array($f["name"],$hidden_form_fields) )	{
 			echo($indent.'		<tr><td></td><td class="data"><input type="hidden" name="_formfield_'.$f['name'].'" value="'.$val.'"/></td></tr>'."\n");
 		} else {
-			echo("							<tr>\n");
+			echo($indent.'		'."<tr>\n");
 			// save old value if its relevant for consistency
 			if($params["cmd"] != "new" and in_array($f["name"],$consistency_fields)) {
 				echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$val.'"/>'."\n");
@@ -369,8 +369,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	// ------ submit section ------
 	$next_command = 'edit';
 	if($params["cmd"]=="new") {$next_command="entry";}
-	echo($indent.'		<table><tr class="submit">'."\n");
-	echo($indent.'			<td style="width:50%;">'."\n");
+	echo($indent.'		<table>'."\n");
+    echo($indent.'		    <tr class="submit">'."\n");
+	echo($indent.'			    <td style="width:50%;">'."\n");
     //preview
     if ($hasTextarea) {
         echo($indent.'			<script>'."\n");
@@ -385,7 +386,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         }
         echo($indent.'			   return t;'."\n");
         echo($indent.'			}</script>'."\n");
-        echo($indent.'			<a href="javascript:show preview" onclick="GB_showFullScreen(\'Preview\', \'../../?'.$params["page"].'&cmd=preview&\' + getValues());">Preview</a>'."\n");
+        echo($indent.'			<a href="javascript:;" onclick="GB_showFullScreen(\'Preview\', \'../../?'.$params["page"].'&cmd=preview&\' + getValues());">Preview</a>'."\n");
     }
     
     //hidden values
@@ -402,9 +403,10 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'				<br/><input type="hidden" id="cmd" name="cmd" value="nothing_yet"/>'."\n");
 	echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\''.$next_command.'\';return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
 	if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
-	echo($indent.'			</td>'."\n");
-	echo($indent.'		</tr>'."\n");
-	echo($indent.'	</table></form>'."\n");
+	echo($indent.'			    </td>'."\n");
+	echo($indent.'		    </tr>'."\n");
+	echo($indent.'    </table>'."\n");
+    echo($indent.'    </form>'."\n");
     
     // for date fields: add calendar (popup)
     foreach($entity['fields'] as $f){
