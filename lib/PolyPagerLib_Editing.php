@@ -126,6 +126,7 @@ function getEditParameters() {
 		//-------------------------topic (for admin list)
 		$params["topic"] = $_POST["topic"];
 		if ($params["topic"] == "") {$params["topic"] = $_GET["topic"];}
+        if ($params["topic"] == "") {$params["topic"] = "content";}
 		
 		//-------------------------feed (from checkbox)
 		$params["feed"] = $_POST['_formfield_feedbox'];

@@ -915,7 +915,7 @@
 		}
 		
 		$briefly = false;	//turns true when some fields are not shown
-		$the_url = '?'.$pagename.'&amp;nr='.$row[$entity['pk']];
+		$the_url = '?'.urlencode($pagename).'&amp;nr='.$row[$entity['pk']];
         
 		if ($entity["fields"] != "") {
             //we always want the title first when we showing search results
@@ -1030,9 +1030,9 @@
 								$the_href = '?_sys_fields&amp;group='.$content.'&amp;from=list&amp;topic=fields';
 								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a></span>'."\n");
 							}
-							$the_href = 'edit.php?'.$page.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].$group_forward.'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
+							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;group='.urlencode($group_forward).'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
 							echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a></span>'."\n");
-							$the_href = 'edit.php?'.$page.'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].$group_forward.'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
+							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].'&amp;group='.urlencode($group_forward).'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
 							//check if we should give the old name for consistency reasons
 							$consistency_fields = explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];

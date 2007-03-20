@@ -270,7 +270,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'<div  display="'.$display.'">'."\n");
 	if ($params["page"] == "_sys_comments")
 		echo($indent.'	<a class="target" name="commentform_anchor"></a>'."\n");
-	echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.$params["page"].'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
+	echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($params["page"]).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 	
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
@@ -391,9 +391,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     
     //hidden values
 	if($params["cmd"] != "new") echo($indent.'			<input value="'.$params['nr'].'" name="nr" type="hidden" />'."\n");
-	echo($indent.'			<input value="'.$params['page'].'" name="page" type="hidden" />'."\n");
+	echo($indent.'			<input value="'.urlencode($params['page']).'" name="page" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['topic'].'" name="topic" type="hidden" />'."\n");
-	echo($indent.'			<input value="'.$params['group'].'" name="group" type="hidden" />'."\n");
+	echo($indent.'			<input value="'.urlencode($params['group']).'" name="group" type="hidden" />'."\n");
 	echo($indent.'			<input value="'.$params['from'].'" name="from" type="hidden" /></td>'."\n");
     
 	//echo($indent.'		<td class="form_options"><input type="checkbox" name="opt"/> '.__('show next entry').'</td>'."\n");

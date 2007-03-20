@@ -61,10 +61,10 @@ for ($x=0; $x < count($res); $x++) {
 	$row = $res[$x];
 	echo('		<item>'."\n");
 	echo('			<title><![CDATA['.$row["theText"].']]></title>'."\n");
-	echo('			<link>http://'.$url.'?'.$row["thePage"].'&amp;nr='.$row["theID"].'</link>'."\n");
+	echo('			<link>http://'.$url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"].'</link>'."\n");
 	echo('			<description><![CDATA['.$row["theContent"].']]></description>'."\n");
 	echo('			<pubDate>'.date('r',strtotime($row["theDate"])).'</pubDate>'."\n");
-	echo('			<guid isPermaLink="true">http://'.$url.'?'.$row["thePage"].'&amp;nr='.$row["theID"].'</guid>'."\n");
+	echo('			<guid isPermaLink="true">http://'.$url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"].'</guid>'."\n");
     echo('		</item>'."\n");
 }
 echo('	</channel>'."\n");

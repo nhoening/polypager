@@ -220,16 +220,14 @@
 					else $classAtt = 'not_here';
 	
 					if (isMultipage($p["name"])) {
-						$theLink = "?".$p["name"];
 						$tmp_entity = getEntity($p["name"]);
 						if ($tmp_entity["group"] != "") $has_sub = true;
 						else $has_sub = false;
 					} else {
-						$theLink = "?".$p["name"];
 						if ($sections[$p["name"]] == "") $has_sub = false;
 						else $has_sub = true;
 					}
-		
+                    $theLink = "?".urlencode($p["name"]);
 					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
 						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
 					} else {
