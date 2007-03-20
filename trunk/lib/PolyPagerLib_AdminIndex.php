@@ -489,8 +489,8 @@
 			echo($indent.'			<option value="">--'.__('select page').'--</option>'."\n");
 			$pages =  getPageNames();
 			foreach ($pages as $p) {
-				if ($page_selector == $p["name"]) $selected = "selected='selected'"; else $selected = "";
-				echo($indent.'			<option '.$selected.' value="'.$p.'">'.$p.'</option>'."\n");
+				if ($page_selector == $p) $selected = "selected='selected'"; else $selected = "";
+				echo($indent.'			<option '.$selected.' value="'.urlencode($p).'">'.$p.'</option>'."\n");
 			}
 			echo($indent.'		</select>'."\n");
 		} else if ($topic == 'pages') {
@@ -519,13 +519,13 @@
 		if ($params["page"] != "" and $params["topic"] == "content") {
 			$link_text = __('Here you can edit the intro text of this page.');
 			//if (isMultipage($params["page"])) 
-				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr='.$params["page"].'&page='.$params["page"].'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
+				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr='.urlencode($params["page"]).'&page='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
 			$link_text = __('Here you can insert a new entry for this page.');
-			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.$params["page"].'&cmd=new&from=list&topic='.$topic.'">'.__('new entry').'</a>'."\n");
+			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.urlencode($params["page"]).'&cmd=new&from=list&topic='.$topic.'">'.__('new entry').'</a>'."\n");
 		//now for fields
 		} else if ($params["page"] == "_sys_fields") {
 			$link_text = __('Here you can make statements about another field.');
-			$the_href = 'edit.php?_sys_fields&cmd=new&from=list&group='.$params["group"].'&topic='.$topic;
+			$the_href = 'edit.php?_sys_fields&cmd=new&from=list&group='.urlencode($params["group"]).'&topic='.$topic;
 			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$the_href.'">'.__('new entry').'</a>'."\n");
 		//now for pages
 		} else if (strpos($params["page"], "pages")) {

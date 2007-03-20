@@ -163,20 +163,21 @@ function writeData($ind=4) {
 		$pname = $params["values"]["name"];
 		if ($pname == "") $pname = $_GET["name"];
 		if ($pname == "") $pname = $_GET["page"];
+        if ($pname == "") $pname = $_GET["nr"];
 		echo($indent.'		<li><a
 			onmouseover="popup(\''.sprintf(__('click to make a new entry on the %s - page'),$pname).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
-			href="edit.php?'.$pname.'&amp;cmd=new&amp;from='.$params["from"].'&topic=content&group='.$params["group"].'">'.__('insert a new entry').'</a></li>'."\n");
+			href="edit.php?'.urlencode($pname).'&amp;cmd=new&amp;from='.$params["from"].'&topic=content&group='.urlencode($params["group"]).'">'.__('insert a new entry').'</a></li>'."\n");
 	} else if ($entity["one_entry_only"] != "1"){
 		echo($indent.'		<li>'.__('insert a').' <a
 			onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$params["page"]).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
-			href="edit.php?'.$params["page"].'&amp;cmd=new&amp;from='.$params["from"].'&topic='.$params["topic"].'&group='.$params["group"].'">'.__('new record').'</a></li>'."\n");
+			href="edit.php?'.urlencode($params["page"]).'&amp;cmd=new&amp;from='.$params["from"].'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('new record').'</a></li>'."\n");
 	}
 	
-	if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.$page.'&topic='.$params["topic"].'&group='.$params["group"].'">'.__('back to list view').'</a></li>'."\n");
+	if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.urlencode($page).'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('back to list view').'</a></li>'."\n");
 	if ($params["from"] == "admin" and $params["page"]!="_sys_sys") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
 	$page_info = getPageInfo($params["page"]);
 	if($page_info["in_menue"] == "0" and !strpos($params["page"], "_sys_")) {
-		echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.$params['page'].'&amp;group='.$params['group'].'">'.__('see the page').'</a></li>'."\n");
+		echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.urlencode($params['page']).'&amp;group='.urlencode($params['group']).'">'.__('see the page').'</a></li>'."\n");
 	}
 	echo($indent.'	</ul>'."\n");
 
@@ -254,7 +255,7 @@ function writeData($ind=4) {
 				//when we have a number, we should enter a new entry using that!
 				if ($params["nr"] == "") $the_cmd = "new";
 				else $the_cmd = "entry";
-				echo($indent.'	<a href="edit.php?'.$params["page"].'&nr='.$params["nr"].'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
+				echo($indent.'	<a href="edit.php?'.urlencode($params["page"]).'&nr='.urlencode($params["nr"]).'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
 			}
 		}
 	}

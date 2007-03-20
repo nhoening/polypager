@@ -121,7 +121,7 @@ function writeFeedDiv($ind=5) {
 			if ($sys_info['hide_public_popups']==0) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 			else $text = '';
             global $path_to_root_dir;
-			echo($indent.'		<a '.$text.'href="./'.$path_to_root_dir.'/?'.$row['thePage'].'&amp;nr='.$row['theID'].'">');
+			echo($indent.'		<a '.$text.'href="./'.$path_to_root_dir.'/?'.urlencode($row['thePage']).'&amp;nr='.$row['theID'].'">');
 			echo($row['theText'].'	</a>'."\n");
 			echo($indent.'	</div>'."\n");
 		}
