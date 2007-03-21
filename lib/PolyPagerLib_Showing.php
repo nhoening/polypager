@@ -246,12 +246,22 @@
     /*return text search keywords*/
     function getSearchKeywords(){
         global $params;
-        $kws = explode(' ',$params["search"]["kw"]);//TODO: consider ".. .." as one keyword
+        $url_kws = str_replace("\\","",$params["search"]["kw"]);
+        //get keywords encapsulated in parentheses
+        preg_match_all('/\'[^\']*\'/',$url_kws,$kws);
+        //echo("<br/><br/>|".$params["search"]["kw"]."| yields:<br/>");
+        $kws = $kws[0]; //all hits are in the first element
+        //print_r($kws);
+        $single_kws = preg_split('/\'[^\']*\'/',$params["search"]["kw"]);
+        //echo("<br/><br/>|".$params["search"]["kw"]."| yields:<br/>");
+        //print_r($single_kws);
+        foreach($single_kws as $k) $kws = array_merge($kws, explode(" ", $k)); 
         //TODO: eject keywords that are part of others?
         $sys_info = getSysInfo();
-        for($x=0;$x<count($kws);$x++)
-            $kws[$x] = htmlentities(urldecode($kws[$x]), ENT_QUOTES, $sys_info['encoding']);
         //print_r($kws);
+        for($x=0;$x<count($kws);$x++)
+            if (trim($kws[$x]) != "") $kws[$x] = htmlentities(urldecode(str_replace("'", "", $kws[$x])), ENT_QUOTES, $sys_info['encoding']);
+        print_r($kws);
         return $kws;
     }
     
@@ -530,7 +540,7 @@
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
 			$queries[$p] = $theQuery;
 		}
-        //print_r($queries);
+        print_r($queries);
 		return $queries;
 	}
 	
@@ -559,7 +569,7 @@
             if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
         echo(implode(',',$l));
         $helptext = __('Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).');
-        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.str_replace('+',' ', $_GET["kw"]).'" name="kw"/><button type="submit">go</button>'."\n");
+        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.str_replace("\'","'", str_replace('\"',"'", $_GET["kw"])).'" name="kw"/><button type="submit">go</button>'."\n");
         writeHelpLink($indent.'     ', $helptext);
         echo($indent.'    </form>'."\n");
             

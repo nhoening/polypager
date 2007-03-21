@@ -327,7 +327,6 @@ $multipages = "";
 function getMultipages() {
 	global $multipages;
 	if ($multipages == "") {
-		//echo("getting multipages");
 		$multipages = array();
 		$query = "SELECT * FROM _sys_multipages";
 		$res = mysql_query($query, getDBLink());
@@ -371,7 +370,7 @@ function getPageNames() {
 	return $all;
 }
 
-/* get Pagename accorsing to a number */
+/* get Pagename according to a number */
 function getMultipageNameByNr($nr){
 	$pages = getMultipages();
 	foreach($pages as $p) {

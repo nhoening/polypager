@@ -51,6 +51,7 @@ function prioH($pagename){
     global $sys_info;
     $prio = 0.5;
     if ($pagename == $sys_info["start_page"]) $prio = 1.0; // we want search engines to index our start page
+    if ($prio < 1 and $entity["publish_field"] != "" and $row["pub"] == '1') $prio = 0.7;
     return $prio;
 }
 
@@ -66,22 +67,17 @@ foreach ($pages as $p) {
         $res = pp_run_query("SELECT id AS theID, heading AS theTitle, input_date AS theDate1, edited_date AS theDate2, publish AS pub FROM ".$entity['tablename']." WHERE pagename='".$p."'");
     }
 
-    $prio = prioH($p);
-    
     //now put'em out
 	while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
         if ($entity["publish_field"] == "" or ($entity["publish_field"] != "" and $row["pub"] == '1')){
             echo('	<url>'."\n");
-            echo('		<loc>http://'.$url.'?'.$p.'&amp;nr='.$row["theID"].'</loc>'."\n");
+            echo('		<loc>http://'.$url.'?'.urlencode($p).'&amp;nr='.$row["theID"].'</loc>'."\n");
             //prefer last edited date over input date
             if ($row["theDate2"]!="" and $row["theDate2"]!="NULL" and substr($row['theDate2'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate2"])).'</lastmod>'."\n");
             else if ($row["theDate1"]!="" and$row["theDate1"]!="NULL" and substr($row['theDate1'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate1"])).'</lastmod>'."\n");
-   
             echo('		<changefreq>weekly</changefreq>'."\n");
-            if ($prio < 1 and $entity["publish_field"] != "" and $row["pub"] == '1') $prio = 0.7;
-            echo('		<priority>'.$prio.'</priority>'."\n");
+            echo('		<priority>'.prioH($p,$entity["publish_field"],$row["pub"]).'</priority>'."\n");
             echo('	</url>'."\n");
-            $prio = prioH($p);
         }
     }
 }
