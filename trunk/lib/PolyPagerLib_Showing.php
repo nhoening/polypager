@@ -237,7 +237,7 @@
 			echo($indent.'<div class="sys_msg" id="searchinfo"><h4>'.__('you searched for:').'</h4><ul>');
 			foreach($params["search"] as $name => $val) {
 				if ($name=="kw")$name="keyword";
-				if ($val != "") echo($indent.'	<li>'.$name.':'.$val.'</li>');
+				if ($val != "") echo($indent.'	<li>'.$name.':'.str_replace("\\","",$val).'</li>');
 			}
 			echo($indent.'</ul></div>');
 		}
@@ -246,23 +246,29 @@
     /*return text search keywords*/
     function getSearchKeywords(){
         global $params;
+        // ensure one standard of parentheses to work with
         $url_kws = str_replace("\\","",$params["search"]["kw"]);
-        //get keywords encapsulated in parentheses
-        preg_match_all('/\'[^\']*\'/',$url_kws,$kws);
-        //echo("<br/><br/>|".$params["search"]["kw"]."| yields:<br/>");
+        $url_kws = str_replace('"',"'",$url_kws);
+        // get keywords encapsulated in parentheses
+        $regex = '/\'[^\']*\'/';
+        preg_match_all($regex,$url_kws,$kws);
+        //echo("<br/><br/>|".$params["search"]["kw"]."| yields in parentheses:<br/>");
         $kws = $kws[0]; //all hits are in the first element
         //print_r($kws);
-        $single_kws = preg_split('/\'[^\']*\'/',$params["search"]["kw"]);
-        //echo("<br/><br/>|".$params["search"]["kw"]."| yields:<br/>");
+        // get the others
+        $single_kws = preg_split($regex,$url_kws);
+        //echo("<br/><br/>|".$params["search"]["kw"]."| yields normal:<br/>");
         //print_r($single_kws);
         foreach($single_kws as $k) $kws = array_merge($kws, explode(" ", $k)); 
         //TODO: eject keywords that are part of others?
         $sys_info = getSysInfo();
         //print_r($kws);
+        $kws_clean = array();
         for($x=0;$x<count($kws);$x++)
-            if (trim($kws[$x]) != "") $kws[$x] = htmlentities(urldecode(str_replace("'", "", $kws[$x])), ENT_QUOTES, $sys_info['encoding']);
-        print_r($kws);
-        return $kws;
+            if (trim($kws[$x]) != "") $kws_clean[] = htmlentities(urldecode(str_replace("'", "", $kws[$x])), ENT_QUOTES, $sys_info['encoding']);
+        //echo("<br/>final result:<br/>");
+        //print_r($kws_clean);
+        return $kws_clean;
     }
     
     
@@ -540,7 +546,7 @@
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
 			$queries[$p] = $theQuery;
 		}
-        print_r($queries);
+        //print_r($queries);
 		return $queries;
 	}
 	
