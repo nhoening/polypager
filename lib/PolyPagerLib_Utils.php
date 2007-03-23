@@ -859,7 +859,7 @@ function getEntity($page_name) {
 			//this is to make sitewide search work
 			else if ($page_name == "_search") {
 				$s = array('range'=>0, 'keyword'=>1, 'month'=>1, 'year'=>1);
-				$entity["search"] =$s;
+				$entity["search"] = $s;
 			}
 			//	table for feeds
 			else if ($page_name == "_sys_feed") {

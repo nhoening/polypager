@@ -179,10 +179,8 @@ function writeData($ind=5) {
 			//removed by popular request
 			echo($indent.'<h1 style="display:none;">'.$params["page"].'</h1>'."\n");
 			
-			if ($params['page'] != '_search'){
-				writeSearchForm(false, $nind);
-				writeToc($res, false, $nind);
-			}
+			if ($params['page'] != '_search') writeSearchForm(false, $nind);
+			writeToc($res, false, $nind);
 			
 			echo($indent.'<div class="show">'."\n");
 			$nind = $ind + 1;
