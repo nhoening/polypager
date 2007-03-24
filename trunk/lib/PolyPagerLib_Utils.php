@@ -157,8 +157,8 @@ function buildDateTimeString(){
 	may be a letter, a digit, ".", or "-".
 */
 function buildValidIDFrom($text){
-	$text = ereg_replace('$([^(a-zA-Z)])(.*)','pp\1\2',$text);
-	$text = ereg_replace('[^a-zA-Z0-9\.-]','-',$text);
+	$text = preg_replace('/^[^a-zA-Z0-9\.-]/','p',$text);
+	$text = preg_replace('/[^a-zA-Z0-9\.-]/','-',$text);
 	return $text;
 }
 
@@ -168,7 +168,7 @@ function buildValidIDFrom($text){
 	more here: http://dev.mysql.com/doc/refman/5.0/en/legal-names.html
 */
 function buildValidMySQLTableNameFrom($text){
-	$text = ereg_replace('[^a-zA-Z0-9_]','_',$text);
+	$text = preg_replace('/[^a-zA-Z0-9_]/','_',$text);
 	return substr($text,0,64);
 }
 
@@ -1721,6 +1721,29 @@ function getFirstWords($html_str, $number){
 	if ($m_number < count($text_arr)) $result = $result.' (...)';
 	return preg_replace('/\s\s+/', ' ', $result);	//strip all whitespace into ' '
 }
+
+/* escape regexes */
+
+function escape_regex($t) {
+    $t = str_replace(".", "\.", $t);
+    $t = str_replace("+", "\+", $t);
+    $t = str_replace("*", "\*", $t);
+    $t = str_replace("[", "\[", $t);
+    $t = str_replace("]", "\]", $t);
+    $t = str_replace("?", "\?", $t);
+    $t = str_replace('$', '\$', $t);
+    $t = str_replace("^", "\^", $t);
+    $t = str_replace("(", "\(", $t);
+    $t = str_replace(")", "\)", $t);
+    $t = str_replace("|", "\|", $t);
+    return $t;
+}
+
+if (!function_exists("str_ireplace")) {
+    function str_ireplace($search, $replace, $subject) {
+        return eregi_replace(escape_regex($search), escape_regex($replace), $subject);
+    }
+} 
 
 /* Validation functions - get validation regexes*/
 function getValidationRegex($validation) {

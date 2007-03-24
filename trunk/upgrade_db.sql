@@ -10,6 +10,9 @@
 UPDATE _sys_sections SET the_group = 'standard' WHERE the_group = '';
 ALTER TABLE `_sys_sys` ADD `full_feed` TINYINT( 1 ) NOT NULL DEFAULT '1' AFTER `feed_amount` ;
 
+ALTER TABLE `_sys_comments` CHANGE `comment` `comment` TEXT NOT NULL ;
+ALTER TABLE `_sys_intros` CHANGE `intro` `intro` TEXT NOT NULL ;
+ALTER TABLE `_sys_sections` CHANGE `bla` `bla` TEXT NOT NULL ;
 -- 0.9.9
 
 ALTER TABLE `_sys_fields` CHANGE `order_index` `order_index` INT( 11 ) NOT NULL DEFAULT '1';

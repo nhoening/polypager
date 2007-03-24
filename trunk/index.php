@@ -179,6 +179,9 @@ function writeData($ind=5) {
 			//removed by popular request
 			echo($indent.'<h1 style="display:none;">'.$params["page"].'</h1>'."\n");
 			
+            $page_info = getPageInfo();
+            if ($params["step"] != "all" and $page_info["in_menue"] == 0) echo('<div class="sys_msg">from the page <a href="?'.$params["page"].'">'.$params["page"].'</a></div>');
+            
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
 			writeToc($res, false, $nind);
 			
