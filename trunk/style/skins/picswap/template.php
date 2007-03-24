@@ -27,6 +27,10 @@
 
 			<div id="data<?=$area?>">
 
+				<div id="mainpane">
+<?php writeData();?>
+				</div>
+                
 <?php if($area == '') { ?>
 				<div id="sidepane">
 
@@ -35,10 +39,6 @@
 <?php writeFeedDiv();?>
 				</div>
 <?php } ?>
-		
-				<div id="mainpane">
-<?php writeData();?>
-				</div>
 		
 			</div>
 <?php writeFooter();?>

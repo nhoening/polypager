@@ -67,7 +67,7 @@
 		}
 		//test if the skin can be found, go back to default otherwise
 		if (!file_exists($path_to_root_dir.'/style/skins/'.$css)){
-			$skin = 'default';
+			$skin = 'polly';
 			$css = $skin.'/skin.css';
 		}
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/skins/'.$css.'" type="text/css"></link>'."\n");

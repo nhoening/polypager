@@ -94,6 +94,7 @@ body {
 	width: 250px; /*(790px(data)-540px(main))*/
 }
 #mainpane {
+    float: left;
 	width: 540px;
 }
 

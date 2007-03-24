@@ -468,7 +468,7 @@ function getSysInfo() {
 	
 	//default for the case that we haven't any data yet
 	if ($sys_info["skin"] == "" or $sys_info['no_tables']) {
-		$sys_info["skin"] = 'default';
+		$sys_info["skin"] = 'polly';
 	}
 	
 	$params['values']['skin'] = $sys_info["skin"];
