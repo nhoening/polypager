@@ -437,8 +437,8 @@ function isTextType($type) {
 
 /* returns wether this MySQL type is a type that PolyPager handles with a text area*/
 function isTextAreaType($type) {
-	return ($type=="blob" or $type=="mediumblob" or $type=="longblob"
-        or $type=="text" or $type=="mediumtext" or $type=="longtext");
+	return ($type=="tinyblob" or $type=="blob" or $type=="mediumblob" or $type=="longblob"
+        or $type=="tinytext" or $type=="text" or $type=="mediumtext" or $type=="longtext");
 }
 
 /* get system info
