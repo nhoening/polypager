@@ -50,10 +50,10 @@ ul{
 
 blockquote
 {
-	background: url(pics/qoute.gif) 0px 0px no-repeat;
+	background: url(pics/quote.gif) 0px 0px no-repeat;
 	font-style: italic;
-	padding: 1px 0px 1px 20px;
-	margin: 0px 20px 0px 20px;
+	padding: 4px 0px 1px 20px;
+	margin: 10px 30px;
 }
 
 blockquote p { margin: .7em 0; }
@@ -90,7 +90,7 @@ body {
 }
 
 #title {
-    padding: 0px 20px 0px 20px;
+    padding: 0px 20px;
 	text-align: right;
 }
 #title span a {
@@ -133,7 +133,7 @@ body {
 
 /*menu idea from http://css.maxdesign.com.au/listamatic/horizontal07.htm */
 #main_menu{
-    margin-top: 2.5em;
+    margin-top: 3.5em;
     margin-right: 1em;
 }
 
@@ -153,7 +153,7 @@ list-style-type: none;
 #main_menu a
 {
 padding: 1px 8px 1px 24px;
-border: 1px solid #333;
+border: 1px solid #e57c00;
 background-color: #999;
 background-image: url(pics/menu_down.gif);
 }
@@ -166,20 +166,46 @@ text-decoration: none;
 
 #main_menu a:hover
 {
-border: 1px solid #333;
-background-color: #FF6600;
-background-image: url(pics/menu_over.gif);
+border: 1px solid #e57c00;
+background-image: url(pics/menu_hov.gif);
 color: #333;
 }
 
 #main_menu .here a:link, #main_menu .here a:visited, #main_menu .here a:hover
 {
-border: 1px solid #333 !important;
+border: 1px solid #84a0b9 !important;
 background-color: #FF6600 !important;
-background-image: url(pics/menu_over.gif) !important;
+background-image: url(pics/menu_on.gif) !important;
 color: #333 !important;
 }
 
+
+#sub_menus {
+	margin: 12px 1em 0px 0px;
+}
+
+#sub_menus ul{
+	margin: 2px 0px 0px 0px;
+}
+
+#sub_menus li {
+	margin-left: 5px;
+}
+
+#sub_menus li a{
+	border: 1px solid #fff;
+	padding: 0px 3px;
+}
+
+#sub_menus li:hover a, #sub_menus li.here a {
+	border: 1px solid #84a0b9;
+	background: transparent;
+	color: #e57c00 !important;
+}
+
+#sub_menus li.here a {
+	border: 1px solid #e57c00 ;
+}
 
 /* ----- sidepane ----- */
 
@@ -281,6 +307,10 @@ color: #333 !important;
 
 #search a:hover, #search a:focus, #toc a:hover, #toc a:focus, .admin_link a:hover, .admin_link a:focus{
 	color: #e57c00;
+}
+
+#search fieldset{
+	width: 480px !important;
 }
 
 .title{
