@@ -116,7 +116,7 @@
                       `edited_date` datetime default NULL,
                       `pagename` varchar(50) NOT NULL default '',
                       `heading` varchar(200) NOT NULL default '',
-                      `bla` blob NOT NULL,
+                      `bla` text NOT NULL,
                       `publish` tinyint(1) NOT NULL default '1',
                       `in_submenu` tinyint(1) NOT NULL default '0',
                       `order_index` int(11) NOT NULL default '0',
@@ -134,7 +134,7 @@
 		
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_intros` (
 					  `tablename` varchar(80) NOT NULL default '',
-					  `intro` blob NOT NULL,
+					  `intro` text NOT NULL,
 					  PRIMARY KEY  (`tablename`)
 					) TYPE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
@@ -164,7 +164,7 @@
 					  `name` varchar(120) NOT NULL default '',
 					  `email` varchar(120) NOT NULL default '',
 					  `www` varchar(120) NOT NULL default '',
-					  `comment` blob NOT NULL,
+					  `comment` text NOT NULL,
 					  `is_spam` tinyint(1) NOT NULL default '0',
 					  PRIMARY KEY  (`id`),
 					  KEY `pagename` (`pagename`,`pageid`),

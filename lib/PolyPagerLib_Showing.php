@@ -246,6 +246,7 @@
     /*return text search keywords*/
     function getSearchKeywords(){
         global $params;
+        //echo($params["search"]["kw"]);
         // ensure one standard of parentheses to work with
         $url_kws = str_replace("\\","",$params["search"]["kw"]);
         $url_kws = str_replace('"',"'",$url_kws);
@@ -449,16 +450,16 @@
 								// get all keywords
 								$kws = getSearchKeywords();
 								foreach($entity["fields"] as $f) {
-                                    //if (isTextType($f["data_type"])){
+                                    if (isTextType($f["data_type"])){
                                         $table_field = $entity["tablename"].'.'.$f['name'];
-                                        //BLOB fields are case-sensitive, therefore lcase - see http://forums.devshed.com/t1909/s.html
+                                        //remember: BLOB fields are case-sensitive! you should take text for those
                                         $a[] = " (";
                                         foreach($kws as $k)
-                                            $a[] = " lcase(".$table_field.") LIKE '%$k%' AND ";
+                                            $a[] = " ".$table_field." LIKE '%".str_replace('.','\.', $k)."%' AND ";
                                         // replace last AND with OR
                                         $a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
                                         $a[] = " ) OR";
-                                    //}
+                                    }
 								}
 								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
 								$a[] = ")";
@@ -527,7 +528,6 @@
 					if ($references != "" and count($references)>0){
 						$a[] = ' GROUP BY '.$entity["tablename"].'.'.$entity["pk"];
 					}
-					
 					
 					$theQuery = implode('',$a);
 					
@@ -892,6 +892,7 @@
 		}
 		
 	}
+    
 	
 	/* writes out an entry in a div with class "show_entry"
 	   params:
@@ -938,7 +939,7 @@
             if($entity["title_field"]!="" and ($params['page']=='_search' or $params["cmd"] == "_search" )) {
                 $title = strip_tags($row[$entity["title_field"]]);
                 foreach(getSearchKeywords() as $k){
-                    $title = eregi_replace(sql_regcase($k),'<span class="high">'.$k.'</span>', $title);
+                    $title = eregi_replace(escape_regex($k),'<span class="high">'.escape_regex($k).'</span>', $title);
                 }
                 echo('<a href="'.$the_url.'">'.$title.'</a><br/>'."\n");
             }
@@ -969,7 +970,7 @@
                             
                             $content = strip_tags($row[$f['name']]);
                             foreach(getSearchKeywords() as $k){
-                                $hits = spliti(sql_regcase($k),$content);
+                                $hits = spliti(escape_regex($k),$content);
                                 $hit_cnt = count($hits);
                                 if($hit_cnt>1){
                                     for($x=0;$x<$hit_cnt;$x++) $hits[$x] = preg_split('/\s/',$hits[$x], -1);
