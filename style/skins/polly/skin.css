@@ -397,6 +397,8 @@ td.label{
     font-size: .7em;
     border: 1px solid gray;
     margin-top:20px;
+    padding-left: 10px !important;
+    background: url('pics/comments.gif') left top no-repeat;
 }
 
 .comment_prefix, ._sys_comments_comment .label {
