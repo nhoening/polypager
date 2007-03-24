@@ -172,7 +172,7 @@ background-image: url(pics/menu_over.gif);
 color: #333;
 }
 
-.here a:link, .here a:visited, .here a:hover
+#main_menu .here a:link, #main_menu .here a:visited, #main_menu .here a:hover
 {
 border: 1px solid #333 !important;
 background-color: #FF6600 !important;

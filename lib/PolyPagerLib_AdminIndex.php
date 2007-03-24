@@ -104,7 +104,7 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
         $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', 'utf-8', '', '', 12, 0, '', 'en', 'default', 0, 0, 0, '', 99);";
+                                '', 'utf-8', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99);";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
