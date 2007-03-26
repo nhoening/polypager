@@ -95,7 +95,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 			$show_params["values"]["www"] = $params["values"]["www"];
 			$show_params["values"]["comment"] = $params["values"]["comment"];
 		}
-		// well, to proceed, our page is not _sys_comments
+		// well, to proceed, our page is not _sys_comments,
 		// but the page the comment appears on
 		$show_params["page"] = $params["values"]["pagename"];
 	}
@@ -176,11 +176,9 @@ function writeData($ind=5) {
 			
 			$page_info = getPageInfo($params["page"]);
 			//------------------------ showing data   --------------
-			//removed by popular request
-			echo($indent.'<h1 style="display:none;">'.$params["page"].'</h1>'."\n");
 			
             $page_info = getPageInfo();
-            if ($params["step"] != "all" and $page_info["in_menue"] == 0) echo('<div class="sys_msg">from the page <a href="?'.$params["page"].'">'.$params["page"].'</a></div>');
+            if ($params["step"] != "all" and $page_info["in_menue"] == 0 and $params["page"] != "_sys_comments") echo('<div class="sys_msg">from the page <a href="?'.$params["page"].'">'.$params["page"].'</a></div>');
             
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
 			writeToc($res, false, $nind);

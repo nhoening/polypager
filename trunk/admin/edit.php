@@ -144,8 +144,6 @@ function writeData($ind=4) {
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
 	}
 	
-	
-	
 	//sys msg? write it 
 	if ($sys_msg_text != "") {
 		echo($indent.$sys_msg_text);
@@ -159,7 +157,7 @@ function writeData($ind=4) {
 	
 	//showing some navigation links
 	echo($indent.'	<ul>'."\n");
-	if ($page == "_sys_pages") {	//entry on that  page
+	if ($page == "_sys_pages" and $params["cmd"] != "new") {	//entry on that  page
 		$pname = $params["values"]["name"];
 		if ($pname == "") $pname = $_GET["name"];
 		if ($pname == "") $pname = $_GET["page"];
@@ -167,7 +165,7 @@ function writeData($ind=4) {
 		echo($indent.'		<li><a
 			onmouseover="popup(\''.sprintf(__('click to make a new entry on the %s - page'),$pname).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
 			href="edit.php?'.urlencode($pname).'&amp;cmd=new&amp;from='.$params["from"].'&topic=content&group='.urlencode($params["group"]).'">'.__('insert a new entry').'</a></li>'."\n");
-	} else if ($entity["one_entry_only"] != "1"){
+	} else if ($entity["one_entry_only"] != "1" and $params["cmd"] != "new"){
 		echo($indent.'		<li>'.__('insert a').' <a
 			onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$params["page"]).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
 			href="edit.php?'.urlencode($params["page"]).'&amp;cmd=new&amp;from='.$params["from"].'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('new record').'</a></li>'."\n");
