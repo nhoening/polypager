@@ -528,6 +528,8 @@ function getPageInfo($page_name) {
             //adding this if page info is used for queries
             if(isSinglePage($page_name)) $page_info["tablename"] = '_sys_sections';
             else if (isASysPage($page_name)) $page_info["tablename"] = $page_name;
+            //adding this for comment preview
+            if($page_name=='_sys_comments') $page_info["hide_toc"] = 1;
         }
 	}
 	

@@ -268,9 +268,13 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	if ($target_nr == "") $target_nr = $row[$entity["pk"]];
 	
 	echo($indent.'<div  display="'.$display.'">'."\n");
-	if ($params["page"] == "_sys_comments")
+	if ($params["page"] == "_sys_comments"){
 		echo($indent.'	<a class="target" name="commentform_anchor"></a>'."\n");
-	echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($params["page"]).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
+        $target_page = $params["values"]["pagename"]; // the page the entry will appear on
+    }else {
+        $target_page = $params["page"];
+    }
+	echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 	
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
@@ -373,7 +377,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     echo($indent.'		    <tr class="submit">'."\n");
 	echo($indent.'			    <td style="width:50%;">'."\n");
     //preview
-    if ($hasTextarea) {
+    if ($hasTextarea and $_GET["cmd"]!="preview") {
         echo($indent.'			<script>'."\n");
         echo($indent.'			function getValues(){'."\n");
         echo($indent.'			   var t = \'\';'."\n");

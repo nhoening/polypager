@@ -918,6 +918,8 @@
 		//we'll use this to forward that we had a group request
 		if ($params["group"] != "") $group_forward = '&group='.$row[$entity["group"]["field"]];
 		
+        if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'<div id="comments">');
+        
 		if (!$list_view) {
 			if ($page_info["hide_options"] == 0 and !($params['page']=='_search' or $params["cmd"] == "_search" )) 
                 echo($indent.'<div class="show_entry_with_options">'."\n");
@@ -1110,14 +1112,14 @@
 				}
 			}
 		}
-		/*if (!$list_view and $entity["tablename"] == "_sys_comments") {
-			echo($indent.'		<div><a href="admin/edit.php?_sys_comments&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'">#</a></div>'."\n");
-		}*/
+
 		if (!$list_view and $something_was_not_brief == true and $params["step"] != 1) { 	//show a link to the whole entry
 			$wlink = "?".$pagename.'&amp;nr='.$row[$entity["pk"]];
 			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
 		}
 		echo($indent."</div>"."\n");
+        
+        if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == 0 ) {
