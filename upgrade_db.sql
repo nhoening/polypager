@@ -14,7 +14,7 @@ ALTER TABLE `_sys_comments` CHANGE `comment` `comment` TEXT NOT NULL ;
 ALTER TABLE `_sys_intros` CHANGE `intro` `intro` TEXT NOT NULL ;
 ALTER TABLE `_sys_sections` CHANGE `bla` `bla` TEXT NOT NULL ;
 
-UPDATE `_sys_sys` SET `skin` = 'polly';
+UPDATE `_sys_sys` SET `skin` = 'polly' WHERE `skin` = 'default';
 
 -- 0.9.9
 
