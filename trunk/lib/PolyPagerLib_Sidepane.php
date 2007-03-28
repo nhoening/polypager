@@ -117,7 +117,7 @@ function writeFeedDiv($ind=5) {
 		for ($x=0;$x<count($res);$x++) {
 			$row = $res[$x];
 			echo($indent.'	<div class="entry">'."\n");
-			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.$row['theContent'];
+			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.str_replace("'","\'", strip_tags(getFirstWords($row['theContent'],20)));
 			if ($sys_info['hide_public_popups']==0) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 			else $text = '';
             global $path_to_root_dir;

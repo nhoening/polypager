@@ -1238,9 +1238,9 @@
 	function checkComment($comment, $time) {
 		if ($time < 1000 and $time != '') 
 			return __('wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.');
-		$stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p>');
+		$stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');
 		if ($comment != $stripped_comment) 
-			return __('Your text contains tags that are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;. Your comment has not been saved.');
+			return __('Your text contains tags that are not allowed. You can use one of those: b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;&lt;em&gt;&lt;. Your comment has not been saved.');
 		return "";
 	}
 ?>
