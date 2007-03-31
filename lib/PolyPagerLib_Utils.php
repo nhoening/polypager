@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '1.0rc1';
+$version = '1.0rc2';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
@@ -791,7 +791,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("date_field", "help", __('this (date)field stores the time its entry was created.'));
 				setEntityFieldValue("edited_field", "help", __('this (date)field would display when the last change to its entry took place.'));
 				setEntityFieldValue("title_field", "help", __('this field will be used as title field. It will therefore look different to the others.'));
-				setEntityFieldValue("feed", "help", __('if this field is checked, new entries of this page will be fed. That means they will be listed under the latest entries (right on the page) and they will be available via RSS. BUT: this will only work if you have selected a title-field AND a date-field !!!'));
+				setEntityFieldValue("feed", "help", __('if this field is checked, new entries of this page will be fed. That means they will be listed under the latest entries (right on the page) and they will be available via RSS.'));
 				setEntityFieldValue("step", "help", __('here you specify how many entries should be shown on one page. You can use a number or simply all'));
 				setEntityFieldValue("hide_comments", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
 				setEntityFieldValue("taggable", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
@@ -1766,7 +1766,7 @@ function getValidationRegex($validation) {
 /* Validation functions - get validation messages*/
 function getValidationMsg($validation) {
 	if ($validation == 'any_text') {
-		return __('please specify any text here.');
+		return __('please specify some text here.');
 	}
 	if ($validation == 'email') {
 		return __('please specify a valid email address here.');

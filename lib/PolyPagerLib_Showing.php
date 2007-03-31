@@ -739,9 +739,8 @@
 		$indent = translateIndent($ind);
 		global $params;
 		$page_info = getPageInfo($params["page"]);
-		echo($indent.'<!-- table of contents-->'."\n");
 		if ($page_info["hide_toc"] == 0 ) {
-			
+			echo($indent.'<!-- table of contents-->'."\n");
 			echo($indent.'<div id="toc">'."\n");
 			echo($indent.'    <div id="toc_content_link_nester"><a id="toc_content_link" href="javascript:toggleVisibility(\'toc_content\',\'toc_content_link\', \''.__('show index').'\', \''.__('hide index').'\');">'.__('show index').'</a></div>'."\n");
 			$entity = getEntity($params["page"]);
