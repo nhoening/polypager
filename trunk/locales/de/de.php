@@ -196,8 +196,10 @@ function getTranslation($text) {
 	'Administratorname und -Kennwort sind auf "admin" eingestellt. Viel Spass!',
 
 /*	lib/GempuxLib_HTMLForms.php	*/
-'if you tick this checkbox before hitting the save button, this entry will be seen on top of the feed list (the list of latest entries).' =>
-	'Wenn Sie diese Checkbox aktivieren, wird dieser Eintrag oben auf der Feed-Liste zu sehen sein (das ist die Liste der neuesten Eintr&auml;ge)',
+'If you tick this checkbox before hitting the save button, this entry will be fed to the list of latest entries and the RSS.' =>
+	'Wenn Sie diese Checkbox aktivieren, wird dieser Eintrag in der Feed-Liste und im RSS zu sehen sein.',
+' (If you do not publish this entry, it will be invisible there, too)' => 
+    '(Wenn Sie diesen Eintrag nicht ver&ouml;ffentlichen, wird er dort ebenfalls unsichtbar sein.)',
 'choose:' => 'W&auml;hlen Sie:',
 'This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.' =>
 	'Diese Liste ist hier um Ihnen sinnvolle Vorschl&auml;ge zum F&uuml;llen des obigen Listfelds zu geben. Klicken Sie auf einen Eintrag, um ihn in das Feld zu kopieren. Sie k&ouml;nnen auch etwas anderes hineinschreiben, wenn Sie wissen, ob das Sinn macht :-) Der reset-link stellt den Zustand zum Zeitpunkt des letzten Ladens der Seite wieder her.',
@@ -260,8 +262,8 @@ function getTranslation($text) {
 => '&quot;ASC&quot; steht f&uuml;r &quot;ascending&quot;. Wenn im Sortierkriteriumsfeld beispielsweise Nummern stehen, bedeutet das: niedrige Nummern kommen zuerst, hohe zuletzt. &quot;DESC&quot; bedeutet &quot;descending&quot; und funktioniert andersherum.',
 'this field will be used as title field. It will therefore look different to the others.'
 => 'Dieses Feld wird als Titel-Feld benutzt werden. Das bedeutet, dass es anders aussehen wird als andere und im Feeding als &Uuml;berschrift verwendet wird.',
-'if this field is checked, new entries of this page will be fed. That means they will be listed under the latest entries (right on the page) and they will be available via RSS. BUT: this will only work if you have selected a title-field AND a date-field !!!'
-=> 'Wenn dieses Feld markiert ist, werden neue Eintr&auml;ge dieser Seite gef&uuml;ttert. Das bedeutet, sie werden in der Liste namens &quot;Die neuesten Eintr&auml;ge&quot; erscheinen und per RSS verf&uuml;gbar sein. ABER: das wird erst funktionieren, wenn Sie ein Titelfeld UND ein Datums-Feld ausgew&auml;hlt haben !!!',
+'if this field is checked, new entries of this page will be fed. That means they will be listed under the latest entries (right on the page) and they will be available via RSS.'
+=> 'Wenn dieses Feld markiert ist, werden neue Eintr&auml;ge dieser Seite gef&uuml;ttert. Das bedeutet, sie werden in der Liste namens &quot;Die neuesten Eintr&auml;ge&quot; erscheinen und per RSS verf&uuml;gbar sein.',
 'this field has currently no meaning (that means: it is not yet implemented)'
 => 'dieses Feld hat beim derzeitigen Entwicklungsstand noch keine Bedeutung (es wurde noch nichts daf&uuml;r implementiert).',
 'if this field is checked, users can search for entries of this page made in a particular month.'

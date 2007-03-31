@@ -357,35 +357,45 @@ function getEditQuery($command, $theID) {
 /*
  * handles the feed table
  */
+
  function handleFeed() {
 	global $params;
 	global $entity;
 	$max_entries = 50;
-	//delete all possible entries with the same pagename/id from the feed list
-	if($params["cmd"] != "entry") $res = pp_run_query("DELETE FROM _sys_feed WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";");
-	
-	if($params["cmd"] != "delete") {	//new one comes in
-		//find out how much is still in there
-		$res = pp_run_query("SELECT COUNT(*) AS nr FROM _sys_feed;");
-		if($row = mysql_fetch_array($res, MYSQL_ASSOC))	$count = $row['nr'];
-		
-		//if bigger than max_entries, delete oldest
-		if ($count > ($max_entries-1)){
-			$res = pp_run_query("SELECT MIN(edited_date) AS maxed FROM _sys_feed;");
-			$row = mysql_fetch_array($res, MYSQL_ASSOC);
-			$res = pp_run_query("DELETE FROM _sys_feed WHERE edited_date = '".$row['maxed']."';");
-		}
-		//insert the new one
-		$title = "";
-		if ($entity['title_field'] != "") $title = $params['values'][$entity['title_field']];
-		$tfield = guessTextField($entity);
-		if ($title == "" and $tfield != "") $title = getFirstWords($params['values'][$tfield],50);
-		
-		//we know if the entry is new or was updated
-		if ($params["cmd"] == "edit") $title = '['.__('update').'] '.$title;
-		$query = "INSERT INTO _sys_feed (edited_date, title, pagename, id) VALUES ";
-		$query = $query."('".buildDateTimeString()."','".$title."','".$params["page"]."',".$params["nr"].");";
-		$res = pp_run_query($query);
-	}
+    
+    //make the feed for the entry public if the entry is published
+    $p = 1;
+    if ($entity["publish_field"]!="" and $params["values"][$entity["publish_field"]] == '0') $p = 0;
+    $query = "UPDATE _sys_feed SET public = ".$p." WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";";
+    $res = pp_run_query($query);
+    
+    if($params["feed"] == '1') {
+        //delete all possible entries with the same pagename/id from the feed list
+        if($params["cmd"] != "entry") $res = pp_run_query("DELETE FROM _sys_feed WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";");
+        
+        if($params["cmd"] != "delete") {	//new one comes in
+            //find out how much is still in there
+            $res = pp_run_query("SELECT COUNT(*) AS nr FROM _sys_feed;");
+            if($row = mysql_fetch_array($res, MYSQL_ASSOC))	$count = $row['nr'];
+            
+            //if bigger than max_entries, delete oldest
+            if ($count > ($max_entries-1)){
+                $res = pp_run_query("SELECT MIN(edited_date) AS maxed FROM _sys_feed;");
+                $row = mysql_fetch_array($res, MYSQL_ASSOC);
+                $res = pp_run_query("DELETE FROM _sys_feed WHERE edited_date = '".$row['maxed']."';");
+            }
+            //insert the new one
+            $title = "";
+            if ($entity['title_field'] != "") $title = $params['values'][$entity['title_field']];
+            $tfield = guessTextField($entity);
+            if ($title == "" and $tfield != "") $title = getFirstWords($params['values'][$tfield],50);
+            
+            //we know if the entry is new or was updated
+            if ($params["cmd"] == "edit") $title = '['.__('update').'] '.$title;
+            $query = "INSERT INTO _sys_feed (edited_date, title, pagename, id, public) VALUES ";
+            $query = $query."('".buildDateTimeString()."','".$title."','".$params["page"]."',".$params["nr"].",".$p.");";
+            $res = pp_run_query($query);
+        }
+    }
  }
 ?>

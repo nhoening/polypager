@@ -209,7 +209,9 @@ function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js
  */
 function proposeFeeding($tabindex, $value, $ind=11) {
 	$indent = translateIndent($ind);
-	$helptext = __('if you tick this checkbox before hitting the save button, this entry will be seen on top of the feed list (the list of latest entries).');
+	$helptext = __('If you tick this checkbox before hitting the save button, this entry will be fed to the list of latest entries and the RSS.');
+    $entity = getEntity();
+    if ($entity["publish_field"]!="") $helptext .= __(' (If you do not publish this entry, it will be invisible there, too)');
 	echo($indent.'<span id="feedbox">feed now:'."\n");
 	writeInputElement($tabindex, 'bool', 1, '_formfield_feedbox', '', $value, false, false);
 	writeHelpLink($indent, $helptext);
@@ -390,7 +392,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         }
         echo($indent.'			   return t;'."\n");
         echo($indent.'			}</script>'."\n");
-        echo($indent.'			<a href="javascript:;" onclick="GB_showFullScreen(\'Preview\', \'../../?'.$params["page"].'&cmd=preview&\' + getValues());">Preview</a>'."\n");
+        echo($indent.'			<a href="javascript:void(0)" onclick="GB_showFullScreen(\'Preview\', \'../../?'.urlencode($params["page"]).'&cmd=preview&\' + escape(getValues()));">Preview</a>'."\n");
     }
     
     //hidden values
@@ -404,8 +406,8 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'			<td class="form_submits">'."\n");
 	if($params["cmd"] == "new") $feed = 1; else $feed = 0;
 	if (!ereg('_sys_', $params["page"]))  proposeFeeding(++$index, $feed, $nind+3);
-	echo($indent.'				<br/><input type="hidden" id="cmd" name="cmd" value="nothing_yet"/>'."\n");
-	echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\''.$next_command.'\';return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
+	echo($indent.'				<br/><input type="hidden" id="cmd" name="cmd" value="'.$next_command.'"/>'."\n");
+	echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
 	if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
 	echo($indent.'			    </td>'."\n");
 	echo($indent.'		    </tr>'."\n");

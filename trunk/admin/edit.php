@@ -92,7 +92,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				$query = $queries[0];
 				
 				//now that we have the new ID, we can feed it
-				if ($params["feed"] == '1' or $params["cmd"]=="delete") handleFeed($params);
+				handleFeed($params);
 				
 				
 				// now we switch to another command (see getEditParameters() for documentation)

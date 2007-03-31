@@ -6,6 +6,10 @@
 --BUT: please execute them chronologically, one version after the
 --other
 
+-- 1.0rc2
+ALTER TABLE `_sys_feed` ADD `public` TINYINT( 1 ) NOT NULL DEFAULT '1' COMMENT 'tells wether the feed should be seen';
+
+
 -- 1.0rc1
 UPDATE _sys_sections SET the_group = 'standard' WHERE the_group = '';
 ALTER TABLE `_sys_sys` ADD `full_feed` TINYINT( 1 ) NOT NULL DEFAULT '1' AFTER `feed_amount` ;

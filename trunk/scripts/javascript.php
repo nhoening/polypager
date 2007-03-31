@@ -254,10 +254,9 @@ function checkValues(pageName) {
 						if (field) {
 							tmp = field.value;
 							regex = '<?=getValidationRegex($f["validation"])?>';
-							msg = '<?=getValidationMsg($f["validation"])?>';
 							var erg = tmp.match(<?=getValidationRegex($f["validation"])?>); 
 							if (!erg) {
-								results = results + "<?=__($f["name"])?>: " + msg + "\n\n";
+								results = results + "<?=__($f["name"])?>: <?=getValidationMsg($f["validation"])?>\n\n";
 								results = results + "<?echo(__('In detail: the content'));?> \"" + tmp + "\" <?echo(__('of the field'));?> \"<?=__($f["name"])?>\" <?echo(__('does not match the Regular Expression'));?> \"" + regex + "\"!\n";
 								results = results + "\n\n";
 							}

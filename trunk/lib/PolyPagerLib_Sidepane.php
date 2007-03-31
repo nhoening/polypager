@@ -54,21 +54,23 @@ function getFeed($amount) {
 	$t = explode(',',$t);
 	
 	//make a filter with what was requested
-	$where = ' WHERE';
-	if($p[0] != '') 
+	$where = ' WHERE public = 1';
+	if($p[0] != '') {
+        $where .= " AND ";
 		for($i=0;$i<count($p);$i++) {
 			$page = $p[$i];
 			$where .= " pagename = '".filterSQL($page)."'";
 			if($i+1 < count($p)) $where .= ' OR'; 
 		}
+    }
 	//do the same for tags, once the feature is given...
-	
+    
 	//get fed entries
 	$sys = getSysInfo();
 	$query = "SELECT id AS theID, edited_date AS theDate,".
 							"title AS theText,".
 							"pagename AS thePage FROM _sys_feed";
-	if ($where != ' WHERE') $query .= $where;
+	$query .= $where;
 	$res = pp_run_query($query);
 	$feeds = array();
 	
@@ -113,7 +115,7 @@ function writeFeedDiv($ind=5) {
 		$res = getFeed($feed_amount);
 		if ($sys_info['hide_public_popups']==0) $text = ' onmouseover="popup(\''.__('the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 		else $text = '';
-		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="rss.php">'.__('the latest entries:').'</a></div>'."\n");
+		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="./'.$path_to_root_dir.'/rss.php">'.__('the latest entries:').'</a></div>'."\n");
 		for ($x=0;$x<count($res);$x++) {
 			$row = $res[$x];
 			echo($indent.'	<div class="entry">'."\n");
