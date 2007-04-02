@@ -294,7 +294,7 @@ ol.myresponse
 }
 #comments .show_entry_with_options, #comments .show_entry{
     padding-left: 10px !important;
-    background: url('pics/comments.gif') left top no-repeat;
+    background: url('images/comments.gif') left top no-repeat;
 }
 
 #comments .value, .options, #search, #toc, .list_entry{

@@ -22,7 +22,7 @@
 	/*
 	Function Index:
 	* getShowParameters()
-	* getMaxNr()
+	* getMaxNr($page)
 	* writeSearchInfo($ind)
 	* getQuery($only_published)
 	* writeToc($res, $show, $ind)
@@ -43,21 +43,14 @@
 		if ($debug) {echo '				<div class="debug">getting max for:|'.$params["page"].'| and I know it:'.isAKnownPage($page).'</div>'; }
 		if ($page != '_sys_pages' and isAKnownPage($page)) {
 			$entity = getEntity($page);
-			if ($entity['pk'] != "") {
+			if ($entity['pk'] != "" ) {
 				$page_info = getPageInfo($page);
 				$max = $_POST["max"];	//get max from request - POST
 				if ($max == "") { $max = $_GET["max"]; } //coming in per GET?
 				//reading the number of entries, if not give
-				if ($max == "" and $entity != "" and !(!isASysPage($page) and isMultipage($page) and $page_info["tablename"] == "") ) {
-					$query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
-					$res = mysql_query($query, getDBLink());
-					$error_nr = mysql_errno(getDBLink());
-					if ($debug) {echo '				<div class="debug">Query was: '.$query.'</div>'; }
-					if ($error_nr != 0) {
-						$fehler_text = mysql_error(getDBLink());
-						echo "				<br />DB-Error: $fehler_text<br />\n";
-						
-					}
+				if ($max == "" and $entity != "" and $page_info["tablename"] != "" ) {
+                    $query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
+					$res = pp_run_query($query);
 					$row = mysql_fetch_array($res, MYSQL_ASSOC);
 					$max = $row["maxnr"];
 				}
@@ -67,6 +60,23 @@
 		return $max;
 	}
 	
+    /*get number of entries for a page*/
+    function getMaxCount($page) {
+		if ($page != '_sys_pages' and isAKnownPage($page)) {
+			$entity = getEntity($page);
+			if ($entity['pk'] != "" ) {
+				$page_info = getPageInfo($page);
+                $query = "SELECT count(*) AS cnt FROM ".$entity["tablename"];
+                if (isSinglePage($page)) $query .= " WHERE pagename = '".$page."'";
+                $res = pp_run_query($query);
+                $row = mysql_fetch_array($res, MYSQL_ASSOC);
+                $cnt = $row["cnt"];
+			}
+		}
+		if ($cnt == "") $cnt = 0;	//better than nothing, and indeed, there is nothing
+		return $cnt;
+	}
+    
 	/*
 		returns an Array of Parameters for showing:
 		["page"=>""), "cmd"=>""), "nr"=>""), "step"=>""), "group"=>""]

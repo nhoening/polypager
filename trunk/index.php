@@ -178,7 +178,7 @@ function writeData($ind=5) {
 			//------------------------ showing data   --------------
 			
             $page_info = getPageInfo();
-            if ($params["step"] != "all" and $page_info["in_menue"] == 0 and $params["page"] != "_sys_comments") echo('<div class="sys_msg">from the page <a href="?'.$params["page"].'">'.$params["page"].'</a></div>');
+            //if ($params["step"] != "all" and $page_info["in_menue"] == 0 and $params["page"] != "_sys_comments") echo('<div class="sys_msg">from the page <a href="?'.$params["page"].'">'.$params["page"].'</a></div>');
             
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
 			writeToc($res, false, $nind);
@@ -187,13 +187,12 @@ function writeData($ind=5) {
 			$nind = $ind + 1;
 			writeEntries($res, false, $nind, false);
 			
-			//if there were entries but we did not show all
-			if (count($res)==1 and $params['page'] != '_search'){
-				if($debug) echo('<div class="debug">max: '.$params['max'].' step param: '.$params["step"].' show count: '.mysql_num_rows($res[$params['page']]).'</div>');
-				if (mysql_num_rows($res[$params['page']]) > 0 and $params["step"] != "all" and ($params["step"] < $params['max'] and $params['step'] != 1 )) {
-					echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page.').'<a href="?'.$params["page"].'&step=all"> click</a>'.__(' to see all there are.').'</div>');
-				}
-			}
+            
+            $num = mysql_num_rows($res[$params['page']]);
+            if ($num > 0 and ($num < getMaxCount($params["page"] ))) {
+                echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&step=all">click</a>'.__(' to see all there are.').'</div>');
+            }
+            
 			echo($indent.'</div>'."\n");  //end of class "show"
 			//--------------------- end showing data  --------------
 		}
