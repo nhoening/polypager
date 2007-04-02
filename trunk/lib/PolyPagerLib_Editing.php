@@ -159,7 +159,33 @@ function getEditParameters() {
 				$values["time_needed"] = $_POST['_formfield_time_needed'];
 				$params["values"] = $values;
 			}
-	
+            
+            //date fields
+            if ($params["cmd"] == "edit" or $params["cmd"] == "preview"){
+                if ($entity["date_field"]["editlabel"] != ""){
+                    $time = buildTimeString(localtime(time() , 1));
+                    $params["values"][$entity["date_field"]["editlabel"]] = buildDateString(getdate());
+                    $f = getEntityField($entity["date_field"]["editlabel"],$entity);
+                    if ($f["data_type"] == "datetime") {
+                        $params["values"][$entity["date_field"]["editlabel"]] = $params["values"][$entity["date_field"]["editlabel"]]." ".$time;
+                    }else if($entity["time_field"] != "") {
+                        $params["values"][$entity["time_field"]["editlabel"]] = $time;
+                    }
+                }
+            }
+            if ($params["cmd"] == "entry" or $params["cmd"] == "preview"){
+                if ($entity["date_field"] != ""){
+                    $time = buildTimeString(localtime(time() , 1));
+                    $params["values"][$entity["date_field"]["name"]] = buildDateString(getdate());
+                    $f = getEntityField($entity["date_field"]["name"],$entity);
+                    if ($f["data_type"] == "datetime") {
+                        $params["values"][$entity["date_field"]["name"]] = $params["values"][$entity["date_field"]["name"]]." ".$time;
+                    }else if($entity["time_field"] != "") {
+                        $params["values"][$entity["time_field"]["name"]] = $time;
+                    }
+                }
+            }
+            
 			//those commands need an entry number
 			if (($params["cmd"] == "show" or $params["cmd"] == "edit" or $params["cmd"] == "delete"
 					or ($params["page"] == "_sys_intros" and $params["cmd"] == "entry"))
@@ -256,16 +282,6 @@ function getEditQuery($command, $theID) {
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
-		if ($entity["date_field"] != ""){
-			$time = buildTimeString(localtime(time() , 1));
-			$params["values"][$entity["date_field"]["name"]] = buildDateString(getdate());
-			$f = getEntityField($entity["date_field"]["name"],$entity);
-			if ($f["data_type"] == "datetime") {
-				$params["values"][$entity["date_field"]["name"]] = $params["values"][$entity["date_field"]["name"]]." ".$time;
-			}else if($entity["time_field"] != "") {
-				$params["values"][$entity["time_field"]["name"]] = $time;
-			}
-		}
 		$queryA = array();
 		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
 		$x = 1;
@@ -303,16 +319,6 @@ function getEditQuery($command, $theID) {
 
 	//------------------- edit ------------------------------------
 	else if ($command == "edit") {			// UPDATE Query
-		if ($entity["date_field"]["editlabel"] != ""){
-			$time = buildTimeString(localtime(time() , 1));
-			$params["values"][$entity["date_field"]["editlabel"]] = buildDateString(getdate());
-			$f = getEntityField($entity["date_field"]["editlabel"],$entity);
-			if ($f["data_type"] == "datetime") {
-				$params["values"][$entity["date_field"]["editlabel"]] = $params["values"][$entity["date_field"]["editlabel"]]." ".$time;
-			}else if($entity["time_field"] != "") {
-				$params["values"][$entity["time_field"]["editlabel"]] = $time;
-			}
-		}
 		$queryA = array();
 		$queryA[0] = "UPDATE ".$page_info["tablename"]." SET";
 		$x = 1;

@@ -35,7 +35,6 @@ require_once("PolyPagerLib_Utils.php");
 	they are expected to be called 'theDate'
 */
 function cmpDate($a, $b) {
-	//echo "$a .. $b ";
 	if ($a['theDate'] == $b['theDate']) return 0;
 	return ($a['theDate'] > $b['theDate']) ? -1 : 1;
 }
@@ -43,73 +42,83 @@ function cmpDate($a, $b) {
 /*	returns an array with the latest entries, count is the number you want
 	each entry is a MySQL result row and will have fields 
 	named "theID", "theDate", "theText" and "thePage" 
-	params: count is the number of entries you want,
-			link the db link
+	params: count - the number of entries you want,
+			comments - set to true if you want to get comments
 */
-function getFeed($amount) {
-	//get channel descriptions
+function getFeed($amount, $comments = false) {
+	//get requested page descriptions
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
 	$p = explode(',',$p);
-	$t = $_GET['t']; if($t=='') $t = $_POST['t'];
-	$t = explode(',',$t);
 	
 	//make a filter with what was requested
-	$where = ' WHERE public = 1';
+    if (!$comments) $where = ' WHERE public = 1';
+    else $where = "";
 	if($p[0] != '') {
-        $where .= " AND ";
+        if (!$comments) $where .= " AND ";
 		for($i=0;$i<count($p);$i++) {
 			$page = $p[$i];
 			$where .= " pagename = '".filterSQL($page)."'";
 			if($i+1 < count($p)) $where .= ' OR'; 
 		}
     }
-	//do the same for tags, once the feature is given...
-    
+
 	//get fed entries
 	$sys = getSysInfo();
-	$query = "SELECT id AS theID, edited_date AS theDate,".
+    if (!$comments) $query = "SELECT id AS theID, edited_date AS theDate,".
 							"title AS theText,".
 							"pagename AS thePage FROM _sys_feed";
+    else $query = "SELECT pageid AS theID, insert_date AS theDate,".
+							"comment AS theContent, id as CommentID,".
+							"pagename AS thePage FROM _sys_comments";
 	$query .= $where;
+    $query .= " ORDER BY theDate DESC LIMIT ".$sys["feed_amount"];
+    
 	$res = pp_run_query($query);
 	$feeds = array();
 	
+    echo('<!-- query: '.$query.'-->');
+    
 	//enrich with text from the tables themselves
-	$i = 0;
-	while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-		$the_page = getPageInfo($row['thePage']);
-		if ($the_page["name"] != "") {
-			//title should be there, gather some content...
-			if (isSinglePage($row['thePage'])) {
-				$res2 = pp_run_query("SELECT bla AS tfield FROM _sys_sections WHERE pagename = '".$row['thePage']."' AND id = ".$row['theID'].";");
-			} else {
+
+        while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            $the_page = getPageInfo($row['thePage']);
+            if ($the_page["name"] != "") {
                 $entity = getEntity($row['thePage']);
-				$field = guessTextField($entity);
-				if ($field=="") $field = $the_page["title_field"];
-				$res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
-			}
-			if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
-				//no title? take sthg from content...
-				if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
-					$row['theText'] = getFirstWords($row2['tfield'],6);
-				}
-                if ($sys["full_feed"]=='1') $row['theContent'] = $row2['tfield'];
-                else $row['theContent'] = getFirstWords($row2['tfield'],70);
-			}
-		    $feeds[$i++] = $row;
-		}
-	}
-	
-	
-	
-	uasort($feeds, "cmpDate");
-	return array_slice($feeds, 0, $sys["feed_amount"]);
+                if (!$comments) {   // get text from original page for feeds
+                    $field = guessTextField($entity);
+                    if ($field=="") $field = $the_page["title_field"];
+                    $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
+        
+                    if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
+                        //no title? take sthg from content...
+                        if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
+                            $row['theText'] = getFirstWords($row2['tfield'],6);
+                        }
+                        if ($sys["full_feed"]=='1') $row['theContent'] = $row2['tfield'];
+                        else $row['theContent'] = getFirstWords($row2['tfield'],70);
+                    }
+                } else {
+                    $field = $the_page["title_field"];
+                    if ($field=="") $field = guessTextField($entity);
+                    $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
+                    if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
+                        $row['theText'] = getFirstWords($row2['tfield'],10);
+                }
+                $feeds[] = $row;
+            }
+        }
+    
+    
+	//uasort($feeds, "cmpDate");
+	//return array_slice($feeds, 0, $sys["feed_amount"]);
+    return $feeds;
 }
 
 /* echos out a div with entries to feeds */
 function writeFeedDiv($ind=5) {
 	$indent = translateIndent($ind);
 	$sys_info = getSysInfo();
+    global $path_to_root_dir;
 	$feed_amount = $sys_info["feed_amount"];
 	if ($feed_amount > 0) {
 		$res = getFeed($feed_amount);
@@ -150,9 +159,7 @@ function writeIntroDiv($ind=4) {
 		echo($indent.'	</div>'."\n");
 	}
 	
-	$results = array();
 	$tmp_query = "SELECT intro FROM _sys_intros WHERE tablename = '".$page."';";
-	//echo('Query: '.$tmp_query);
 	$res = mysql_query($tmp_query, getDBLink());
 	$error_nr = mysql_errno(getDBLink());
 	if ($error_nr != 0) {

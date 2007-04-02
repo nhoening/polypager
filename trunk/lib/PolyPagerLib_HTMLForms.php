@@ -392,7 +392,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         }
         echo($indent.'			   return t;'."\n");
         echo($indent.'			}</script>'."\n");
-        echo($indent.'			<a href="javascript:void(0)" onclick="GB_showFullScreen(\'Preview\', \'../../?'.urlencode($params["page"]).'&cmd=preview&\' + escape(getValues()));">Preview</a>'."\n");
+        echo($indent.'			<a href="javascript:void(0)" onclick="GB_showFullScreen(\'Preview\', \'../../?'.urlencode($params["page"]).'&cmd=preview&\' + getValues());">Preview</a>'."\n");
     }
     
     //hidden values
