@@ -243,8 +243,7 @@ img {
 
 /* ---------------------system styles ---------------------- */
 .sys_msg {
-	 margin-top: 3px;
-	 margin-bottom: 3px;
+	 margin: 15px 0px 15px 0px;
 	 font-size: 1em;
 	 display: block;
 	 width: 90%;

@@ -156,7 +156,7 @@ function getTranslation($text) {
 'find entries specifying your criteria...' => 'finden Sie Eintr&auml;ge mittels mehrerer Suchoptionen ',
 'new entry in page'	=> 'neuer Eintrag auf der Seite',
 'There is no entry in the database meeting the search criteria...'	=> 'Es wurde kein Eintrag in der Datenbank gefunden, der den Suchkriterien entspricht.',
-'you are seeing a selection of all entries on this page.' =>
+'you are seeing a selection of all entries on this page. ' =>
 	'Sie sehen nur eine Auswahl aller Eintr&auml;ge dieser Seite.',
 ' to see all there are.' =>
 	', um alle zu sehen.',
