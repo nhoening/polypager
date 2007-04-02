@@ -869,6 +869,9 @@ function getEntity($page_name) {
 				$entity["title_field"] = "title";
 				$entity = addFields($entity,$entity["tablename"]);
 				$entity["disabled_fields"] = "pagename";
+                $group = array("field"=>"pagename",
+								   "order"=>"DESC");
+				$entity["group"] = $group;
 				//$entity["hidden_form_fields"] = "edited_date"; 
 			}
 			//	table for intros
@@ -958,7 +961,7 @@ function getEntity($page_name) {
 				$entity["time_field"] = $time_field;
 				$entity["title_field"] = "comment";
 				
-				$group = array("field"=>"pagename",
+				$group = array("field"=>"pageid",
 								   "order"=>"DESC");
 				$entity["group"] = $group;
 					

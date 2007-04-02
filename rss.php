@@ -20,8 +20,7 @@
 */
 
 //this PHP generates the RSS 2.0 feed 
-//it selects the top 10 of every entity that was marked as feed in the XML file
-
+//you can use it to get the lates comments by passing channel=comments in the URL
 
 
 $path = './lib/';
@@ -36,16 +35,12 @@ echo('<?xml version="1.0" encoding="'.$sys_info["encoding"].'"?>'."\n");
 
 $link = getDBLink();
 
-
 //get the path to this URI
 $doc_root_folders = explode("/", $_SERVER['DOCUMENT_ROOT']);
 $cwd__folders = explode("/", getcwd());
 //the difference between those is the path from doc root to the folder where
 //all files for this URI reside
 $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));
-//now add to base URI
-$url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
-
 
 echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
@@ -55,16 +50,22 @@ echo('		<description><![CDATA[a website by '.$sys_info["author"].']]></descripti
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
 echo('		<generator>PolyPager '.$version.'</generator>'."\n");
 
-$res = getFeed($sys_info["feed_amount"]);
+$res = getFeed($sys_info["feed_amount"], $_GET["channel"] == "comments");
 
 for ($x=0; $x < count($res); $x++) {
 	$row = $res[$x];
+    
+    //now add to base URI
+    $url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
+    $url = 'http://'.$url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"];
+    if ($_GET["channel"] == "comments") $url .= '#comment'.$row["CommentID"];
+
 	echo('		<item>'."\n");
 	echo('			<title><![CDATA['.$row["theText"].']]></title>'."\n");
-	echo('			<link>http://'.$url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"].'</link>'."\n");
+	echo('			<link>'.$url.'</link>'."\n");
 	echo('			<description><![CDATA['.$row["theContent"].']]></description>'."\n");
 	echo('			<pubDate>'.date('r',strtotime($row["theDate"])).'</pubDate>'."\n");
-	echo('			<guid isPermaLink="true">http://'.$url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"].'</guid>'."\n");
+	echo('			<guid isPermaLink="true">'.$url.'</guid>'."\n");
     echo('		</item>'."\n");
 }
 echo('	</channel>'."\n");

@@ -84,7 +84,7 @@
                       `title` varchar(255) NOT NULL default '',
                       `author` varchar(120) NOT NULL default '',
                       `keywords` varchar(255) NOT NULL default '',
-                      `encoding` enum('utf-8','iso-8859-1') NOT NULL default 'utf-8',
+                      `encoding` enum('utf-8','iso-8859-1') NOT NULL default 'iso-8859-1',
                       `admin_name` varchar(120) NOT NULL default '',
                       `admin_pass` varchar(120) NOT NULL default '',
                       `feed_amount` tinyint(4) NOT NULL default '7',
@@ -104,7 +104,7 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
         $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', 'utf-8', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99);";
+                                '', 'iso-8859-1', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99);";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);

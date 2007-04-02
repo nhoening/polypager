@@ -837,20 +837,28 @@
 				//more grouping stuff...
 				//if not singlepage, group "standard"
 				if ($entity["group"] != "" or $as_toc) {
-					
-					if ($debug) {echo('<div class="debug">group_field_save is '.$group_field_save.' ...row[$entity["group"]["field"]] is '.$row[$entity["group"]["field"]].'</div>'); }
+					// get heading
+                    $heading = $row[$entity["group"]["field"]];
+                    // for comments, display the title of the entrys that got commented
+                    if ($params["page"]=='_sys_comments') {
+                        $tmp_entity = getEntity($row["pagename"]);
+                        $query = "SELECT ".$tmp_entity["title_field"]." AS title, ".$tmp_entity["pk"]." AS pk FROM ".$tmp_entity["tablename"]." WHERE ".$tmp_entity["pk"]." = ".$row["pageid"];
+                        $tmp_result = pp_run_query($query);
+                        $tmp_row = mysql_fetch_array($tmp_result, MYSQL_ASSOC);
+                        $heading = '<a href="?'.urlencode($row["pagename"]).'&amp;nr='.$tmp_row["pk"].'">'.$tmp_row["title"].'</a>';
+                    }
 					if ($before_first_entry == true) {
 						$before_first_entry = false; //indicates we indeed had data
 						//heading
 						if (!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard") and $row[$entity["group"]["field"]] != "")
-							echo($indent.'	<'.$html_type2.' class="group_heading">'.$row[$entity["group"]["field"]].'</'.$html_type2.'>'."\n");
+							echo($indent.'	<'.$html_type2.' class="group_heading">'.$heading.'</'.$html_type2.'>'."\n");
 					} else if ($group_field_save != $row[$entity["group"]["field"]]) {
 						//write end of group div or ul
 						echo($indent.'</'.$html_type.'>'."\n");
 						//write a new group header						
 						echo($indent.'<'.$html_type.' class="group">'."\n");
 						if ($row[$entity["group"]["field"]] != "")
-							echo($indent.'	<'.$html_type2.' class="group_heading">'.$row[$entity["group"]["field"]].'</'.$html_type2.'>'."\n");
+							echo($indent.'	<'.$html_type2.' class="group_heading">'.$heading.'</'.$html_type2.'>'."\n");
 					}
 					//save actual value
 					$group_field_save = $row[$entity["group"]["field"]];
@@ -1201,6 +1209,7 @@
 		$params["page"] = "_sys_comments";	
 		//write the results
 		while($row = mysql_fetch_array($comments, MYSQL_ASSOC)) {
+            echo($indent.'  <a name="comment'.$row['id'].'">&nbsp;</a>'."\n");
 			writeEntry($row, '_sys_comments', false, ++$ind);
 		}
 		
@@ -1223,8 +1232,10 @@
 		
 		//now "instruct" other code what we intend
 		$params["cmd"] = "new";
+        $swap_page = $params["page"];
 		$params["page"] = "_sys_comments";	//we can do this because comments come last
 		writeHTMLForm("", ".", false, true, $ind, "commentform");	//no dataset needed
+        $params["page"] = $swap_page;
 	}
 	
 	/**
