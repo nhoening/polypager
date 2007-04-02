@@ -502,8 +502,10 @@ form select {
 /*  ---------------------- comments --------------------------- */
 #comments .show_entry, #comments .show_entry_with_options{
 	border: 1px solid #<?=getColor('dark'); ?> !important;
-	background: transparent url(); /*no grey pic here */
+    padding-left: 10px !important;
+    background: url('pics/comments.gif') left top no-repeat;
 }
+
 #comments .value, .comment_prefix {
 	color: #<?=getColor('dark');?>;
 }
