@@ -292,7 +292,10 @@ ol.myresponse
 	padding: .2px .5em;
 	text-align: left;
 }
-
+#comments .show_entry_with_options, #comments .show_entry{
+    padding-left: 10px !important;
+    background: url('pics/comments.gif') left top no-repeat;
+}
 
 #comments .value, .options, #search, #toc, .list_entry{
 	border: 1px solid #3f3f3f;

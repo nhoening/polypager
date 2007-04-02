@@ -52,17 +52,16 @@ function getFeed($amount, $comments = false) {
 	
 	//make a filter with what was requested
     if (!$comments) $where = ' WHERE public = 1';
-    else $where = "";
 	if($p[0] != '') {
         if (!$comments) $where .= " AND ";
+        else $where = " WHERE ";
 		for($i=0;$i<count($p);$i++) {
 			$page = $p[$i];
-			$where .= " pagename = '".filterSQL($page)."'";
+			$where .= " pagename = '".urldecode(filterSQL($page))."'";
 			if($i+1 < count($p)) $where .= ' OR'; 
 		}
     }
 
-	//get fed entries
 	$sys = getSysInfo();
     if (!$comments) $query = "SELECT id AS theID, edited_date AS theDate,".
 							"title AS theText,".
@@ -76,41 +75,37 @@ function getFeed($amount, $comments = false) {
 	$res = pp_run_query($query);
 	$feeds = array();
 	
-    echo('<!-- query: '.$query.'-->');
+    //echo('<!-- query: '.$query.'-->');
     
 	//enrich with text from the tables themselves
-
-        while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-            $the_page = getPageInfo($row['thePage']);
-            if ($the_page["name"] != "") {
-                $entity = getEntity($row['thePage']);
-                if (!$comments) {   // get text from original page for feeds
-                    $field = guessTextField($entity);
-                    if ($field=="") $field = $the_page["title_field"];
-                    $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
-        
-                    if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
-                        //no title? take sthg from content...
-                        if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
-                            $row['theText'] = getFirstWords($row2['tfield'],6);
-                        }
-                        if ($sys["full_feed"]=='1') $row['theContent'] = $row2['tfield'];
-                        else $row['theContent'] = getFirstWords($row2['tfield'],70);
+    while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+        $the_page = getPageInfo($row['thePage']);
+        if ($the_page["name"] != "") {
+            $entity = getEntity($row['thePage']);
+            if (!$comments) {   // get text from original page for feeds
+                $field = guessTextField($entity);
+                if ($field=="") $field = $the_page["title_field"];
+                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
+    
+                if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
+                    //no title? take sthg from content...
+                    if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
+                        $row['theText'] = getFirstWords($row2['tfield'],6);
                     }
-                } else {
-                    $field = $the_page["title_field"];
-                    if ($field=="") $field = guessTextField($entity);
-                    $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
-                    if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
-                        $row['theText'] = getFirstWords($row2['tfield'],10);
+                    if ($sys["full_feed"]=='1') $row['theContent'] = $row2['tfield'];
+                    else $row['theContent'] = getFirstWords($row2['tfield'],70);
                 }
-                $feeds[] = $row;
+            } else {
+                $field = $the_page["title_field"];
+                if ($field=="") $field = guessTextField($entity);
+                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
+                if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
+                    $row['theText'] = getFirstWords($row2['tfield'],10);
             }
+            $feeds[] = $row;
         }
-    
-    
-	//uasort($feeds, "cmpDate");
-	//return array_slice($feeds, 0, $sys["feed_amount"]);
+    }
+
     return $feeds;
 }
 
