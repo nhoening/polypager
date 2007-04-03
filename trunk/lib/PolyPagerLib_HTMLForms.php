@@ -222,12 +222,13 @@ function proposeFeeding($tabindex, $value, $ind=11) {
 *    resulting array will be sorted according to the order_index in the formgroup entry
 */
 function cmpByFormGroup($a, $b) {
-	if ($a['formgroup'] == $b['formgroup']) return 0;
+    //if the formgroups are the same, maintain the order given by order index
+	if ($a['formgroup'] == $b['formgroup']) return ($a['order_index'] > $b['order_index']) ? 1 : -1;
 	$entity = getEntity();	//actual entity
 	if ($entity['formgroups'][''] == "") $entity['formgroups'][''] = array(100,'show');
 	//compare the position of the formgroups on the entitys formgroup array
 	//(indicated at position 0)
-	return ($entity['formgroups'][$a['formgroup']][0] < $entity['formgroups'][$b['formgroup']][0]) ? -1 : 1;
+	return ($entity['formgroups'][$a['formgroup']][0] > $entity['formgroups'][$b['formgroup']][0]) ? 1 : -1;
 }
 
 /* writes out an HTML Form for singlepages, multipages and other stuff
@@ -281,8 +282,10 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
 	// sort according to formgroups
-	if ($entity['formgroups']!="") uasort($entity["fields"],"cmpByFormGroup");
-	else echo($indent.'		<table>'."\n"); //otherwise a table for each fieldset
+	if ($entity['formgroups']!="") {
+        uasort($entity["fields"],"cmpByFormGroup");
+    }
+    else echo($indent.'		<table>'."\n"); //otherwise a table for each fieldset
 	$lastFormGroup = "xxxxxxxx";
     $hasTextarea = false;
     

@@ -37,7 +37,7 @@ function getTranslation($text) {
 'hide_toc:' => 'hide table of contents:',
 'hidden_fields:' => 'hidden fields:',
 'order_by:' => 'order by:',
-'order_order:' => 'asc/descending order of order:',
+'order_order:' => 'order asc/descending:',
 'publish_field:' => 'publish-field:',
 'group_field:' => 'group-field:',
 'group_order:' => 'asc/descending order of groups:',
@@ -66,7 +66,7 @@ function getTranslation($text) {
 'submenus_always_on:' => 'submenus are always on:',
 'link_to_gallery_in_menu:' => 'show link to gallery in menu:',
 'gallery_name:'=> 'gallery name:',  	
-'gallery_index:'=> 'gallerys order index:',
+'gallery_index:'=> 'gallery\'s order index:',
 	
 //system pagenames
 '_sys_comments' => 'Comments',
