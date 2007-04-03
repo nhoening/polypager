@@ -365,7 +365,7 @@ function getTranslation($text) {
 'hide_toc:' => 'verstecke Inshaltsverzeichnis:',
 'hidden_fields:' => 'nicht anzuzeigende Felder:',
 'order_by:' => 'ordne nach:',
-'order_order:' => 'ab/aufsteigend:',
+'order_order:' => 'ab/aufsteigend sortieren:',
 'publish_field:' => 'publish-Feld:',
 'group_field:' => 'group-Feld:',
 'group_order:' => 'ab/aufsteigende Sortierung d. Gruppen:',

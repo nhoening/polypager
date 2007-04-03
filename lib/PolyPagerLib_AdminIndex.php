@@ -42,13 +42,13 @@
         }
     
 		echo($indent.'<div id="admin_options">'.__('Let\'s talk about...').'&nbsp;'."\n");
+        $linkText = __('By clicking on this link, you can see (and search for) entries of the page you select. Note that this is the only place you will actually see not published entries/sections.');
+		echo($indent.'	<a href=".?page=&amp;topic=content&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('content').'</a>&nbsp;|&nbsp;'."\n");
 		echo($indent.'	<a href="edit.php?_sys_sys&amp;from=admin">'.__('the system').'</a>&nbsp;|&nbsp;'."\n");
 		$linkText = __('By clicking on this link, you will see a file browser where you can upload files and create folders to store what you need. There are directories for different types of files (File, Image, Media, Flash).');
 		echo($indent.'	<a onclick="openWindow(this.href, \'File Manager\', 800, 500, 100, 100, \'yes\'); return false" href="'.$the_url.'/plugins/webadmin.php"  onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('files').'</a>&nbsp;|&nbsp;'."\n");
 		$linkText = __('By clicking on this link, you can see what pages you have and maybe enter new ones or delete some.');
-		echo($indent.'	<a href=".?page=_sys_pages&amp;topic=pages&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('pages').'</a>&nbsp;|&nbsp;'."\n");
-		$linkText = __('By clicking on this link, you can see (and search for) entries of the page you select. Note that this is the only place you will actually see not published entries/sections.');
-		echo($indent.'	<a href=".?page=&amp;topic=content&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('content').'</a>'."\n");
+		echo($indent.'	<a href=".?page=_sys_pages&amp;topic=pages&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('pages').'</a>'."\n");
 		echo($indent.'</div>');
 	}
 	
