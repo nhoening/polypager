@@ -360,6 +360,9 @@
 	function ensureConsistency() {
 		global $params;
 		global $debug;
+        $entity = getEntity($params["page"]);
+        
+        // change of a page name
 		if (($params["cmd"] == "edit" or $params["cmd"] == "delete")
 		and $params["values"]["old_formfield_name"] != "") {
 			if ($params["page"] == '_sys_singlepages'){
@@ -380,82 +383,103 @@
                     }
 			}
 			if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
-                    //update start page
-                    $sys_info = getSysInfo();
-                    if ($params["values"]["old_formfield_name"] == $sys_info["start_page"]){
-                        $query = "UPDATE _sys_sys SET start_page = '".$params["values"]["name"]."'";
-                        $res = mysql_query($query, getDBLink());
-                        $fehler_nr .= mysql_errno(getDBLink());
-                        $fehler_text .= mysql_error(getDBLink());
-                        if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_sys...</div>'); }
-                    }
-                    
-					//update comments
-					if ($params["cmd"] == "delete") {
-						$query = "DELETE FROM _sys_comments WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
-					}
-                    if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]){
-                        $query = "UPDATE _sys_comments SET pagename = '".$params["values"]["name"]."'".
-							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
-					}
-                    if ($query!="") {
-                        $res = mysql_query($query, getDBLink());
-                        $fehler_nr .= mysql_errno(getDBLink());
-                        $fehler_text .= mysql_error(getDBLink());
-                        if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_comments...</div>'); }
-                    }
-                    
-					//update feed list
-					if ($params["cmd"] == "delete") {
-						$query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."';";
-					}
-					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
-						$query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
-							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
-					}
-                    if ($query!="") {
-                        $res = pp_run_query($query);
-                        $fehler_nr .= mysql_errno(getDBLink());
-                        $fehler_text .= mysql_error(getDBLink());
-                        if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
-					}
-                    
-					//update field list
-					if ($params["cmd"] == "delete") {
-						$query = "DELETE FROM _sys_fields WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
-					}
-					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
-						$query = "UPDATE _sys_fields SET pagename = '".$params["values"]["name"]."'".
-							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
-					}
-                    if ($query!="") {
-                        $res = mysql_query($query, getDBLink());
-                        $fehler_nr .= mysql_errno(getDBLink());
-                        $fehler_text .= mysql_error(getDBLink());
-                        if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_fields...</div>'); }
-					}
-                    
-					//update foreign keys
-					if ($params["cmd"] == "delete") {
-						$query = "UPDATE _sys_fields SET foreign_key_to = '' WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
-					}
-					if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
-						$query = "UPDATE _sys_fields SET foreign_key_to = '".$params["values"]["name"]."'".
-							" WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
-					}
-                    if ($query!="") {
-                        $res = mysql_query($query, getDBLink());
-                        $fehler_nr .= mysql_errno(getDBLink());
-                        $fehler_text .= mysql_error(getDBLink());
-                        if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_foreign keys...</div>'); }
-                    }
+                //update start page
+                $sys_info = getSysInfo();
+                if ($params["values"]["old_formfield_name"] == $sys_info["start_page"]){
+                    $query = "UPDATE _sys_sys SET start_page = '".$params["values"]["name"]."'";
+                    $res = mysql_query($query, getDBLink());
+                    $fehler_nr .= mysql_errno(getDBLink());
+                    $fehler_text .= mysql_error(getDBLink());
+                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_sys...</div>'); }
+                }
+                
+                //update comments
+                if ($params["cmd"] == "delete") {
+                    $query = "DELETE FROM _sys_comments WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]){
+                    $query = "UPDATE _sys_comments SET pagename = '".$params["values"]["name"]."'".
+                        " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($query!="") {
+                    $res = mysql_query($query, getDBLink());
+                    $fehler_nr .= mysql_errno(getDBLink());
+                    $fehler_text .= mysql_error(getDBLink());
+                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_comments...</div>'); }
+                }
+                
+                //update feed list
+                if ($params["cmd"] == "delete") {
+                    $query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."';";
+                }
+                if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
+                    $query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
+                        " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($query!="") {
+                    $res = pp_run_query($query);
+                    $fehler_nr .= mysql_errno(getDBLink());
+                    $fehler_text .= mysql_error(getDBLink());
+                    if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
+                }
+                
+                //update field list
+                if ($params["cmd"] == "delete") {
+                    $query = "DELETE FROM _sys_fields WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
+                    $query = "UPDATE _sys_fields SET pagename = '".$params["values"]["name"]."'".
+                        " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($query!="") {
+                    $res = mysql_query($query, getDBLink());
+                    $fehler_nr .= mysql_errno(getDBLink());
+                    $fehler_text .= mysql_error(getDBLink());
+                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_fields...</div>'); }
+                }
+                
+                //update foreign keys
+                if ($params["cmd"] == "delete") {
+                    $query = "UPDATE _sys_fields SET foreign_key_to = '' WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
+                    $query = "UPDATE _sys_fields SET foreign_key_to = '".$params["values"]["name"]."'".
+                        " WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
+                }
+                if ($query!="") {
+                    $res = mysql_query($query, getDBLink());
+                    $fehler_nr .= mysql_errno(getDBLink());
+                    $fehler_text .= mysql_error(getDBLink());
+                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_foreign keys...</div>'); }
+                }
 			}
 		}
+        
+        // change of a title field
+        $title_field = $entity['title_field'];
+        if (($params["cmd"] == "edit" or $params["cmd"] == "delete")
+		and $params["values"]["old_formfield_$title_field"] != "") {
+			//update feed list
+            if ($params["cmd"] == "delete") {
+                $query = "DELETE FROM _sys_feed WHERE pagename = '".$params['page']."' and title = '".$params["values"]["old_formfield_$title_field"]."';";
+            }
+            if ($params["cmd"] == "edit" && $params["values"][$title_field] != $params["values"]["old_formfield_$title_field"]) {
+                $query = "UPDATE _sys_feed SET title = '".$params["values"][$title_field]."'".
+                    " WHERE title = '".$params["values"]["old_formfield_$title_field"]."'";
+            }
+            if ($query!="") {
+                $res = pp_run_query($query);
+                $fehler_nr .= mysql_errno(getDBLink());
+                $fehler_text .= mysql_error(getDBLink());
+                if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
+                if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
+            }
+        }
 	}
 	
 	/* writes an admin data list */

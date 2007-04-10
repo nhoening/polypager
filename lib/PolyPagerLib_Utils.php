@@ -990,7 +990,8 @@ function getEntity($page_name) {
 				$entity["order_by"] = 'order_index';
 				$entity["hidden_fields"] = "in_submenu,pagename,order_index,publish,the_group,edited_date,input_date,input_time";
 				$entity["hidden_form_fields"] = ",pagename,input_date,input_time,edited_date";
-				
+				$entity["consistency_fields"] = "heading";
+                
 				//date_field + time_field
 				$entity["date_field"] = array("name"=>"input_date",
 								 "editlabel"=>"edited_date");
@@ -1130,6 +1131,7 @@ function getEntity($page_name) {
     
     // guess title field if not set
     if ($entity["title_field"]=="") $entity["title_field"] = guessTextField($entity,false);
+    $entity["consistency_fields"] = $entity["title_field"]; //if titles change, I want to know
     
 	return $entity;
 }
