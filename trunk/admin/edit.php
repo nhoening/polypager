@@ -174,7 +174,7 @@ function writeData($ind=4) {
 	if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.urlencode($page).'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('back to list view').'</a></li>'."\n");
 	if ($params["from"] == "admin" and $params["page"]!="_sys_sys") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
 	$page_info = getPageInfo($params["page"]);
-	if($page_info["in_menue"] == "0" and !strpos($params["page"], "_sys_")) {
+	if($page_info["in_menue"] == "0" and !utf8_strpos($params["page"], "_sys_")) {
 		echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.urlencode($params['page']).'&amp;group='.urlencode($params['group']).'">'.__('see the page').'</a></li>'."\n");
 	}
 	echo($indent.'	</ul>'."\n");

@@ -53,7 +53,7 @@ else
 if ( ! ereg( '/$', $GLOBALS["UserFilesPath"] ) )
 	$GLOBALS["UserFilesPath"] .= '/' ;
 
-if ( strlen( $Config['UserFilesAbsolutePath'] ) > 0 ) 
+if ( utf8_strlen( $Config['UserFilesAbsolutePath'] ) > 0 ) 
 {
 	$GLOBALS["UserFilesDirectory"] = $Config['UserFilesAbsolutePath'] ;
 
@@ -84,10 +84,10 @@ function DoResponse()
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if ( ! ereg( '/$', $sCurrentFolder ) ) $sCurrentFolder .= '/' ;
-	if ( strpos( $sCurrentFolder, '/' ) !== 0 ) $sCurrentFolder = '/' . $sCurrentFolder ;
+	if ( utf8_strpos( $sCurrentFolder, '/' ) !== 0 ) $sCurrentFolder = '/' . $sCurrentFolder ;
 	
 	// Check for invalid folder paths (..)
-	if ( strpos( $sCurrentFolder, '..' ) )
+	if ( utf8_strpos( $sCurrentFolder, '..' ) )
 		SendError( 102, "" ) ;
 
 	// File Upload doesn't have to Return XML, so it must be intercepted before anything.

@@ -32,6 +32,9 @@ function getDBLink() {
 
 		// now to the DB
 		mysql_select_db($db, $the_db_link) or die ($text);
+        mysql_query('SET CHARACTER SET utf8');
+        mysql_query("SET SESSION collation_connection ='utf8_general_ci'");
+        mysql_query("SET NAMES 'utf8';");
 	}
 	return $the_db_link;
 }

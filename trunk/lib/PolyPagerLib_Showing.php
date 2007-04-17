@@ -323,7 +323,7 @@
 			// ---------- first the easy cases: 
 			
 			// all comments
-			if (strpos($params["cmd"], "_sys_comments_all") > 0) {
+			if (utf8_strpos($params["cmd"], "_sys_comments_all") > 0) {
 				$entity = getEntity("_sys_comments");
 				$theQuery = "SELECT * FROM _sys_comments
 							WHERE is_spam = 0
@@ -331,7 +331,7 @@
 			}
 			
 			// comments for one entry
-			else if (strpos($params["cmd"], "_sys_comments") > 0) {
+			else if (utf8_strpos($params["cmd"], "_sys_comments") > 0) {
 				$entity = getEntity("_sys_comments");
 				$theQuery = "SELECT * FROM _sys_comments
 							WHERE pagename = '$pagename'
@@ -341,15 +341,15 @@
 			}
 			
 			// feeds
-			else if (strpos($params["cmd"], "_sys_feed") > 0) {
+			else if (utf8_strpos($params["cmd"], "_sys_feed") > 0) {
 				$entity = getEntity("_sys_feed");
 				$theQuery = "SELECT * FROM _sys_feed 
 							ORDER BY edited_date DESC";
 			}
 			
 			// pages - always select all of them (user doesn't have to see the distinction)
-			else if ((strpos($params["cmd"], "_sys_multipages") > 0)
-				or (strpos($params["cmd"], "_sys_singlepages") > 0)
+			else if ((utf8_strpos($params["cmd"], "_sys_multipages") > 0)
+				or (utf8_strpos($params["cmd"], "_sys_singlepages") > 0)
 				or($entity["tablename"] == "_sys_pages")) {
 				$theQuery = "SELECT id, name, in_menue FROM _sys_multipages UNION
 								SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
@@ -1050,7 +1050,7 @@
 							$content = trim(getFirstWords($content, 14));
 							if ($params["group"] != "") $group_forward = '&group='.$row[$entity["group"]["field"]];
 							//for entries on pages we can say if they are public
-							if (!strpos($params["page"], 'pages') and $params["page"] !='_sys_fields') {
+							if (!utf8_strpos($params["page"], 'pages') and $params["page"] !='_sys_fields') {
 								$linkText = __('This entry is viewable to the public');
 								$pic = "eye.gif";
 								if($entity['publish_field'] != "" and $row[$entity['publish_field']] == "0") {
@@ -1084,7 +1084,7 @@
 								else if ($f['name']=='email') $prefix = "email";
 								else if ($f['name']=='www') {
                                     $prefix = "www";
-                                    if (!strpos("http://", $content)) $content = "http://".$content;
+                                    if (!utf8_strpos("http://", $content)) $content = "http://".$content;
                                     $content = '<a rel="nofollow" href="'.$content.'">'.$content.'</a>';
                                 }
 								else $prefix = "";

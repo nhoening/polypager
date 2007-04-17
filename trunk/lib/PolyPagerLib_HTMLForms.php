@@ -277,7 +277,8 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     }else {
         $target_page = $params["page"];
     }
-	echo($indent.'	<form name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
+    $sys_info = getSysInfo();
+	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 	
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;

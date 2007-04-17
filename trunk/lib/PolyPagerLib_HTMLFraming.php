@@ -58,7 +58,7 @@
 		echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/popup.js"></script>'."\n");
 		
         //backdoor hack to get all picswap colorsets
-		if (strpos($sys_info['skin'],'picswap')>-1) {
+		if (utf8_strpos($sys_info['skin'],'picswap')>-1) {
 			$skin = 'picswap';
 			$css = 'picswap/'.$sys_info['skin'].'.css';
 		}else {

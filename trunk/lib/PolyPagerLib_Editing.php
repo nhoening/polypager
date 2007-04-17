@@ -99,7 +99,7 @@ function getEditParameters() {
 		$query_array = explode("&", $_SERVER["QUERY_STRING"]);
 		$params["page"] = urldecode($query_array[0]);
 		//if "page=" is given we can handle this, too
-		if (strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
+		if (utf8_strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
 	}
     
 	if ($params["page"] != "" and isAKnownPage($params["page"])){
@@ -292,7 +292,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1); //remove comma
+		$queryA[$x] = substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1); //remove comma
 
 		//some tables have a string as pk
 		//if ($entity["pk"] != "" and !isNumericType($entity["pk_type"])) $queryA[] = ", ".$entity["pk"];
@@ -310,7 +310,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
+		$queryA[$x] = substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
 
 		$queryA[count($queryA)] = ")";
 		$query .= implode($queryA);
@@ -330,7 +330,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, strlen($queryA[$x])-1);
+		$queryA[$x] = substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
 		if ($entity["pk"] != "") {
 			if (isNumericType($entity["pk_type"])) $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = $theID";
 			else $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = '".$theID."'";

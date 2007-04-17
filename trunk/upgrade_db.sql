@@ -8,7 +8,7 @@
 
 -- 1.0rc2
 ALTER TABLE `_sys_feed` ADD `public` TINYINT( 1 ) NOT NULL DEFAULT '1' COMMENT 'tells wether the feed should be seen';
-
+ ALTER TABLE `_sys_sys` DROP `encoding`;
 
 -- 1.0rc1
 UPDATE _sys_sections SET the_group = 'standard' WHERE the_group = '';

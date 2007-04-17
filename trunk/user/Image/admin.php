@@ -760,14 +760,14 @@ class FileFarm {
 			echo substr(("000".($i+1)), -4).":</EM> ";
 			$line = $tstr[$i];
 			// C++ style comments
-			$pos = strpos($line,"//");
+			$pos = utf8_strpos($line,"//");
 			// exceptions: two slashes aren't a script comment
 			if (strstr($line,"//")
 				&& ! ($pos>0 && substr($line,$pos-1,1)==":")
 				&& ! (substr($line,$pos,8) == "//--&gt;")
 				&& ! (substr($line,$pos,9) == "// --&gt;"))
 			{
-				$beg = substr($line,0,strpos($line,"//"));
+				$beg = substr($line,0,utf8_strpos($line,"//"));
 				$end = strstr($line,"//");
 				$line = $beg."<span class=\"REM\">".$end."</span>";
 			}
@@ -1305,7 +1305,7 @@ class FileFarm {
 	function path2bc($path) {
 		$link = '';
 		$ret  = "<a href=\"".$this->self.'?&amp;D='.urlencode("/")."\">//</a> ";
-		$path = substr($path,1,strlen($path));
+		$path = substr($path,1,utf8_strlen($path));
 		$arr = explode('/',$path);
 		for ($i=0;$i<sizeof($arr);$i++) {
 			$current = $arr[$i];
