@@ -48,6 +48,7 @@ if ( !defined('FILE_SEPARATOR') ) {
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot());
 require_once("PolyPager_Config.php");
+require_once("lib" . PATH_SEPARATOR .  "utf8.php");
 
 $sys = getSysInfo();
 $lang = $sys["lang"];
@@ -109,7 +110,7 @@ function filterSQL($v) {
 */
 function format_date($timestamp) {
     //format depends on wether we have a timestamp or not
-    if (strlen($timestamp)>10) $fstr = 'd M Y - G:i'; else $fstr = 'd M Y';
+    if (utf8_strlen($timestamp)>10) $fstr = 'd M Y - G:i'; else $fstr = 'd M Y';
 	if (substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
 	if ($lang == "de")
 		return date($fstr, strtotime($timestamp));
@@ -190,7 +191,7 @@ function useTemplate($path_to_root_dir){
 		if ($area == '_gallery') $link_href = '../../admin/?&cmd=create';
 		$error_msg_text .= '<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>'."\n";
 	}
-	if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
+	if (utf8_strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
 	else $skin = $sys_info['skin'];
 	$template_path = $path_to_root_dir."/style/skins/".$skin."/template.php";
 	if (file_exists($template_path)){
@@ -213,18 +214,18 @@ function getPathFromDocRoot() {
 	$folders_from_doc_root = array_diff($cwd_folders, $doc_root_folders);
 	$path = implode(FILE_SEPARATOR, $folders_from_doc_root);
 	//maybe we're in admin or scripts or so
-	//echo($path."|".strstr($path, 'admin')."|".substr( $path, 0, strpos( $path, "admin" ) )."|");
+	//echo($path."|".strstr($path, 'admin')."|".substr( $path, 0, utf8_strpos( $path, "admin" ) )."|");
 	if(eregi('admin',$path) != false or $path == 'admin')
-		{$path = substr( $path, 0, strpos( $path, "admin" ) ) ;}
+		{$path = substr( $path, 0, utf8_strpos( $path, "admin" ) ) ;}
 	if(eregi('scripts',$path) != false or $path == 'scripts')
-		{$path =  substr( $path, 0, strpos( $path, "scripts" ) ) ;}
+		{$path =  substr( $path, 0, utf8_strpos( $path, "scripts" ) ) ;}
 	if(eregi('plugins',$path)!= false or $path == 'plugins')
-		{$path =  substr( $path, 0, strpos( $path, "plugins" ) ) ;}
+		{$path =  substr( $path, 0, utf8_strpos( $path, "plugins" ) ) ;}
 	if(eregi('user',$path) != false or $path == 'user')
-		{$path =  substr( $path, 0, strpos( $path, "user" ) ) ;}
+		{$path =  substr( $path, 0, utf8_strpos( $path, "user" ) ) ;}
 	if ($path == "") $path = FILE_SEPARATOR;
 	if (substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
-	if (substr( $path, strlen($path)-1, strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
+	if (substr( $path, utf8_strlen($path)-1, utf8_strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
 	//echo($path);
 	return $path;
 }
@@ -470,10 +471,12 @@ function getSysInfo() {
 	if ($sys_info["skin"] == "" or $sys_info['no_tables']) {
 		$sys_info["skin"] = 'polly';
 	}
-	
 	$params['values']['skin'] = $sys_info["skin"];
+    
+    //encoding is not user-configurable
+    $sys_info["encoding"] = "utf-8";
 	
-	//as demo, adminname and password are set
+	//in demo-mode, adminname and password are set
 	if($run_as_demo) {
 		$sys_info["admin_name"] = "admin";
 		$sys_info["admin_pass"] = "admin";
@@ -713,10 +716,10 @@ function getEntity($page_name) {
 				//take the first one that comes with getTables();
 				}else {
 					$tables_str = implode("|", $tables);
-					if (!strpos( $tables_str, "|" )) {
+					if (!utf8_strpos( $tables_str, "|" )) {
 						$the_table = $tables_str; //there seems to be only one
 					} else {
-						$the_table = substr( $tables_str, 0, strpos( $tables_str, "|" ) );
+						$the_table = substr( $tables_str, 0, utf8_strpos( $tables_str, "|" ) );
 					}
 				}
 				
@@ -1490,11 +1493,11 @@ function getForeignKeys(){
 			
 			$crlf = "||";
 			// Convert end of line chars to one that we want (note that MySQL doesn't return query it will accept in all cases)
-			if (strpos($create_query, "(\r\n ")) {
+			if (utf8_strpos($create_query, "(\r\n ")) {
 				$create_query = str_replace("\r\n", $crlf, $create_query);
-			} elseif (strpos($create_query, "(\n ")) {
+			} elseif (utf8_strpos($create_query, "(\n ")) {
 				$create_query = str_replace("\n", $crlf, $create_query);
-			} elseif (strpos($create_query, "(\r ")) {
+			} elseif (utf8_strpos($create_query, "(\r ")) {
 				$create_query = str_replace("\r", $crlf, $create_query);
 			}
 			

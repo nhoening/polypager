@@ -8,7 +8,7 @@ if ( !defined('FILE_SEPARATOR') ) {
 require('..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
 $sys_info = getSysInfo();
 //backdoor hack to get all picswap colorsets
-		if (strpos($sys_info['skin'],'picswap')>-1) {
+		if (utf8_strpos($sys_info['skin'],'picswap')>-1) {
 			$skin = 'picswap';
 			$css = 'picswap/'.$sys_info['skin'].'.css';
 		}else {

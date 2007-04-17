@@ -253,7 +253,7 @@ if (empty($action) && (!empty($_POST['submit_create']) || (array_key_exists('foc
 if (sizeof($files) == 0) $action = ''; else $file = reset($files);
 
 if ($lang == 'auto') {
-	if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && strlen($_SERVER['HTTP_ACCEPT_LANGUAGE']) >= 2) {
+	if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && utf8_strlen($_SERVER['HTTP_ACCEPT_LANGUAGE']) >= 2) {
 		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 	} else {
 		$lang = 'en';
@@ -513,7 +513,7 @@ case 'rename':
 	<input type="hidden" name="dir" value="' . html($directory) . '" />
 	<b>' . word('rename_file') . '</b>
 	<p>' . html($file) . '</p>
-	<b>' . substr($file, 0, strlen($file) - strlen($name)) . '</b>
+	<b>' . substr($file, 0, utf8_strlen($file) - utf8_strlen($name)) . '</b>
 	<input type="text" name="destination" size="' . textfieldsize($name) . '" value="' . html($name) . '" />
 	<hr />
 	<input type="submit" value="' . word('rename') . '" />
@@ -543,7 +543,7 @@ case 'move':
 		$success = array();
 
 		foreach ($files as $file) {
-			$filename = substr($file, strlen($directory));
+			$filename = substr($file, utf8_strlen($directory));
 			$d = $dest . $filename;
 			if (!@file_exists($d) && @rename($file, $d)) {
 				$success[] = $file;
@@ -616,7 +616,7 @@ case 'copy':
 			$success = array();
 
 			foreach ($files as $file) {
-				$filename = substr($file, strlen($directory));
+				$filename = substr($file, utf8_strlen($directory));
 				$d = addslash($dest) . $filename;
 				if (!@is_dir($file) && !@file_exists($d) && @copy($file, $d)) {
 					$success[] = $file;
@@ -879,14 +879,14 @@ function getlist ($directory) {
 			$dpath = $_SERVER['DOCUMENT_ROOT'];
 			$pfdr = getPathFromDocRoot();
 			if ($pfdr!="/")$dpath.=$pfdr;
-			if ($filename==".." && substr($directory,-1*strlen($dpath)) == $dpath) $listit = false;
+			if ($filename==".." && substr($directory,-1*utf8_strlen($dpath)) == $dpath) $listit = false;
 
 			// now we're making sure that all the "good" stuff will be shown...
 			foreach($good_paths as $g)
 				if (ereg('/'.$filename.'/',$g)) {	//if file is in good path...
 					//AND also the start of the good path has yet been travelled...
-					if (""!=substr($g,0,strpos($g,$filename)))
-						if(ereg(substr($g,0,strpos($g,$filename)), $directory))	
+					if (""!=substr($g,0,utf8_strpos($g,$filename)))
+						if(ereg(substr($g,0,utf8_strpos($g,$filename)), $directory))	
 							$listit = true;
 				}
 			foreach($good_files as $g)
@@ -1143,8 +1143,8 @@ function absolute2relative ($directory, $target) {
 
 	$path = '';
 	while ($directory != $target) {
-		if ($directory == substr($target, 0, strlen($directory))) {
-			$path .= substr($target, strlen($directory));
+		if ($directory == substr($target, 0, utf8_strlen($directory))) {
+			$path .= substr($target, utf8_strlen($directory));
 			break;
 		} else {
 			$path .= '..' . $delim;
@@ -1175,7 +1175,7 @@ function simplify_path ($path) {
 		$path = addslash($path);
 	}
 
-	while (strpos($path, $pattern) !== false) {
+	while (utf8_strpos($path, $pattern) !== false) {
 		$path = str_replace($pattern, $delim, $path);
 	}
 
@@ -1200,11 +1200,11 @@ function human_filesize ($filesize) {
 		$n++;
 	}
 
-	$filesize = round($filesize, 3 - strpos($filesize, '.'));
+	$filesize = round($filesize, 3 - utf8_strpos($filesize, '.'));
 
-	if (strpos($filesize, '.') !== false) {
+	if (utf8_strpos($filesize, '.') !== false) {
 		while (in_array(substr($filesize, -1, 1), array('0', '.'))) {
-			$filesize = substr($filesize, 0, strlen($filesize) - 1);
+			$filesize = substr($filesize, 0, utf8_strlen($filesize) - 1);
 		}
 	}
 
@@ -1614,7 +1614,7 @@ function spacer () {
 
 function textfieldsize ($content) {
 
-	$size = strlen($content) + 5;
+	$size = utf8_strlen($content) + 5;
 	if ($size < 30) $size = 30;
 
 	return $size;
@@ -2544,7 +2544,7 @@ function getimage ($image) {
 function html_header () {
 	global $site_charset;
     global $sys_info;
-	if (strpos($sys_info['skin'],'picswap')>-1) {
+	if (utf8_strpos($sys_info['skin'],'picswap')>-1) {
 		$css = 'picswap/'.$sys_info['skin'].'.css';
 	}else {
 		$css = $sys_info["skin"].'/skin.css';

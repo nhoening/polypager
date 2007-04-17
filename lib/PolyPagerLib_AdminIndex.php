@@ -75,7 +75,7 @@
         
 		$link = getDBLink();
         $client_api = explode('.', mysql_get_server_info()); 
-		if ($client_api[0] >= 5) $charsetter = " DEFAULT CHARSET=utf8";
+		if ($client_api[0] >= 5) $charsetter = " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"; //CHARSET=utf8"
         else $charsetter = "";
         
         if ($debug) echo("create_sys_Tables on api: ".$client_api[0]);
@@ -104,7 +104,7 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
         $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', 'iso-8859-1', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99);";
+                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99);";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
@@ -552,7 +552,7 @@
 			$the_href = 'edit.php?_sys_fields&cmd=new&from=list&group='.urlencode($params["group"]).'&topic='.$topic;
 			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$the_href.'">'.__('new entry').'</a>'."\n");
 		//now for pages
-		} else if (strpos($params["page"], "pages")) {
+		} else if (utf8_strpos($params["page"], "pages")) {
 			$link_text = __('Here you can insert a new simple page (internally also called singlepage). Its entries will simply have a heading and a content, that is all. PolyPager will store it in a special table and you will not need to put much thought in how the page behaves.');
 			$the_href = 'edit.php?_sys_singlepages&cmd=new&from=list&topic='.$topic;
 			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="'.$the_href.'">'.__('new simple page').'</a>&nbsp;|&nbsp;'."\n");

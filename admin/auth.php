@@ -62,7 +62,7 @@
 			/*  //useful test output...
 			    echo('http host is:'.$_SERVER['HTTP_HOST']);
 			    echo('dirname is:'.$path);
-			    echo("phpself is:".$_SERVER['PHP_SELF']."...".strpos($path, 'admin'));
+			    echo("phpself is:".$_SERVER['PHP_SELF']."...".utf8_strpos($path, 'admin'));
 			*/
 			//if not authenticated, then do so
 			if (!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']) {
@@ -95,7 +95,7 @@
 				if(!$_SESSION['authenticated']) {
 					//if the calling script is not within admin/, we have some problems
 					//it shouldn't happen anyway, so this quickhack suffices for now
-					if(strpos($path, 'admin') == 0) {
+					if(utf8_strpos($path, 'admin') == 0) {
 						echo('    <div class="sys_msg">'.__('you are not logged in!').'</div>');
 					}else{
 						//display form

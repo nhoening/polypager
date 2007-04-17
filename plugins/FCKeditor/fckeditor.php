@@ -84,12 +84,12 @@ class FCKeditor
 		}
 		else
 		{
-			if ( strpos( $this->Width, '%' ) === false )
+			if ( utf8_strpos( $this->Width, '%' ) === false )
 				$WidthCSS = $this->Width . 'px' ;
 			else
 				$WidthCSS = $this->Width ;
 
-			if ( strpos( $this->Height, '%' ) === false )
+			if ( utf8_strpos( $this->Height, '%' ) === false )
 				$HeightCSS = $this->Height . 'px' ;
 			else
 				$HeightCSS = $this->Height ;
@@ -111,14 +111,14 @@ class FCKeditor
 		else
 			$sAgent = $_SERVER['HTTP_USER_AGENT'] ;
 
-		if ( strpos($sAgent, 'MSIE') !== false && strpos($sAgent, 'mac') === false && strpos($sAgent, 'Opera') === false )
+		if ( utf8_strpos($sAgent, 'MSIE') !== false && utf8_strpos($sAgent, 'mac') === false && utf8_strpos($sAgent, 'Opera') === false )
 		{
-			$iVersion = (float)substr($sAgent, strpos($sAgent, 'MSIE') + 5, 3) ;
+			$iVersion = (float)substr($sAgent, utf8_strpos($sAgent, 'MSIE') + 5, 3) ;
 			return ($iVersion >= 5.5) ;
 		}
-		else if ( strpos($sAgent, 'Gecko/') !== false )
+		else if ( utf8_strpos($sAgent, 'Gecko/') !== false )
 		{
-			$iVersion = (int)substr($sAgent, strpos($sAgent, 'Gecko/') + 6, 8) ;
+			$iVersion = (int)substr($sAgent, utf8_strpos($sAgent, 'Gecko/') + 6, 8) ;
 			return ($iVersion >= 20030210) ;
 		}
 		else

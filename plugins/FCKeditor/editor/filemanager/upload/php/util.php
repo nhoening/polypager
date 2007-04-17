@@ -30,7 +30,7 @@ function GetRootPath()
 	$sSelfPath = $_SERVER['PHP_SELF'] ;
 	$sSelfPath = substr( $sSelfPath, 0, strrpos( $sSelfPath, '/' ) ) ;
 
-	return substr( $sRealPath, 0, strlen( $sRealPath ) - strlen( $sSelfPath ) ) ;
+	return substr( $sRealPath, 0, utf8_strlen( $sRealPath ) - utf8_strlen( $sSelfPath ) ) ;
 }
 
 ?>

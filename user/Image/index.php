@@ -738,18 +738,18 @@ function getImageFilenames($path)
 	while (($file = readdir($pwd_handle)) != false) {
 		if ($file == '.' || $file == '..') { continue; }
 		if ($extra_paranoia == TRUE && is_file($path.'/'.$file)) {
-			if (strpos(stripslashes(rawurldecode($file)), '..')
+			if (utf8_strpos(stripslashes(rawurldecode($file)), '..')
 				|| ($file[0] == '.' && $file[1] == '.'))
 			{
 				securityExit('Updir ("..") is not allowed in a filename.');
 			}
-			if (strlen($file) > $imgname_maxlen) {
+			if (utf8_strlen($file) > $imgname_maxlen) {
 				securityExit('Filename length exceed.  Increase $imgname_maxlen?');
 			}
 		}
 		if ($ignore_dotfiles == TRUE && $file[0] == '.') { continue; }
 		//if (in_array($file, $excl_imgs)) { continue; }
-		if (strpos('*'.$file, $excl_img_pattern)) { continue; }
+		if (utf8_strpos('*'.$file, $excl_img_pattern)) { continue; }
 		if (is_file($path.'/'.$file)
 			&& ($is_readable_disa == TRUE || is_readable($path.'/'.$file))
 			&& ! ($ignore_img_links == TRUE && is_link($path.'/'.$file))
@@ -894,14 +894,14 @@ function getReqdImage()
 	if (empty($imgs)) { return; }
 	if (isset($get_vars['Qif'])) {
 		$imagefile = stripslashes(rawurldecode($get_vars['Qif']));
-		if (strlen($imagefile) > $imgname_maxlen
+		if (utf8_strlen($imagefile) > $imgname_maxlen
 			|| ($imagefile[0] == '.' && $imagefile[1] == '.'))
 		{
 			securityExit('Filename (Qif=) is too long or starts with "..".');
 		}
 		// Redundant, but what the heck.
 		if ($extra_paranoia == TRUE
-			&& strpos(stripslashes(rawurldecode($imagefile)), '..'))
+			&& utf8_strpos(stripslashes(rawurldecode($imagefile)), '..'))
 		{
 			securityExit('Updir ("..") not allowed in a filename.');
 		}
@@ -1680,9 +1680,9 @@ EOT;
 			if ($namelinks_ena == TRUE) {
 				// Strip extension from filename
 				$ext = strrchr($img, '.');
-				$img = substr($img, 0, -strlen($ext));
+				$img = substr($img, 0, -utf8_strlen($ext));
 				// Truncate long names
-				if (strlen($img) > $namelinks_trunc) {
+				if (utf8_strlen($img) > $namelinks_trunc) {
 					$img_lnk_txt = substr($img, 0, $namelinks_trunc - 2).'...';
 				} else {
 					$img_lnk_txt = $img;
@@ -2032,7 +2032,7 @@ EOT;
 				&& $img_link['full'] == FALSE)
 			{
 				$wd    = strrchr($reqd_image['pwd_url'], '/');
-				$wd_up = substr($reqd_image['pwd_url'], 0, -strlen($wd));
+				$wd_up = substr($reqd_image['pwd_url'], 0, -utf8_strlen($wd));
 				$str .= <<<EOT
   <a href="$qdig_url?{$extra_param}Qwd=$wd_up&amp;Qiv={$reqd_image['view']}&amp;Qis={$reqd_image['size']}$anchor"
    title="{$dir_nav['up_level_txt']}"><img class="qdig-image" src="$url_base_path$img_url"
@@ -2895,17 +2895,17 @@ if (!@is_dir($rootdir)) {
 * Establish working directory.
 */
 if (!empty($get_vars['Qwd'])) {
-	if (strlen($get_vars['Qwd']) > $pathname_maxlen
-		|| (strlen($get_vars['Qwd']) > 1 && $get_vars['Qwd'][0] == '.' && $get_vars['Qwd'][1] == '.')) {
+	if (utf8_strlen($get_vars['Qwd']) > $pathname_maxlen
+		|| (utf8_strlen($get_vars['Qwd']) > 1 && $get_vars['Qwd'][0] == '.' && $get_vars['Qwd'][1] == '.')) {
 		securityExit('Pathname (Qwd=) is too long or starts with "..".');
 	}
 	$pwd_tmp = cleanPath($get_vars['Qwd']);
 } else {
 	$pwd_tmp = '.';
 }
-if (strlen($pwd_tmp) <= strlen($rootdir)) {
+if (utf8_strlen($pwd_tmp) <= utf8_strlen($rootdir)) {
 	$pwd = $rootdir;
-} elseif (strpos($pwd_tmp, $rootdir) === 0) {
+} elseif (utf8_strpos($pwd_tmp, $rootdir) === 0) {
 	$pwd = rawurldecode($pwd_tmp);
 }
 if (! is_dir($pwd)
@@ -2914,10 +2914,10 @@ if (! is_dir($pwd)
 	$pwd = $rootdir;
 }
 if ($extra_paranoia == TRUE
-	&& (strpos(stripslashes(rawurldecode($pwd)), '..')
+	&& (utf8_strpos(stripslashes(rawurldecode($pwd)), '..')
 		|| empty ($pwd)
 		|| $pwd[0] != '.'
-		|| (strlen($pwd) > 1 && $pwd[1] == '.')))
+		|| (utf8_strlen($pwd) > 1 && $pwd[1] == '.')))
 {
 	securityExit('Updir ("..") is not allowed in a pathname (Qwd=).');
 }
@@ -2938,7 +2938,7 @@ foreach($disp_size as $i => $ena) {
 	}
 }
 if (isset($get_vars['Qis'])
-	&& strlen($get_vars['Qis']) < 9
+	&& utf8_strlen($get_vars['Qis']) < 9
 	&& in_array($get_vars['Qis'], $valid_sizes))
 {
 	$reqd_img_size = $get_vars['Qis'];
@@ -2951,7 +2951,7 @@ if (isset($get_vars['Qis'])
 /**
 * Establish temp size, if any.
 */
-if (isset($get_vars['Qtmp']) && strlen($get_vars['Qtmp']) < 9) {
+if (isset($get_vars['Qtmp']) && utf8_strlen($get_vars['Qtmp']) < 9) {
 	$reqd_img_size_tmp = $get_vars['Qtmp'];
 } else {
 	$reqd_img_size_tmp = FALSE;
@@ -3149,7 +3149,7 @@ if (is_dir($cnvrt_path)
 * Get the requested view
 */
 if (isset($get_vars['Qiv'])
-	&& strlen($get_vars['Qiv']) < 10
+	&& utf8_strlen($get_vars['Qiv']) < 10
 	&& in_array($get_vars['Qiv'], array('thumbs', 'name', 'num', 'none')))
 {
 	$reqd_view = $get_vars['Qiv'];
@@ -3373,7 +3373,7 @@ if ($diag_messages == TRUE) {
 		.'$qdig_url is <a href="'.$qdig_url.'" title="Gallery URL (w/o query string)">'.$qdig_url.'</a>'."<br />\n"
 		.'$php_self is '.$php_self."<br />\n"
 		.'$script_name is '.$script_name."<br />\n"
-		.'Query string is '.@trueFalse(strlen($server_vars['QUERY_STRING']) > 64, '<br />&nbsp; ', '')
+		.'Query string is '.@trueFalse(utf8_strlen($server_vars['QUERY_STRING']) > 64, '<br />&nbsp; ', '')
 		.@trueFalse($server_vars['QUERY_STRING'],$server_vars['QUERY_STRING'], ' (empty)')."<br />\n"
 		.'$pwd is '.$pwd.',&nbsp; '
 		.'$chroot_dir is '.@trueFalse($chroot_dir, $chroot_dir, '(empty)')."<br />\n"
@@ -3685,7 +3685,7 @@ function writeData($ind=1) {
 }
 
 //now ... we are ready to import a PHP/HTML template
-if (strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
+if (utf8_strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
 else $skin = $sys_info['skin'];
 @include("../../style/skins/".$skin."/template.php");
 ?>
