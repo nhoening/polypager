@@ -124,9 +124,8 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 		$sys_msg_text .= '<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n";
 	}
 	
-	// set a title
-	// when only one entry is given, we can do some fancy stuff:
-	if ($res != "" and count($res)==1 and mysql_num_rows($res[$params['page']]) == 1) {	//we should have a title
+	// set a title if we show one entry
+	if ($res != "" and in_array($params['page'],array_keys($res)) and mysql_num_rows($res[$params['page']]) == 1) {	
 		//writing header with a title when we find a good one
 		$row = mysql_fetch_array($res[$params['page']], MYSQL_ASSOC);	//get first one
 		$title = getTitle($entity,$row);
@@ -177,9 +176,6 @@ function writeData($ind=5) {
 			$page_info = getPageInfo($params["page"]);
 			//------------------------ showing data   --------------
 			
-            $page_info = getPageInfo();
-            //if ($params["step"] != "all" and $page_info["in_menue"] == 0 and $params["page"] != "_sys_comments") echo('<div class="sys_msg">from the page <a href="?'.$params["page"].'">'.$params["page"].'</a></div>');
-            
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
 			writeToc($res, false, $nind);
 			
