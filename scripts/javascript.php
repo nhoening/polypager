@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
+    Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
     This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ function toggle_ability(theClass) {
 	}
 	var link = document.getElementById(theClass + "_link");
 	<? $path_from_docroot = getPathFromDocRoot(); 
-		$pic_url = str_replace("\\", '/', $path_from_docroot).'style/pics/'; ?>
+		$pic_url = utf8_str_replace("\\", '/', $path_from_docroot).'style/pics/'; ?>
 	if (link.style.backgroundImage.match('.*ok.*'))
 		link.style.backgroundImage = "url(<? echo($pic_url);?>no.gif)";
 	else link.style.backgroundImage = "url(<? echo($pic_url);?>ok.gif)";

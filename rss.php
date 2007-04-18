@@ -36,8 +36,8 @@ echo('<?xml version="1.0" encoding="'.$sys_info["encoding"].'"?>'."\n");
 $link = getDBLink();
 
 //get the path to this URI
-$doc_root_folders = explode("/", $_SERVER['DOCUMENT_ROOT']);
-$cwd__folders = explode("/", getcwd());
+$doc_root_folders = utf8_explode("/", $_SERVER['DOCUMENT_ROOT']);
+$cwd__folders = utf8_explode("/", getcwd());
 //the difference between those is the path from doc root to the folder where
 //all files for this URI reside
 $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));

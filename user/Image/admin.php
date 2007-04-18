@@ -527,7 +527,7 @@ class FileFarm {
 			chmod($path, $this->file_perms);
 		}
 		$exists   = file_exists($path);
-		$ext      = strtolower(strrchr($path,'.'));
+		$ext      = utf8_strtolower(strrchr($path,'.'));
 		$editable = ($ext=='' || strstr(join(' ',$this->allow_edit),$ext));
 		$writable = is_writable($path);
 
@@ -721,26 +721,26 @@ class FileFarm {
 		$tstr = htmlspecialchars($tstr);
 
 		// Tabs
-		$tstr = str_replace(chr(9),'   ',$tstr) ; 
+		$tstr = utf8_str_replace(chr(9),'   ',$tstr) ; 
 
 		// ASP tags & XML/PHP tags
 		$aspbeg = "<span class=\"XML\">&lt;%</span><span class=\"black\">";
 		$aspend = "</span><span class=\"XML\">%&gt;</span>";
-		$tstr = str_replace('&lt;%',$aspbeg,$tstr);
-		$tstr = str_replace('%&gt;',$aspend,$tstr);
+		$tstr = utf8_str_replace('&lt;%',$aspbeg,$tstr);
+		$tstr = utf8_str_replace('%&gt;',$aspend,$tstr);
 
 		$xmlbeg = "<span class=\"XML\">&lt;?</span><span class=\"black\">";
 		$xmlend = "</span><span class=\"XML\">?&gt;</span>";
-		$tstr = str_replace('&lt;?',$xmlbeg,$tstr);
-		$tstr = str_replace('?&gt;',$xmlend,$tstr);
+		$tstr = utf8_str_replace('&lt;?',$xmlbeg,$tstr);
+		$tstr = utf8_str_replace('?&gt;',$xmlend,$tstr);
 
 		// C style comment
-		$tstr = str_replace('/*','<span class=\'REM\'>/*',$tstr);
-		$tstr = str_replace('*/','*/</span>',$tstr);
+		$tstr = utf8_str_replace('/*','<span class=\'REM\'>/*',$tstr);
+		$tstr = utf8_str_replace('*/','*/</span>',$tstr);
 
 		// HTML comments
-		$tstr = str_replace("&lt;!--","<i class=\"RED\">&lt;!--",$tstr) ; 
-		$tstr = str_replace("--&gt;","--&gt;</i>",$tstr) ; 
+		$tstr = utf8_str_replace("&lt;!--","<i class=\"RED\">&lt;!--",$tstr) ; 
+		$tstr = utf8_str_replace("--&gt;","--&gt;</i>",$tstr) ; 
 
 
 		$this->colorbars($this->bodyFgToRowDiv);
@@ -757,22 +757,22 @@ class FileFarm {
 		for ($i = 0 ; $i < sizeof($tstr) ; ++$i) {
 			// add line numbers
 			echo "<br /><EM>";
-			echo substr(("000".($i+1)), -4).":</EM> ";
+			echo utf8_substr(("000".($i+1)), -4).":</EM> ";
 			$line = $tstr[$i];
 			// C++ style comments
 			$pos = utf8_strpos($line,"//");
 			// exceptions: two slashes aren't a script comment
 			if (strstr($line,"//")
-				&& ! ($pos>0 && substr($line,$pos-1,1)==":")
-				&& ! (substr($line,$pos,8) == "//--&gt;")
-				&& ! (substr($line,$pos,9) == "// --&gt;"))
+				&& ! ($pos>0 && utf8_substr($line,$pos-1,1)==":")
+				&& ! (utf8_substr($line,$pos,8) == "//--&gt;")
+				&& ! (utf8_substr($line,$pos,9) == "// --&gt;"))
 			{
-				$beg = substr($line,0,utf8_strpos($line,"//"));
+				$beg = utf8_substr($line,0,utf8_strpos($line,"//"));
 				$end = strstr($line,"//");
 				$line = $beg."<span class=\"REM\">".$end."</span>";
 			}
 			// shell & asp style comments
-			$first = substr(ltrim($line),0,1);
+			$first = utf8_substr(ltrim($line),0,1);
 			if ($first == "#"
 				|| $first == "'")
 			{
@@ -820,7 +820,7 @@ class FileFarm {
 	* Display an <img> link to an appropriate icon based ont $txt.
 	*/
 	function icon($txt,$alt='') {
-		switch (strtolower($txt)) {
+		switch (utf8_strtolower($txt)) {
 		case '.bmp' :	case '.gif' :	case '.png' :
 		case '.jpg' :	case '.jpeg':	case '.tif' :
 		case '.tiff':
@@ -930,7 +930,7 @@ class FileFarm {
 			} elseif (is_file($this->rel_path.'/'.$item)) {
 				// file
 				if (!$this->show_hidden
-					&& substr($item,0,1)=='.')
+					&& utf8_substr($item,0,1)=='.')
 				{
 					// hidden file, do nothing
 					$hiddenFiles[] = $item;
@@ -1108,7 +1108,7 @@ class FileFarm {
 				$tstr = $this->self.'?op=details&amp;D='.urlencode($this->rel_dir).'&amp;F='.rawurlencode($file);
 				$tstr  = '<a href="'.$tstr.'">'.$file.'</a>'.$a;
 
-				$ext = strtolower(strrchr($file,'.'));
+				$ext = utf8_strtolower(strrchr($file,'.'));
 				if ( $ext=='' || strstr(join(' ',$this->allow_edit),$ext)) { 
 					$b  = '<a href="'.$this->self.'?op=view&amp;F=';
 					$b .= urlencode($file).'&amp;D='.urlencode($this->rel_dir);
@@ -1305,8 +1305,8 @@ class FileFarm {
 	function path2bc($path) {
 		$link = '';
 		$ret  = "<a href=\"".$this->self.'?&amp;D='.urlencode("/")."\">//</a> ";
-		$path = substr($path,1,utf8_strlen($path));
-		$arr = explode('/',$path);
+		$path = utf8_substr($path,1,utf8_strlen($path));
+		$arr = utf8_explode('/',$path);
 		for ($i=0;$i<sizeof($arr);$i++) {
 			$current = $arr[$i];
 			$link .= '/'.$current;
@@ -1335,7 +1335,7 @@ class FileFarm {
 			$fcontents = file ($skinfile);
 			for ($i = 0; $i < count($fcontents); $i++) {
 				$row = $fcontents[$i];
-				$rowa = explode("\t",$row);
+				$rowa = utf8_explode("\t",$row);
 				if (count($rowa) == 2) {
 					$keyval = trim($rowa[0]);
 					$valval = trim($rowa[1]);
@@ -1349,10 +1349,10 @@ class FileFarm {
 
 	function colorbars($str) {
 		if ($str != '') {
-			$arr = explode(';',$str);
+			$arr = utf8_explode(';',$str);
 			echo "\n    <table summary=\"Color Bar\"cellspacing=0 cellpadding=0 border=0 width=\"100%\">\n";
 			for ($i = 0; $i < count($arr); $i++) {
-				$arr2 = explode(',',$arr[$i]);
+				$arr2 = utf8_explode(',',$arr[$i]);
 				echo "     <tr bgcolor=\"".$arr2[0]."\"><td height=\"".$arr2[1]."\">";
 				echo "<spacer type=\"block\" height=\"".$arr2[1]."\">";
 				echo "</td></tr>\n";

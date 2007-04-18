@@ -46,9 +46,10 @@ if ( !defined('FILE_SEPARATOR') ) {
 	define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
 
+require_once("utf8.php");
 set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot());
+
 require_once("PolyPager_Config.php");
-require_once("lib" . PATH_SEPARATOR .  "utf8.php");
 
 $sys = getSysInfo();
 $lang = $sys["lang"];
@@ -83,8 +84,8 @@ function scandir_n($dir = './', $sort = 0, $only_pics = false, $only_dirs = fals
 	
 	$files = array();
 	while (($dir_content = readdir($dir_open)) !== false){
-		if($dir_content != "." && $dir_content != ".." && substr($dir_content,0,1) != '.') 
-			if (!$only_pics or in_array(strtolower(substr($dir_content,-4)),array('.jpg','.gif','.png','tiff')))
+		if($dir_content != "." && $dir_content != ".." && utf8_substr($dir_content,0,1) != '.') 
+			if (!$only_pics or in_array(utf8_strtolower(utf8_substr($dir_content,-4)),array('.jpg','.gif','.png','tiff')))
 				if (!$only_dirs or filetype($dir.'/'.$dir_content)=='dir')
 					$files[] = $dir_content;
 	}
@@ -111,7 +112,7 @@ function filterSQL($v) {
 function format_date($timestamp) {
     //format depends on wether we have a timestamp or not
     if (utf8_strlen($timestamp)>10) $fstr = 'd M Y - G:i'; else $fstr = 'd M Y';
-	if (substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
+	if (utf8_substr($timestamp,0,10)=='0000-00-00') return __('no date set yet');
 	if ($lang == "de")
 		return date($fstr, strtotime($timestamp));
 	else 
@@ -122,7 +123,7 @@ function format_date($timestamp) {
  * returns a csv list without whitespace
  */
 function stripCSVList($csv_string) {
-	$arr1 = explode(',', $csv_string);
+	$arr1 = utf8_explode(',', $csv_string);
 	for($i=0;$i<count($arr1);$i++) {
 		$arr1[$i] = trim($arr1[$i]);
 	}
@@ -170,7 +171,7 @@ function buildValidIDFrom($text){
 */
 function buildValidMySQLTableNameFrom($text){
 	$text = preg_replace('/[^a-zA-Z0-9_]/','_',$text);
-	return substr($text,0,64);
+	return utf8_substr($text,0,55); //there is a MySQL upper limit for length of a table name 
 }
 
 
@@ -209,23 +210,23 @@ function getPathFromDocRoot() {
 	$doc_root = $_SERVER['DOCUMENT_ROOT'];
 	if (FILE_SEPARATOR != '/')
 		$doc_root = eregi_replace('/', FILE_SEPARATOR, $doc_root);
-	$doc_root_folders = explode(FILE_SEPARATOR, $doc_root);
-	$cwd_folders = explode(FILE_SEPARATOR, getcwd());
+	$doc_root_folders = utf8_explode(FILE_SEPARATOR, $doc_root);
+	$cwd_folders = utf8_explode(FILE_SEPARATOR, getcwd());
 	$folders_from_doc_root = array_diff($cwd_folders, $doc_root_folders);
 	$path = implode(FILE_SEPARATOR, $folders_from_doc_root);
 	//maybe we're in admin or scripts or so
-	//echo($path."|".strstr($path, 'admin')."|".substr( $path, 0, utf8_strpos( $path, "admin" ) )."|");
+	//echo($path."|".strstr($path, 'admin')."|".utf8_substr( $path, 0, utf8_strpos( $path, "admin" ) )."|");
 	if(eregi('admin',$path) != false or $path == 'admin')
-		{$path = substr( $path, 0, utf8_strpos( $path, "admin" ) ) ;}
+		{$path = utf8_substr( $path, 0, utf8_strpos( $path, "admin" ) ) ;}
 	if(eregi('scripts',$path) != false or $path == 'scripts')
-		{$path =  substr( $path, 0, utf8_strpos( $path, "scripts" ) ) ;}
+		{$path =  utf8_substr( $path, 0, utf8_strpos( $path, "scripts" ) ) ;}
 	if(eregi('plugins',$path)!= false or $path == 'plugins')
-		{$path =  substr( $path, 0, utf8_strpos( $path, "plugins" ) ) ;}
+		{$path =  utf8_substr( $path, 0, utf8_strpos( $path, "plugins" ) ) ;}
 	if(eregi('user',$path) != false or $path == 'user')
-		{$path =  substr( $path, 0, utf8_strpos( $path, "user" ) ) ;}
+		{$path =  utf8_substr( $path, 0, utf8_strpos( $path, "user" ) ) ;}
 	if ($path == "") $path = FILE_SEPARATOR;
-	if (substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
-	if (substr( $path, utf8_strlen($path)-1, utf8_strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
+	if (utf8_substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
+	if (utf8_substr( $path, utf8_strlen($path)-1, utf8_strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
 	//echo($path);
 	return $path;
 }
@@ -239,8 +240,8 @@ function writeHelpLink($indent, $helptext) {
 *    resulting array will be sorted ascending
 */
 function cmpByName($a, $b) {
-	$an = strtolower($a);
-	$bn = strtolower($b);
+	$an = utf8_strtolower($a);
+	$bn = utf8_strtolower($b);
 	if ($an == $bn) return 0;
 	return ($an < $bn) ? -1 : 1;
 }
@@ -495,7 +496,7 @@ function getTables() {
 		$amount = mysql_num_rows($tables);
 		for($x = 0; $x < $amount; $x++){
 		  $table_name = mysql_tablename($tables, $x);
-		  if(substr($table_name,0,5) != "_sys_") $non_sys_tables[$x] = $table_name;
+		  if(utf8_substr($table_name,0,5) != "_sys_") $non_sys_tables[$x] = $table_name;
 		}
 	}
 	return $non_sys_tables;
@@ -635,7 +636,7 @@ function getEntity($page_name) {
 				if (count($skindirs) != count($skindirs_wo_picswap)){
 					$skindirs = $skindirs_wo_picswap;
 					$dirs = implode(",",$skindirs);
-					$dirs = str_replace(",,", ",",$dirs);
+					$dirs = utf8_str_replace(",,", ",",$dirs);
 					$dirs = $dirs.",picswap-aqua,picswap-fall,picswap-uptight,picswap-saarpreme";
 				}else{
 					$dirs = implode(",",$skindirs);
@@ -719,7 +720,7 @@ function getEntity($page_name) {
 					if (!utf8_strpos( $tables_str, "|" )) {
 						$the_table = $tables_str; //there seems to be only one
 					} else {
-						$the_table = substr( $tables_str, 0, utf8_strpos( $tables_str, "|" ) );
+						$the_table = utf8_substr( $tables_str, 0, utf8_strpos( $tables_str, "|" ) );
 					}
 				}
 				
@@ -899,13 +900,13 @@ function getEntity($page_name) {
 					// the users, I prefer to not show'em all
 					if ($params['page']=='_sys_fields' && isSinglePage($params['group'])){
 						$flist = implode(',', $fields);
-						$flist = str_replace('input_date','',$flist); //internal date field
-						$flist = str_replace('edited_date','',$flist); //internal date field
-						$flist = str_replace('the_group','',$flist); //internal field
-						$flist = str_replace('publish','',$flist); //just boolean
-						$flist = str_replace('in_submenu','',$flist); //just boolean
-						$flist = str_replace('pagename','',$flist); 
-						while (ereg(',,',$flist)) $flist = str_replace(',,',',',$flist);
+						$flist = utf8_str_replace('input_date','',$flist); //internal date field
+						$flist = utf8_str_replace('edited_date','',$flist); //internal date field
+						$flist = utf8_str_replace('the_group','',$flist); //internal field
+						$flist = utf8_str_replace('publish','',$flist); //just boolean
+						$flist = utf8_str_replace('in_submenu','',$flist); //just boolean
+						$flist = utf8_str_replace('pagename','',$flist); 
+						while (ereg(',,',$flist)) $flist = utf8_str_replace(',,',',',$flist);
 						//now commas at start or end have to go
 						$flist = preg_replace('@^,@', '', $flist);
 						$flist = preg_replace('@,$@', '', $flist);
@@ -1329,7 +1330,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		$fields = array();
 		$page_info = getPageInfo($entity['pagename']);
 		global $db;
-
+        
 		$link = getDBLink();
 		
 		//do we know where to look at all?
@@ -1371,6 +1372,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		$res = pp_run_query($query);
 		$i = 0;
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
+            
 			//primary key
 			if ($row['Key']=='PRI') {
 				if ($entity['pk']!=""){ // seems to be a 2-field PK - not supported!
@@ -1379,6 +1381,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 				$entity["pk"] = $row['Field'];	//overwriting the first!
 				$entity["pk_type"] = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
 			}
+            
 			if (!eregi($row['Field'],$not_for_field_list) and $row['Extra']!='auto_increment') {
 				//determine length
 				$len = $row['CHARACTER_MAXIMUM_LENGTH'];
@@ -1494,17 +1497,17 @@ function getForeignKeys(){
 			$crlf = "||";
 			// Convert end of line chars to one that we want (note that MySQL doesn't return query it will accept in all cases)
 			if (utf8_strpos($create_query, "(\r\n ")) {
-				$create_query = str_replace("\r\n", $crlf, $create_query);
+				$create_query = utf8_str_replace("\r\n", $crlf, $create_query);
 			} elseif (utf8_strpos($create_query, "(\n ")) {
-				$create_query = str_replace("\n", $crlf, $create_query);
+				$create_query = utf8_str_replace("\n", $crlf, $create_query);
 			} elseif (utf8_strpos($create_query, "(\r ")) {
-				$create_query = str_replace("\r", $crlf, $create_query);
+				$create_query = utf8_str_replace("\r", $crlf, $create_query);
 			}
 			
 			// are there any foreign keys to cut out?
 			if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $create_query)) {
 				// Split the query into lines, so we can easily handle it. We know lines are separated by $crlf (done few lines above).
-				$sql_lines = explode($crlf, $create_query);
+				$sql_lines = utf8_explode($crlf, $create_query);
 				$sql_count = count($sql_lines);
 				
 				// lets find first line with foreign keys
@@ -1520,7 +1523,7 @@ function getForeignKeys(){
 						if (preg_match('@CONSTRAINT|FOREIGN[\s]+KEY@', $sql_lines[$j])) {
 							//remove "," at the end 
 							$sql_lines[$j] = preg_replace('@,$@', '', $sql_lines[$j]);
-							$tokens = explode(' ',$sql_lines[$j]);
+							$tokens = utf8_explode(' ',$sql_lines[$j]);
 							
 							$fk['table'] = $table;
 							
@@ -1530,18 +1533,18 @@ function getForeignKeys(){
 							//  REFERENCES `verbs` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE"
 							// We will find out when the next token is interesting
 							// sometimes we'll have to cut stuff like (,) or the like off
-							// with substr()
+							// with utf8_substr()
 							for($k=0; $k<$token_count; $k++){
 								// THE FIELD
-								if ($tokens[$k] == 'KEY') $fk['field'] = substr($tokens[$k + 1],2,-2);
+								if ($tokens[$k] == 'KEY') $fk['field'] = utf8_substr($tokens[$k + 1],2,-2);
 								
 								// THE CONSTRAINT NAME
-								if ($tokens[$k] == 'CONSTRAINT') $fkname = substr($tokens[$k + 1],1,-1);
+								if ($tokens[$k] == 'CONSTRAINT') $fkname = utf8_substr($tokens[$k + 1],1,-1);
 								
 								// WHERE DOES IT POINT?
 								if ($tokens[$k] == 'REFERENCES') {
-									$fk['ref_table'] = substr($tokens[$k + 1],1,-1);
-									$fk['ref_field'] = substr($tokens[$k + 2],2,-2);
+									$fk['ref_table'] = utf8_substr($tokens[$k + 1],1,-1);
+									$fk['ref_field'] = utf8_substr($tokens[$k + 2],2,-2);
 								}
 								
 								// ON UPDATE, ON DELETE
@@ -1637,7 +1640,7 @@ function getListOfFields($entity_name) {
 /* gets an array with names of fields of the actual 
  * entity with the named data types (a comma separated list)*/
 function getListOfFieldsByDataType($entity_name, $data_types) {
-	$types = explode(',', $data_types);
+	$types = utf8_explode(',', $data_types);
 	if ($entity_name != "") {
 		global $entity;
 		$actual_entity = $entity;	//save it
@@ -1722,7 +1725,7 @@ function guessTextField($entity, $prefer_long_text=true) {
 function getFirstWords($html_str, $number){
 	$result = "";
 	$text = strip_tags($html_str);
-	$text_arr = explode(' ', $text);
+	$text_arr = utf8_explode(' ', $text);
 	//print_r($text_arr);
 	$m_number = min($number, count($text_arr));
 	for($i=0; $i<$m_number; $i++) {
@@ -1735,17 +1738,17 @@ function getFirstWords($html_str, $number){
 /* escape regexes */
 
 function escape_regex($t) {
-    $t = str_replace(".", "\.", $t);
-    $t = str_replace("+", "\+", $t);
-    $t = str_replace("*", "\*", $t);
-    $t = str_replace("[", "\[", $t);
-    $t = str_replace("]", "\]", $t);
-    $t = str_replace("?", "\?", $t);
-    $t = str_replace('$', '\$', $t);
-    $t = str_replace("^", "\^", $t);
-    $t = str_replace("(", "\(", $t);
-    $t = str_replace(")", "\)", $t);
-    $t = str_replace("|", "\|", $t);
+    $t = utf8_str_replace(".", "\.", $t);
+    $t = utf8_str_replace("+", "\+", $t);
+    $t = utf8_str_replace("*", "\*", $t);
+    $t = utf8_str_replace("[", "\[", $t);
+    $t = utf8_str_replace("]", "\]", $t);
+    $t = utf8_str_replace("?", "\?", $t);
+    $t = utf8_str_replace('$', '\$', $t);
+    $t = utf8_str_replace("^", "\^", $t);
+    $t = utf8_str_replace("(", "\(", $t);
+    $t = utf8_str_replace(")", "\)", $t);
+    $t = utf8_str_replace("|", "\|", $t);
     return $t;
 }
 

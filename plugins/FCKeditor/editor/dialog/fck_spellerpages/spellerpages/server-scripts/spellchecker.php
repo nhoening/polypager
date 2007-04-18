@@ -20,7 +20,7 @@ $input_separator = "A";
 function print_textinputs_var() {
 	global $textinputs;
 	foreach( $textinputs as $key=>$val ) {
-		# $val = str_replace( "'", "%27", $val );
+		# $val = utf8_str_replace( "'", "%27", $val );
 		echo "textinputs[$key] = decodeURIComponent(\"" . $val . "\");\n";
 	}
 }
@@ -79,7 +79,7 @@ function print_checker_results() {
 	if( $fh = fopen( $tempfile, 'w' )) {
 		for( $i = 0; $i < count( $textinputs ); $i++ ) {
 			$text = urldecode( $textinputs[$i] );
-			$lines = explode( "\n", $text );
+			$lines = utf8_explode( "\n", $text );
 			fwrite ( $fh, "%\n" ); # exit terse mode
 			fwrite ( $fh, "^$input_separator\n" );
 			fwrite ( $fh, "!\n" ); # enter terse mode
@@ -93,21 +93,21 @@ function print_checker_results() {
 		# exec aspell command - redirect STDERR to STDOUT
 		$cmd = "$aspell_prog $aspell_opts < $tempfile 2>&1";
 		if( $aspellret = shell_exec( $cmd )) {
-			$linesout = explode( "\n", $aspellret );
+			$linesout = utf8_explode( "\n", $aspellret );
 			$index = 0;
 			$text_input_index = -1;
 			# parse each line of aspell return
 			foreach( $linesout as $key=>$val ) {
-				$chardesc = substr( $val, 0, 1 );
+				$chardesc = utf8_substr( $val, 0, 1 );
 				# if '&', then not in dictionary but has suggestions
 				# if '#', then not in dictionary and no suggestions
 				# if '*', then it is a delimiter between text inputs
 				# if '@' then version info
 				if( $chardesc == '&' || $chardesc == '#' ) {
-					$line = explode( " ", $val, 5 );
+					$line = utf8_explode( " ", $val, 5 );
 					print_words_elem( $line[1], $index, $text_input_index );
 					if( isset( $line[4] )) {
-						$suggs = explode( ", ", $line[4] );
+						$suggs = utf8_explode( ", ", $line[4] );
 					} else {
 						$suggs = array();
 					}

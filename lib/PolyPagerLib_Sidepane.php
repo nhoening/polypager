@@ -48,7 +48,7 @@ function cmpDate($a, $b) {
 function getFeed($amount, $comments = false) {
 	//get requested page descriptions
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
-	$p = explode(',',$p);
+	$p = utf8_explode(',',$p);
 	
 	//make a filter with what was requested
     if (!$comments) $where = ' WHERE public = 1';
@@ -123,7 +123,7 @@ function writeFeedDiv($ind=5) {
 		for ($x=0;$x<count($res);$x++) {
 			$row = $res[$x];
 			echo($indent.'	<div class="entry">'."\n");
-			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.str_replace("'","\'", strip_tags(getFirstWords($row['theContent'],20)));
+			$tipText = '['.__('from the page').' '.$row['thePage'].'] '.utf8_str_replace("'","\'", strip_tags(getFirstWords($row['theContent'],20)));
 			if ($sys_info['hide_public_popups']==0) $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 			else $text = '';
             global $path_to_root_dir;

@@ -127,7 +127,7 @@
 		
 		if ($params["page"] == "") {
 			//the "page" param will be just the first in GET Requests (so we can write http://www.bla.com/?mypage)
-			$query_array = explode('&', $_SERVER["QUERY_STRING"]);
+			$query_array = utf8_explode('&', $_SERVER["QUERY_STRING"]);
 			$params["page"] = urldecode($query_array[0]);
 			if ($params["page"]=="page=") $params["page"] = "";
 			//if "page=" is given we should handle this, too
@@ -247,7 +247,7 @@
 			echo($indent.'<div class="sys_msg" id="searchinfo"><h4>'.__('you searched for:').'</h4><ul>');
 			foreach($params["search"] as $name => $val) {
 				if ($name=="kw")$name="keyword";
-				if ($val != "") echo($indent.'	<li>'.$name.':'.str_replace("\\","",$val).'</li>');
+				if ($val != "") echo($indent.'	<li>'.$name.':'.utf8_str_replace("\\","",$val).'</li>');
 			}
 			echo($indent.'</ul></div>');
 		}
@@ -256,29 +256,21 @@
     /*return text search keywords*/
     function getSearchKeywords(){
         global $params;
-        //echo($params["search"]["kw"]);
         // ensure one standard of parentheses to work with
-        $url_kws = str_replace("\\","",$params["search"]["kw"]);
-        $url_kws = str_replace('"',"'",$url_kws);
+        $url_kws = utf8_str_replace("\\","",$params["search"]["kw"]);
+        $url_kws = utf8_str_replace('"',"'",$url_kws);
         // get keywords encapsulated in parentheses
         $regex = '/\'[^\']*\'/';
         preg_match_all($regex,$url_kws,$kws);
-        //echo("<br/><br/>|".$params["search"]["kw"]."| yields in parentheses:<br/>");
         $kws = $kws[0]; //all hits are in the first element
-        //print_r($kws);
         // get the others
         $single_kws = preg_split($regex,$url_kws);
-        //echo("<br/><br/>|".$params["search"]["kw"]."| yields normal:<br/>");
-        //print_r($single_kws);
-        foreach($single_kws as $k) $kws = array_merge($kws, explode(" ", $k)); 
+        foreach($single_kws as $k) $kws = array_merge($kws, utf8_explode(" ", $k)); 
         //TODO: eject keywords that are part of others?
         $sys_info = getSysInfo();
-        //print_r($kws);
         $kws_clean = array();
         for($x=0;$x<count($kws);$x++)
-            if (trim($kws[$x]) != "") $kws_clean[] = htmlentities(urldecode(str_replace("'", "", $kws[$x])), ENT_QUOTES, $sys_info['encoding']);
-        //echo("<br/>final result:<br/>");
-        //print_r($kws_clean);
+            if (trim($kws[$x]) != "") $kws_clean[] = htmlentities(urldecode(utf8_str_replace("'", "", $kws[$x])), ENT_QUOTES, $sys_info['encoding']);
         return $kws_clean;
     }
     
@@ -311,7 +303,7 @@
 			$pagelist =implode(',',getPageNames());
 		}
 		
-		foreach (explode(',',$pagelist) as $p){
+		foreach (utf8_explode(',',$pagelist) as $p){
             $pagename = $p;
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
@@ -391,7 +383,7 @@
 					foreach($entity['fields'] as $f){
 						// prefer title from referenced values over referencing ones!
 						if (in_array($f['name'],array_keys($ref_fields))) {
-							$ref = explode('||',$ref_fields[$f['name']]);
+							$ref = utf8_explode('||',$ref_fields[$f['name']]);
 							// using subselect so that we get NULL when the refencing field IS NULL
 							$a[0] .= '(SELECT name FROM '.$ref[0].' WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
 							$a[0] .= ' as '.$f['name'].",";
@@ -449,7 +441,7 @@
 					//Keyword search works page AND sitewide
 					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
 						if ($params["search"]["kw"] != "") {
-							$keyword_lower = strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
+							$keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
                             if ($said_where) $a[] = " AND ";
                             else $a[] = " WHERE ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
@@ -465,13 +457,13 @@
                                         //remember: BLOB fields are case-sensitive! you should take text for those
                                         $a[] = " (";
                                         foreach($kws as $k)
-                                            $a[] = " ".$table_field." LIKE '%".str_replace('.','\.', $k)."%' AND ";
+                                            $a[] = " ".$table_field." LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
                                         // replace last AND with OR
-                                        $a[count($a)-1] = str_replace(' AND ','',$a[count($a)-1]);
+                                        $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
                                         $a[] = " ) OR";
                                     }
 								}
-								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
+								$a[count($a)-1] = utf8_substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
 								$a[] = ")";
 							}
 						}
@@ -565,8 +557,8 @@
 		to stay, but < and > are preserved (same as Firefox tab titles) 
 	*/
 	function preserveMarkup($content){
-		$content = str_replace(">", "&gt;", $content);
-		$content = str_replace("<", "&lt;", $content);
+		$content = utf8_str_replace(">", "&gt;", $content);
+		$content = utf8_str_replace("<", "&lt;", $content);
 		return $content;
 	}
 	
@@ -579,13 +571,13 @@
         $indent = translateIndent($ind);
         echo($indent.'<div id="searchbox"><div class="description">'.__('Search this site for:')."</div>\n");
         global $path_to_root_dir;
-        $keywords = explode(',',$keywords);
+        $keywords = utf8_explode(',',$keywords);
         $l = array();
         foreach ($keywords as $kw)
             if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
         echo(implode(',',$l));
         $helptext = __('Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).');
-        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.str_replace("\'","'", str_replace('\"',"'", $_GET["kw"])).'" name="kw"/><button type="submit">go</button>'."\n");
+        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.utf8_str_replace("\'","'", utf8_str_replace('\"',"'", $_GET["kw"])).'" name="kw"/><button type="submit">go</button>'."\n");
         writeHelpLink($indent.'     ', $helptext);
         echo($indent.'    </form>'."\n");
             
@@ -718,7 +710,7 @@
 					echo($indent.'		<div class="search_option">'."\n");
 					echo($indent.'			<span class="search_toggle"><a id="search_'.$f['name'].'_link" href="javascript:toggle_ability(\'search_'.$f['name'].'\');">&nbsp;&nbsp;&nbsp;&nbsp;</a></span>'."\n");
 					echo($indent.'			'.$f["name"].': <select class="search_'.$f['name'].'" disabled="disabled" name="'.$f['name'].'">'."\n");	//input
-					$vals = explode(',', $f["valuelist"]);
+					$vals = utf8_explode(',', $f["valuelist"]);
 					foreach ($vals as $v) {
 						if ($v != $params["search"][$f["name"]]) echo('<option>'.$v.'</option>'."\n");
 						else echo($indent.'			<option selected="selected">'.$v.'</option>'."\n");
@@ -1012,9 +1004,9 @@
 				}else if($f["name"] != $entity["group"]["field"] and ($not_brief == false or $params["step"] == 1)) {
 					//another obstacle: in $list_view, we only show titles
 					//and: no fields described as "hidden" within the entity or the (multi)page
-					$hidden_fields = explode(",",$entity["hidden_fields"]);
+					$hidden_fields = utf8_explode(",",$entity["hidden_fields"]);
 					if(isMultipage($params["page"])) {
-						$hidden_fields = array_merge($hidden_fields, explode(',',$page_info["hidden_fields"]));
+						$hidden_fields = array_merge($hidden_fields, utf8_explode(',',$page_info["hidden_fields"]));
 					}
 					if ((!$list_view or $entity["title_field"] == $f["name"]) and
 						!(in_array($f["name"],$hidden_fields)))	{
@@ -1070,7 +1062,7 @@
 							echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a></span>'."\n");
 							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].'&amp;group='.urlencode($group_forward).'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
 							//check if we should give the old name for consistency reasons
-							$consistency_fields = explode(",",$entity["consistency_fields"]);
+							$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];
 							echo($indent.'		<span class="list_pic"><a onclick="return checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete();" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a></span>'."\n");
 							echo($indent.'	</div>');
