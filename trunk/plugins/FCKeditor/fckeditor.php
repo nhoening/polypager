@@ -113,12 +113,12 @@ class FCKeditor
 
 		if ( utf8_strpos($sAgent, 'MSIE') !== false && utf8_strpos($sAgent, 'mac') === false && utf8_strpos($sAgent, 'Opera') === false )
 		{
-			$iVersion = (float)substr($sAgent, utf8_strpos($sAgent, 'MSIE') + 5, 3) ;
+			$iVersion = (float)utf8_substr($sAgent, utf8_strpos($sAgent, 'MSIE') + 5, 3) ;
 			return ($iVersion >= 5.5) ;
 		}
 		else if ( utf8_strpos($sAgent, 'Gecko/') !== false )
 		{
-			$iVersion = (int)substr($sAgent, utf8_strpos($sAgent, 'Gecko/') + 6, 8) ;
+			$iVersion = (int)utf8_substr($sAgent, utf8_strpos($sAgent, 'Gecko/') + 6, 8) ;
 			return ($iVersion >= 20030210) ;
 		}
 		else

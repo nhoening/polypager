@@ -264,7 +264,7 @@
 					//the db, so page_info does not have it)
 					else $gfield = $page_info["grouplist"];
 					
-					$a = explode(',', stripCSVList($gfield));
+					$a = utf8_explode(',', stripCSVList($gfield));
 					
 					//test if one of the groups was selected
 					$ul_visibility = "hidden";
@@ -322,7 +322,7 @@
 						//text that doesn't come from a text area still must be escaped
 						$h["heading"] = htmlentities($h["heading"]);
 						$classAtt="not_here";	//we're not showing them anyway
-						echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'#'.str_replace(' ', '_', $h["heading"]).'">'.$h["heading"].'</a></li>'."\n");
+						echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'#'.utf8_str_replace(' ', '_', $h["heading"]).'">'.$h["heading"].'</a></li>'."\n");
 					}
 				} else {	//ul should not be empty - that's not valid
 					echo($indent.'		<li></li>'."\n");

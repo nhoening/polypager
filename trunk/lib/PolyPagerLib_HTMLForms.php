@@ -54,7 +54,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	if(isTextAreaType($type)) $inputType = "textarea";
 	if (gettype($value) == "string" and $inputType != "textarea") {
 		//we cannot write " inside of input-Elements (they're standalone in XHTML)
-		$value = str_replace('"', "&quot;", $value);
+		$value = utf8_str_replace('"', "&quot;", $value);
 	}
 	echo($indent);
 	if ($inputType != "textarea") echo('<'.$inputType.' id="'.$name.'_input" tabindex="'.$tabindex.'"');
@@ -66,14 +66,14 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		if (!$full_editor) $oFCKeditor->ToolbarSet = 'Basic';
 		$path = getPathFromDocRoot();
 		
-		$oFCKeditor->BasePath = str_replace("\\", '/', $path).'plugins/FCKeditor/';
+		$oFCKeditor->BasePath = utf8_str_replace("\\", '/', $path).'plugins/FCKeditor/';
 		$oFCKeditor->Value = $value;
 		$oFCKeditor->Width  = '100%' ;
 		$oFCKeditor->Height = '300' ;
 		$oFCKeditor->Config['CustomConfigurationsPath'] = str_replace("\\", '/', $path).'plugins/fckconfig.php'  ;
 		$oFCKeditor->Create() ;
 	} else if (isTextType($type) or isDateType($type)) {
-        $value = str_replace("&", "&amp;", $value);
+        $value = utf8_str_replace("&", "&amp;", $value);
 		if ($size > 50) {
 			if ($value == "") {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -136,9 +136,9 @@ function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
 	$indent = translateIndent($ind);
 	if ($spec[1] != ''){
 		//this is what we want in b
-		$diff1 = array_in_one(explode(',',$spec[1]), $fields);
+		$diff1 = array_in_one(utf8_explode(',',$spec[1]), $fields);
 		//this is what we don't want from that
-		$b = array_in_one($fields, explode(',',$value));
+		$b = array_in_one($fields, utf8_explode(',',$value));
 		echo($indent.'<div class="filler">'.__('choose:'));
 		$helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
 		writeHelpLink($indent, $helptext);
@@ -184,14 +184,14 @@ function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js
 		$disabled = ' disabled="disabled" ';
 	}
 	echo($indent.'<select id="'.$name.'_input" tabindex="'.$tabindex.'" name="'.$name.'" '.$disabled.' '.$js.' class="'.$class.'">'."\n");
-	$list_arr = explode(",", $valuelist);
+	$list_arr = utf8_explode(",", $valuelist);
 	//in the database, enum and set values must be enclosed by '' - away with that 
 	if ($type == "enum" or $type == "set") 
 		$value = $value = trim($value,'\'');
 		for($x=0;$x < count($list_arr);$x++) $list_arr[$x] = trim($list_arr[$x],'\'');
 	for($x=0;$x < count($list_arr);$x++){
 		if (ereg(':',$list_arr[$x])) {	//key/value can come in valuelist
-			$tmp = explode(':',$list_arr[$x]);
+			$tmp = utf8_explode(':',$list_arr[$x]);
 			$key = chop($tmp[0]);
 			$val = chop($tmp[1]);
 		} else{
@@ -240,9 +240,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	global $params;
 	$entity = getEntity($params["page"]);
 	$page_info = getPageInfo($params["page"]);
-	$hidden_form_fields = explode(",",$entity["hidden_form_fields"]);
-	$disabled_fields = explode(",",$entity["disabled_fields"]);
-	$consistency_fields = explode(",",$entity["consistency_fields"]);
+	$hidden_form_fields = utf8_explode(",",$entity["hidden_form_fields"]);
+	$disabled_fields = utf8_explode(",",$entity["disabled_fields"]);
+	$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
 	
 	if ($show) $display = 'display:block;'; else $display = 'display:none;';
 	if ($id) $id_text = $id; else $id_text = '';

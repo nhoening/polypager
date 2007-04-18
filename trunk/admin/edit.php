@@ -21,7 +21,7 @@
 */
 
 include('auth.php');
-header( 'Content-Type: text/html; charset=iso-8859-1' );
+header( 'Content-Type: text/html; charset='.$sys_info['encoding'] );
 // --------------------------------------- Lib Inclusions
 // PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
 if ( !defined('PATH_SEPARATOR') ) {
@@ -38,7 +38,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 require_once("PolyPagerLib_Editing.php");
 require_once("PolyPagerLib_AdminIndex.php");
 require_once("PolyPagerLib_Sidepane.php");
-
 // ---------------------------------------
 
 $area = "_admin"; 

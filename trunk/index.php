@@ -35,7 +35,7 @@ require_once("PolyPagerLib_Sidepane.php");
 require_once("PolyPagerLib_Showing.php");
 
 $sys_info = getSysInfo();
-header( 'Content-Type: text/html; charset='.$sys_info['encoding'].'' );
+header( 'Content-Type: text/html; charset='.$sys_info['encoding'] );
 
 
 // ---------------------------------------

@@ -92,11 +92,11 @@ function getEditParameters() {
 
 	//------------------------- page check ----------------------------
 	//the "page" param
-	$query_array = explode("&", $_SERVER["QUERY_STRING"]);
+	$query_array = utf8_explode("&", $_SERVER["QUERY_STRING"]);
 	$params["page"] = urldecode($_POST["page"]);
 	if ($params["page"] == "") {
 		//the "page" param will be just the first in GET Requests (so we can write http://www.bla.com/?mypage)
-		$query_array = explode("&", $_SERVER["QUERY_STRING"]);
+		$query_array = utf8_explode("&", $_SERVER["QUERY_STRING"]);
 		$params["page"] = urldecode($query_array[0]);
 		//if "page=" is given we can handle this, too
 		if (utf8_strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
@@ -138,7 +138,7 @@ function getEditParameters() {
 		if ($params["cmd"] != "") {
 	
 			if ($params["cmd"] == "show" or $params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete"  or $params["cmd"] == "preview") {	//get data
-				$consistency_fields = explode(",",$entity["consistency_fields"]);
+				$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
 				$values = array();
 				foreach($entity["fields"] as $f) {
 					$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
@@ -292,7 +292,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1); //remove comma
+		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1); //remove comma
 
 		//some tables have a string as pk
 		//if ($entity["pk"] != "" and !isNumericType($entity["pk_type"])) $queryA[] = ", ".$entity["pk"];
@@ -302,15 +302,15 @@ function getEditQuery($command, $theID) {
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]]) ) {
 				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time') {
-					$queryA[$x] = " '".$params["values"][$f["name"]]."',";
+					$queryA[$x] = " convert('".$params["values"][$f["name"]]."' using utf8),";
 				} else {
-					$queryA[$x] = " ".$params["values"][$f["name"]].",";
+					$queryA[$x] = " convert(".$params["values"][$f["name"]]." using utf8),";
 				}
 				$x++;
 			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
+		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
 
 		$queryA[count($queryA)] = ")";
 		$query .= implode($queryA);
@@ -330,7 +330,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 		$x--;
-		$queryA[$x] = substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
+		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
 		if ($entity["pk"] != "") {
 			if (isNumericType($entity["pk_type"])) $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = $theID";
 			else $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = '".$theID."'";

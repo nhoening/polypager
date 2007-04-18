@@ -37,7 +37,7 @@ CVS: $Id: index.php,v 1.150 2006/06/24 20:04:30 haganfox Exp $
 */
 $qdig_version = '1.2.9.3';
 $mtime = microtime();
-$mtime = explode(" ",$mtime);
+$mtime = utf8_explode(" ",$mtime);
 $start_time = $mtime[1] + $mtime[0];
 
 /*
@@ -599,7 +599,7 @@ if (!isset($orig_err_rep_level)) {
 }
 // Establish self-referring URL.
 if (empty($qdig_url)) {
-	$tmp = explode('?', @$request_uri);
+	$tmp = utf8_explode('?', @$request_uri);
 	$qdig_url = @$tmp['0'];
 	unset($tmp);
 }
@@ -614,11 +614,11 @@ if (ini_get('safe_mode')) {
 	@ini_set('max_execution_time', $max_exec_time);
 }
 // Which OS?
-if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
+if (strtoupper(utf8_substr(PHP_OS, 0, 3)) == 'WIN') {
 	$platform = 'Win32';
-} elseif (strtoupper(substr(PHP_OS, 0, 3)) == 'MAC') {
+} elseif (strtoupper(utf8_substr(PHP_OS, 0, 3)) == 'MAC') {
 	$platform = 'Macintosh';
-} elseif (strtoupper(substr(PHP_OS, 0, 3)) == 'LIN') {
+} elseif (strtoupper(utf8_substr(PHP_OS, 0, 3)) == 'LIN') {
 	$platform = 'Linux';
 } else {
 	$platform = 'Unix';
@@ -926,7 +926,7 @@ function getReqdImage()
 function cleanPath($path)
 {
 	$path = stripslashes(rawurldecode($path));
-	$path_array = explode('/', $path);
+	$path_array = utf8_explode('/', $path);
 	$clean_path = '.';
 	foreach($path_array as $dir) {
 		if ($dir == '' || $dir == '.' || $dir == '..' || $dir == '...') { continue; }
@@ -943,7 +943,7 @@ function urlPath($path)
 	$decoded = rawurldecode($path);     // Decode if encoded
 	$cleaned = cleanPath($decoded);
 	$encoded = rawurlencode($cleaned);  // Encode
-	$encoded_path = str_replace('%2F', '/', $encoded);  // replace slashes
+	$encoded_path = utf8_str_replace('%2F', '/', $encoded);  // replace slashes
 	return $encoded_path;
 } // End rawurlencodePath()
 
@@ -994,7 +994,7 @@ function gdVersion()
 function mkRecursiveDir($dir)
 {
 	global $file_exists_disa;
-	$path_array = explode('/', $dir);
+	$path_array = utf8_explode('/', $dir);
 	$path = '.';
 	foreach($path_array as $dir) {
 		if ($dir == '' || $dir == '.' || $dir == '..' || $dir == '...') { continue; }
@@ -1462,9 +1462,9 @@ function dirnavPath($dir_nav)
 		$dir_nav, $rootdir;
 	$i        = 0;
 	$num_imgs = count($imgs);
-	$split_path = explode('/', urlPath($reqd_image['pwd']));
+	$split_path = utf8_explode('/', urlPath($reqd_image['pwd']));
 	$path_pos = count($split_path);
-	$split_root = explode('/', urlPath($rootdir));
+	$split_root = utf8_explode('/', urlPath($rootdir));
 	$root_pos = count($split_root);
 	$path     = $rootdir;
 	$str      = '';
@@ -1571,8 +1571,8 @@ function subdirLinks($dir_nav)
 		}
 		foreach($subdirs as $dir => $age_idx) {
 			$dirurl = rawurlencode($dir);
-			$dirtxt = str_replace(' ', '&nbsp;', $dir);  // replace spaces
-			$dirtxt = str_replace("'", '&#39;', $dirtxt);   // replace apostrophes
+			$dirtxt = utf8_str_replace(' ', '&nbsp;', $dir);  // replace spaces
+			$dirtxt = utf8_str_replace("'", '&#39;', $dirtxt);   // replace apostrophes
 			if ($age_idx < ($dir_nav['dir_is_new'] * 1000)) {
 				$newdir = $dir_nav['new_flag'];
 			} else {
@@ -1680,10 +1680,10 @@ EOT;
 			if ($namelinks_ena == TRUE) {
 				// Strip extension from filename
 				$ext = strrchr($img, '.');
-				$img = substr($img, 0, -utf8_strlen($ext));
+				$img = utf8_substr($img, 0, -utf8_strlen($ext));
 				// Truncate long names
 				if (utf8_strlen($img) > $namelinks_trunc) {
-					$img_lnk_txt = substr($img, 0, $namelinks_trunc - 2).'...';
+					$img_lnk_txt = utf8_substr($img, 0, $namelinks_trunc - 2).'...';
 				} else {
 					$img_lnk_txt = $img;
 				}
@@ -2032,7 +2032,7 @@ EOT;
 				&& $img_link['full'] == FALSE)
 			{
 				$wd    = strrchr($reqd_image['pwd_url'], '/');
-				$wd_up = substr($reqd_image['pwd_url'], 0, -utf8_strlen($wd));
+				$wd_up = utf8_substr($reqd_image['pwd_url'], 0, -utf8_strlen($wd));
 				$str .= <<<EOT
   <a href="$qdig_url?{$extra_param}Qwd=$wd_up&amp;Qiv={$reqd_image['view']}&amp;Qis={$reqd_image['size']}$anchor"
    title="{$dir_nav['up_level_txt']}"><img class="qdig-image" src="$url_base_path$img_url"
@@ -2800,10 +2800,10 @@ function adminLink($admin)
 		&& !empty($php_self))
 	{
 		if (empty($admin['full_url'])) {
-			$admin_script_dir = substr(urlPath(dirname($php_self)), 1);
+			$admin_script_dir = utf8_substr(urlPath(dirname($php_self)), 1);
 			$admin['full_url'] = $admin_script_dir.'/'.$admin['script_file'];
 		}
-		$admin_caption_dir = substr(urlPath($caption_path), 1); // No leading '.'  
+		$admin_caption_dir = utf8_substr(urlPath($caption_path), 1); // No leading '.'  
 		$admin_img = rawurlencode($reqd_image['file']);
 		$str = <<<EOT
 \n      {$admin['before_link']}<a href="{$admin['full_url']}?op=details&amp;D=$admin_caption_dir&amp;F=$admin_img.txt&amp;R=Qdig"
@@ -2975,10 +2975,10 @@ if ($keep_params == TRUE) {
 if (!empty($qdig_files)) {
 	$cnvrtd_files_root = cleanPath("$qdig_files/$convrtd_subdir").'/';
 	$captions_root = cleanPath("$qdig_files/$caption_subdir").'/';
-	$qdig_files   = substr(cleanPath($qdig_files), 2);
-	$chroot_dir   = substr(cleanPath($chroot_dir), 2);
-	$qdf_parts    = explode('/', $qdig_files);
-	$chroot_parts = explode('/', $chroot_dir);
+	$qdig_files   = utf8_substr(cleanPath($qdig_files), 2);
+	$chroot_dir   = utf8_substr(cleanPath($chroot_dir), 2);
+	$qdf_parts    = utf8_explode('/', $qdig_files);
+	$chroot_parts = utf8_explode('/', $chroot_dir);
 	foreach($qdf_parts as $i => $qdf_part) {
 		if (@$chroot_parts[$i] == $qdf_part) { continue; }
 		$qdig_files_topdir = $qdf_part;
@@ -3047,8 +3047,8 @@ if ($convert_magick == TRUE && $convert_GD == TRUE) {
 * Get the array of image filenames.
 */
 // Exclude background images.
-$excl_imgs[] = end($logo_arrray = explode('/', $header['css_logo_url']));
-$excl_imgs[] = end($bg_img_array = explode('/', $header['css_bg_img_url']));
+$excl_imgs[] = end($logo_arrray = utf8_explode('/', $header['css_logo_url']));
+$excl_imgs[] = end($bg_img_array = utf8_explode('/', $header['css_bg_img_url']));
 $imgs = getImageFilenames($pwd);
 
 /**
@@ -3079,7 +3079,7 @@ if ($check_security == TRUE
 	$path = @$base_dir.cleanPath($qdig_files).'/';
 	$warning_fn = $path.'Security_Check_File--Safe_To_Delete';
 	$dperms = decoct(fileperms($path)) % 10000;
-	$wperms = substr($dperms, - 1); // world perms
+	$wperms = utf8_substr($dperms, - 1); // world perms
 	if (@is_dir($cnvrt_path)
 		&& ($touch_captions == FALSE || @is_dir($caption_path)))
 	{
@@ -3636,7 +3636,7 @@ function writeData($ind=1) {
 	if (!empty($thumbs_msg) || !empty($resize_msg) || !empty($diag_mesgs)) {
 		if (!empty($diag_mesgs)){
 			$mtime = microtime();
-			$mtime = explode(" ",$mtime);
+			$mtime = utf8_explode(" ",$mtime);
 			$end_time = $mtime[1] + $mtime[0];
 			$exec_time = round(($end_time - $start_time), 3) * 1000;
 			$max_time = ini_get("max_execution_time");

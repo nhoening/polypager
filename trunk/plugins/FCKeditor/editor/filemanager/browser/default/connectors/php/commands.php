@@ -168,8 +168,8 @@ function FileUpload( $resourceType, $currentFolder )
 		$sOriginalFileName = $sFileName ;
 
 		// Get the extension.
-		$sExtension = substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
-		$sExtension = strtolower( $sExtension ) ;
+		$sExtension = utf8_substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
+		$sExtension = utf8_strtolower( $sExtension ) ;
 
 		$arAllowed	= $Config['AllowedExtensions'][$resourceType] ;
 		$arDenied	= $Config['DeniedExtensions'][$resourceType] ;
@@ -210,7 +210,7 @@ function FileUpload( $resourceType, $currentFolder )
 		$sErrorNumber = '202' ;
 
 	echo '<script type="text/javascript">' ;
-	echo 'window.parent.frames["frmUpload"].OnUploadCompleted(' . $sErrorNumber . ',"' . str_replace( '"', '\\"', $sFileName ) . '") ;' ;
+	echo 'window.parent.frames["frmUpload"].OnUploadCompleted(' . $sErrorNumber . ',"' . utf8_str_replace( '"', '\\"', $sFileName ) . '") ;' ;
 	echo '</script>' ;
 
 	exit ;

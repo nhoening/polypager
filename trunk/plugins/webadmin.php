@@ -192,7 +192,7 @@ if (!function_exists('lstat')) {
 $delim = DIRECTORY_SEPARATOR;
 
 if (function_exists('php_uname')) {
-	$win = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? true : false;
+	$win = (strtoupper(utf8_substr(PHP_OS, 0, 3)) === 'WIN') ? true : false;
 } else {
 	$win = ($delim == '\\') ? true : false;
 }
@@ -254,7 +254,7 @@ if (sizeof($files) == 0) $action = ''; else $file = reset($files);
 
 if ($lang == 'auto') {
 	if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER) && utf8_strlen($_SERVER['HTTP_ACCEPT_LANGUAGE']) >= 2) {
-		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+		$lang = utf8_substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 	} else {
 		$lang = 'en';
 	}
@@ -284,7 +284,7 @@ if (!empty($_SERVER['SCRIPT_NAME'])) {
 }
 
 if (!empty($_SERVER['SERVER_SOFTWARE'])) {
-	if (strtolower(substr($_SERVER['SERVER_SOFTWARE'], 0, 6)) == 'apache') {
+	if (utf8_strtolower(utf8_substr($_SERVER['SERVER_SOFTWARE'], 0, 6)) == 'apache') {
 		$apache = true;
 	} else {
 		$apache = false;
@@ -303,7 +303,7 @@ case 'view':
 		ob_start();
 		highlight_file($file);
 		$src = ereg_replace('<font color="([^"]*)">', '<span style="color: \1">', ob_get_contents());
-		$src = str_replace(array('</font>', "\r", "\n"), array('</span>', '', ''), $src);
+		$src = utf8_str_replace(array('</font>', "\r", "\n"), array('</span>', '', ''), $src);
 		ob_end_clean();
 
 		html_header();
@@ -513,7 +513,7 @@ case 'rename':
 	<input type="hidden" name="dir" value="' . html($directory) . '" />
 	<b>' . word('rename_file') . '</b>
 	<p>' . html($file) . '</p>
-	<b>' . substr($file, 0, utf8_strlen($file) - utf8_strlen($name)) . '</b>
+	<b>' . utf8_substr($file, 0, utf8_strlen($file) - utf8_strlen($name)) . '</b>
 	<input type="text" name="destination" size="' . textfieldsize($name) . '" value="' . html($name) . '" />
 	<hr />
 	<input type="submit" value="' . word('rename') . '" />
@@ -543,7 +543,7 @@ case 'move':
 		$success = array();
 
 		foreach ($files as $file) {
-			$filename = substr($file, utf8_strlen($directory));
+			$filename = utf8_substr($file, utf8_strlen($directory));
 			$d = $dest . $filename;
 			if (!@file_exists($d) && @rename($file, $d)) {
 				$success[] = $file;
@@ -616,7 +616,7 @@ case 'copy':
 			$success = array();
 
 			foreach ($files as $file) {
-				$filename = substr($file, utf8_strlen($directory));
+				$filename = utf8_substr($file, utf8_strlen($directory));
 				$d = addslash($dest) . $filename;
 				if (!@is_dir($file) && !@file_exists($d) && @copy($file, $d)) {
 					$success[] = $file;
@@ -693,7 +693,7 @@ case 'create_symlink':
 
 		$dest = relative2absolute($_POST['destination'], $directory);
 
-		if (substr($dest, -1, 1) == $delim) $dest .= basename($file);
+		if (utf8_substr($dest, -1, 1) == $delim) $dest .= basename($file);
 
 		if (!empty($_POST['relative'])) $file = absolute2relative(addslash(dirname($dest)), $file);
 
@@ -746,7 +746,7 @@ case 'edit':
 
 	if (!empty($_POST['save'])) {
 
-		$content = str_replace("\r\n", "\n", $_POST['content']);
+		$content = utf8_str_replace("\r\n", "\n", $_POST['content']);
 
 		if (($f = @fopen($file, 'w')) && @fwrite($f, $content) !== false && @fclose($f)) {
 			listing_page(notice('saved', $file));
@@ -861,7 +861,7 @@ function getlist ($directory) {
 	
 	
 	//echo('<div>$directory is: '.$directory.'</div>');
-	if ($d = @opendir($directory) ){ //&& !in_array($directory,explode(',',$forbidden_dirs))) {
+	if ($d = @opendir($directory) ){ //&& !in_array($directory,utf8_explode(',',$forbidden_dirs))) {
 
 		while (($filename = @readdir($d)) !== false) {
 			//nh: 	this conditions were added by me to show only one file
@@ -879,14 +879,14 @@ function getlist ($directory) {
 			$dpath = $_SERVER['DOCUMENT_ROOT'];
 			$pfdr = getPathFromDocRoot();
 			if ($pfdr!="/")$dpath.=$pfdr;
-			if ($filename==".." && substr($directory,-1*utf8_strlen($dpath)) == $dpath) $listit = false;
+			if ($filename==".." && utf8_substr($directory,-1*utf8_strlen($dpath)) == $dpath) $listit = false;
 
 			// now we're making sure that all the "good" stuff will be shown...
 			foreach($good_paths as $g)
 				if (ereg('/'.$filename.'/',$g)) {	//if file is in good path...
 					//AND also the start of the good path has yet been travelled...
-					if (""!=substr($g,0,utf8_strpos($g,$filename)))
-						if(ereg(substr($g,0,utf8_strpos($g,$filename)), $directory))	
+					if (""!=utf8_substr($g,0,utf8_strpos($g,$filename)))
+						if(ereg(utf8_substr($g,0,utf8_strpos($g,$filename)), $directory))	
 							$listit = true;
 				}
 			foreach($good_files as $g)
@@ -1109,7 +1109,7 @@ function del ($file) {
 function addslash ($directory) {
 	global $delim;
 
-	if (substr($directory, -1, 1) != $delim) {
+	if (utf8_substr($directory, -1, 1) != $delim) {
 		return $directory . $delim;
 	} else {
 		return $directory;
@@ -1131,9 +1131,9 @@ function path_is_relative ($path) {
 	global $win;
 
 	if ($win) {
-		return (substr($path, 1, 1) != ':');
+		return (utf8_substr($path, 1, 1) != ':');
 	} else {
-		return (substr($path, 0, 1) != '/');
+		return (utf8_substr($path, 0, 1) != '/');
 	}
 
 }
@@ -1143,12 +1143,12 @@ function absolute2relative ($directory, $target) {
 
 	$path = '';
 	while ($directory != $target) {
-		if ($directory == substr($target, 0, utf8_strlen($directory))) {
-			$path .= substr($target, utf8_strlen($directory));
+		if ($directory == utf8_substr($target, 0, utf8_strlen($directory))) {
+			$path .= utf8_substr($target, utf8_strlen($directory));
 			break;
 		} else {
 			$path .= '..' . $delim;
-			$directory = substr($directory, 0, strrpos(substr($directory, 0, -1), $delim) + 1);
+			$directory = utf8_substr($directory, 0, strrpos(utf8_substr($directory, 0, -1), $delim) + 1);
 		}
 	}
 	if ($path == '') $path = '.';
@@ -1176,7 +1176,7 @@ function simplify_path ($path) {
 	}
 
 	while (utf8_strpos($path, $pattern) !== false) {
-		$path = str_replace($pattern, $delim, $path);
+		$path = utf8_str_replace($pattern, $delim, $path);
 	}
 
 	$e = addslashes($delim);
@@ -1203,12 +1203,12 @@ function human_filesize ($filesize) {
 	$filesize = round($filesize, 3 - utf8_strpos($filesize, '.'));
 
 	if (utf8_strpos($filesize, '.') !== false) {
-		while (in_array(substr($filesize, -1, 1), array('0', '.'))) {
-			$filesize = substr($filesize, 0, utf8_strlen($filesize) - 1);
+		while (in_array(utf8_substr($filesize, -1, 1), array('0', '.'))) {
+			$filesize = utf8_substr($filesize, 0, utf8_strlen($filesize) - 1);
 		}
 	}
 
-	$suffix = (($n == 0) ? '' : substr($suffices, $n - 1, 1));
+	$suffix = (($n == 0) ? '' : utf8_substr($suffices, $n - 1, 1));
 
 	return $filesize . " {$suffix}B";
 
@@ -1329,7 +1329,7 @@ function listing ($list) {
 
 		} else {
 
-			if (substr($file['filename'], 0, 1) == '.') {
+			if (utf8_substr($file['filename'], 0, 1) == '.') {
 				echo '<img src="' . $self . '?image=hidden_file" alt="hidden file" /> ';
 			} else {
 				echo '<img src="' . $self . '?image=file" alt="file" /> ';
@@ -1547,7 +1547,7 @@ function edit ($file) {
 	}
 	if (!empty($_POST['basic_auth'])) {
 		if ($win) {
-			$authfile = str_replace('\\', '/', $directory) . $htpasswd;
+			$authfile = utf8_str_replace('\\', '/', $directory) . $htpasswd;
 		} else {
 			$authfile = $directory . $htpasswd;
 		}
@@ -1653,7 +1653,7 @@ function phrase ($phrase, $arguments) {
 
 	$replace = array('{' => '<pre>', '}' =>'</pre>', '[' => '<b>', ']' => '</b>');
 
-	return str_replace($search, $arguments, str_replace(array_keys($replace), $replace, nl2br(html($words[$phrase]))));
+	return utf8_str_replace($search, $arguments, utf8_str_replace(array_keys($replace), $replace, nl2br(html($words[$phrase]))));
 
 }
 

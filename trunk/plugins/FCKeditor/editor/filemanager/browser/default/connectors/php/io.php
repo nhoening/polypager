@@ -28,7 +28,7 @@ function GetUrlFromPath( $resourceType, $folderPath )
 
 function RemoveExtension( $fileName )
 {
-	return substr( $fileName, 0, strrpos( $fileName, '.' ) ) ;
+	return utf8_substr( $fileName, 0, strrpos( $fileName, '.' ) ) ;
 }
 
 function ServerMapFolder( $resourceType, $folderPath )
@@ -90,8 +90,8 @@ function GetRootPath()
 	$sRealPath = realpath( './' ) ;
 
 	$sSelfPath = $_SERVER['PHP_SELF'] ;
-	$sSelfPath = substr( $sSelfPath, 0, strrpos( $sSelfPath, '/' ) ) ;
+	$sSelfPath = utf8_substr( $sSelfPath, 0, strrpos( $sSelfPath, '/' ) ) ;
 
-	return substr( $sRealPath, 0, utf8_strlen( $sRealPath ) - utf8_strlen( $sSelfPath ) ) ;
+	return utf8_substr( $sRealPath, 0, utf8_strlen( $sRealPath ) - utf8_strlen( $sSelfPath ) ) ;
 }
 ?>

@@ -29,7 +29,7 @@
 	* admin_list()
 	*/
 	if ( !defined('FILE_SEPARATOR') ) {
-		define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
+		define('FILE_SEPARATOR', ( utf8_substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 	}
 	
 	/* --------------- show all options  ------------ */
@@ -67,6 +67,12 @@
 		return $failed;
 	}
 	
+    function getMySQLCharsetter() {
+        $client_api = utf8_explode('.', mysql_get_server_info()); 
+		if ($client_api[0] >= 5) return " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"; //CHARSET=utf8"
+        else return "";
+    }
+    
 	/* creates the Systable(s) PolyPager needs to work
 		returns a string containing SQL errors
 		@param the MySQL link*/
@@ -74,9 +80,7 @@
 		global $debug;
         
 		$link = getDBLink();
-        $client_api = explode('.', mysql_get_server_info()); 
-		if ($client_api[0] >= 5) $charsetter = " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"; //CHARSET=utf8"
-        else $charsetter = "";
+        $charsetter = getMySQLCharsetter();
         
         if ($debug) echo("create_sys_Tables on api: ".$client_api[0]);
         
@@ -268,6 +272,7 @@
 	function executeTemplate($template_name, $page_name) {
 		global $debug;
 		$link = getDBLink();
+        $charsetter = getMySQLCharsetter();
 		if ($page_name == "") return __('you should provide a page name!');
 		$shuffpp = str_shuffle('polypager'); // this helps that we most likely don't create tables twice
 		if ($template_name == "") return __('there is no template provided!');
@@ -292,23 +297,23 @@
 		}
 		else if($template_name == "blog") {
 			//first the actual table
-			$query = "CREATE TABLE `".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."` (
+			$query = "CREATE TABLE `".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."` (
 						  `id` bigint(20) NOT NULL auto_increment,
 						  `title` varchar(160) NOT NULL default '',
-						  `bla` blob NOT NULL,
+						  `bla` text NOT NULL,
 						  `inputdate` datetime NOT NULL default '0000-00-00 00:00:00',
 						  `lastedited` date default NULL,
 						  `publish` tinyint(1) NOT NULL default '1',
 						  PRIMARY KEY  (`id`),
 						  KEY `publish` (`publish`)
-						) TYPE=MyISAM;";
+						) ENGINE=MyISAM $charsetter;";
 			$res = mysql_query($query, $link);
 			$fehler_nr = $fehler_nr.mysql_errno($link);
 			$fehler_text = $fehler_text.mysql_error($link);
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `hide_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
+					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."', 1, 0, 1, 1, 1, 0, '', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
 				$fehler_text = $fehler_text.mysql_error($link);
@@ -317,16 +322,16 @@
 		}
 		else if($template_name == "faq") {
 			//first the actual table
-			$query = "CREATE TABLE `".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."` (
+			$query = "CREATE TABLE `".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."` (
 						  `id` int(12) NOT NULL auto_increment,
 						  `inputdate` datetime NOT NULL default '0000-00-00 00:00:00',
 						  `topic` varchar(200) NOT NULL default '',
 						  `question` varchar(255) NOT NULL default '',
-						  `answer` blob NOT NULL,
+						  `answer` text NOT NULL,
 						  PRIMARY KEY  (`id`),
 						  KEY `topic` (`topic`),
 						  KEY `inputdate` (`inputdate`)
-						) TYPE=MyISAM ;";
+						) ENGINE=MyISAM $charsetter;";
 			$res = mysql_query($query, $link);
 			$fehler_nr = $fehler_nr.mysql_errno($link);
 			$fehler_text = $fehler_text.mysql_error($link);
@@ -335,7 +340,7 @@
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, ``, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-				VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom($page_name."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
+				VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, '', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
 				$res = mysql_query($query, $link);
 				$fehler_nr = $fehler_nr.mysql_errno($link);
 				$fehler_text = $fehler_text.mysql_error($link);
@@ -597,7 +602,7 @@
 				if (isMultipage($params["page"]) and $params["max"] == "") { //no other way... db is empty
 					echo($indent.'	<ul id="menu">'."\n");
 					echo($indent.'		<div class="sys_msg">'.__('There is no entry in the database yet...').'</div>'."\n");
-					echo($indent.'		<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
+					echo($indent.'		<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
 					echo($indent.'	</ul><div class="menuend"></div>'."\n");
 				} else {
 				

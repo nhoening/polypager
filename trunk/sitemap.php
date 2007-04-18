@@ -34,8 +34,8 @@ $link = getDBLink();
 
 
 //get the path to this URI
-$doc_root_folders = explode("/", $_SERVER['DOCUMENT_ROOT']);
-$cwd__folders = explode("/", getcwd());
+$doc_root_folders = utf8_explode("/", $_SERVER['DOCUMENT_ROOT']);
+$cwd__folders = utf8_explode("/", getcwd());
 //the difference between those is the path from doc root to the folder where
 //all files for this URI reside
 $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));
@@ -73,8 +73,8 @@ foreach ($pages as $p) {
             echo('	<url>'."\n");
             echo('		<loc>http://'.$url.'?'.urlencode($p).'&amp;nr='.$row["theID"].'</loc>'."\n");
             //prefer last edited date over input date
-            if ($row["theDate2"]!="" and $row["theDate2"]!="NULL" and substr($row['theDate2'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate2"])).'</lastmod>'."\n");
-            else if ($row["theDate1"]!="" and$row["theDate1"]!="NULL" and substr($row['theDate1'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate1"])).'</lastmod>'."\n");
+            if ($row["theDate2"]!="" and $row["theDate2"]!="NULL" and utf8_substr($row['theDate2'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate2"])).'</lastmod>'."\n");
+            else if ($row["theDate1"]!="" and$row["theDate1"]!="NULL" and utf8_substr($row['theDate1'],0,10) != '0000-00-00') echo('		<lastmod>'.date('Y-m-d',strtotime($row["theDate1"])).'</lastmod>'."\n");
             echo('		<changefreq>weekly</changefreq>'."\n");
             echo('		<priority>'.prioH($p,$entity["publish_field"],$row["pub"]).'</priority>'."\n");
             echo('	</url>'."\n");

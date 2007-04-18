@@ -35,7 +35,7 @@ include('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SE
 function SendResults( $errorNumber, $fileUrl = '', $fileName = '', $customMsg = '' )
 {
 	echo '<script type="text/javascript">' ;
-	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . str_replace( '"', '\\"', $fileUrl ) . '","' . str_replace( '"', '\\"', $fileName ) . '", "' . str_replace( '"', '\\"', $customMsg ) . '") ;' ;
+	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . utf8_str_replace( '"', '\\"', $fileUrl ) . '","' . utf8_str_replace( '"', '\\"', $fileName ) . '", "' . utf8_str_replace( '"', '\\"', $customMsg ) . '") ;' ;
 	echo '</script>' ;
 	exit ;
 }
@@ -61,8 +61,8 @@ if ( $Config['ForceSingleExtension'] )
 $sOriginalFileName = $sFileName ;
 
 // Get the extension.
-$sExtension = substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
-$sExtension = strtolower( $sExtension ) ;
+$sExtension = utf8_substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
+$sExtension = utf8_strtolower( $sExtension ) ;
 
 // The the file type (from the QueryString, by default 'File').
 $sType = isset( $_GET['Type'] ) ? $_GET['Type'] : 'File' ;
