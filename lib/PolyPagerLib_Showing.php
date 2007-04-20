@@ -552,16 +552,6 @@
 		return $queries;
 	}
 	
-	/* preserve Markup for text fields
-		the consensus here is that &...; entities are going
-		to stay, but < and > are preserved (same as Firefox tab titles) 
-	*/
-	function preserveMarkup($content){
-		$content = utf8_str_replace(">", "&gt;", $content);
-		$content = utf8_str_replace("<", "&lt;", $content);
-		return $content;
-	}
-	
     
     /*  Write a little search box that performs a sitewide keyword search
         In addition, it displays links to searches for the provides keywords
@@ -1246,8 +1236,11 @@
 	 * 
 	 * @param comment the entered text
 	 * @param time the time it took in milliseconds
+     * @param idontwantnogarbage the content of a hidden field that should not be ssen by humans (but by machines)
 	 */
-	function checkComment($comment, $time) {
+	function checkComment($comment, $time, $idontwantnogarbage) {
+        if ($idontwantnogarbage != "")
+            return __('Sorry, your comment has not been entered due to our internal spam filtering. Please try again.').'<a href="javascript:back()">Go back.</a>';
 		if ($time < 1000 and $time != '') 
 			return __('wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.');
 		$stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');

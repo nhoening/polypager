@@ -61,7 +61,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 		$params = getEditParameters();
 		
 		//let's first check if the comment was ok
-		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"]);
+		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"], $params["values"]["_idontwantnogarbage_"]);
 		if ($msg == "") {	//seems ok
 			if ($debug) {
 				echo('<div class="debug">Page: '.$params["page"].'</div>');
