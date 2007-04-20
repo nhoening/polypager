@@ -174,7 +174,18 @@ function buildValidMySQLTableNameFrom($text){
 	return utf8_substr($text,0,55); //there is a MySQL upper limit for length of a table name 
 }
 
-
+	
+/* preserve Markup for text fields
+    the consensus here is that &...; entities are going
+    to stay, but < and > are preserved (same as Firefox tab titles) 
+*/
+function preserveMarkup($content){
+    $content = utf8_str_replace("&", "&amp;", $content);
+    $content = utf8_str_replace(">", "&gt;", $content);
+    $content = utf8_str_replace("<", "&lt;", $content);
+    return $content;
+}
+    
 /* import a PHP/HTML template.
    If the skin cannot be found, we default back to default
    remember that templates expect writeData() !

@@ -279,7 +279,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     }
     $sys_info = getSysInfo();
 	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
-	
+	echo($indent.'		<input name="_idontwantnogarbage_" id="_idontwantnogarbage_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
 	// sort according to formgroups

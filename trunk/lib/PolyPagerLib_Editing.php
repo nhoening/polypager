@@ -134,6 +134,7 @@ function getEditParameters() {
 		if($params["feed"] == "on"){$params["feed"] = "1";}
 		else{$params["feed"] = "0";}
 		
+        
 		//-----------checking Parameters ---------------------------------
 		if ($params["cmd"] != "") {
 	
@@ -186,6 +187,10 @@ function getEditParameters() {
                 }
             }
             
+            //-------------------------anti spam trap field
+            $params["values"]["_idontwantnogarbage_"] = $_POST["_idontwantnogarbage_"];
+            if ($params["values"]["_idontwantnogarbage_"] == "") {$params["values"]["_idontwantnogarbage_"] = $_GET["_idontwantnogarbage_"];}
+        
 			//those commands need an entry number
 			if (($params["cmd"] == "show" or $params["cmd"] == "edit" or $params["cmd"] == "delete"
 					or ($params["page"] == "_sys_intros" and $params["cmd"] == "entry"))

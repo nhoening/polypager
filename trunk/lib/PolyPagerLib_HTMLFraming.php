@@ -229,9 +229,9 @@
 					}
                     $theLink = "?".urlencode($p["name"]);
 					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
-						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.preserveMarkup($p["name"])."</a></li>\n");
 					} else {
-						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.preserveMarkup($p["name"])."</a></li>\n");
 					}
 				}
 			}
@@ -289,7 +289,7 @@
 						if ($a[$x] != "") {
 							//test if THIS group was selected
 							if ($a[$x] == $params["group"]) $classAtt="here"; else $classAtt="not_here";
-							echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group='.urlencode($a[$x]).'">'.$a[$x].'</a></li>'."\n");
+							echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group='.urlencode($a[$x]).'">'.preserveMarkup($a[$x]).'</a></li>'."\n");
 						}
 					}
 					if ($x==0) {	//ul yhould not be empty - that's not valid'
