@@ -44,9 +44,9 @@ $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders))
 
 echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
-echo('		<title><![CDATA['.$sys_info["title"].']]></title>'."\n");
+echo('		<title><![CDATA['.urlencode($sys_info["title"]).']]></title>'."\n");
 echo('		<link>http://'.$url.'</link>'."\n");
-echo('		<description><![CDATA[a website by '.$sys_info["author"].']]></description>'."\n");
+echo('		<description><![CDATA[a website by '.urlencode($sys_info["author"]).']]></description>'."\n");
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
 echo('		<generator>PolyPager '.$version.'</generator>'."\n");
 
