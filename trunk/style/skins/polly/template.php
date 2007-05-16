@@ -18,7 +18,7 @@
 <html>
 <?php writeHeader();?>
 	<body>
-        <div id="top"></div></a></div>
+        <div id="top"></div>
         <div id="container">
 			<div id="header">
 <?php writeTitle();?>
@@ -43,6 +43,6 @@
 			</div>
 <?php writeFooter();?>
         </div>
-        <div id="bottom">&nbsp;</div>
+        <div id="bottom"></div>
 	</body>
 </html>
