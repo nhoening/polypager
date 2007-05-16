@@ -35,6 +35,27 @@
 +----------------------------------------------------------------------+
 CVS: $Id: index.php,v 1.150 2006/06/24 20:04:30 haganfox Exp $
 */
+
+// ----------- start PolyPager code ------------
+
+// --------------------------------------- Inclusions
+// PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
+if ( !defined('PATH_SEPARATOR') ) {
+    define('PATH_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? ';' : ':');
+}
+// FILE SEPARATOR
+if ( !defined('FILE_SEPARATOR') ) {
+    define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
+}
+set_include_path(get_include_path() . PATH_SEPARATOR . '..'. FILE_SEPARATOR . '..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
+require_once("PolyPagerLib_HTMLFraming.php");
+require_once("PolyPagerLib_AdminIndex.php");
+require_once("PolyPagerLib_Utils.php");
+require_once("PolyPagerLib_Showing.php");
+require_once("PolyPagerLib_Sidepane.php");
+
+// ---------------------------------------
+
 $qdig_version = '1.2.9.3';
 $mtime = microtime();
 $mtime = utf8_explode(" ",$mtime);
@@ -3427,23 +3448,6 @@ if ($diag_messages == TRUE) {
 
 // ----------- start PolyPager code ------------
 
-// --------------------------------------- Inclusions
-// PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
-if ( !defined('PATH_SEPARATOR') ) {
-    define('PATH_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? ';' : ':');
-}
-// FILE SEPARATOR
-if ( !defined('FILE_SEPARATOR') ) {
-    define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
-}
-set_include_path(get_include_path() . PATH_SEPARATOR . '..'. FILE_SEPARATOR . '..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
-require_once("PolyPagerLib_HTMLFraming.php");
-require_once("PolyPagerLib_AdminIndex.php");
-require_once("PolyPagerLib_Utils.php");
-require_once("PolyPagerLib_Showing.php");
-require_once("PolyPagerLib_Sidepane.php");
-
-// ---------------------------------------
 
 $sys_info = getSysInfo();
 
