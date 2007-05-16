@@ -16,8 +16,8 @@ else
     
     # first extract skins
     cd style/skins
-	zip -r ../../../dist/$1/picswap.zip picswap
-    zip -r ../../../dist/$1/default.zip default
+    zip -r ../../../dist/$1/picswap.zip picswap
+    zip -r ../../../dist/$1/polly.zip polly
     zip -r ../../../dist/$1/fscreen.zip fscreen
     # keep only default
     rm -rf picswap
