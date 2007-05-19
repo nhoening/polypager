@@ -68,6 +68,10 @@
 				$page_info = getPageInfo($page);
                 $query = "SELECT count(*) AS cnt FROM ".$entity["tablename"];
                 if (isSinglePage($page)) $query .= " WHERE pagename = '".$page."'";
+                if ($entity["publish_field"] != "") {
+                    if (isSinglePage($page)) $query .= " AND "; else $query .= " WHERE ";
+                    $query .= $entity["publish_field"]." != 0";
+                }
                 $res = pp_run_query($query);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
                 $cnt = $row["cnt"];
@@ -80,11 +84,9 @@
 	/*
 		returns an Array of Parameters for showing:
 		["page"=>""), "cmd"=>""), "nr"=>""), "step"=>""), "group"=>""]
-		I know that PHP stores the params in variables with the name accordingly,
-		but I do not have control over all those variable names for some depend
-		on configurated db field names. So I go this way to store them.
+
 		For SINGLEPAGES, we make only one PHP page, and they will have only one 
-			parameter, "page".
+		parameter, "page".
 			
 			For MULTIPAGES, we need some params more. 
 			First, we need one for commands (parameter "cmd"). Commands are: 
