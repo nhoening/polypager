@@ -98,6 +98,7 @@
 
 		if ($sys_info["feed_amount"] > 0) {
 			echo($indent.'	<link rel="alternate" type="application/rss+xml" title="'.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
+            echo($indent.'	<link rel="alternate" type="application/rss+xml" title="Comments on '.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
 		}
 		echo('	</head>'."\n");
 	}

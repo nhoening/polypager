@@ -161,7 +161,7 @@ function getTranslation($text) {
 ' to see all there are.' =>
 	', um alle zu sehen.',
 
-/*	lib/GempuxLib_Editing.php	*/
+/*	lib/PolyPagerLib_Editing.php	*/
 'Error: command is %s, but no id is given'	=> 'Fehler: Kommando ist %s, aber es wurde keine id angegeben.',
 'heading:'	=> '&Uuml;berschrift:',
 'Your Text:'	=> 'Ihr Text:',
@@ -177,7 +177,7 @@ function getTranslation($text) {
 'Save'	=> 'Speichern',
 'The record with %s = %s does not exist.'	=> 'Ein Datensatz mit %s = %s konnte nicht gefunden werden.',
 
-/*	lib/GempuxLib_HTMLFraming.php	*/
+/*	lib/PolyPagerLib_HTMLFraming.php	*/
 'Administration Page'	=> 'Administration',
 'show all %s-pages'	=> 'zeige alle %s-Seiten',
 'show this page'	=> 'zeige diese Seite',
@@ -187,7 +187,7 @@ function getTranslation($text) {
 	=> 'PolyPagers Datenbank scheint noch nicht konfiguriert zu sein. Durch das Anklicken dieses Buttons k&ouml;nnen Sie sicherstellen, dass alle Systemtabellen, die PolyPager zum Arbeiten ben&ouml;tigt, erstellt werden. Beachten Sie, dass dies nicht die Tabellen beinhaltet, die die Daten f&uuml;r Ihre Multipages beinhalten.',
 'all' => 'alle',
 
-/*	lib/GempuxLib_Sidepane.php	*/
+/*	lib/PolyPagerLib_Sidepane.php	*/
 'the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.'
 	=> 'der RSS-Feed f&uuml;r diese Seite. &lt;br/&gt;Das bedeutet, dass Sie unter diesem Link die neuesten Eintr&auml;ge dieser Website sehen. Der Link selbst f&uuml;hrt zur XML-Ansicht. Wenn Sie wollen, k&ouml;nnen Sie die URL dieses Links Ihrem News Feed Programm hinzuf&uuml;gen',
 'from the page' => 'von der Seite',
@@ -195,7 +195,7 @@ function getTranslation($text) {
 'Admin name and password are set to "admin". Have fun!' =>
 	'Administratorname und -Kennwort sind auf "admin" eingestellt. Viel Spass!',
 
-/*	lib/GempuxLib_HTMLForms.php	*/
+/*	lib/PolyPagerLib_HTMLForms.php	*/
 'If you tick this checkbox before hitting the save button, this entry will be fed to the list of latest entries and the RSS.' =>
 	'Wenn Sie diese Checkbox aktivieren, wird dieser Eintrag in der Feed-Liste und im RSS zu sehen sein.',
 ' (If you do not publish this entry, it will be invisible there, too)' => 
@@ -206,7 +206,7 @@ function getTranslation($text) {
 '(show)' => '(zeigen)',
 '(hide)' => '(verstecken)',
 
-/*	lib/GempuxLib_Utils.php	*/
+/*	lib/PolyPagerLib_Utils.php	*/
 'the latest entries:'	=> 'Die neuesten Eintr&auml;ge:',
 'click to see this %s from %s'	=> 'klicken Sie hier, um diese(n) %s vom %s zu sehen.',
 'about this page'	=> '&Uuml;ber diese Seite',
@@ -281,7 +281,7 @@ function getTranslation($text) {
 'the group of this entry (you will find the groups in the specifications for this page). The standard group contains entries that are always shown.'
  => 'die Gruppe dieses Eintrags (Sie finden die Gruppen f&auml;r diese Seite in auf deren Konfigurationsseite). Die standard-Gruppe enth&auml;lt Eintr&auml;ge, die immer gezeigt werden.',
 
-/*	lib/GempuxLib_Showing.php	*/
+/*	lib/PolyPagerLib_Showing.php	*/
 'please do not use SQL Code here in your keyword search...'	=> 'bitte benutzen Sie keine SQL-Schl&uuml;sselw&ouml;rter in Ihrer Stichwortsuche',
 'Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search. Several keywords are implicitely connected by AND.'
 	=> 'Sie k&ouml;nnen hier nach Eintr&auml;gen suchen. Sie sehen verschiedene Optionen, die Ihnen helfen, Ihre Suche nach einem Eintrag dieser Seite zu spezifieren&lt;br/&gt; Klicken Sie auf das Symbol zur Linken der Option, um Sie in Ihrer Suche aufzunehemn bzw. sie auszuschliessen. Mehrere Schl&uuml;sselw&ouml;rter werden implizit mit UND verbunden.',
@@ -343,7 +343,11 @@ function getTranslation($text) {
 	'Bitte geben Sie eine gueltige email-Adresse an.',
 'please specify a valid URL here.' =>
 	'bitte geben Sie hier eine valide URL (Web-Adresse) an.',
-	
+
+/* rss.php */
+'Comments on ' => 'Kommentare auf ',
+
+
 /* formgroups*/
 'admin' => 'Admin',
 'metadata' => 'Metadaten',
