@@ -41,23 +41,24 @@ $cwd__folders = utf8_explode("/", getcwd());
 //the difference between those is the path from doc root to the folder where
 //all files for this URI reside
 $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));
+$base_url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
 
+    
 echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
-echo('		<title><![CDATA['.urlencode($sys_info["title"]).']]></title>'."\n");
-echo('		<link>http://'.$url.'</link>'."\n");
+if ($_GET["channel"] == "comments") {$title_prefix = "Comments on ";}
+echo('		<title><![CDATA['.$title_prefix.urlencode($sys_info["title"]).']]></title>'."\n");
+echo('		<link>http://'.urldecode($base_url).'</link>'."\n");
 echo('		<description><![CDATA[a website by '.urlencode($sys_info["author"]).']]></description>'."\n");
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
-echo('		<generator>PolyPager '.$version.'</generator>'."\n");
 
 $res = getFeed($sys_info["feed_amount"], $_GET["channel"] == "comments");
 
 for ($x=0; $x < count($res); $x++) {
 	$row = $res[$x];
-    
-    //now add to base URI
-    $url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
-    $url = 'http://'.$url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"];
+
+    //make URL
+    $url = 'http://'.$base_url.'?'.urlencode($row["thePage"]).'&amp;nr='.$row["theID"];
     if ($_GET["channel"] == "comments") $url .= '#comment'.$row["CommentID"];
 
 	echo('		<item>'."\n");
