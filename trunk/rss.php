@@ -46,8 +46,8 @@ $base_url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
     
 echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
-if ($_GET["channel"] == "comments") {$title_prefix = "Comments on ";}
-echo('		<title><![CDATA['.$title_prefix.urlencode($sys_info["title"]).']]></title>'."\n");
+if ($_GET["channel"] == "comments") {$title_prefix = __('Comments on ');}
+echo('		<title><![CDATA['.$title_prefix.$sys_info["title"].']]></title>'."\n");
 echo('		<link>http://'.urldecode($base_url).'</link>'."\n");
 echo('		<description><![CDATA[a website by '.urlencode($sys_info["author"]).']]></description>'."\n");
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
