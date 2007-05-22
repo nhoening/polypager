@@ -299,18 +299,21 @@ function getEditQuery($command, $theID) {
 		$x--;
 		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1); //remove comma
 
-		//some tables have a string as pk
-		//if ($entity["pk"] != "" and !isNumericType($entity["pk_type"])) $queryA[] = ", ".$entity["pk"];
+		
         
 		$queryA[] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]]) ) {
-				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time') {
-					$queryA[$x] = " convert('".$params["values"][$f["name"]]."' using utf8),";
-				} else {
-					$queryA[$x] = " convert(".$params["values"][$f["name"]]." using utf8),";
-				}
+				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time')
+                    $val = "'".$params["values"][$f["name"]]."'";
+                else $val = $params["values"][$f["name"]];
+                //for MySQL >= 5, convert to UTF-8
+                $client_api = explode('.', mysql_get_server_info()); 
+                if ($client_api[0] >= 5){
+                    $queryA[$x] = " convert(".$val." using utf8),";
+                }
+                else $queryA[$x] = " ".$val.",";
 				$x++;
 			}
 		}
