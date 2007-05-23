@@ -96,7 +96,7 @@
 					//if the calling script is not within admin/, we have some problems
 					//it shouldn't happen anyway, so this quickhack suffices for now
 					if(utf8_strpos($path, 'admin') == 0) {
-						echo('    <div class="sys_msg">'.__('you are not logged in!').'</div>');
+						echo('    <div class="sys_msg_admin">'.__('you are not logged in!').'</div>');
 					}else{
 						//display form
 						echo('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\n");
@@ -108,7 +108,7 @@
 						echo(' <body>'."\n");
 						echo('  <div id="container">'."\n");
 						echo('   <div id="data">'."\n");
-						echo('    <div class="sys_msg">'.__('you need to login to access this area').'</div>'."\n");
+						echo('    <div class="sys_msg_admin">'.__('you need to login to access this area').'</div>'."\n");
 						echo('    <form id="login_form" action="http://'.$hostname.($path == '/' ? '' : $path).'/auth.php" method="post">'."\n");
 						echo('     <label for="username">Username:</label><input type="text" name="username" />'."\n");
 						echo('     <label for="password">Password:</label><input type="password" name="password" />'."\n");

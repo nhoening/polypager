@@ -302,7 +302,7 @@ ol.myresponse
 	padding:10px;
 	background-color:#323232;
 }
-.sys_msg{
+.sys_msg, .sys_msg_admin{
 	border: 1px solid #6f3f3f;
 	padding:10px;
 	background-color:#623232;

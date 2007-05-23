@@ -186,7 +186,7 @@ function writeData($ind=5) {
             
             $num = mysql_num_rows($res[$params['page']]);
             if ($num > 0 and ($num < getMaxCount($params["page"] ))) {
-                echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&step=all">click</a>'.__(' to see all there are.').'</div>');
+                echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&step=all">Click</a>'.__(' to see all there are.').'</div>');
             }
             
 			echo($indent.'</div>'."\n");  //end of class "show"
