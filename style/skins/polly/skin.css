@@ -349,7 +349,7 @@ a.entry_title_link:hover{
 	margin-bottom:30px;
 }
 
-.sys_msg {
+.sys_msg, .sys_msg_admin {
     color: #aaa;
     border: 1px solid #84a0b9;
     padding: 5px;

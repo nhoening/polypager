@@ -53,16 +53,16 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 	//installation of database
 	if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
 		$error = create_sys_Tables($link);
-		$sys_msg = __('attempted to create sys tables... ');
-		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
-		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-		$sys_msg = $sys_msg."<br/>\n";
+		$sys_msg_admin = __('attempted to create sys tables... ');
+		if ($error != "") $sys_msg_admin = $sys_msg_admin.__('The dbms reported the following error: ').$error;
+		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
+		$sys_msg_admin = $sys_msg_admin."<br/>\n";
 		
 		/*
 		$error = chmod_dirs($link);
-		$sys_msg = $sys_msg.'__('attempted to chmod directories... ');
-		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
-		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
+		$sys_msg_admin = $sys_msg_admin.'__('attempted to chmod directories... ');
+		if ($error != "") $sys_msg_admin = $sys_msg_admin.__('The dbms reported the following error: ').$error;
+		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
 		*/
 	
 	}
@@ -70,15 +70,15 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 	//template creation
 	if ($_GET["template_name"] != "") {
 		$error = executeTemplate($_GET["template_name"], $_GET["page_name"]);
-		$sys_msg = $sys_msg.__('attempted to create a page by template... ');
-		if ($error != "") $sys_msg = $sys_msg.__('The dbms reported the following error: ').$error;
-		else $sys_msg = $sys_msg.__('The dbms reported no errors.');
-		$sys_msg = $sys_msg."<br/>\n";
+		$sys_msg_admin = $sys_msg_admin.__('attempted to create a page by template... ');
+		if ($error != "") $sys_msg_admin = $sys_msg_admin.__('The dbms reported the following error: ').$error;
+		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
+		$sys_msg_admin = $sys_msg_admin."<br/>\n";
 	}
 
 }else{
 	$title = __('unknown page').': '.$params["page"];
-	$sys_msg .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
+	$sys_msg_admin .= '<div class="sys_msg_admin">'.__('There is no known page specified.').'</div>'."\n";
 }
 $path_to_root_dir = "..";
 $title = "Admin Area";
@@ -88,7 +88,7 @@ $title = "Admin Area";
 function writeData($ind=5) {
 	$indent = translateIndent($ind);
 	global $params;
-	global $sys_msg;
+	global $sys_msg_admin;
 	global $error_msg_text;
 
     //error? write it and return
@@ -100,8 +100,8 @@ function writeData($ind=5) {
 	echo($indent.'<h1>Admin Area</h1>'."\n");
 	
 	//sys msg? write it 
-	if ($sys_msg != "") {
-		echo($indent.'<div class="sys_msg">'.$sys_msg.'</div>'."\n");
+	if ($sys_msg_admin != "") {
+		echo($indent.'<div class="sys_msg_admin">'.$sys_msg_admin.'</div>'."\n");
 	}
 	
 	if ($params["page"] == "" or isAKnownPage($params["page"])){

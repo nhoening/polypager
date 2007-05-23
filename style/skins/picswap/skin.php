@@ -388,12 +388,12 @@ h6 {
 .high {
 	background-color: #6ee;
 }
-.sys_msg {
+.sys_msg, .sys_msg_admin {
 	 color: #ff5107 !important;
 	 background-color: #eee !important;
 	 border: 2px solid #999 !important;
 }
-.sys_msg a{
+.sys_msg a, .sys_msg_admin a{
 	 color: #ff5107 !important;
 }
 #admin_options {

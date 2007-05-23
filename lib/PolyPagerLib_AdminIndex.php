@@ -38,7 +38,7 @@
 		
         $sys_info = getSysInfo();
         if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
-            echo('<div class="sys_msg">'.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</div>\n");
+            echo('<div class="sys_msg_admin">'.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</div>\n");
         }
     
 		echo($indent.'<div id="admin_options">'.__('Let\'s talk about...').'&nbsp;'."\n");
@@ -384,7 +384,7 @@
                         $res = mysql_query($query, getDBLink());
                         $fehler_nr .= mysql_errno(getDBLink());
                         $fehler_text .= mysql_error(getDBLink());
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_sections...</div>'); }
+                        if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_sections...</div>'); }
                     }
 			}
 			if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
@@ -396,7 +396,7 @@
                     $fehler_nr .= mysql_errno(getDBLink());
                     $fehler_text .= mysql_error(getDBLink());
                     if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_sys...</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_sys...</div>'); }
                 }
                 
                 //update comments
@@ -412,7 +412,7 @@
                     $fehler_nr .= mysql_errno(getDBLink());
                     $fehler_text .= mysql_error(getDBLink());
                     if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_comments...</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_comments...</div>'); }
                 }
                 
                 //update feed list
@@ -428,7 +428,7 @@
                     $fehler_nr .= mysql_errno(getDBLink());
                     $fehler_text .= mysql_error(getDBLink());
                     if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_feed...</div>'); }
                 }
                 
                 //update field list
@@ -444,7 +444,7 @@
                     $fehler_nr .= mysql_errno(getDBLink());
                     $fehler_text .= mysql_error(getDBLink());
                     if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_fields...</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_fields...</div>'); }
                 }
                 
                 //update foreign keys
@@ -460,7 +460,7 @@
                     $fehler_nr .= mysql_errno(getDBLink());
                     $fehler_text .= mysql_error(getDBLink());
                     if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_foreign keys...</div>'); }
+                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_foreign keys...</div>'); }
                 }
 			}
 		}
@@ -482,7 +482,7 @@
                 $fehler_nr .= mysql_errno(getDBLink());
                 $fehler_text .= mysql_error(getDBLink());
                 if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
-                if ($fehler_nr != 0) { echo('<div class="sys_msg">I could not update _sys_feed...</div>'); }
+                if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_feed...</div>'); }
             }
         }
 	}
@@ -505,7 +505,7 @@
 			if ($topic == 'content') {
 				$comment_help = __('view the comments list.');
 				$feed_help = __('view the feed list. delete here what you do not want in the feed (latest entries) list.');
-				echo($indent.'		<div class="sys_msg">'."\n");
+				echo($indent.'		<div class="sys_msg_admin">'."\n");
 				echo($indent.'			<a onmouseover="popup(\''.$comment_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="?_sys_comments">'.__('comments').'</a>&nbsp;|&nbsp;'."\n");
 				echo($indent.'			<a onmouseover="popup(\''.$feed_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()"  href="?_sys_feed">'.__('feeds').'</a>'."\n");
 				echo($indent.'		</div>'."\n");
@@ -525,7 +525,7 @@
 		} else if ($topic == 'pages') {
 			$link_text = __('a page template creates pages for you that fulfill some well-known function and is used often. So this might be useful for you. After you created the page, you can still edit its properties or delete it.');
 			echo($indent.'		<a id="templates_link"  onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleVisibility(\'template_msg\',\'templates_link\', \''.__('show templates').'\', \''.__('hide templates').'\');">'.__('show templates').'</a>&nbsp;|&nbsp;'."\n");
-			echo($indent.'		<span id="template_msg"  style="display:none;" class="sys_msg">'."\n");
+			echo($indent.'		<span id="template_msg"  style="display:none;" class="sys_msg_admin">'."\n");
 			echo($indent.'		'.__('new page named').' <input type="text" name="page_name" maxlength="30"="60" size="20"/> '."\n");
 			echo($indent.'		'.__('from template:')."\n");			
 			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()"><img src="../style/pics/help.gif"/></a>'."\n");
@@ -593,7 +593,7 @@
 				$error_nr = mysql_errno($link);
 				if ($error_nr != 0) {
 					$fehler_text = mysql_error($link);
-					$error_msg_text .= '<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
+					$error_msg_text .= '<div class="sys_msg_admin">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
 				}
 			}
 	
@@ -601,13 +601,13 @@
 				
 				if (isMultipage($params["page"]) and $params["max"] == "") { //no other way... db is empty
 					echo($indent.'	<ul id="menu">'."\n");
-					echo($indent.'		<div class="sys_msg">'.__('There is no entry in the database yet...').'</div>'."\n");
+					echo($indent.'		<div class="sys_msg_admin">'.__('There is no entry in the database yet...').'</div>'."\n");
 					echo($indent.'		<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
 					echo($indent.'	</ul><div class="menuend"></div>'."\n");
 				} else {
 				
 					//you could type in a too high number - senseless
-					if ($params["nr"] > $params["max"]) { $params["nr"] = $params["max"]; echo('<div class="sys_msg">'.__('the chosen number was too high - showing newest').'</div>');};
+					if ($params["nr"] > $params["max"]) { $params["nr"] = $params["max"]; echo('<div class="sys_msg_admin">'.__('the chosen number was too high - showing newest').'</div>');};
 					//-------------------------- end  ---------------------------------
 					
 					
