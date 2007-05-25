@@ -1,6 +1,4 @@
 <?
-    
-
 	// FILE SEPARATOR
 	if ( !defined('FILE_SEPARATOR') ) {
 		define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
@@ -37,6 +35,10 @@ FCKConfig.ToolbarSets["Basic"] = [
 	['Bold','Italic','-','OrderedList','UnorderedList']
 ] ;
 
+FCKConfig.ToolbarSets["PolyPager"] = [
+	['Source','-','Preview', 'Cut','Copy','Undo','Redo','-','Find','Replace','-','RemoveFormat','SpecialChar','Style','FontSize'],
+    ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','OrderedList','UnorderedList','-','Link','Unlink','Image']
+] ;
 
 
 

@@ -415,6 +415,12 @@ blockquote {
     color: #555;
 }
 
+.code{
+    color: blue;
+    border: 1px solid grey;
+    padding: 2px;
+    display:block;
+}
 /* -----------------end system styles ---------------------- */
 
 /* ------------------- predefined divs --------------------- */

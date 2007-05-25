@@ -465,7 +465,7 @@
                                         $a[] = " ) OR";
                                     }
 								}
-								$a[count($a)-1] = utf8_substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
+								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
 								$a[] = ")";
 							}
 						}
@@ -550,7 +550,7 @@
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
 			$queries[$p] = $theQuery;
 		}
-        //print_r($queries);
+        print_r($queries);
 		return $queries;
 	}
 	
