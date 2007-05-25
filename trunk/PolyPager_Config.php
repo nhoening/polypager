@@ -25,16 +25,17 @@ function getDBLink() {
 	global $pass;
 
 	if ($the_db_link == "") {
-		$text = "Welcome to PolyPager.<br/>Seeing this page proofs that PolyPager is working at the adress you typed in. <br/> However, the database is not connectable. <br/>Maybe it is not configured yet or the configuration does not fit. <br/>If you are the administrator of this page, please consult PolyPager_Config.php";
+        $text = "Welcome to PolyPager.<br/>Seeing this page proofs that PolyPager is working at the address you typed in. <br/> However, the database is not connectable. <br/>Maybe it is not configured yet or the configuration does not fit. <br/>If you are the administrator of this page, please consult PolyPager_Config.php";
 
-		// build connection to DBMS
-		$the_db_link = mysql_connect($host, $user, $pass) or die($text);
-
-		// now to the DB
-		mysql_select_db($db, $the_db_link) or die ($text);
+        // build connection to DBMS
+        $the_db_link = mysql_connect($host, $user, $pass) or die($text);
+        
+        // now to the DB
+        mysql_select_db($db, $the_db_link) or die ($text);
         mysql_query('SET CHARACTER SET utf8');
         mysql_query("SET SESSION collation_connection ='utf8_general_ci'");
-        mysql_query("SET NAMES 'utf8';");
+        mysql_query("SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
+
 	}
 	return $the_db_link;
 }

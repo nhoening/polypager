@@ -1359,7 +1359,6 @@ function addFields($entity,$name, $not_for_field_list = "") {
 			$info_schema_accessible = false;
 			$db_list = mysql_list_dbs(getDBLink());
 			while ($row = mysql_fetch_object($db_list)) {
-				//echo($row->Database."<br/>");
 				if ($row->Database == "information_schema") $info_schema_accessible = true;
 			}
 			if ($info_schema_accessible) // information_schema exists
@@ -1378,7 +1377,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		}
 		//if we can't use it, do it the old way, with less fields sadly
 		if ($query=="") 
-			$query = "SHOW COLUMNS FROM ".$entity["tablename"];//." FROM ".$db; 
+			$query = "SHOW COLUMNS FROM ".$entity["tablename"];
 		//echo("query:".$query);
 		$res = pp_run_query($query);
 		$i = 0;
@@ -1407,7 +1406,6 @@ function addFields($entity,$name, $not_for_field_list = "") {
 				//but we save the valuelist - PolyPager can handle those
 				if (eregi('^set\(',$row['Type']) or eregi('^enum\(',$row['Type'])){
 					$type = preg_replace('@\((\'.+\'\,?)+(\'.+\')\)$@', '', $row['Type']);
-                    //$type = preg_replace('@\(\'[a-z0-9]+\'\)$@', '', $row['Type']);
 					eregi('\((\'.+\'\,)+(\'.+\')\)$',$row['Type'],$hits);
 					$valuelist = implode(',',array_slice($hits,1));
 					$valuelist = str_replace(",,", ",",$valuelist);

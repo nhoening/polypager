@@ -22,7 +22,7 @@
 	/*
 	Function Index:
 	* showAdminOptions()
-	* chmod_dirs()
+    * getMySQLCharsetter()
 	* create_sys_Tables()
 	* executeTemplate($template_name, $page_name)
 	* ensureConsistency()
@@ -52,24 +52,9 @@
 		echo($indent.'</div>');
 	}
 	
-	/* creates chmodding on selected dirs
-		returns a string with dirs that did not work*/
-	function chmod_dirs() {
-		$failed = "";
-		$worked = chmod($_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot()."user/", 0777);
-		if (!$worked) $failed += " | user/";
-		/*$worked = chmod($_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot()."user/File/", 0777);
-		if (!$worked) $failed += " | user/files/"; 
-		$worked = chmod(realpath($_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot()."user/Image/"), 0777);
-		if (!$worked) $failed += " | user/pics";  */
-		$worked = chmod($_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot()."user/Image/_mg/thumbs", 0777);
-		if (!$worked) $failed += " | user/Image/_mg/thumbs";
-		return $failed;
-	}
-	
     function getMySQLCharsetter() {
         $client_api = utf8_explode('.', mysql_get_server_info()); 
-		if ($client_api[0] >= 5) return " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"; //CHARSET=utf8"
+		if ($client_api[0] >= 5) return " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
         else return "";
     }
     

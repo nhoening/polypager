@@ -188,7 +188,6 @@
 		
 		$pages = getPages();
 		
-		
 		// are we in the gallery?
 		$in_gallery = false;
 		if (eregi('user'.FILE_SEPARATOR.'Image',getcwd())) { //we're in the gallery
@@ -230,9 +229,9 @@
 					}
                     $theLink = "?".urlencode($p["name"]);
 					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
-						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.preserveMarkup($p["name"])."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
 					} else {
-						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.preserveMarkup($p["name"])."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
 					}
 				}
 			}

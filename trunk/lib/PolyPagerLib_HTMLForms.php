@@ -64,6 +64,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	if ($inputType == "textarea")	{
 		$oFCKeditor = new FCKeditor($name);
 		if (!$full_editor) $oFCKeditor->ToolbarSet = 'Basic';
+        else $oFCKeditor->ToolbarSet = 'PolyPager';
 		$path = getPathFromDocRoot();
 		
 		$oFCKeditor->BasePath = utf8_str_replace("\\", '/', $path).'plugins/FCKeditor/';
