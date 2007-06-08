@@ -73,7 +73,6 @@
                       `title` varchar(255) NOT NULL default '',
                       `author` varchar(120) NOT NULL default '',
                       `keywords` varchar(255) NOT NULL default '',
-                      `encoding` enum('utf-8','iso-8859-1') NOT NULL default 'iso-8859-1',
                       `admin_name` varchar(120) NOT NULL default '',
                       `admin_pass` varchar(120) NOT NULL default '',
                       `feed_amount` tinyint(4) NOT NULL default '7',
@@ -85,7 +84,10 @@
                       `hide_public_popups` tinyint(1) NOT NULL default '0',
                       `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
                       `gallery_name` varchar(120) NOT NULL default 'gallery',
-                      `gallery_index` smallint(6) NOT NULL default '99'
+                      `gallery_index` smallint(6) NOT NULL default '99',
+                      `use_captchas` tinyint(1) NOT NULL default '0',
+                      `public_captcha_key` varchar(50) NOT NULL default '',
+                      `private_captcha_key` varchar(50) NOT NULL default ''
                     ) ENGINE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
@@ -93,7 +95,7 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
         $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99);";
+                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, '', 99, '0','','');";
 		$res = mysql_query($query, $link);
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);

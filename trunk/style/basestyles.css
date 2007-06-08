@@ -53,4 +53,8 @@ a.help{
 	color: blue;
 }
 
-#_idontwantnogarbage_ {visibility:hidden;} /*not visible for humans, only for spam machines*/
+#_nogarbageplease_ {visibility:hidden;} /*not visible for humans, only for (dumb) spam machines*/
+
+#commentform {
+    border: 1px solid #ccc;
+}

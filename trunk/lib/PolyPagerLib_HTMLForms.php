@@ -76,8 +76,8 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	} else if (isTextType($type) or isDateType($type)) {
         $value = utf8_str_replace("&", "&amp;", $value);
 		if ($size > 50) {
-			if ($value == "") {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text"');}
-			else {echo(' size="50" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
+			if ($value == "") {echo(' maxlength="'.$size.'" name="'.$name.'" type="text"');}
+			else {echo(' maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
 		}else {
 			if ($value == "") {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -241,6 +241,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	global $params;
 	$entity = getEntity($params["page"]);
 	$page_info = getPageInfo($params["page"]);
+    $sys_info = getSysInfo();
 	$hidden_form_fields = utf8_explode(",",$entity["hidden_form_fields"]);
 	$disabled_fields = utf8_explode(",",$entity["disabled_fields"]);
 	$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
@@ -278,11 +279,14 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     }else {
         $target_page = $params["page"];
     }
-    $sys_info = getSysInfo();
+    
 	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
-	echo($indent.'		<input name="_idontwantnogarbage_" id="_idontwantnogarbage_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
+	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
+    if ($params["page"] == "_sys_comments"){
+        echo recaptcha_get_html($sys_info['public_captcha_key'], null);
+    }
 	// sort according to formgroups
 	if ($entity['formgroups']!="") {
         uasort($entity["fields"],"cmpByFormGroup");

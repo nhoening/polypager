@@ -124,13 +124,11 @@ body {
 }
 
 #feeds div.entry{
-	/*width: 100%;*/
 	padding-bottom: 1px;
 }
 
 #feeds div.description a{
 	display: block;
-	/*width: 100%;*/
 }
 /* ----------------end sidepane ------------------------------- */
 
@@ -328,6 +326,8 @@ table tr.edit td.last_edited_label {
 
 #commentform { 
 	margin-top: 20px;
+    width: 500px;
+    padding: 5px;
 }
 
 #edit_form, #edit_form fieldset{
@@ -354,6 +354,14 @@ form.edit input, form textarea, form button {
 
 button {
 	margin-right: 5px;
+}
+
+input {
+    width: 270px;
+}
+
+#searchbox input{
+     width: 170px;
 }
 
 #login_form{

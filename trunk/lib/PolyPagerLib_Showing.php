@@ -550,7 +550,7 @@
 			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
 			$queries[$p] = $theQuery;
 		}
-        print_r($queries);
+        //print_r($queries);
 		return $queries;
 	}
 	
@@ -1238,16 +1238,29 @@
 	 * 
 	 * @param comment the entered text
 	 * @param time the time it took in milliseconds
-     * @param idontwantnogarbage the content of a hidden field that should not be ssen by humans (but by machines)
+     * @param nogarbageplease the content of a hidden field that should not be ssen by humans (but by machines)
 	 */
-	function checkComment($comment, $time, $idontwantnogarbage) {
-        if ($idontwantnogarbage != "")
+	function checkComment($comment, $time, $nogarbageplease) {
+        // check 1: a field hidden by CSS that humans can't see. Only machines would see it and fill it out.
+        if ($nogarbageplease != "")
             return __('Sorry, your comment has not been entered due to our internal spam filtering. Please try again.').'<a href="javascript:back()">Go back.</a>';
+        // check 2: Entering comments too fast lets me think it has been done by a machine
 		if ($time < 1000 and $time != '') 
 			return __('wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.');
 		$stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');
 		if ($comment != $stripped_comment) 
 			return __('Your text contains tags that are not allowed. You can use one of those: b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;&lt;em&gt;&lt;. Your comment has not been saved.');
-		return "";
+		// check 3: was there a reCAPTCHA response? (only works with PHP5)
+        $php_version = explode('.', phpversion());
+        if ($_POST["recaptcha_response_field"] and $php_version[0] >= 5 ) {
+            $sys_info = getSysInfo();
+            $resp = recaptcha_check_answer($sys_info['private_captcha_key'],
+                                          $_SERVER["REMOTE_ADDR"],
+                                          $_POST["recaptcha_challenge_field"],
+                                          $_POST["recaptcha_response_field"]);
+        
+          if (!$resp->is_valid) return __('You failed the Captcha: ').$resp->error;
+        }else if ($_POST["recaptcha_response_field"] == "") return __('You failed the Captcha. Provide a solution, please.');
+        return "";
 	}
 ?>

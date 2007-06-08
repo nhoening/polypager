@@ -188,8 +188,8 @@ function getEditParameters() {
             }
             
             //-------------------------anti spam trap field
-            $params["values"]["_idontwantnogarbage_"] = $_POST["_idontwantnogarbage_"];
-            if ($params["values"]["_idontwantnogarbage_"] == "") {$params["values"]["_idontwantnogarbage_"] = $_GET["_idontwantnogarbage_"];}
+            $params["values"]["_nogarbageplease_"] = $_POST["_nogarbageplease_"];
+            if ($params["values"]["_nogarbageplease_"] == "") {$params["values"]["_nogarbageplease_"] = $_GET["_nogarbageplease_"];}
         
 			//those commands need an entry number
 			if (($params["cmd"] == "show" or $params["cmd"] == "edit" or $params["cmd"] == "delete"

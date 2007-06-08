@@ -46,10 +46,10 @@ if ( !defined('FILE_SEPARATOR') ) {
 	define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
 
-require_once("utf8.php");
 set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot());
-
 require_once("PolyPager_Config.php");
+require_once("plugins"  . FILE_SEPARATOR .  "utf8.php");
+require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 
 $sys = getSysInfo();
 $lang = $sys["lang"];
@@ -221,24 +221,23 @@ function getPathFromDocRoot() {
 	$doc_root = $_SERVER['DOCUMENT_ROOT'];
 	if (FILE_SEPARATOR != '/')
 		$doc_root = eregi_replace('/', FILE_SEPARATOR, $doc_root);
-	$doc_root_folders = utf8_explode(FILE_SEPARATOR, $doc_root);
-	$cwd_folders = utf8_explode(FILE_SEPARATOR, getcwd());
+	$doc_root_folders = explode(FILE_SEPARATOR, $doc_root);
+	$cwd_folders = explode(FILE_SEPARATOR, getcwd());
 	$folders_from_doc_root = array_diff($cwd_folders, $doc_root_folders);
 	$path = implode(FILE_SEPARATOR, $folders_from_doc_root);
 	//maybe we're in admin or scripts or so
 	//echo($path."|".strstr($path, 'admin')."|".utf8_substr( $path, 0, utf8_strpos( $path, "admin" ) )."|");
 	if(eregi('admin',$path) != false or $path == 'admin')
-		{$path = utf8_substr( $path, 0, utf8_strpos( $path, "admin" ) ) ;}
+		{$path = substr( $path, 0, strpos( $path, "admin" ) ) ;}
 	if(eregi('scripts',$path) != false or $path == 'scripts')
-		{$path =  utf8_substr( $path, 0, utf8_strpos( $path, "scripts" ) ) ;}
+		{$path =  substr( $path, 0, strpos( $path, "scripts" ) ) ;}
 	if(eregi('plugins',$path)!= false or $path == 'plugins')
-		{$path =  utf8_substr( $path, 0, utf8_strpos( $path, "plugins" ) ) ;}
+		{$path =  substr( $path, 0, strpos( $path, "plugins" ) ) ;}
 	if(eregi('user',$path) != false or $path == 'user')
-		{$path =  utf8_substr( $path, 0, utf8_strpos( $path, "user" ) ) ;}
+		{$path =  substr( $path, 0, strpos( $path, "user" ) ) ;}
 	if ($path == "") $path = FILE_SEPARATOR;
-	if (utf8_substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
-	if (utf8_substr( $path, utf8_strlen($path)-1, utf8_strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
-	//echo($path);
+	if (substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
+	if (substr( $path, strlen($path)-1, strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
 	return $path;
 }
 
@@ -680,11 +679,17 @@ function getEntity($page_name) {
 				setEntityFieldValue("lang", "formgroup", 'misc');
 				setEntityFieldValue("skin", "formgroup", 'misc');
 				setEntityFieldValue("submenus_always_on", "formgroup", 'misc');
-				
+				$entity['formgroups']['captcha'] = array(4,'hide');
+				setEntityFieldValue("use_captchas", "formgroup", 'captcha');
+				setEntityFieldValue("public_captcha_key", "formgroup", 'captcha');
+				setEntityFieldValue("private_captcha_key", "formgroup", 'captcha');
+                
 				global $run_as_demo;
 				if ($run_as_demo) {
 					$entity["hidden_form_fields"] .= ',admin_name,admin_pass';
 				}
+                setEntityFieldValue("use_captchas", "help", __('Activate this if you want your commenters to proof they are human before entering a comment. They will have to do so by entering one or two words. This will only work if you have PHP version >= 5 and if you go get access keys for this service and fill them in below (It is worth it).'));
+                setEntityFieldValue("label", "public_captcha_key", __('public key (<a href="recaptcha_get_signup_url function">get your own</a>')); 
 			}
 			//	metadata for multipages that are edited
 			else if ($page_name == "_sys_multipages") {
