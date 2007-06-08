@@ -6,6 +6,12 @@
 --BUT: please execute them chronologically, one version after the
 --other
 
+-- 1.0rc3
+ALTER TABLE `_sys_sys` ADD `use_captchas` TINYINT( 1 ) NOT NULL DEFAULT '0' COMMENT 'True if Captchas shall prevent comment spam',
+ADD `public_captcha_key` VARCHAR( 50 ) NOT NULL COMMENT 'provided by recaptcha.org',
+ADD `private_captcha_key` VARCHAR( 50 ) NOT NULL COMMENT 'provided by recaptcha.org';
+-- remove is_spam and its occurences ?
+
 -- 1.0rc2
 ALTER TABLE `_sys_feed` ADD `public` TINYINT( 1 ) NOT NULL DEFAULT '1' COMMENT 'tells wether the feed should be seen';
 ALTER TABLE `_sys_sys` DROP `encoding`;

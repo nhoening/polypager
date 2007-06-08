@@ -75,9 +75,9 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		$oFCKeditor->Create() ;
 	} else if (isTextType($type) or isDateType($type)) {
         $value = utf8_str_replace("&", "&amp;", $value);
-		if ($size > 50) {
-			if ($value == "") {echo(' maxlength="'.$size.'" name="'.$name.'" type="text"');}
-			else {echo(' maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
+		if ($size > 24) {
+			if ($value == "") {echo(' size="24" maxlength="'.$size.'" name="'.$name.'" type="text"');}
+			else {echo(' size="24" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
 		}else {
 			if ($value == "") {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -284,7 +284,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
-    if ($params["page"] == "_sys_comments"){
+    if ($params["page"] == "_sys_comments" and $sys_info["use_captchas"] == 1){
         echo recaptcha_get_html($sys_info['public_captcha_key'], null);
     }
 	// sort according to formgroups
