@@ -8,7 +8,7 @@
 	header( 'Content-Type: text/javascript; charset='.$sys_info['encoding'].'' );
 ?>
 FCKConfig.AutoDetectLanguage	= false ;
-FCKConfig.DefaultLanguage		= '<? echo($sys_info["lang"]) ?>' ;
+FCKConfig.DefaultLanguage	= '<? echo($sys_info["lang"]) ?>' ;
 FCKConfig.UseBROnCarriageReturn	= false ;
 FCKConfig.ToolbarStartExpanded	= false ;
 

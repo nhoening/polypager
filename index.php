@@ -61,7 +61,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 		$params = getEditParameters();
 		
 		//let's first check if the comment was ok
-		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"], $params["values"]["_idontwantnogarbage_"]);
+		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"], $params["values"]["_nogarbageplease_"]);
 		if ($msg == "") {	//seems ok
 			if ($debug) {
 				echo('<div class="debug">Page: '.$params["page"].'</div>');
@@ -88,7 +88,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	
 		}else{
 			$i_manipulated = false;
-			$error_msg_text = '<div class="sys_msg">'.$msg.'</div>';
+			$sys_msg_text = '<div class="sys_msg">'.$msg.'</div>';
 			//refill values for form
 			$show_params["values"]["name"] = $params["values"]["name"];
 			$show_params["values"]["email"] = $params["values"]["email"];
@@ -161,7 +161,6 @@ function writeData($ind=5) {
 	if ($sys_msg_text != "") {
 		echo($sys_msg_text);
 	}
-    
 	if ($known_page) {
 		if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
 			echo($indent.'<ul id="menu">'."\n");
