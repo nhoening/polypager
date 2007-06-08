@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '1.0rc2';
+$version = '1.0rc3';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
