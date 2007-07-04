@@ -19,6 +19,10 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
 
+//we need this for comment forms
+//we cannot include it within a method because the scope wouldn't fit
+require_once("PolyPagerLib_HTMLForms.php");
+
 	/*
 	Function Index:
 	* getShowParameters()
@@ -1216,7 +1220,6 @@
 	*/
 	function writeCommentForm($ind) {
 		global $params;
-		require_once("PolyPagerLib_HTMLForms.php");
 
 		//fill into $values what we know about this page and entry -
 		//writeHTMLForm will look it up...

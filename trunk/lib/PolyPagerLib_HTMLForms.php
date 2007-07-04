@@ -29,8 +29,9 @@
 
 //we could be called from two places - so include both possibilities and no one gets hurt
 set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'plugins'.FILE_SEPARATOR.'FCKeditor'.FILE_SEPARATOR);
-require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
+
 require_once("fckeditor.php");
+require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 
 /* 	writes out one HTML Form Input Element
 	you can specifiy the following:
@@ -284,6 +285,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
+    
     if ($params["page"] == "_sys_comments" and $sys_info["use_captchas"] == 1){
         echo recaptcha_get_html($sys_info['public_captcha_key'], null);
     }
