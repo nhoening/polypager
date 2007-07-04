@@ -1252,15 +1252,16 @@
 			return __('Your text contains tags that are not allowed. You can use one of those: b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;&lt;em&gt;&lt;. Your comment has not been saved.');
 		// check 3: was there a reCAPTCHA response? (only works with PHP5)
         $php_version = explode('.', phpversion());
-        if ($_POST["recaptcha_response_field"] and $php_version[0] >= 5 ) {
-            $sys_info = getSysInfo();
-            $resp = recaptcha_check_answer($sys_info['private_captcha_key'],
+        $sys_info = getSysInfo();
+        if ($sys_info['use_captchas'] == 1) {
+            if ($_POST["recaptcha_response_field"] and $php_version[0] >= 5 ) {
+                $resp = recaptcha_check_answer($sys_info['private_captcha_key'],
                                           $_SERVER["REMOTE_ADDR"],
                                           $_POST["recaptcha_challenge_field"],
                                           $_POST["recaptcha_response_field"]);
-        
-          if (!$resp->is_valid) return __('You failed the Captcha: ').$resp->error;
-        }else if ($_POST["recaptcha_response_field"] == "") return __('You failed the Captcha. Provide a solution, please.');
+                if (!$resp->is_valid) return __('You failed the Captcha: ').$resp->error;
+            }else if ($_POST["recaptcha_response_field"] == "") return __('You failed the Captcha. Provide a solution, please.');
+        }
         return "";
 	}
 ?>
