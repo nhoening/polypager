@@ -1,0 +1,405 @@
+/*
+	Theme Name: fScreen
+	Theme URI: http://www.fahlstad.se
+	Description: A nice theme.
+	Version: 1.0
+	Author: Fredrik Fahlstad - rewired for PolyPager by Nicolas Hoening
+	Author URI: http://www.fahlstad.se
+*/
+
+
+body
+{
+	color: #ccc;
+	margin: 0;
+	padding: 0;
+	background-color: #2f2f2f;
+	font-size: 13px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-image: url(images/htop.gif);
+	background-repeat: repeat-x;
+}
+
+
+#data, #data_admin, #data_gallery
+{
+	width: 760px;
+	text-align: left;
+	overflow: hidden;
+	font-size: 1em;
+	line-height: 1.6em;
+	margin: 0 auto 0 auto;
+}
+
+#header
+{
+	height: 100px;
+	width: 760px;
+	margin-top: 0;
+	margin-right: auto;
+	margin-bottom: 0;
+	margin-left: auto;
+	padding-top: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+	padding-left: 0px;
+	background-image: url(images/logo.gif);
+	background-repeat: no-repeat;
+}
+
+#mainpane
+{
+	width: 480px;
+	float: left;
+	text-align: left;
+	overflow: hidden;
+	padding-top:26px;
+	margin-top: 10px;
+	margin-right: 0;
+	margin-bottom: 10px;
+	margin-left: 0;
+	padding-left: 20px;
+}
+
+#data_gallery #mainpane, #data_admin #mainpane{
+	width: 95% !important;
+	min-height: 500px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
+#data_gallery #sidepane, #data_admin #sidepane{
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
+#data_gallery #mainpane{
+	height: 900px;
+}
+
+#sidepane
+{
+	width: 200px;
+	float: right;
+	text-align: left;
+	padding-top:26px;
+	margin-top: 10px;
+	margin-right: 0;
+	margin-bottom: 10px;
+	margin-left: 0;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+#bottom
+{
+	clear: both;
+	padding: 1.2em;
+	text-align: center;
+	color: #696969;
+	height: 100px;
+	margin-top: 1.5em;
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+
+}
+
+
+#title #text a,
+ul#main_menu li a, #sub_menus ul li a
+{
+	color:#FFFFFF;
+}
+
+#main_menu {
+	position: relative;
+	top: 52px;
+	height: 38px;
+	background-image: url(images/nav.gif);
+	background-repeat: repeat-x;
+	margin: 0 0 0 0;
+	list-style:none !important;
+	z-index:4;
+}
+ul#main_menu li, #sub_menus ul li  {
+	float:left;
+	margin:0 0 0 0;
+	padding-top: 3px;
+	padding-right: 5px;
+	padding-left: 5px;;
+}
+
+ul#main_menu li {
+	position:relative; top: 1px;
+}
+ul#main_menu li a:link, #sub_menus li a:link {
+	padding-right: 4px;
+	display:block; /*so we can control all aspects without worrying about the inline box*/
+}
+
+
+/* these are the sublists */
+#sub_menus {
+	margin: 0 2px 0 0;
+	height: 0px;
+	z-index: 5;
+}
+#sub_menus ul {
+	position: absolute; top: 83px;
+	margin-right: 135px;
+	height: 19px;
+	list-style:none ! important;
+	z-index: 5; /*selecting links over the "data"-pane works so*/
+}
+
+/* -------- */
+
+a:link, a:visited {
+	color:#0099FE;
+	text-decoration:none;
+}
+a:hover {
+	text-decoration:underline;
+}
+/* 	General styling		*/
+h2
+{
+	margin-bottom: .2em;
+	text-transform: uppercase;
+	color: #91B476;
+	font-family: 'Nimbus Sans L', helvetica, arial, sans-serif;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	font-size:1.2em;
+}
+h2.entrydate{
+	font-size:1.1em;
+	margin:0;
+	padding:0;
+	}
+h4 {
+	font-size:1.1em;
+}
+
+.entrybody img{
+	margin: 0px;
+	padding: 5px;
+	border: 1px solid #CCCCCC;
+}
+.comments_link img{
+	border:0;
+}
+h3
+{
+	font: normal 1.5em/120% 'Nimbus Sans L', helvetica, arial, sans-serif;
+	margin-bottom: .3em;
+	margin-top:0;
+}
+
+blockquote
+{
+	background-image: url(images/qoute.gif);
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	font-style: italic;
+	padding-top: 1px;
+	padding-right: 0;
+	padding-bottom: 1px;
+	padding-left: 20px;
+	margin-top: 0;
+	margin-right: 20px;
+	margin-bottom: 0;
+	margin-left: 20px;
+}
+
+blockquote p { margin: .7em 0; }
+
+img { border: none; }
+.show .show_entry, .show .show_entry_with_options  { text-align: justify; }
+.show {
+	margin-bottom: 30px;
+}
+.show form * { text-align: left; }
+
+.show_entry ul, .show_entry_with_options ul, 
+.show_entry ol, .show_entry_with_options ol{
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	padding:0;
+	list-style-position: inside;
+}
+
+
+.label{line-height: 12px;color:#0099FE;margin:0;padding:0;}
+.value{line-height: 12px;margin:0;padding:0;margin-bottom:1em;}
+
+
+textarea { width: 270px; }
+
+h3 a:hover
+{
+	text-decoration:underline;
+}
+
+.title a, .comment_prefix,
+.description, .description a{
+	margin-top: 10px;
+	color:#91B476;
+}
+.title a, #title #text a{
+	font-size: 1.7em !important;
+}
+.title{margin-top: 30px;}
+.list_entry .title {margin-top:3px;}
+.list_entry {
+	border: 1px solid grey;
+	margin-top: 4px;
+}
+#title{ margin-left: 400px; }
+
+.commentlink { text-align: right; }
+
+ol.commentlist
+{
+	list-style: none;
+	margin-left: 0;
+}
+
+ol.myresponse
+{
+	list-style: none;
+	margin-left: 0;
+	background-image: url(comment_bg_response.jpg);
+}
+
+.commentlist li
+{
+	font-style: normal;
+	margin: 1em 0;
+	padding-top: .1em;
+	padding-left: .3em;
+
+}
+
+.commentlist li p {
+	margin: .7em;
+}
+
+#comments
+{
+	margin: 1em 0 0 0;
+	padding: .2px .5em;
+	text-align: left;
+}
+#comments .show_entry_with_options, #comments .show_entry{
+    padding-left: 10px !important;
+    background: url('images/comments.gif') left top no-repeat;
+}
+
+#comments .value, .options, #search, #toc, .list_entry{
+	border: 1px solid #3f3f3f;
+	padding:10px;
+	background-color:#323232;
+}
+.sys_msg, .sys_msg_admin{
+	border: 1px solid #6f3f3f;
+	padding:10px;
+	background-color:#623232;
+	margin-bottom: 5px;
+}
+
+.debug{
+	border: 1px solid #6f6f3f;
+	padding:10px;
+	background-color:#626232;
+}
+/*	sidebar styling 	
+----------------------------------------*/
+
+#sidepane h2 {
+	font-size: 1.1em;
+}
+
+
+#sidepane ul {
+	list-style: none;
+	margin:0;
+	padding:0;
+}
+
+#sidepane ul ul li {
+	padding:0;
+	margin:0;
+}
+
+#sidepane ul p, #sidepane ul select {
+	margin: 5px 0 8px;
+	font-size: 0.9em;
+}
+
+#sidepane div div.description{
+	margin-bottom:15px;
+}
+
+#sidepane div div.entry a, li.link a, ul.fk_link li a{
+	background-image: url(images/bull.gif);
+	background-repeat: no-repeat;
+	background-position: 0 .5em;
+	padding-left: 15px;
+	margin-left:5px;
+}
+
+
+#toc ul {
+	list-style: none;
+}
+#toc .group_heading {
+	font-weight: 800;
+}
+#toc .link{
+	padding-left: 1em;
+}
+
+
+form .search, form .search *
+{
+	font-size: 1em;
+	margin: 0;
+	padding-bottom:10px;
+}
+
+form fieldset{ border:0;}
+#edit_form fieldset{ border:1px solid grey;;}
+#edit_form table {
+	width: 700px !important;
+}
+form.edit input, form textarea, form button { /*form select {*/
+	background:#eee;
+	border-width:1px;
+	border-style: solid;
+	border-color: #aaa;
+}
+/*Focused Form inputs appear lighter in Edit Forms*/
+form.edit input:focus, form textarea:focus, form button.focus{ /*form select:focus {*/
+	border-color: #333;
+	background-color: #fff;
+}
+
+/*aligning labels right minimizes the time the user needs to scan the form*/
+form td.label{
+	text-align:right;
+}
+
+/*#searchform input
+{
+	width: 122px;
+	margin: .3em 0 1em 0;
+}
+*/
+
+
+/*	footer styles 	*/
+#bottom * { margin: 0; }
+#bottom a:link, #bottom a:visited { color: #09F; }
+
