@@ -280,7 +280,10 @@ function getTranslation($text) {
 => 'Sie k&ouml;nnen hier Gruppen angeben (als Komma-separierte Liste). Sie k&ouml;nnen dann die Sektionen dieser Seite einzelnen Gruppen zuordnen, und diese Gruppen sind dann per Untermen&uuml; erreichbar. Wenn Sie das tun, &uuml;berschreibt dieses Verhalten die M&ouml;glichkeit, einzelne Sektionen per HTML-Anker vom Untermen&uuml; aus erreichbar zu machen.',
 'the group of this entry (you will find the groups in the specifications for this page). The standard group contains entries that are always shown.'
  => 'die Gruppe dieses Eintrags (Sie finden die Gruppen f&auml;r diese Seite in auf deren Konfigurationsseite). Die standard-Gruppe enth&auml;lt Eintr&auml;ge, die immer gezeigt werden.',
-
+'Activate this if you want your commenters to proof they are human before entering a comment. They will have to do so by entering one or two words. This will only work if you have PHP version >= 5 and if you get your personal access keys for this service (recaptcha.net) and fill them in below (It is worth it).'
+ => 'Aktivieren Sie diese Option, wenn Sie Ihre Kommentare vor Spam sch&uuml;tzen wollen. Jeder Kommentator muss hier beweisen, dass er/sie ein Mensch ist, indem er/sie zwei W&ouml;rter eingibt. Sie brauchen daf&uuml; PHP Version >= 5 und zwei Zahlenschl&uuml;ssel von recaptcha.net, die Sie unten eintragen.',
+ 
+ 
 /*	lib/PolyPagerLib_Showing.php	*/
 'please do not use SQL Code here in your keyword search...'	=> 'bitte benutzen Sie keine SQL-Schl&uuml;sselw&ouml;rter in Ihrer Stichwortsuche',
 'Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search. Several keywords are implicitely connected by AND.'

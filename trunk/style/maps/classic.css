@@ -240,8 +240,8 @@ img {
 /* --------------------end typography ---------------------- */
 
 /* ---------------------system styles ---------------------- */
-.sys_msg {
-	 margin: 15px 0px 15px 0px;
+.sys_msg, .sys_msg_admin {
+	 margin: 15px;
 	 font-size: 1em;
 	 display: block;
 	 width: 90%;

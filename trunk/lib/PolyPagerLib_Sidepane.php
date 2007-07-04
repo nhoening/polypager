@@ -71,7 +71,6 @@ function getFeed($amount, $comments = false) {
 							"pagename AS thePage FROM _sys_comments";
 	$query .= $where;
     $query .= " ORDER BY theDate DESC LIMIT ".$sys["feed_amount"];
-    
 	$res = pp_run_query($query);
 	$feeds = array();
 	

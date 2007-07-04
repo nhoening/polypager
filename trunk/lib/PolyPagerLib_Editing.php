@@ -109,7 +109,8 @@ function getEditParameters() {
 		//------------------------- command check -------------------------
 		//get command: new|entry|show|edit|delete (the last 3 must come with id!)
 		$params["cmd"] = $_GET["cmd"];
-		if ($params["cmd"] == "") $params["cmd"] = $_POST["cmd"];	//post command
+		if ($params["cmd"] == "") $params["cmd"] = $_POST["cmd"];   //coming in per POST?
+        if ($params["cmd"] == "") $params["cmd"] = "show";          // the default
 		//one_entry_only: there is only show(default) and edit
 		if($entity["one_entry_only"] == "1" and $params["cmd"] != "edit" and $params["cmd"] != "new"  and $params["cmd"] != "entry") {
 			$params["cmd"] = "show";
