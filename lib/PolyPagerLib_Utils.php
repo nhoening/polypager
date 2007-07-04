@@ -49,7 +49,6 @@ if ( !defined('FILE_SEPARATOR') ) {
 set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot());
 require_once("PolyPager_Config.php");
 require_once("plugins"  . FILE_SEPARATOR .  "utf8.php");
-require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 
 $sys = getSysInfo();
 $lang = $sys["lang"];
@@ -688,7 +687,7 @@ function getEntity($page_name) {
 				if ($run_as_demo) {
 					$entity["hidden_form_fields"] .= ',admin_name,admin_pass';
 				}
-                setEntityFieldValue("use_captchas", "help", __('Activate this if you want your commenters to proof they are human before entering a comment. They will have to do so by entering one or two words. This will only work if you have PHP version >= 5 and if you go get access keys for this service and fill them in below (It is worth it).'));
+                setEntityFieldValue("use_captchas", "help", __('Activate this if you want your commenters to proof they are human before entering a comment. They will have to do so by entering one or two words. This will only work if you have PHP version >= 5 and if you get your personal access keys for this service (recaptcha.net) and fill them in below (It is worth it).'));
                 setEntityFieldValue("label", "public_captcha_key", __('public key (<a href="recaptcha_get_signup_url function">get your own</a>')); 
 			}
 			//	metadata for multipages that are edited

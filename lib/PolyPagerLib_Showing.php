@@ -321,7 +321,7 @@
 				$entity = getEntity("_sys_comments");
 				$theQuery = "SELECT * FROM _sys_comments
 							WHERE is_spam = 0
-							ORDER BY insert_date DESC";
+							ORDER BY pagename, pageid, insert_date DESC";
 			}
 			
 			// comments for one entry
@@ -1203,7 +1203,7 @@
 		$params["page"] = "_sys_comments";	
 		//write the results
 		while($row = mysql_fetch_array($comments, MYSQL_ASSOC)) {
-            echo($indent.'  <a name="comment'.$row['id'].'">&nbsp;</a>'."\n");
+            echo($indent.'  <a class="target" name="comment'.$row['id'].'">&nbsp;</a>'."\n");
 			writeEntry($row, '_sys_comments', false, ++$ind);
 		}
 		
