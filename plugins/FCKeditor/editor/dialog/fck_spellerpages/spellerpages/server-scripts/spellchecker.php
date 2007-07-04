@@ -1,17 +1,20 @@
 <?php
 header('Content-type: text/html; charset=utf-8');
 
-//$spellercss = '/speller/spellerStyle.css';	// by FredCK
-$spellercss = '../spellerStyle.css';			// by FredCK
-//$word_win_src = '/speller/wordWindow.js';		// by FredCK
-$word_win_src = '../wordWindow.js';				// by FredCK
-$textinputs = $_POST['textinputs']; # array
-//$aspell_prog = 'aspell';									// by FredCK (for Linux)
-$aspell_prog = '"C:\Program Files\Aspell\bin\aspell.exe"';	// by FredCK (for Windows)
-$lang = 'en_US';
-//$aspell_opts = "-a --lang=$lang --encoding=utf-8";	// by FredCK
-$aspell_opts = "-a --lang=$lang --encoding=utf-8 -H";	// by FredCK
-$tempfiledir = "./";
+// The following variables values must reflect your installation needs.
+
+$aspell_prog	= '"C:\Program Files\Aspell\bin\aspell.exe"';	// by FredCK (for Windows)
+//$aspell_prog	= 'aspell';										// by FredCK (for Linux)
+
+$lang			= 'en_US';
+$aspell_opts	= "-a --lang=$lang --encoding=utf-8 -H --rem-sgml-check=alt";		// by FredCK
+
+$tempfiledir	= "./";
+
+$spellercss		= '../spellerStyle.css';						// by FredCK
+$word_win_src	= '../wordWindow.js';							// by FredCK
+
+$textinputs		= $_POST['textinputs']; # array
 $input_separator = "A";
 
 # set the JavaScript variable to the submitted text.
@@ -20,7 +23,7 @@ $input_separator = "A";
 function print_textinputs_var() {
 	global $textinputs;
 	foreach( $textinputs as $key=>$val ) {
-		# $val = utf8_str_replace( "'", "%27", $val );
+		# $val = str_replace( "'", "%27", $val );
 		echo "textinputs[$key] = decodeURIComponent(\"" . $val . "\");\n";
 	}
 }
@@ -79,7 +82,7 @@ function print_checker_results() {
 	if( $fh = fopen( $tempfile, 'w' )) {
 		for( $i = 0; $i < count( $textinputs ); $i++ ) {
 			$text = urldecode( $textinputs[$i] );
-			$lines = utf8_explode( "\n", $text );
+			$lines = explode( "\n", $text );
 			fwrite ( $fh, "%\n" ); # exit terse mode
 			fwrite ( $fh, "^$input_separator\n" );
 			fwrite ( $fh, "!\n" ); # enter terse mode
@@ -93,21 +96,21 @@ function print_checker_results() {
 		# exec aspell command - redirect STDERR to STDOUT
 		$cmd = "$aspell_prog $aspell_opts < $tempfile 2>&1";
 		if( $aspellret = shell_exec( $cmd )) {
-			$linesout = utf8_explode( "\n", $aspellret );
+			$linesout = explode( "\n", $aspellret );
 			$index = 0;
 			$text_input_index = -1;
 			# parse each line of aspell return
 			foreach( $linesout as $key=>$val ) {
-				$chardesc = utf8_substr( $val, 0, 1 );
+				$chardesc = substr( $val, 0, 1 );
 				# if '&', then not in dictionary but has suggestions
 				# if '#', then not in dictionary and no suggestions
 				# if '*', then it is a delimiter between text inputs
 				# if '@' then version info
 				if( $chardesc == '&' || $chardesc == '#' ) {
-					$line = utf8_explode( " ", $val, 5 );
+					$line = explode( " ", $val, 5 );
 					print_words_elem( $line[1], $index, $text_input_index );
 					if( isset( $line[4] )) {
-						$suggs = utf8_explode( ", ", $line[4] );
+						$suggs = explode( ", ", $line[4] );
 					} else {
 						$suggs = array();
 					}
