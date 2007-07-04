@@ -1,21 +1,25 @@
-<?php 
+<?php
 /*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
- * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
- * 
- * For further information visit:
- * 		http://www.fckeditor.net/
- * 
- * "Support Open Source software. What about a donation today?"
- * 
- * File Name: commands.php
- * 	This is the File Manager Connector for PHP.
- * 
- * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * This is the File Manager Connector for PHP.
  */
 
 function GetFolders( $resourceType, $currentFolder )
@@ -38,7 +42,7 @@ function GetFolders( $resourceType, $currentFolder )
 
 	// Open the "Folders" node.
 	echo "<Folders>" ;
-	
+
 	natcasesort( $aFolders ) ;
 	foreach ( $aFolders as $sFolder )
 		echo $sFolder ;
@@ -106,7 +110,7 @@ function CreateFolder( $resourceType, $currentFolder )
 	{
 		$sNewFolderName = $_GET['NewFolderName'] ;
 
-		if ( utf8_strpos( $sNewFolderName, '..' ) !== FALSE )
+		if ( strpos( $sNewFolderName, '..' ) !== FALSE )
 			$sErrorNumber = '102' ;		// Invalid folder name.
 		else
 		{
@@ -160,7 +164,7 @@ function FileUpload( $resourceType, $currentFolder )
 
 		// Get the uploaded file name.
 		$sFileName = $oFile['name'] ;
-		
+
 		// Replace dots in the name with underscores (only one dot can be there... security issue).
 		if ( $Config['ForceSingleExtension'] )
 			$sFileName = preg_replace( '/\\.(?![^.]*$)/', '_', $sFileName ) ;
@@ -168,8 +172,8 @@ function FileUpload( $resourceType, $currentFolder )
 		$sOriginalFileName = $sFileName ;
 
 		// Get the extension.
-		$sExtension = utf8_substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
-		$sExtension = utf8_strtolower( $sExtension ) ;
+		$sExtension = substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
+		$sExtension = strtolower( $sExtension ) ;
 
 		$arAllowed	= $Config['AllowedExtensions'][$resourceType] ;
 		$arDenied	= $Config['DeniedExtensions'][$resourceType] ;
@@ -210,7 +214,7 @@ function FileUpload( $resourceType, $currentFolder )
 		$sErrorNumber = '202' ;
 
 	echo '<script type="text/javascript">' ;
-	echo 'window.parent.frames["frmUpload"].OnUploadCompleted(' . $sErrorNumber . ',"' . utf8_str_replace( '"', '\\"', $sFileName ) . '") ;' ;
+	echo 'window.parent.frames["frmUpload"].OnUploadCompleted(' . $sErrorNumber . ',"' . str_replace( '"', '\\"', $sFileName ) . '") ;' ;
 	echo '</script>' ;
 
 	exit ;

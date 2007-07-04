@@ -1,27 +1,28 @@
-<?php 
+<?php
 /*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
- * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
- * 
- * For further information visit:
- * 		http://www.fckeditor.net/
- * 
- * "Support Open Source software. What about a donation today?"
- * 
- * File Name: upload.php
- * 	This is the "File Uploader" for PHP.
- * 
- * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * This is the "File Uploader" for PHP.
  */
 
-require('config.php') ;
-require('util.php') ;
-
-// FILE SEPARATOR
+ // FILE SEPARATOR
 if ( !defined('FILE_SEPARATOR') ) {
     define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
@@ -29,13 +30,17 @@ require_once('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FI
 
 // --------------------------------------- Authentification!
 include('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR.'auth.php');
+
 // --------------------------------------- 
+
+require('config.php') ;
+require('util.php') ;
 
 // This is the function that sends the results of the uploading process.
 function SendResults( $errorNumber, $fileUrl = '', $fileName = '', $customMsg = '' )
 {
 	echo '<script type="text/javascript">' ;
-	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . utf8_str_replace( '"', '\\"', $fileUrl ) . '","' . utf8_str_replace( '"', '\\"', $fileName ) . '", "' . utf8_str_replace( '"', '\\"', $customMsg ) . '") ;' ;
+	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . str_replace( '"', '\\"', $fileUrl ) . '","' . str_replace( '"', '\\"', $fileName ) . '", "' . str_replace( '"', '\\"', $customMsg ) . '") ;' ;
 	echo '</script>' ;
 	exit ;
 }
@@ -61,8 +66,8 @@ if ( $Config['ForceSingleExtension'] )
 $sOriginalFileName = $sFileName ;
 
 // Get the extension.
-$sExtension = utf8_substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
-$sExtension = utf8_strtolower( $sExtension ) ;
+$sExtension = substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) ) ;
+$sExtension = strtolower( $sExtension ) ;
 
 // The the file type (from the QueryString, by default 'File').
 $sType = isset( $_GET['Type'] ) ? $_GET['Type'] : 'File' ;
@@ -85,11 +90,20 @@ $sFileUrl		= '' ;
 // Initializes the counter used to rename the file, if another one with the same name already exists.
 $iCounter = 0 ;
 
-// The the target directory.
-if ( isset( $Config['UserFilesAbsolutePath'] ) && utf8_strlen( $Config['UserFilesAbsolutePath'] ) > 0 )
+// Get the target directory.
+if ( isset( $Config['UserFilesAbsolutePath'] ) && strlen( $Config['UserFilesAbsolutePath'] ) > 0 )
 	$sServerDir = $Config['UserFilesAbsolutePath'] ;
-else 
+else
 	$sServerDir = GetRootPath() . $Config["UserFilesPath"] ;
+
+if ( $Config['UseFileType'] )
+	$sServerDir .= strtolower($sType) . '/' ;
+
+//check for the directory before uploading the file
+if(!is_dir($sServerDir))
+{
+    mkdir($sServerDir);
+} 
 
 while ( true )
 {
@@ -113,8 +127,11 @@ while ( true )
 			chmod( $sFilePath, 0777 ) ;
 			umask( $oldumask ) ;
 		}
-		
-		$sFileUrl = $Config["UserFilesPath"] . $sFileName ;
+
+		if ( $Config['UseFileType'] )
+			$sFileUrl = $Config["UserFilesPath"] . strtolower($sType) . '/' . $sFileName ;
+		else
+			$sFileUrl = $Config["UserFilesPath"] . $sFileName ;
 
 		break ;
 	}

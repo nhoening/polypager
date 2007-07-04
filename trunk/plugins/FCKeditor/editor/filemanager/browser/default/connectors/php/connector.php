@@ -1,30 +1,28 @@
-<?php 
+<?php
 /*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
- * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
- * 
- * For further information visit:
- * 		http://www.fckeditor.net/
- * 
- * "Support Open Source software. What about a donation today?"
- * 
- * File Name: connector.php
- * 	This is the File Manager Connector for PHP.
- * 
- * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * This is the File Manager Connector for PHP.
  */
 
-include('config.php') ;
-include('util.php') ;
-include('io.php') ;
-include('basexml.php') ;
-include('commands.php') ;
-
-// FILE SEPARATOR
+ // FILE SEPARATOR
 if ( !defined('FILE_SEPARATOR') ) {
     define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
@@ -33,9 +31,16 @@ require_once('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FI
 
 // --------------------------------------- Authentification!
 include('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR.'auth.php');
+
 // --------------------------------------- 
 
+ob_start() ;
 
+include('config.php') ;
+include('util.php') ;
+include('io.php') ;
+include('basexml.php') ;
+include('commands.php') ;
 
 if ( !$Config['Enabled'] )
 	SendError( 1, 'This connector is disabled. Please check the "editor/filemanager/browser/default/connectors/php/config.php" file' ) ;
@@ -48,12 +53,12 @@ if ( isset( $Config['UserFilesPath'] ) )
 else if ( isset( $_GET['ServerPath'] ) )
 	$GLOBALS["UserFilesPath"] = $_GET['ServerPath'] ;
 else
-	$GLOBALS["UserFilesPath"] = '/UserFiles/' ;
+	$GLOBALS["UserFilesPath"] = '/userfiles/' ;
 
 if ( ! ereg( '/$', $GLOBALS["UserFilesPath"] ) )
 	$GLOBALS["UserFilesPath"] .= '/' ;
 
-if ( utf8_strlen( $Config['UserFilesAbsolutePath'] ) > 0 ) 
+if ( strlen( $Config['UserFilesAbsolutePath'] ) > 0 )
 {
 	$GLOBALS["UserFilesDirectory"] = $Config['UserFilesAbsolutePath'] ;
 
@@ -84,10 +89,10 @@ function DoResponse()
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if ( ! ereg( '/$', $sCurrentFolder ) ) $sCurrentFolder .= '/' ;
-	if ( utf8_strpos( $sCurrentFolder, '/' ) !== 0 ) $sCurrentFolder = '/' . $sCurrentFolder ;
-	
+	if ( strpos( $sCurrentFolder, '/' ) !== 0 ) $sCurrentFolder = '/' . $sCurrentFolder ;
+
 	// Check for invalid folder paths (..)
-	if ( utf8_strpos( $sCurrentFolder, '..' ) )
+	if ( strpos( $sCurrentFolder, '..' ) )
 		SendError( 102, "" ) ;
 
 	// File Upload doesn't have to Return XML, so it must be intercepted before anything.

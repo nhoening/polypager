@@ -173,3 +173,31 @@ FCKConfig.SmileyImages	= ['regular_smile.gif','sad_smile.gif','wink_smile.gif','
 FCKConfig.SmileyColumns = 8 ;
 FCKConfig.SmileyWindowWidth		= 320 ;
 FCKConfig.SmileyWindowHeight	= 240 ;
+
+
+// a fix for "A has no properties" from
+// http://64.233.183.104/search?q=cache:_UcMnDxJvksJ:www.achievo.org/forum/viewtopic.php%3Fp%3D12966+fckeditor+%22A+has+no+properties%22&hl=en&ct=clnk&cd=7&client=firefox-a
+
+// new since version 2.4.1
+var CTRL=1000;var SHIFT=2000;var ALT=4000;
+FCKConfig.Keystrokes = [
+[ CTRL + 65 /*A*/, true ],
+[ CTRL + 67 /*C*/, true ],
+[ CTRL + 70 /*F*/, true ],
+[ CTRL + 83 /*S*/, true ],
+[ CTRL + 88 /*X*/, true ],
+[ CTRL + 86 /*V*/, 'Paste' ],
+[ SHIFT + 45 /*INS*/, 'Paste' ],
+[ CTRL + 90 /*Z*/, 'Undo' ],
+[ CTRL + 89 /*Y*/, 'Redo' ],
+[ CTRL + SHIFT + 90 /*Z*/, 'Redo' ],
+[ CTRL + 76 /*L*/, 'Link' ],
+[ CTRL + 66 /*B*/, 'Bold' ],
+[ CTRL + 73 /*I*/, 'Italic' ],
+[ CTRL + 85 /*U*/, 'Underline' ],
+[ CTRL + SHIFT + 83 /*S*/, 'Save' ],
+[ CTRL + ALT + 13 /*ENTER*/, 'FitWindow' ],
+[ CTRL + 9 /*TAB*/, 'Source' ]
+] ;
+
+FCKConfig.ProtectedTags = '' ;

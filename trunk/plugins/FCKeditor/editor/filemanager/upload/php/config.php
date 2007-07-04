@@ -1,7 +1,8 @@
-<?php 
+
+<?php
 /*
  * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2005 Frederico Caldeira Knabben
  * 
  * Licensed under the terms of the GNU Lesser General Public License:
  * 		http://www.opensource.org/licenses/lgpl-license.php
@@ -17,6 +18,8 @@
  * File Authors:
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  *		Nicolas Hoening (nicolashoening.de)
+ *
+ * this file is: editor/filemanager/upload/php/config.php
  */
 
 global $Config ;
@@ -47,8 +50,5 @@ $Config['DeniedExtensions']['Image']	= array() ;
 
 $Config['AllowedExtensions']['Flash']	= array('swf','fla') ;
 $Config['DeniedExtensions']['Flash']	= array() ;
-
-$Config['AllowedExtensions']['Media']	= array('swf','fla','jpg','gif','jpeg','png','avi', 'wmv', 'mov', 'mpg','mpeg') ;
-$Config['DeniedExtensions']['Media']	= array() ;
 
 ?>
