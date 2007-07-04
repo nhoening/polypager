@@ -130,7 +130,7 @@ if ( !defined('FILE_SEPARATOR') ) {
 require_once('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
 
 // --------------------------------------- Authentification!
-include('auth.php');
+include('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR.'auth.php');
 // --------------------------------------- 
 
 //this goes into upload.php :
@@ -142,5 +142,5 @@ if ( !defined('FILE_SEPARATOR') ) {
 require_once('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
 
 // --------------------------------------- Authentification!
-include('auth.php');
+include('..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'..'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR.'auth.php');
 // --------------------------------------- 
