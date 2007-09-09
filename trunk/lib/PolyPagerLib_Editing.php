@@ -387,7 +387,7 @@ function getEditQuery($command, $theID) {
     if($params["feed"] == '1') {
         //delete all possible entries with the same pagename/id from the feed list
         if($params["cmd"] != "entry") $res = pp_run_query("DELETE FROM _sys_feed WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";");
-        
+
         if($params["cmd"] != "delete") {	//new one comes in
             //find out how much is still in there
             $res = pp_run_query("SELECT COUNT(*) AS nr FROM _sys_feed;");

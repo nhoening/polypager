@@ -43,7 +43,6 @@ $cwd__folders = utf8_explode("/", getcwd());
 $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));
 $base_url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
 
-    
 echo('<rss version="2.0">'."\n");
 echo('	<channel>'."\n");
 if ($_GET["channel"] == "comments") {$title_prefix = __('Comments on ');}
