@@ -539,7 +539,10 @@ function getPageInfo($page_name) {
                 $page_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
             }
             //adding this if page info is used for queries
-            if(isSinglePage($page_name)) $page_info["tablename"] = '_sys_sections';
+            if(isSinglePage($page_name)) {
+                $page_info["tablename"] = '_sys_sections';
+                $page_info["title_field"] = 'heading';
+            }
             else if (isASysPage($page_name)) $page_info["tablename"] = $page_name;
             //adding this for comment preview
             if($page_name=='_sys_comments') $page_info["hide_toc"] = 1;
@@ -707,8 +710,6 @@ function getEntity($page_name) {
 					$entity["disabled_fields"] .= $entity["disabled_fields"].',tablename';
 					setEntityFieldValue("tablename", "valuelist", __('there is no table in the database yet'));
 				}
-				$entity["consistency_fields"] = "name";
-				
 				
 				//fill data in for option lists
 				//first, find out what table is used for this multipage
@@ -833,8 +834,7 @@ function getEntity($page_name) {
 				$entity["title_field"] = "name";
 				setEntityFieldValue("menue_index", "validation", 'number');
 				setEntityFieldValue("name", "validation", 'any_text');
-				
-				$entity["consistency_fields"] = ",name";
+
 				
 				//formgroups
 				$entity['formgroups'] = array();
@@ -1009,7 +1009,6 @@ function getEntity($page_name) {
 				$entity["order_by"] = 'order_index';
 				$entity["hidden_fields"] = "in_submenu,pagename,order_index,publish,the_group,edited_date,input_date,input_time";
 				$entity["hidden_form_fields"] = ",pagename,input_date,input_time,edited_date";
-				$entity["consistency_fields"] = "heading";
                 
 				//date_field + time_field
 				$entity["date_field"] = array("name"=>"input_date",
@@ -1150,8 +1149,10 @@ function getEntity($page_name) {
     
     // guess title field if not set
     if ($entity["title_field"]=="") $entity["title_field"] = guessTextField($entity,false);
-    $entity["consistency_fields"] = $entity["title_field"]; //if titles change, I want to know
-    
+    //if titles change, I want to know (if they are no blob)
+    $f = getEntityField($entity["title_field"], $entity);
+    if (isTextareaType($f['data-type']))
+        $entity["consistency_fields"] .= ','.$entity["title_field"];
 	return $entity;
 }
 

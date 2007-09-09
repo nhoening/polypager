@@ -1072,7 +1072,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 								else if ($f['name']=='email') $prefix = "email";
 								else if ($f['name']=='www') {
                                     $prefix = "www";
-                                    if (!utf8_strpos("http://", $content)) $content = "http://".$content;
+                                    if (substr($content,0,7) != "http://") $content = "http://".$content;
                                     $content = '<a rel="nofollow" href="'.$content.'">'.$content.'</a>';
                                 }
 								else $prefix = "";
@@ -1157,10 +1157,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
 						echo($indent.'	<span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
 					}
+                    
 				} else {
-					$href='javascript:document.edit_form._formfield_name_input.focus();';
-					echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
-				}
+					
+                }
 			}
 			
 			//closing tags
@@ -1172,6 +1172,17 @@ require_once("PolyPagerLib_HTMLForms.php");
 			//show comments
 			$nind = $ind + 1;
 			if ($page_info["commentable"] == "1" and $params["step"] == 1) {
+                
+                echo($indent.'<div id="comments"><a class="target" name="comments_anchor"></a>'."\n");
+                
+                $href='javascript:document.edit_form._formfield_name_input.focus();';
+                echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;-&nbsp;'."\n");
+                echo($indent.'  <span class="comment_rss">'."\n");
+                echo($indent.'      <a href="rss.php?p='.$pagename.'&nr='.$params["nr"].'&channel=comments">follow comments per RSS</a>'."\n");
+                $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can be follow the discussion without always coming here to check for new comments.";
+                writeHelpLink($indent."     ",$helptext);
+                echo($indent.'  </span>'."\n");
+                    
 				if($comment_count > 0) {
 					writeComments($comments, $nind);
 				}
@@ -1199,7 +1210,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 	function writeComments($comments, $ind=5) {
 		$indent = translateIndent($ind);
 		global $params;
-		echo($indent.'<div id="comments"><a class="target" name="comments_anchor"></a>'."\n");
 		
 		//save what page we're on
 		$page = $params["page"];

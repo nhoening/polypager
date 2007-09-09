@@ -139,6 +139,7 @@
 					  `title` varchar(255) NOT NULL,
 					  `pagename` varchar(120) NOT NULL,
 					  `id` int(11) NOT NULL,
+                      `public` tinyint(1) NOT NULL default '0',
 					  PRIMARY KEY  (`pk`),
 					  KEY `edited_date` (`edited_date`)
 					) TYPE=MyISAM $charsetter ;";

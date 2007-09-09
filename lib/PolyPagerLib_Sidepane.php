@@ -49,17 +49,24 @@ function getFeed($amount, $comments = false) {
 	//get requested page descriptions
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
 	$p = utf8_explode(',',$p);
-	
+	//get requested entry number
+    $nr = $_GET['nr']; if($nr=='') $nr = $_POST['nr'];
+    
 	//make a filter with what was requested
     if (!$comments) $where = ' WHERE public = 1';
 	if($p[0] != '') {
-        if (!$comments) $where .= " AND ";
-        else $where = " WHERE ";
+        if (!$comments) $where .= " AND (";
+        else $where = " WHERE (";
 		for($i=0;$i<count($p);$i++) {
 			$page = $p[$i];
 			$where .= " pagename = '".urldecode(filterSQL($page))."'";
 			if($i+1 < count($p)) $where .= ' OR'; 
 		}
+        $where .= ")";
+    }
+    
+    if ($nr!=""){
+        $where .= " AND id = ".$nr;
     }
 
 	$sys = getSysInfo();
@@ -74,7 +81,7 @@ function getFeed($amount, $comments = false) {
 	$res = pp_run_query($query);
 	$feeds = array();
 	
-    //echo('<!-- query: '.$query.'-->');
+    echo('<!-- query: '.$query.'-->');
     
 	//enrich with text from the tables themselves
     while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
@@ -96,6 +103,7 @@ function getFeed($amount, $comments = false) {
                 }
             } else {
                 $field = $the_page["title_field"];
+                echo('<!--field:'.$row['thePage'].'-->');
                 if ($field=="") $field = guessTextField($entity);
                 $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
                 if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
