@@ -840,9 +840,9 @@ function getEntity($page_name) {
 				$entity['formgroups'] = array();
 				$entity['formgroups'][''] = array(0,'show');
 				setEntityFieldValue("name", "formgroup", '');
-				$entity['formgroups']['menu'] = array(1,'show');
-				setEntityFieldValue("in_menue", "formgroup", 'menu');
-				setEntityFieldValue("menue_index", "formgroup", 'menu');
+				$entity['formgroups']['menu-settings'] = array(1,'show');
+				setEntityFieldValue("in_menue", "formgroup", 'menu-settings');
+				setEntityFieldValue("menue_index", "formgroup", 'menu-settings');
 				$entity['formgroups']['what to hide or show'] = array(2,'hide');
 				setEntityFieldValue("hide_options", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_toc", "formgroup", 'what to hide or show');

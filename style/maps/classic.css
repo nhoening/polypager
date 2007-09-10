@@ -339,10 +339,10 @@ table tr.edit td.last_edited_label {
 }
 
 #edit_form fieldset table tr td.label{
-	min-width: 170px;
+    width: 13em;
 }
 
-.form_submits{
+.form_submits *{
 	width: 100%;
 	display: inline;
 	margin: 0px 2px 0px 0px;

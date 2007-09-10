@@ -304,8 +304,8 @@ ul#main_menu li a:active, #sub_menus li a:active {
 	text-decoration: none;
 }
 /* these are the sublists */
-#sub_menus {position: relative; top: 83px; left: 0px;}
-#sub_menus ul {}
+#sub_menus { left: 0px;}
+#sub_menus ul {position: absolute; top: 123px; right:10px;}
 
 /* hovering and here: sliding doors */
 #sub_menus li:hover, #sub_menus li.here {
