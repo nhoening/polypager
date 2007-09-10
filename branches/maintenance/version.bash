@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# copy a state as a new version
+# copy a state of the trunk as a new version
 # see also: http://svnbook.red-bean.com/en/1.1/re07.html 
-# TODO: make a bash out of this
 #       -pass version
 #       -verify
 
