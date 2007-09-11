@@ -55,7 +55,8 @@
 		//echo($indent.'	<meta name="date" content="'.date('Y-m-d').'"></meta>'."\n");
 		echo($indent.'	<link rel="Shortcut Icon" href="/favicon.ico" type="image/x-icon"></link>'."\n");
 		echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/javascript.php"></script>'."\n");
-		echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/popup.js"></script>'."\n");
+		echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/browser_detect.js"></script>'."\n");
+        echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/popup.js"></script>'."\n");
 		
         //backdoor hack to get all picswap colorsets
 		if (utf8_strpos($sys_info['skin'],'picswap')>-1) {
