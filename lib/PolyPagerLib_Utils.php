@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-	Copyright (C) 2006 Nicolas Hï¿½ning
+	Copyright (C) 2006 Nicolas Hšning
 	polypager.nicolashoening.de
 	
 	This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '1.0rc3';
+$version = '1.0rc4';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
