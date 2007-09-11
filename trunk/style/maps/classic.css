@@ -164,13 +164,13 @@ div.show div.options span.whole_link{
 /* ----------------end show - divs ------------------------- */
 
 /* ------------------- menue------------------------------- */
-#menu {
+/*#menu {
 	float: right;
 	margin-bottom: 1em;
 }
 #menu ul{
 	list-style:none ! important;
-}
+}*/
 #menuend, .menuend{
 	float:none;
 }

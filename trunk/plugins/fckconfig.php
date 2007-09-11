@@ -11,6 +11,7 @@ FCKConfig.AutoDetectLanguage	= false ;
 FCKConfig.DefaultLanguage	= '<? echo($sys_info["lang"]) ?>' ;
 FCKConfig.UseBROnCarriageReturn	= false ; 	// IE only.
 FCKConfig.ToolbarStartExpanded	= false ;
+FCKConfig.DefaultLinkTarget = "";
 
 FCKConfig.EditorAreaCSS = '<?echo('http://'.$_SERVER['HTTP_HOST'].utf8_str_replace("\\",'/',getPathFromDocRoot()).'plugins/');?>fckcss.php' ;
 FCKConfig.StylesXmlPath = '<?echo('http://'.$_SERVER['HTTP_HOST'].utf8_str_replace("\\",'/',getPathFromDocRoot()).'plugins/');?>fckstyles.xml' ;
