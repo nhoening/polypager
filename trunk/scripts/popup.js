@@ -1,34 +1,17 @@
-/*
-	PolyPager - a lean, mean web publishing system
-    Copyright (C) 2006 Nicolas Hšning
-	polypager.nicolashoening.de
-	
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
-*/
-    
 /*  --------------------------------------------------------------------------
 	Code for link-hover text boxes
 	Original: Mike McGrath (Web Site: http://website.lineone.net/~mike_mcgrath) 
 	modified by Nicolas Hoening (Web Site: http://nicolashoening.de)
+        Works only if the BrowserDetect script has run before (http://dithered.chadlindstrom.ca/javascript/browser_detect)
 */
 
-var iex=(document.all);	//this can also be Opera!
-var nav=(document.layers);
-var old=(navigator.appName=="Netscape" && !document.layers && !document.getElementById);
-var n_6=(window.sidebar);
-var opera = (name.indexOf("opera")> -1) //this is just Opera
+var iex = browser.isIE || browser.isOpera; // opera has a similar engine to IE
+var nav = (document.layers);
+var old = browser.isNS && (!document.layers && !document.getElementById);
+var n_6 = browser.isNS6up;
+var opera = browser.isOpera; // this is only opera
+var safari = browser.isSafari;
+if (safari) n_6 = true; //they work the same for this
 
 // create the popup box - inline so everyone, including Opera, will tell the width
 document.write('<div id="pup" style="visibility:hidden;display:inline;"></div>');
