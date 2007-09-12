@@ -625,7 +625,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 						if ($prev < 0) $prev = 0;
 						if ($next > $params["max"]) $next = $params["max"];
 						if ($prev > 0) {    //earlier entries
-							$theLink = "?".$params["page"]."&amp;nr=".$prev."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params[group];
+							$theLink = "?".$params["page"]."&amp;nr=".$prev."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params["group"];
 							$newPrev = $prev - $step + 1;
 							$sys_info = getSysInfo();
 							if($sys_info['hide_public_popups']==0)$theText = ' onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$newPrev,$prev).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
@@ -921,7 +921,7 @@ require_once("PolyPagerLib_HTMLForms.php");
         }
 		
 		//we'll use this to forward that we had a group request
-		if ($params["group"] != "") $group_forward = '&group='.$row[$entity["group"]["field"]];
+		if ($params["group"] != "") $group_forward = 'group='.urlencode($row[$entity["group"]["field"]]);
 		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'<div id="comments">');
         
@@ -1036,7 +1036,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 							}
 							//make it no longer than 14 words
 							$content = trim(getFirstWords($content, 14));
-							if ($params["group"] != "") $group_forward = 'group='.$row[$entity["group"]["field"]];
 							//for entries on pages we can say if they are public
 							if (!utf8_strpos($params["page"], 'pages') and $params["page"] !='_sys_fields') {
 								$linkText = __('This entry is viewable to the public');
@@ -1054,9 +1053,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 								$the_href = '?_sys_fields&amp;group='.$content.'&amp;from=list&amp;topic=fields';
 								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a></span>'."\n");
 							}
-							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;'.urlencode($group_forward).'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
+							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
 							echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a></span>'."\n");
-							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].'&amp;'.urlencode($group_forward).'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
+							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
 							//check if we should give the old name for consistency reasons
 							$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];
@@ -1122,7 +1121,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$wlink = "?".$pagename.'&amp;nr='.$row[$entity["pk"]];
 			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
 		}
-		echo($indent."</div>"."\n");
+		//echo($indent."</div>"."\n");
         
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
         
@@ -1178,7 +1177,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $href='javascript:document.edit_form._formfield_name_input.focus();';
                 echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;-&nbsp;'."\n");
                 echo($indent.'  <span class="comment_rss">'."\n");
-                echo($indent.'      <a href="rss.php?p='.$pagename.'&nr='.$params["nr"].'&channel=comments">follow comments per RSS</a>'."\n");
+                echo($indent.'      <a href="rss.php?p='.$pagename.'&amp;nr='.$params["nr"].'&amp;channel=comments">follow comments per RSS</a>'."\n");
                 $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can be follow the discussion without always coming here to check for new comments.";
                 writeHelpLink($indent."     ",$helptext);
                 echo($indent.'  </span>'."\n");
@@ -1189,6 +1188,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				writeCommentForm($nind);
 			}
 		}
+        echo($indent."</div>"."\n");
 	}
 	
 	/* gets a resultset of comments according to params

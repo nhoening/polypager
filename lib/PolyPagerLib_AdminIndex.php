@@ -407,7 +407,7 @@
                 if ($params["cmd"] == "delete") {
                     $query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."';";
                 }
-                if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
+                if ($params["cmd"] == "edit" && ($params["values"]["name"] != $params["values"]["old_formfield_name"])) {
                     $query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
                         " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
                 }
@@ -463,7 +463,7 @@
             }
             if ($params["cmd"] == "edit" && $params["values"][$title_field] != $params["values"]["old_formfield_$title_field"]) {
                 $query = "UPDATE _sys_feed SET title = '".$params["values"][$title_field]."'".
-                    " WHERE title = '".$params["values"]["old_formfield_$title_field"]."'";
+                    " WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"];
             }
             if ($query!="") {
                 $res = pp_run_query($query);
