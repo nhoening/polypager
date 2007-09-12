@@ -359,7 +359,7 @@ function getTranslation($text) {
 'gallery' => 'Galerie',
 'misc' => 'Sonstiges',
 'name/table' => 'Name/Tabelle',
-'menu' => 'Men&uuml;',
+'menu-settings' => 'Men&uuml; Einstellungen',
 'what to hide or show' => 'Was angezeigt oder versteckt werden soll',
 'fields with special meaning' => 'Felder mit besonderer Bedeutung',
 

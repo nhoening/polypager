@@ -104,7 +104,7 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	$params = $show_params;
 	$entity = getEntity($params["page"]);
     $queries = getQuery(true);
-
+    
 	if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 
 
@@ -185,7 +185,7 @@ function writeData($ind=5) {
             
             $num = mysql_num_rows($res[$params['page']]);
             if ($num > 0 and ($num < getMaxCount($params["page"] ))) {
-                echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&step=all">Click</a>'.__(' to see all there are.').'</div>');
+                echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&amp;step=all">Click</a>'.__(' to see all there are.').'</div>');
             }
             
 			echo($indent.'</div>'."\n");  //end of class "show"

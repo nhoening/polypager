@@ -342,11 +342,13 @@ table tr.edit td.last_edited_label {
     width: 13em;
 }
 
-.form_submits *{
+
+.form_submits button{
 	width: 100%;
 	display: inline;
 	margin: 0px 2px 0px 0px;
 }
+
 
 form.edit input, form textarea, form button { 
 	padding:2px; 

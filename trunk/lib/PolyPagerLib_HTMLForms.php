@@ -273,7 +273,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     if ($target_nr == "") $target_nr = $params["values"]["nr"];
 	if ($target_nr == "") $target_nr = $row[$entity["pk"]];
 	
-	echo($indent.'<div  display="'.$display.'">'."\n");
+	echo($indent.'<div style="'.$display.'">'."\n");
 	if ($params["page"] == "_sys_comments"){
 		echo($indent.'	<a class="target" name="commentform_anchor"></a>'."\n");
         $target_page = $params["values"]["pagename"]; // the page the entry will appear on
@@ -341,7 +341,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 			if($params["cmd"] != "new" and in_array($f["name"],$consistency_fields)) {
 				echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$val.'"/>'."\n");
 			}
-			echo($indent.'			<td class="label"><label for="'.$f['name'].'_input">');
+			echo($indent.'			<td class="label"><label for="_formfield_'.$f['name'].'_input">');
 			if ($f['label'] != "") echo($f['label'].':'); else echo(__($f['name'].':'));
 			if ($f["help"] != "") writeHelpLink($indent, $f["help"]);	
 			echo($indent.'</label></td>'."\n");
@@ -391,19 +391,19 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'			    <td style="width:50%;">'."\n");
     //preview
     if ($hasTextarea and $_GET["cmd"]!="preview") {
-        echo($indent.'			<script>'."\n");
+        echo($indent.'			<script type="text/JavaScript">'."\n");
         echo($indent.'			function getValues(){'."\n");
         echo($indent.'			   var t = \'\';'."\n");
         foreach ($entity["fields"] as $f){
             if (isTextAreaType($f["data_type"])) {
                 echo($indent.'		    	   var oEditor = FCKeditorAPI.GetInstance(\'_formfield_'.$f["name"].'\');'."\n");
-                echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(oEditor.GetXHTML(false)) + \'&\';'."\n");
+                echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(oEditor.GetXHTML(false)) + \'&amp;\';'."\n");
             }else
                 echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(document.edit_form._formfield_'.$f["name"].'.value) + \'&\';'."\n");
         }
         echo($indent.'			   return t;'."\n");
         echo($indent.'			}</script>'."\n");
-        echo($indent.'			<a href="javascript:void(0)" onclick="GB_showFullScreen(\'Preview\', \'../../?'.urlencode($params["page"]).'&cmd=preview&\' + getValues());">Preview</a>'."\n");
+        echo($indent.'			<a href="javascript:void(0)" onclick="GB_showFullScreen(\'Preview\', \'../../?'.urlencode($params["page"]).'&amp;cmd=preview&amp;\' + getValues());">Preview</a>'."\n");
     }
     
     //hidden values

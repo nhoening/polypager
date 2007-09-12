@@ -1144,16 +1144,17 @@ function getEntity($page_name) {
 				}
 			}
 			$old_entities[] = $entity;
+
+            // guess title field if not set
+            if ($entity["title_field"] == "") $entity["title_field"] = guessTextField($entity,false);
+            // because: if titles change, I always want to know (if they are no blob)
+            $f = getEntityField($entity["title_field"], $entity);
+            if (!isTextareaType($f['data_type']))
+                $entity["consistency_fields"] .= ','.$entity["title_field"];
+            
 		}
 	}
-    
-    // guess title field if not set
-    if ($entity["title_field"]=="") $entity["title_field"] = guessTextField($entity,false);
-    //if titles change, I want to know (if they are no blob)
-    $f = getEntityField($entity["title_field"], $entity);
-    if (isTextareaType($f['data-type']))
-        $entity["consistency_fields"] .= ','.$entity["title_field"];
-	return $entity;
+    return $entity;
 }
 
 /*gives you an alreay built entity if it is stored in $old_entities (it should)*/
