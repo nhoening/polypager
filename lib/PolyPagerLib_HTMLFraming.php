@@ -155,13 +155,7 @@
 		$query = "SELECT id, pagename, heading, publish, in_submenu, order_index from _sys_sections
 					WHERE publish = 1
 					GROUP BY pagename, heading ORDER BY order_index ASC";
-		$res = mysql_query($query, $dblink);
-		$fehler_nr = mysql_errno($dblink);
-		if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
-		if ($fehler_nr!==0) {
-			$fehler_text=mysql_error($dblink);
-			if ($debug) echo('<div class="sys_msg">DB-Error: '.$fehler_text.'</div>'."\n");
-		}
+		pp_run_query($query);
 		
 		$sections = array(); //build a 2-dimensional array with 
 							 //key:page value:heading and order_index

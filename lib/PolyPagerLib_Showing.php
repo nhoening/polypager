@@ -126,24 +126,34 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
 		//------------------------ topic (for admin list)
 		$params["topic"] = $_POST['topic'];
-		if ($params["topic"] == "") {$params["topic"] = $_GET[topic];}
+		if ($params["topic"] == "") $params["topic"] = $_GET["topic"];
 		
 		//------------------------ the page name
-		$params["page"] = urldecode($_POST["page"]);
-		
-		if ($params["page"] == "") {
-			//the "page" param will be just the first in GET Requests (so we can write http://www.bla.com/?mypage)
-			$query_array = utf8_explode('&', $_SERVER["QUERY_STRING"]);
-			$params["page"] = urldecode($query_array[0]);
-			if ($params["page"]=="page=") $params["page"] = "";
-			//if "page=" is given we should handle this, too
-			if ($_GET["page"]!="") $params["page"] = urldecode($_GET["page"]);
-		}
-		
-		//now we just take the start page if there is no one given
-		if ($params["page"] == "") {
-			$sys_info = getSysInfo();
-			$params["page"] = $sys_info["start_page"];
+        //first, let's see if there are pages at all
+        global $path_to_root_dir;
+        if (count(getPageNames()) == 0 and !includedByAdminScript($path_to_root_dir)){
+            global $error_msg_text;
+            $error_msg_text.= $indent.'<div class="sys_msg">'.__('There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.').'</div>'."\n";
+        }else{
+            $params["page"] = urldecode($_POST["page"]);
+            if ($params["page"] == "") {
+                //the "page" param will be just the first in GET Requests (so we can write http://www.bla.com/?mypage)
+                $query_array = utf8_explode('&', $_SERVER["QUERY_STRING"]);
+                $params["page"] = urldecode($query_array[0]);
+                if ($params["page"]=="page=") $params["page"] = "";
+                //if "page=" is given we should handle this, too
+                if ($_GET["page"]!="") $params["page"] = urldecode($_GET["page"]);
+            }
+            
+            //if we have no pagename yet, we just want to take the start page
+            if ($params["page"] == "") {
+                $sys_info = getSysInfo();
+                $params["page"] = $sys_info["start_page"];
+                if ($params["page"] == "" and !includedByAdminScript($path_to_root_dir)) {
+                    global $error_msg_text;
+                    $error_msg_text.= $indent.'<div class="sys_msg">'.__('There is no start page set. If you are the admin of this site, you can set it at <a href="admin/edit.php?_sys_sys">the system properties</a>.').'</div>'."\n";
+                }
+            }
 		}
 		
 
@@ -551,7 +561,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$theQuery = implode('',$b);
 				}
 			}
-			if ($debug) { echo('				<div class="debug">the Query is: '.$theQuery.'</div>'."\n"); }
 			$queries[$p] = $theQuery;
 		}
         //print_r($queries);

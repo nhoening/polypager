@@ -40,16 +40,14 @@ header( 'Content-Type: text/html; charset='.$sys_info['encoding'] );
 
 // ---------------------------------------
 $area = ""; //one of '', '_admin', '_gallery' - makes your template flexible if you want
+$path_to_root_dir = ".";
 $link = getDBLink();
 $show_params = getShowParameters();
-$path_to_root_dir = ".";
-$known_page = true;
+$known_page = isAKnownPage($show_params["page"]) || $show_params["page"] == "";
 
-if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
-		or ($show_params["page"] != '_sys_comments' and isASysPage($show_params["page"]))) {	//nothing to do
-	$error_msg_text = '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
-	$known_page = false;
-} else {
+if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($show_params["page"]))) {
+	$error_msg_text .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
+} else if ($error_msg_text == "") {
 
 	// maybe we need a comment insertion FIRST
 	//- afterwards we'll select data to show
@@ -79,16 +77,16 @@ if ($show_params["page"] == "" or !isAKnownPage($show_params["page"])
 	
 			if ($fehler_nr != 0) {
 				$i_manipulated = false;
-				$error_msg_text = '				<div class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error($link).'</div>'."\n";
+				$error_msg_text .= '				<div class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error($link).'</div>'."\n";
 			} else {
-				$sys_msg_text = '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
-				if ($debug) { $sys_msg_text = $sys_msg_text.'<div class="debug">I used this query: '.$query.'.</div>';}
+				$sys_msg_text .= '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
+				if ($debug) { $sys_msg_text .= '<div class="debug">I used this query: '.$query.'.</div>';}
 				$params["cmd"]="show";
 			}
 	
 		}else{
 			$i_manipulated = false;
-			$sys_msg_text = '<div class="sys_msg">'.$msg.'</div>';
+			$sys_msg_text .= '<div class="sys_msg">'.$msg.'</div>';
 			//refill values for form
 			$show_params["values"]["name"] = $params["values"]["name"];
 			$show_params["values"]["email"] = $params["values"]["email"];
@@ -150,7 +148,7 @@ function writeData($ind=5) {
 	global $params;
 	global $sys_msg_text;
 	global $error_msg_text;
-
+    
     //error? write it and return
 	if ($error_msg_text != "") {
 		echo($error_msg_text);

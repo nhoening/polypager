@@ -22,7 +22,7 @@
 /*this is the place where you can turn logging on or off
   (it is so because almost every script uses this library)
 */
-$debug = false ;
+$debug = true ;
 
 /*
  * the PolyPager version
@@ -33,7 +33,7 @@ $version = '1.0rc4';
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
  * (in writeIntro())  !!!
  */
-$run_as_demo = false;
+$run_as_demo = true;
 
 /*
   ATTENTION: 	some of the functions here (the getters mostly)
@@ -58,13 +58,12 @@ $lang = $sys["lang"];
  */
 function pp_run_query($query){
 	global $debug;
-	if($debug) echo('<div class="debug">running query::|'.$query.'|</div>');
 	$res = mysql_query($query, getDBLink());
 	$error_nr = mysql_errno(getDBLink());
 	if ($error_nr != 0) {
-		$error_buffer = $error_buffer.'|'.mysql_error(getDBLink());
+		$error_buffer .= '|'.mysql_error(getDBLink()).'|';
 	}
-	if($debug) echo('<div class="debug">got error(s):|'.$error_buffer.'|</div>');
+	if($debug and $error_buffer != "") echo('<div class="debug">got error(s):|'.$error_buffer.'| when running the query "'.$query.'"</div>');
 	
 	return $res;
 }
