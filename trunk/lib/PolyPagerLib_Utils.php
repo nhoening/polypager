@@ -22,7 +22,7 @@
 /*this is the place where you can turn logging on or off
   (it is so because almost every script uses this library)
 */
-$debug = true ;
+$debug = false ;
 
 /*
  * the PolyPager version
@@ -33,7 +33,7 @@ $version = '1.0rc4';
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
  * (in writeIntro())  !!!
  */
-$run_as_demo = true;
+$run_as_demo = false;
 
 /*
   ATTENTION: 	some of the functions here (the getters mostly)
