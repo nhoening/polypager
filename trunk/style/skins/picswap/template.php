@@ -13,7 +13,6 @@
 	with a simple if($area == 'x') {} - statement
 	*/
 ?>
-
 <?php writeDocType();?>
 <html>
 <?php writeHeader();?>
