@@ -131,7 +131,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 		//------------------------ the page name
         //first, let's see if there are pages at all
         global $path_to_root_dir;
-        if (count(getPageNames()) == 0 and !includedByAdminScript($path_to_root_dir)){
+        $sys_info = getSysInfo();
+        if (count(getPageNames()) == 0 and !$sys_info['no_tables'] and !includedByAdminScript($path_to_root_dir)){
             global $error_msg_text;
             $error_msg_text.= $indent.'<div class="sys_msg">'.__('There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.').'</div>'."\n";
         }else{
@@ -149,15 +150,14 @@ require_once("PolyPagerLib_HTMLForms.php");
             if ($params["page"] == "") {
                 $sys_info = getSysInfo();
                 $params["page"] = $sys_info["start_page"];
-                if ($params["page"] == "" and !includedByAdminScript($path_to_root_dir)) {
+                if ($params["page"] == "" and !$sys_info['no_tables'] and !includedByAdminScript($path_to_root_dir)) {
                     global $error_msg_text;
                     $error_msg_text.= $indent.'<div class="sys_msg">'.__('There is no start page set. If you are the admin of this site, you can set it at <a href="admin/edit.php?_sys_sys">the system properties</a>.').'</div>'."\n";
                 }
             }
 		}
 		
-
-        //one more exception: if there is no page butcommand is _search, 
+        //one more exception: if there is no page but command is _search, 
         //let's help the user out and conduct pagewise search
         if (($params["page"]=="" or $params["page"]=='cmd=_search') and $_GET["cmd"]=="_search")
             $params["page"] = "_search";
@@ -325,8 +325,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$entity = getEntity($p);
 			if ($entity['pk'] == "") {
 				global $sys_msg_text;
-				$sys_msg_text .= '<div class="sys_msg">'.__('This table has no primary key!').'</div>';
-				return "";
+				$sys_msg_text .= '<div class="sys_msg">'.$entity['tablename'].':'.__('This table has no primary key!').'</div>';
+				continue;
 			}
 			// ---------- first the easy cases: 
 			

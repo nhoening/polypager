@@ -103,8 +103,6 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	$entity = getEntity($params["page"]);
     $queries = getQuery(true);
     
-	if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
-
 
 	// send show quer(y|ies) to DBMS now
 	$res = array();
