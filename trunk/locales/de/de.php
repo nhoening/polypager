@@ -96,8 +96,8 @@ function getTranslation($text) {
     => 'Dieser Link ist nur aktiv, wenn es Tabellen in der Datenbank gibt, auf denen komplexe Seiten operieren k&ouml;nnten (das sind alle Tabellen, die keine Systemtabellen sind -deren Namen beginnen alle mit [_sys_] -)',
 'new page named' => 'neue Seite namens',
 'from template:' => 'aus Schablone:',
-'a page template creates pages for you that fulfill some well-known function and is used often. So this might be useful for you. After you created the page, you can still edit its properties or delete it.'
-	=> 'eine Seiten-Schablone erstellt Seiten f&uuml;r Sie. Sie k&ouml;nnen aus Typen von Seiten w&auml;hlen, die wohlbekannte und oft verwendete Funktionen erf&uuml;llen. Nach der Erstellung k&ouml;nnen Sie die Eigenschaften der Seite ver&auml;ndern oder sie l&ouml;schen.',
+'A page template creates a page for you that fulfills some well-known function which is used often on websites. So this might be useful for you. After you created the page, you can still edit its properties or delete it.'
+	=> 'Eine Seiten-Schablone erstellt eine Seite f&uuml;r Sie. Sie k&ouml;nnen aus Typen von Seiten w&auml;hlen, die wohlbekannte und oft verwendete Funktionen erf&uuml;llen. Nach der Erstellung k&ouml;nnen Sie die Eigenschaften der Seite ver&auml;ndern oder sie l&ouml;schen.',
 'a simple guestbook' => 'ein einfaches G&auml;stebuch',
 'an FAQ (Frequently asked questions)' => 'ein FAQ (Frequently asked questions)',
 'a Weblog (often called Blog)' => 'ein Webtagebuch (oft Blog genannt)',
@@ -285,6 +285,10 @@ function getTranslation($text) {
  
  
 /*	lib/PolyPagerLib_Showing.php	*/
+'There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.'
+    => 'Es gibt bisher keine Seiten. Wenn Sie Administrator dieser Website sind, k&ouml;nnen Sie <a href="admin/?page=_sys_pages&amp;topic=pages">hier</a> eine erstellen.',
+'There is no start page set. If you are the admin of this site, you can set it at <a href="admin/edit.php?_sys_sys">the system properties</a>.'
+    => 'Es ist keine Startseite angegeben, Wenn Sie Administrator dieser Website sind, k&ouml;nnen Sie das <a href="admin/edit.php?_sys_sys">in den Systemeinstellungen</a> nachholen.',
 'please do not use SQL Code here in your keyword search...'	=> 'bitte benutzen Sie keine SQL-Schl&uuml;sselw&ouml;rter in Ihrer Stichwortsuche',
 'Here you can find entries of your interest.&lt;br/&gt; You see several options that help you specifying your search for this kind of entry.&lt;br/&gt; Click on the symbol to the left of the option to in- or exclude it into your search. Several keywords are implicitely connected by AND.'
 	=> 'Sie k&ouml;nnen hier nach Eintr&auml;gen suchen. Sie sehen verschiedene Optionen, die Ihnen helfen, Ihre Suche nach einem Eintrag dieser Seite zu spezifieren&lt;br/&gt; Klicken Sie auf das Symbol zur Linken der Option, um Sie in Ihrer Suche aufzunehemn bzw. sie auszuschliessen. Mehrere Schl&uuml;sselw&ouml;rter werden implizit mit UND verbunden.',

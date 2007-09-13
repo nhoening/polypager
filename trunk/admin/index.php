@@ -42,7 +42,7 @@ header( 'Content-Type: text/html; charset='.$sys_info['encoding'].'' );
 include('auth.php');
 
 $area = "_admin"; 
-
+$path_to_root_dir = "..";
 $sys_info["start_page"] = "";
 $link = getDBLink();
 $params = getShowParameters();
@@ -58,13 +58,6 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
 		$sys_msg_admin = $sys_msg_admin."<br/>\n";
 		
-		/*
-		$error = chmod_dirs($link);
-		$sys_msg_admin = $sys_msg_admin.'__('attempted to chmod directories... ');
-		if ($error != "") $sys_msg_admin = $sys_msg_admin.__('The dbms reported the following error: ').$error;
-		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
-		*/
-	
 	}
 	
 	//template creation
@@ -80,7 +73,6 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 	$title = __('unknown page').': '.$params["page"];
 	$sys_msg_admin .= '<div class="sys_msg_admin">'.__('There is no known page specified.').'</div>'."\n";
 }
-$path_to_root_dir = "..";
 $title = "Admin Area";
 
 

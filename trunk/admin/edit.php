@@ -57,7 +57,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 	
 			$queries = getEditQuery($params["cmd"], "");
 			
-			//now run db manipulation quer(y|ies) - we might get a few because of  foreign keys
+			//now run db manipulation quer(y|ies) - we might get a few because of foreign keys
 			if ($queries != "") {
 				foreach($queries as $q) {
 					if ($q!=""){
@@ -65,6 +65,10 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 						$fehler_nr .= mysql_errno(getDBLink());
 						$mysqlerror .= mysql_error(getDBLink());
 					}
+                    if($params["cmd"] == "entry") {
+					    //later, we should show the highest number (that is the one we just inserted)
+                        $newID = mysql_insert_id();
+                    }
 				}
 			} else $fehler_nr = 1;
 			
@@ -83,8 +87,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				$queries = getEditQuery("show", "");
 				$query = $queries[0];
 				if($params["cmd"] == "entry") {
-					//here we should show the highest number (that is the one we just inserted)
-					$newID = mysql_insert_id();
 					$queries = getEditQuery("show", $newID);
 					$params["nr"] = $newID;
 				}
@@ -139,7 +141,6 @@ function writeData($ind=4) {
     showAdminOptions($indent.'	');
     
 	if($debug) {
-		echo('<div class="debug">Query is: '.$query.'</div>');
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
 	}
 	

@@ -344,6 +344,7 @@
 		}
 	}
 	
+    
 	/* this function ensures that changes on pages affect other places
 		on the database that are relevant.
 		Therefore, some fields can be marked as important for consistency
@@ -352,8 +353,15 @@
 		all the other values, too.*/
 	function ensureConsistency() {
 		global $params;
-		global $debug;
         $entity = getEntity($params["page"]);
+        
+        //entry of a page and no startpage is given
+        $sys_info = getSysInfo();
+        
+        if ($params["cmd"] == "entry" and utf8_strpos($params["page"], "pages") and count(getPageNames()) == 0) {
+            $query = "UPDATE _sys_sys SET start_page = '".$params['values']["name"]."'";
+            pp_run_query($query);
+        }
         
         // change of a page name
 		if (($params["cmd"] == "edit" or $params["cmd"] == "delete")
@@ -367,24 +375,14 @@
 						$query = "UPDATE _sys_sections SET pagename = '".$params["values"]["name"]."'".
 							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
 					}
-					if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($query!="") {
-                        $res = mysql_query($query, getDBLink());
-                        $fehler_nr .= mysql_errno(getDBLink());
-                        $fehler_text .= mysql_error(getDBLink());
-                        if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_sections...</div>'); }
-                    }
+                    pp_run_query($query);
 			}
 			if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
                 //update start page
                 $sys_info = getSysInfo();
                 if ($params["values"]["old_formfield_name"] == $sys_info["start_page"]){
                     $query = "UPDATE _sys_sys SET start_page = '".$params["values"]["name"]."'";
-                    $res = mysql_query($query, getDBLink());
-                    $fehler_nr .= mysql_errno(getDBLink());
-                    $fehler_text .= mysql_error(getDBLink());
-                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_sys...</div>'); }
+                    pp_run_query($query);
                 }
                 
                 //update comments
@@ -395,13 +393,7 @@
                     $query = "UPDATE _sys_comments SET pagename = '".$params["values"]["name"]."'".
                         " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
                 }
-                if ($query!="") {
-                    $res = mysql_query($query, getDBLink());
-                    $fehler_nr .= mysql_errno(getDBLink());
-                    $fehler_text .= mysql_error(getDBLink());
-                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_comments...</div>'); }
-                }
+                pp_run_query($query);
                 
                 //update feed list
                 if ($params["cmd"] == "delete") {
@@ -411,13 +403,7 @@
                     $query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
                         " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
                 }
-                if ($query!="") {
-                    $res = pp_run_query($query);
-                    $fehler_nr .= mysql_errno(getDBLink());
-                    $fehler_text .= mysql_error(getDBLink());
-                    if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_feed...</div>'); }
-                }
+                pp_run_query($query);
                 
                 //update field list
                 if ($params["cmd"] == "delete") {
@@ -427,13 +413,7 @@
                     $query = "UPDATE _sys_fields SET pagename = '".$params["values"]["name"]."'".
                         " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
                 }
-                if ($query!="") {
-                    $res = mysql_query($query, getDBLink());
-                    $fehler_nr .= mysql_errno(getDBLink());
-                    $fehler_text .= mysql_error(getDBLink());
-                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_fields...</div>'); }
-                }
+                pp_run_query($query);
                 
                 //update foreign keys
                 if ($params["cmd"] == "delete") {
@@ -443,13 +423,7 @@
                     $query = "UPDATE _sys_fields SET foreign_key_to = '".$params["values"]["name"]."'".
                         " WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
                 }
-                if ($query!="") {
-                    $res = mysql_query($query, getDBLink());
-                    $fehler_nr .= mysql_errno(getDBLink());
-                    $fehler_text .= mysql_error(getDBLink());
-                    if ($debug) { echo('<div class="debug">Consistency Query is: '.$query.'</div>'); }
-                    if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_foreign keys...</div>'); }
-                }
+                pp_run_query($query);
 			}
 		}
         
@@ -465,13 +439,7 @@
                 $query = "UPDATE _sys_feed SET title = '".$params["values"][$title_field]."'".
                     " WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"];
             }
-            if ($query!="") {
-                $res = pp_run_query($query);
-                $fehler_nr .= mysql_errno(getDBLink());
-                $fehler_text .= mysql_error(getDBLink());
-                if ($debug) echo('<div class="debug">Consistency Query is: '.$query.'</div>');
-                if ($fehler_nr != 0) { echo('<div class="sys_msg_admin">I could not update _sys_feed...</div>'); }
-            }
+            pp_run_query($query);
         }
 	}
 	
@@ -511,7 +479,7 @@
 			}
 			echo($indent.'		</select>'."\n");
 		} else if ($topic == 'pages') {
-			$link_text = __('a page template creates pages for you that fulfill some well-known function and is used often. So this might be useful for you. After you created the page, you can still edit its properties or delete it.');
+			$link_text = __('A page template creates a page for you that fulfills some well-known function which is used often on websites. So this might be useful for you. After you created the page, you can still edit its properties or delete it.');
 			echo($indent.'		<a id="templates_link"  onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleVisibility(\'template_msg\',\'templates_link\', \''.__('show templates').'\', \''.__('hide templates').'\');">'.__('show templates').'</a>&nbsp;|&nbsp;'."\n");
 			echo($indent.'		<span id="template_msg"  style="display:none;" class="sys_msg_admin">'."\n");
 			echo($indent.'		'.__('new page named').' <input type="text" name="page_name" maxlength="30"="60" size="20"/> '."\n");
