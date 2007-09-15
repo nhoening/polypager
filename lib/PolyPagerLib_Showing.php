@@ -1194,7 +1194,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if($comment_count > 0) {
 					writeComments($comments, $nind);
 				}
+                
 				writeCommentForm($nind);
+                echo($indent.'</div>'."\n");
 			}
 		}
         echo($indent."</div>"."\n");
@@ -1232,7 +1234,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
 		//set param back
 		$params["page"] = $page;
-		echo($indent.'</div>'."\n");
 	}
 	
 	/* writes a comment form
