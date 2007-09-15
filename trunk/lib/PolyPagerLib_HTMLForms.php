@@ -63,7 +63,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	//now all inner stuff (attributes, value...)
     
 	if ($inputType == "textarea")	{
-		$oFCKeditor = new FCKeditor($name);
+		$oFCKeditor = new FCKeditor($name.'_input');
 		if (!$full_editor) $oFCKeditor->ToolbarSet = 'Basic';
         else $oFCKeditor->ToolbarSet = 'PolyPager';
 		$path = getPathFromDocRoot();
@@ -399,7 +399,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
                 echo($indent.'		    	   var oEditor = FCKeditorAPI.GetInstance(\'_formfield_'.$f["name"].'\');'."\n");
                 echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(oEditor.GetXHTML(false)) + \'&amp;\';'."\n");
             }else
-                echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(document.edit_form._formfield_'.$f["name"].'.value) + \'&\';'."\n");
+                echo($indent.'		    	   t += \'_formfield_'.$f["name"].'=\' + escape(document.edit_form._formfield_'.$f["name"].'.value) + \'&amp;\';'."\n");
         }
         echo($indent.'			   return t;'."\n");
         echo($indent.'			}</script>'."\n");
