@@ -50,7 +50,10 @@ function getFeed($amount, $comments = false) {
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
 	$p = utf8_explode(',',$p);
 	//get requested entry number
-    $nr = $_GET['nr']; if($nr=='') $nr = $_POST['nr'];
+    if ($comments) {
+        $nr = $_GET['nr']; 
+        if($nr=='') $nr = $_POST['nr'];
+    }
     
 	//make a filter with what was requested
     if (!$comments) $where = ' WHERE public = 1';
@@ -65,8 +68,8 @@ function getFeed($amount, $comments = false) {
         $where .= ")";
     }
     
-    if ($nr!=""){
-        $where .= " AND id = ".$nr;
+    if ($comments and $nr!=""){
+        $where .= " AND pageid = ".$nr;
     }
 
 	$sys = getSysInfo();

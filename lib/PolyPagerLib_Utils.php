@@ -35,8 +35,7 @@ $version = '1.0rc4';
  */
 $run_as_demo = false;
 
-/*
-  ATTENTION: 	some of the functions here (the getters mostly)
+/* ATTENTION: 	some of the functions here (the getters mostly)
 				use lazy instantiation:
 				never use those vars directly, although you could
 				make them global (calling the methods ensures its
