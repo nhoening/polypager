@@ -23,6 +23,7 @@ FCKConfig.CustomConfigurationsPath = '' ;
 FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'css/fck_editorarea.css' ;
 
 FCKConfig.DocType = '' ;
+FCKConfig.DefaultLinkTarget = ''; //tmp fix for http://dev.fckeditor.net/changeset/388
 
 FCKConfig.BaseHref = '' ;
 

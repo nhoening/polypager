@@ -12,7 +12,11 @@ Danke an Fabrice Pascal - http://www.fabrice-pascal.de/artikel/posfixedie6/*/
 #title {
 	width: 800px !important;
 }
-#data, #data_admin, #impressum {
+#data, #data_admin, #data_gallery{
+    /*don't know why this is needed, but otherwise we have a gap*/
+    position:relative;top:-60px !important;
+}
+#data, #data_admin, #data_gallery, #impressum {
 	width: 800px; /*IE counts borders extra*/
 }
 #sidepane, #sidepane * {
@@ -38,7 +42,7 @@ div.show_entry div.title,
 	width: 799px !important;
 }
 #sub_menus { 
-	position: relative; top: 97px; left: 0px;
+	position: relative; top: 95px; left: 0px;
 }
 #sub_menus ul {
 	margin-left: 0px;
