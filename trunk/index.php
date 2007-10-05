@@ -39,10 +39,13 @@ header( 'Content-Type: text/html; charset='.$sys_info['encoding'] );
 
 
 // ---------------------------------------
-$area = ""; //one of '', '_admin', '_gallery' - makes your template flexible if you want
+
 $path_to_root_dir = ".";
 $link = getDBLink();
 $show_params = getShowParameters();
+
+$area = ""; //one of '', '_admin', '_gallery' - makes your template flexible if you want
+
 $known_page = isAKnownPage($show_params["page"]) || $show_params["page"] == "";
 
 if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($show_params["page"]))) {
@@ -174,7 +177,11 @@ function writeData($ind=5) {
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
 			writeToc($res, false, $nind);
 			
-			echo($indent.'<div class="show">'."\n");
+            $showid = "";
+            
+			echo($indent.'<div class="show"');
+            if ($params['page'] == "_search") echo(' id="search_results"');
+            echo('>'."\n");
 			$nind = $ind + 1;
 			writeEntries($res, false, $nind, false);
 			

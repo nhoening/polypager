@@ -260,12 +260,12 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$indent = translateIndent($ind);
 		global $params;
 		if ($params["search"] != "") {
-			echo($indent.'<div class="sys_msg" id="searchinfo"><h4>'.__('you searched for:').'</h4><ul>');
+			echo($indent.'<div class="sys_msg" id="searchinfo"><h4>'.__('you searched for:').'</h4><ul>'."\n");
 			foreach($params["search"] as $name => $val) {
 				if ($name=="kw")$name="keyword";
-				if ($val != "") echo($indent.'	<li>'.$name.':'.utf8_str_replace("\\","",$val).'</li>');
+				if ($val != "") echo($indent.'	<li>'.$name.':'.utf8_str_replace("\\","",$val).'</li>'."\n");
 			}
-			echo($indent.'</ul></div>');
+			echo($indent.'</ul></div>'."\n");
 		}
 	}
 	
@@ -316,7 +316,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				return array();
 			}	
 			// search on every page
-			$pagelist =implode(',',getPageNames());
+			$pagelist = implode(',',getPageNames());
 		}
 		
 		foreach (utf8_explode(',',$pagelist) as $p){
@@ -458,17 +458,20 @@ require_once("PolyPagerLib_HTMLForms.php");
 					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
 						if ($params["search"]["kw"] != "") {
 							$keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
-                            if ($said_where) $a[] = " AND ";
-                            else $a[] = " WHERE ";
+                            //if ($said_where) $a[] = " AND ";
+                            //else $a[] = " WHERE ";
+                            $a[1] = " WHERE ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
 								echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
-								$a[] = " 2=1"; //show nothing
+								continue; //show nothing
 							} else {
 								$a[] = " (";
 								// get all keywords
 								$kws = getSearchKeywords();
+                                $found_a_textfield = false;
 								foreach($entity["fields"] as $f) {
                                     if (isTextType($f["data_type"])){
+                                        $found_a_textfield = true;
                                         $table_field = $entity["tablename"].'.'.$f['name'];
                                         //remember: BLOB fields are case-sensitive! you should take text for those
                                         $a[] = " (";
@@ -479,21 +482,23 @@ require_once("PolyPagerLib_HTMLForms.php");
                                         $a[] = " ) OR";
                                     }
 								}
-								$a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
+								if ($found_a_textfield) $a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
+                                else continue;  //no text fields? no query for this table needed
 								$a[] = ")";
 							}
 						}
 					}
 
 					// The other search possibilities work only per page
-					if($params["search"] != "") {
+					else if($params["search"] != "") {
 						if($entity["search"]["year"] == '1' or $entity["search"]["month"] == '1') {
 							if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
 								$month = $params["search"]["m"];
 								$year = $params["search"]["y"];
                                 
-								if ($said_where) $a[] = " AND ";
-                                else $a[] = " WHERE ";
+								//if ($said_where) $a[] = " AND ";
+                                //else $a[] = " WHERE ";
+                                $a[1] = " WHERE ";
 								//if december, increment year for enddate, else only the month
 								if ($month == "") {
 									$nextYear = $year + 1;
@@ -522,13 +527,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 							}
 						}
 						
-						//if we had nothing, make search query valid at least
-						if (count($a) == 2) $a[2] = "1=2";
+						//if we had nothing, no query for this table is needed
+						if (count($a) == 2) continue;
 					} 
-					
-					if ($params["cmd"] == "_search" and $a[2] == "1=2") {
-							echo("should be nothing");
-					}
 					
 					if($only_published and $entity["publish_field"] != "") {	//publish - Flag
 						if ($params['search']!="" or $params['page']!='_search') $a[] = " AND ";
@@ -1184,7 +1185,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 echo($indent.'<div id="comments"><a class="target" name="comments_anchor"></a>'."\n");
                 
                 $href='javascript:document.edit_form._formfield_name_input.focus();';
-                echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;-&nbsp;'."\n");
+                echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                 echo($indent.'  <span class="comment_rss">'."\n");
                 echo($indent.'      <a href="rss.php?p='.$pagename.'&amp;nr='.$params["nr"].'&amp;channel=comments">follow comments per RSS</a>'."\n");
                 $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can be follow the discussion without always coming here to check for new comments.";
