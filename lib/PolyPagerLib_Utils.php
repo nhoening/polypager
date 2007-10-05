@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-	Copyright (C) 2006 Nicolas Hšning
+	Copyright (C) 2006 Nicolas Hï¿½ning
 	polypager.nicolashoening.de
 	
 	This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ $debug = false ;
 /*
  * the PolyPager version
  */
-$version = '1.0rc4';
+$version = '1.0rc5';
 
 /* when true, the admin name and password are set to
  * 'admin'/'admin' (in getSysInfo()) and openly announced 
@@ -608,7 +608,7 @@ function getAlreadyBuiltPageInfo($page_name) {
     $entity["search"]: an array describing what search is possible on this page.
                         For example, here we search for keywords only:
                         array("range"=>0,"month"=>0,"year"=>0,"keyword"=>1)
-    $edntity["fillafromb"]: a is a field name and b is alist of values. In the form,
+    $entity["fillafromb"]: a is a field name and b is alist of values. In the form,
                             PolyPager will provide javascript to fill the field a with values from list b 
 */
 $entity = "";		//stores the actual entity

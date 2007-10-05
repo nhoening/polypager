@@ -84,7 +84,7 @@ function getFeed($amount, $comments = false) {
 	$res = pp_run_query($query);
 	$feeds = array();
 	
-    //echo('<!-- query: '.$query.'-->');
+    echo('<!-- query: '.$query.'-->');
     
 	//enrich with text from the tables themselves
     while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {

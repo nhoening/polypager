@@ -48,7 +48,7 @@ echo('	<channel>'."\n");
 if ($_GET["channel"] == "comments") {$title_prefix = __('Comments on ');}
 echo('		<title><![CDATA['.$title_prefix.$sys_info["title"].']]></title>'."\n");
 echo('		<link>http://'.urldecode($base_url).'</link>'."\n");
-echo('		<description><![CDATA[a website by '.urlencode($sys_info["author"]).']]></description>'."\n");
+echo('		<description><![CDATA[a website by '.$sys_info["author"].']]></description>'."\n");
 echo('		<language>'.$sys_info["lang"].'</language>'."\n");
 
 $res = getFeed($sys_info["feed_amount"], $_GET["channel"] == "comments");

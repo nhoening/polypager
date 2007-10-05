@@ -54,8 +54,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	$inputType = "input";
 	if(isTextAreaType($type)) $inputType = "textarea";
 	if (gettype($value) == "string" and $inputType != "textarea") {
-		//we cannot write " inside of input-Elements (they're standalone in XHTML)
-		$value = utf8_str_replace('"', "&quot;", $value);
+		
 	}
 	echo($indent);
 	if ($inputType != "textarea") echo('<'.$inputType.' id="'.$name.'_input" tabindex="'.$tabindex.'"');
@@ -75,7 +74,9 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		$oFCKeditor->Config['CustomConfigurationsPath'] = str_replace("\\", '/', $path).'plugins/fckconfig.php'  ;
 		$oFCKeditor->Create() ;
 	} else if (isTextType($type) or isDateType($type)) {
-        $value = utf8_str_replace("&", "&amp;", $value);
+        //$value = utf8_str_replace("&", "&amp;", $value);
+        //we cannot write " inside of input-Elements (they're standalone in XHTML)
+		$value = utf8_str_replace('"', "&quot;", $value);
 		if ($size > 24) {
 			if ($value == "") {echo(' size="24" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="24" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -155,7 +156,7 @@ function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
 
 
 /*
- returns an array containing only what was not in both input arrays (and is)
+ returns an array containing only what was not in both input arrays
 */
 function array_in_one($a1, $a2) {
 	$r = array();
@@ -338,7 +339,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 		} else {
 			echo($indent.'		'."<tr>\n");
 			// save old value if its relevant for consistency
-			if($params["cmd"] != "new" and in_array($f["name"],$consistency_fields)) {
+			if(in_array($f["name"],$consistency_fields)) {
 				echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$val.'"/>'."\n");
 			}
 			echo($indent.'			<td class="label"><label for="_formfield_'.$f['name'].'_input">');
