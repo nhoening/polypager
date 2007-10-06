@@ -799,7 +799,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("hide_options", "help", __('when this field is checked, administration info under each entry (edit-link,date of last change, ...) will not be shown.'));
 				setEntityFieldValue("hide_search", "help", __('when this field is checked, the link to search form will not be shown.'));
 				setEntityFieldValue("hide_toc", "help", __('when this field is checked, the table of contents on top of the page will not be shown.'));
-				setEntityFieldValue("tablename", "help", __('this field is important: it defines which table to use for this page. So much of the field-fields below depend on what is given here, because PolyPager finds the values for those fields in this table.'));
+				setEntityFieldValue("tablename", "help", __('this field is important: it defines which table to use for this page. Some of the fields below depend on what is given here, because PolyPager finds the values for those fields in this table.'));
 				setEntityFieldValue("hidden_fields", "help", __('these fields will not be shown to the public. Select fields from the list by clicking on them.'));
 				setEntityFieldValue("order_by", "help", __('here you can choose which field should be the order criterium.'));
 				setEntityFieldValue("order_order", "help", __('ASC stands for ascending. Take numbers for an example: lowest numbers will come first, highest last. DESC means descending and works the other way round'));
@@ -907,11 +907,14 @@ function getEntity($page_name) {
 				$group = array("field"=>"pagename",
 								"order"=>"DESC");
 				$entity["group"] = $group;
-				$fields = getListOfFields($_GET["group"]);
+                
+                $param_group = urldecode($_GET["group"]);
+                if ($param_group == '') { $param_group = urldecode($_POST["group"]); } //coming in per POST?
+				$fields = getListOfFields($param_group);
 				if (count($fields) > 0) {
 					// when field options of simple pages are edited by 
 					// the users, I prefer to not show'em all
-					if ($params['page']=='_sys_fields' && isSinglePage($params['group'])){
+					if ($params['page']=='_sys_fields' && isSinglePage($param_group)){
 						$flist = implode(',', $fields);
 						$flist = utf8_str_replace('input_date','',$flist); //internal date field
 						$flist = utf8_str_replace('edited_date','',$flist); //internal date field
