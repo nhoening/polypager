@@ -215,7 +215,11 @@ blockquote
 blockquote p { margin: .7em 0; }
 
 img { border: none; }
-.show .show_entry, .show .show_entry_with_options  { text-align: justify; }
+.show .show_entry, .show .show_entry_with_options  { 
+    text-align: justify; 
+    margin-top: 40px;
+}
+
 .show {
 	margin-bottom: 30px;
 }

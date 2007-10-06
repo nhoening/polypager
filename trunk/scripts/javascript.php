@@ -194,7 +194,6 @@ function openWindow(adress, title, width, height, top, left, scrollbars) {
 function checkDelete(){
 	agree = confirm("<?echo(__('Are you sure you want to delete this entry?'));?>");
 	if (agree) {
-   		//document.form1.submit();
 		return true;
 	}
 	else {
@@ -205,7 +204,6 @@ function checkDelete(){
 function submit_form_by_selection(command) {
 	agree = confirm('<?=__('a change this field is important for other fields in this form. I therefore would like to reload this page. OK?')?>');
 	if (agree) {
-		get('the_real_cmd').value=command;
 		document.forms[0].submit();
 	}
 }

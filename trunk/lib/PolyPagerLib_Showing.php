@@ -887,10 +887,8 @@ require_once("PolyPagerLib_HTMLForms.php");
                         }
                         echo($indent.'		</ul>'."\n");
                     }
-				} else {	//here we need some sophisticated stuff
-					
+				} else {	//here we need some sophisticated stuff: the whole entry
 					writeEntry($row, $respage, $listview, $ind);
-                    $ind = $ind + 1;
 				}
 			}
 			
@@ -921,7 +919,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 		global $params, $debug;
 		$entity = getEntity($pagename);
 		$page_info = getPageInfo($pagename);
-		
         
 		//quickhack - normally comments do have a title field but not here
         //no options here for comments - takes too much space
@@ -952,7 +949,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$the_url = '?'.urlencode($pagename).'&amp;nr='.$row[$entity['pk']];
         
 		if ($entity["fields"] != "") {
-            //we always want the title first when we showing search results
+            //we always want the title first when we show search results
             if($entity["title_field"]!="" and ($params['page']=='_search' or $params["cmd"] == "_search" )) {
                 $title = strip_tags($row[$entity["title_field"]]);
                 foreach(getSearchKeywords() as $k){
@@ -1137,17 +1134,17 @@ require_once("PolyPagerLib_HTMLForms.php");
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == 0 ) {
-				echo($indent.'<div class="options">'."\n");
-				echo($indent.'	<span class="edit">'."\n");
+				echo($indent.'    <div class="options">'."\n");
+				echo($indent.'	    <span class="edit">'."\n");
 				$sys_info = getSysInfo();
 				if ($sys_info['hide_public_popups']==0) $text='onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
 				else $text = "";
-				echo($indent.'	<span class="admin_link"><a '.$text.'href="admin/edit.php?'.$pagename.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'">#</a></span>'."\n");
+				echo($indent.'	    <span class="admin_link"><a '.$text.'href="admin/edit.php?'.$pagename.'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'">#</a></span>'."\n");
 				if($entity["date_field"]["editlabel"] != "") { //show last editing date
 					if ($row[$entity["date_field"]["editlabel"]] != NULL) {
 						$ed = format_date($row[$entity["date_field"]["editlabel"]]);
 						if ($ed != __('no date set yet')) 
-							echo($indent.'		<span class="last_edited_label">'.__('last edited:').' '.$ed.'</span>'."\n");
+							echo($indent.'		    <span class="last_edited_label">'.__('last edited:').' '.$ed.'</span>'."\n");
 					}
 				}
 			}
@@ -1161,10 +1158,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if ($params["step"] != 1) {
 					if($comment_count > 0) {
 						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
-						echo($indent.'	<span class="comment_link"><a href="'.$href.'">comments('.$comment_count.')</a></span>'."\n");
+						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">comments('.$comment_count.')</a></span>'."\n");
 					} else {
 						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
-						echo($indent.'	<span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
+						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
 					}
                     
 				} else {
@@ -1174,8 +1171,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			
 			//closing tags
 			if ($page_info["hide_options"] == "0" ) {
-				echo($indent.'	</span>'."\n");
-				echo($indent.'</div>'."\n");	//end option div
+				echo($indent.'	    </span>'."\n");
+				echo($indent.'    </div>'."\n");	//end option div
 			}
 			
 			//show comments

@@ -730,12 +730,14 @@ function getEntity($page_name) {
 				//third, if we don't know the table yet (maybe a new page?),
 				//take the first one that comes with getTables();
 				}else {
-					$tables_str = implode("|", $tables);
+                    //edit: this causes more trouble than it does good (where does it actually do any good?)
+                    //      on a new page, we don't want table data if we don"t have a table
+					/*$tables_str = implode("|", $tables);
 					if (!utf8_strpos( $tables_str, "|" )) {
 						$the_table = $tables_str; //there seems to be only one
 					} else {
 						$the_table = utf8_substr( $tables_str, 0, utf8_strpos( $tables_str, "|" ) );
-					}
+					}*/
 				}
 				
 				if ($the_table != "") {
@@ -1128,7 +1130,7 @@ function getEntity($page_name) {
 					if ($rt['table_name'] != ""){
 						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM ".$rt['table_name'];
 						//singlepages can operate on the page level whith all data being in one table...
-						if (isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
+						if ($rt['fk']['ref_page'] != '' and isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
 						//echo('fk . query:'.$q."\n");
 						$result = pp_run_query($q);
 						
@@ -1144,7 +1146,7 @@ function getEntity($page_name) {
 					}
 				}
 			}
-			$old_entities[] = $entity;
+			
 
             // guess title field if not set
             if ($entity["title_field"] == "") $entity["title_field"] = guessTextField($entity,false);
@@ -1153,17 +1155,20 @@ function getEntity($page_name) {
             if (!isTextareaType($f['data_type']))
                 $entity["consistency_fields"] .= ','.$entity["title_field"];
             
+            $old_entities[] = $entity;
 		}
 	}
     return $entity;
 }
 
-/*gives you an alreay built entity if it is stored in $old_entities (it should)*/
+/*gives you an already built entity if it is stored in $old_entities (it should)*/
 function getAlreadyBuiltEntity($page_name) {
 	global $old_entities;
-	if ($old_entities!="")
+	if ($old_entities != "")
 		foreach($old_entities as $e){
-			if ($e["pagename"] == $page_name) return $e;
+			if ($e["pagename"] == $page_name) {
+                return $e;
+            }
 		}
 	return "";
 }
@@ -1206,7 +1211,7 @@ function hasDateField($entity){
 	represented (this is only hard when we encounter "real" FKs from the database and
 	one table is represented on several multipages)
 */
-function getReferencedTableData($entity){
+function ($entity){
 	$fks = getForeignKeys();
 	$tables = array();
 	if ($fks != "") {
@@ -1382,10 +1387,10 @@ function addFields($entity,$name, $not_for_field_list = "") {
 							COLUMN_COMMENT
 					   FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$entity["tablename"]."' AND TABLE_SCHEMA = '".$db."'";
 		}
-		//if we can't use it, do it the old way, with less fields sadly
+		//if we can't use it, do it the old way, with less information, sadly
 		if ($query=="") 
 			$query = "SHOW COLUMNS FROM ".$entity["tablename"];
-		//echo("query:".$query);
+		
 		$res = pp_run_query($query);
 		$i = 0;
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
@@ -1432,7 +1437,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
                 if ($type="timestamp" and $row['Default']=="CURRENT_TIMESTAMP") $field['default'] = date("Y-m-d H:i:s");
                 
 				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data_type"]."<br/>\n");
-				//IMPORTANT: In MySQL we code int(1) as a boolean !!!
+				//IMPORTANT: In MySQL we code a boolean as int(1) !!!
 				if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) $field["data_type"] = "bool";
 				
 				//set some defaults
@@ -1467,6 +1472,50 @@ function addFields($entity,$name, $not_for_field_list = "") {
         
 		return $entity;
 }
+
+/* get names of purely relational  that need to be filled from this table
+   At this time, PP only finds relational tables with two columns.
+   The thing is: A table (and its page) is responsible to fill values
+   in a relational table when it is referenced from the first column!
+   This is an assumption, but it it makes sense if you think about it.
+*/
+function getRelationCandidatesFor($tablename){
+    $entity = getEntity($tablename);
+    // find tables that link to this table from their 1st field
+    $linking_tables = array();
+    $rf = getReferencingTableData($entity);
+    foreach ($rf as $t) {
+        // make sure we know what the 1st field is
+        $res = pp_run_query('SHOW COLUMNS FROM '.$t['table_name']);
+        $row = mysql_fetch_array($res, MYSQL_ASSOC);
+        if ($row['Field'] == $t['fk']['field']) $linking_tables[] = $t['table_name'];
+    }
+    
+    $rel_candidates = array();
+    foreach ($linking_tables as $lt) {
+        // find out if they are purely relational (contain only keys)
+        $entity = getEntity($lt);
+        $purely_relational = true;
+        $rf = ($entity);
+        if (count($rf)==0) $purely_relational = false;
+        else
+            foreach ($entity['fields'] as $f) {
+                foreach ($rf as $r) {
+                    $found = false;
+                    if ($r['fk']['field'] == $f['name']) { 
+                        $found = true; break; 
+                    }
+                }
+                if (!$found) {
+                    $purely_relational = false; break;
+                }
+            }
+        if ($purely_relational) $rel_candidates[] = $lt;
+    }
+    return $rel_candidates;
+}
+
+
 
 /*
 Searches the database for foreign keys (possible in InnoDB tables, for example)
@@ -1731,7 +1780,7 @@ function guessTextField($entity, $prefer_long_text=true) {
 				break;
 			}
 		}
-		
+	
 	return $the_field;
 }
 
