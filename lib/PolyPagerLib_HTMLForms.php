@@ -77,9 +77,9 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         //$value = utf8_str_replace("&", "&amp;", $value);
         //we cannot write " inside of input-Elements (they're standalone in XHTML)
 		$value = utf8_str_replace('"', "&quot;", $value);
-		if ($size > 24) {
-			if ($value == "") {echo(' size="24" maxlength="'.$size.'" name="'.$name.'" type="text"');}
-			else {echo(' size="24" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
+		if ($size > 36) {
+			if ($value == "") {echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="text"');}
+			else {echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
 		}else {
 			if ($value == "") {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text"');}
 			else {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
@@ -145,9 +145,10 @@ function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
 		echo($indent.'<div class="filler">'.__('choose:'));
 		$helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
 		writeHelpLink($indent, $helptext);
-		echo($indent.'(<a onclick="reset(\''.$inp_name.'\');">'.__('reset').'</a>) - '."\n");
+		echo($indent.'(<a onclick="reset(\''.$inp_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
 		for($i = 0; $i < count($b); $i++) {
-			echo($indent.'<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\')">'.trim($b[$i]).'</a>&nbsp; - &nbsp;');
+			echo($indent.'<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\')">'.trim($b[$i]).'</a>'."\n");
+            if ($i < count($b)-1) echo('&nbsp;-&nbsp;');
 		}
 		echo("\n".$indent."</div>\n");
 	}
