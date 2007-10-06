@@ -1211,7 +1211,7 @@ function hasDateField($entity){
 	represented (this is only hard when we encounter "real" FKs from the database and
 	one table is represented on several multipages)
 */
-function ($entity){
+function getReferencedTableData($entity){
 	$fks = getForeignKeys();
 	$tables = array();
 	if ($fks != "") {
@@ -1496,7 +1496,7 @@ function getRelationCandidatesFor($tablename){
         // find out if they are purely relational (contain only keys)
         $entity = getEntity($lt);
         $purely_relational = true;
-        $rf = ($entity);
+        $rf = getReferencedTableData($entity);
         if (count($rf)==0) $purely_relational = false;
         else
             foreach ($entity['fields'] as $f) {
