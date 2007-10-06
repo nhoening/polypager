@@ -212,7 +212,7 @@ function getTranslation($text) {
 'about this page'	=> '&Uuml;ber diese Seite',
 'not set' => 'nicht gesetzt',
 'no date set yet' => 'kein Datum gesetzt',
-'this field is important: it defines which table to use for this page. So much of the field-fields below depend on what is given here, because PolyPager finds the values for those fields in this table.'
+'this field is important: it defines which table to use for this page. Some of the fields below depend on what is given here, because PolyPager finds the values for those fields in this table.'
 => 'dies ist ein wichtiges Feld: Es definiert, welche Tabelle f&uuml;r diese Seite benutzt wird. Viele der Feld-Felder unten h&auml;ngen davon ab, was Sie hier angeben, denn PolyPager findet die Werte f&uuml;r diese Felder in der Tabelle.',
 'these fields will not be shown to the public. Select fields from the list by clicking on them.' 
 => 'diese Felder sind &ouml;ffentlich nicht zu sehen. W&auml;hlen Sie Felder aus der untenstehenden Liste aus.',

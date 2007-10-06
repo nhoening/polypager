@@ -112,7 +112,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
     }
     
 	//do we fill this field from a list?
-	$entity = getentity(getMultipageNameByNr($params['nr']));
+	$entity = getEntity(getMultipageNameByNr($params['nr']));
 	if ($entity != "" and $entity["fillafromb"] != ''){
 		//get field names
 		$fields = array();
@@ -283,7 +283,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         $target_page = $params["page"];
     }
     
-	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
+	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;'.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
