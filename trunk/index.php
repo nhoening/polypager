@@ -28,7 +28,7 @@ if ( !defined('FILE_SEPARATOR') ) {
     define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
 
-set_include_path(get_include_path() . PATH_SEPARATOR . '.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
+set_include_path(get_include_path().PATH_SEPARATOR .'.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
 require_once("PolyPagerLib_HTMLFraming.php");
 require_once("PolyPagerLib_Utils.php");
 require_once("PolyPagerLib_Sidepane.php");
