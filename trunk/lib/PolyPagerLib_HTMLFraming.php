@@ -45,7 +45,7 @@
 		global $version;
 
 		echo($indent.'<head>'."\n");
-		echo($indent.'	<title>'.$title.' - '.$sys_info["title"].'</title>'."\n");
+		echo($indent.'	<title>');  if ($title != '') echo($title.' - '); echo($sys_info["title"].'</title>'."\n");
 		echo($indent.'	<meta http-equiv="Content-type" content="text/html; charset='.$sys_info['encoding'].'"/>'."\n");
 		echo($indent.'	<meta name="description" content="'.$sys_info["title"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.creator" content="'.$sys_info["author"].'"/>'."\n");
