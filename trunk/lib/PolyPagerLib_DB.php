@@ -317,11 +317,12 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		return $entity;
 }
 
-/* get names of purely relational  that need to be filled from this table
-   At this time, PP only finds relational tables with two columns.
-   The thing is: A table (and its page) is responsible to fill values
-   in a relational table when it is referenced from the first column!
-   This is an assumption, but it it makes sense if you think about it.
+/*  get names of purely relational tables (and the number of their fields)
+    that need to be filled from this table
+    At this time, PP only treats relational tables with two columns differently.
+    The thing is: A table (and its page) is responsible to fill values
+    in a relational table when it is referenced from the first column!
+    This is an assumption, but it it makes sense if you think about it.
 */
 function getRelationCandidatesFor($tablename){
     $entity = getEntity($tablename);
@@ -354,7 +355,7 @@ function getRelationCandidatesFor($tablename){
                     $purely_relational = false; break;
                 }
             }
-        if ($purely_relational) $rel_candidates[] = $lt;
+            if ($purely_relational) $rel_candidates[] = array($lt, count($entity['fields']), $rf);
     }
     return $rel_candidates;
 }
