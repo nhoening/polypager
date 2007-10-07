@@ -156,8 +156,6 @@ function writeData($ind=5) {
 		return;
 	}
 	
-
-    //print_r(getRelationCandidatesFor('characters'));
     
 	//sys msg? write it 
 	if ($sys_msg_text != "") {

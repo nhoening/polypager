@@ -21,7 +21,7 @@
 
 /* function index:
  * writeInputElement($tabindex, $type, $size, $name, $class, $value, $full_editor, $dis)
- * writeFiller($spec, $fields, $value, $inp_name, $ind=10)
+ * writeFiller($spec, $fields, $value, $ind=10)
  * writeOptionList($tabindex, $name, $class, $value, $valuelist)
  * proposeFeeding($tabindex, $value)
  * writeHTMLForm($row, $action_target, $full_editor, $show, $id)
@@ -114,18 +114,11 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	//do we fill this field from a list?
 	$entity = getEntity(getMultipageNameByNr($params['nr']));
 	if ($entity != "" and $entity["fillafromb"] != ''){
-		//get field names
-		$fields = array();
-		for($i = 0; $i < count($entity["fields"]); $i++) {
-			$fields[$i] = $entity["fields"][$i]["name"];
-		}
 		foreach($entity["fillafromb"] as $f) {
-			if('_formfield_'.$f[0] == $name) writeFiller($f, $fields, $value, $name.'_input', $indent);
+			if('_formfield_'.$f[0] == $name) writeFiller($f, getListOfFields($params['name']), $value, $indent);
 		}
 	}
-	
-    
-	//finished
+
 }
 
 /*
@@ -135,7 +128,8 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
   @param value value of the field (so far)
   @param inp_name name of the input field
 */
-function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
+function writeFiller($spec, $fields, $value, $ind=10){
+    $inp_name = '_formfield_'.$spec[0].'_input';
 	$indent = translateIndent($ind);
 	if ($spec[1] != ''){
 		//this is what we want in b
@@ -153,7 +147,6 @@ function writeFiller($spec, $fields, $value, $inp_name, $ind=10){
 		echo("\n".$indent."</div>\n");
 	}
 }
-
 
 
 /*
@@ -223,7 +216,7 @@ function proposeFeeding($tabindex, $value, $ind=11) {
 }
 
 /*	compares two fields, using the formgroup entries
-*    resulting array will be sorted according to the order_index in the formgroup entry
+    The resulting array will be sorted according to the order_index in the formgroup entry
 */
 function cmpByFormGroup($a, $b) {
     //if the formgroups are the same, maintain the order given by order index
@@ -234,6 +227,38 @@ function cmpByFormGroup($a, $b) {
 	//(indicated at position 0)
 	return ($entity['formgroups'][$a['formgroup']][0] > $entity['formgroups'][$b['formgroup']][0]) ? 1 : -1;
 }
+
+
+/*  Write HTML Form code to fill data in relational tables
+    This makes only sense for 2-column relational tables, where the first references this table
+*/
+function writeRelationalTableInputs($indent, $entity){
+    $can = getRelationCandidatesFor($entity['tablename']);
+    foreach ($can as $c) {
+        if ($c[1] <= 2){ 
+            // get values of rows with this key as first entry
+            $query = 'SELECT (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS '.$c[2][1]['fk']['field'];
+            $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
+            $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
+            $res = pp_run_query($query);
+            while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                $vals .= $row[$c[2][1]['fk']['field']].',';
+            }
+            $vals = preg_replace('@,$@', '', $vals); // get rid of comma
+            //now get possible values
+            $query = 'SELECT '.$c[2][1]['title_field'].' AS poss FROM ' .$c[2][1]['fk']['ref_table'];
+            $res = pp_run_query($query);
+            $poss_vals = array();
+            while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                $poss_vals[] = $row['poss'];
+            }
+            echo('<input type="text" size="36" id="_formfield_'.$c[0].'_input'.'" value="'.$vals.'"/>'."\n");
+            $fillafromb = array($c[0], $vals);
+            writeFiller($fillafromb, $poss_vals, $vals, $indent);
+        }
+    }
+}
+
 
 /* writes out an HTML Form for singlepages, multipages and other stuff
 that is described in $entity. It can fill the form with data from $row
@@ -385,6 +410,11 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	}
 	if ($entity['formgroups']=="") echo($indent.'		</table>'."\n"); //otherwise a table for each fieldset
 	
+    // this writes input elements to fill data in purely relational
+    //tables for which this table is responsible
+    writeRelationalTableInputs($indent, $entity);
+    
+    
 	// ------ submit section ------
 	$next_command = 'edit';
 	if($params["cmd"]=="new") {$next_command="entry";}
