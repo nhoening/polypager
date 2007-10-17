@@ -93,13 +93,16 @@
 		$fehler_nr = mysql_errno($link);
 		$fehler_text = mysql_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
-		
-        $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 'gallery', 99, '0','','');";
-		$res = mysql_query($query, $link);
-		$fehler_nr = mysql_errno($link);
-		$fehler_text = mysql_error($link);
-		if ($debug) { echo('<br/><span class="debug">Insert Sys_Sys is: '.$query.'<br /></span>'); }
+		$query = 'SELECT * FROM _sys_sys';
+        $res = $pp_run_query($query);
+        if(mysql_num_rows($res) == 0) { //fill in one row if its not there already for some reason
+            $query = "INSERT INTO `_sys_sys` VALUES (1, 'The title of your new page', '', 
+                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 'gallery', 99, '0','','') ;";
+            $res = mysql_query($query, $link);
+            $fehler_nr = mysql_errno($link);
+            $fehler_text = mysql_error($link);
+            if ($debug) { echo('<br/><span class="debug">Insert Sys_Sys is: '.$query.'<br /></span>'); }
+        }
         
 		$query = "CREATE TABLE `_sys_sections` (
                       `id` bigint(20) NOT NULL auto_increment,

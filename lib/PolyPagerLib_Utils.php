@@ -103,6 +103,17 @@ function format_date($timestamp) {
 		return date($fstr, strtotime($timestamp));
 }
 
+/*get format string for the calendar*/
+function getDateFormat($type){
+    switch($type){
+        case 'date': return '%Y-%m-%d';
+        case 'datetime': return '%Y-%m-%d %I:%M:%S';
+        case 'time': case 'timestamp': return '%I:%M:%S';
+        case 'year': return '%Y';
+        default: return '';
+    }
+}
+
 /*
  * returns a csv list without whitespace
  */

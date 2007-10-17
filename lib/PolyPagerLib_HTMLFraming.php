@@ -203,7 +203,7 @@
 				if ($p['gallery'] == "1"){
 					if ($in_gallery)$classAtt = 'here';
 					else $classAtt = 'not_here';
-					echo($indent.'	<li class="'.$classAtt.'">'.'<a href="'.$path_to_root_dir.'/user/Image">'.$p['name']."</a></li>\n");
+					echo($indent.'	<li class="'.$classAtt.'">'.'<a id="gallery_menulink" href="'.$path_to_root_dir.'/user/Image">'.$p['name']."</a></li>\n");
 				
 				//normal pages
 				}else {
@@ -224,9 +224,9 @@
 					}
                     $theLink = "?".urlencode($p["name"]);
 					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
-						echo($indent.'	<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'"><a id="'.buildValidIDFrom($p["name"]).'_menulink" href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
 					} else {
-						echo($indent.'	<li class="'.$classAtt.'" id="'.$p["name"].'_li">'.'<a id="'.$p["name"].'_a" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
+						echo($indent.'	<li class="'.$classAtt.'" id="'.buildValidIDFrom($p["name"]).'_li">'.'<a id="'.buildValidIDFrom($p["name"]).'_menulink" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
 					}
 				}
 			}
