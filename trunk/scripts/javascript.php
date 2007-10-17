@@ -147,21 +147,29 @@ var hidden_links = new Array();
 var first_time_over = 0;
 var initial_state = ''
 function moveContent(target, source) {
-	target_element = get(target);
+	var target_element = get(target);
+    
+    //just remembering what had been here at loadtime
 	if (first_time_over == 0){
 		first_time_over = 1;
-		//just remembering what had been here at loadtime
-		initial_state = target_element.value;
+		if (target_element.nodeName == 'INPUT') initial_state = target_element.value;
 	}
-	source_link = get(source);
-	var sep = "";
-	if(target_element.value != "") sep = ","
-	target_element.value = target_element.value + sep + source_link.innerHTML;
+    
+	var source_link = get(source);
+    var sep = "";
+    if (target_element.nodeName == 'INPUT') {
+        if(target_element.value != "") sep = ","
+        target_element.value = target_element.value + sep + source_link.innerHTML;
+    }else {
+        if(target_element.innerHTML != "") sep = ","
+        target_element.innerHTML = target_element.innerHTML + sep + '<a onclick="">' + source_link.innerHTML + '</a>';
+    }
+    
 	source_link.style.visibility = 'hidden';
 	source_link.style.position =  'absolute';
 	source_link.style.top = getMetric(-10000);
 	source_link.style.left = getMetric(-10000);
-	hidden_links[hidden_links.length] = source;
+	hidden_links[source] = true;
 }
 
 function getMetric(num) {
@@ -172,9 +180,10 @@ function getMetric(num) {
 function reset(inputfieldname){
 	if (first_time_over != 0){
 		infield = get(inputfieldname);
-		infield.value = initial_state;
-		for(i=0;i<hidden_links.length;i++) {
-			hlink = get(hidden_links[i]);
+		if (infield.nodeName == 'INPUT') infield.value = initial_state;
+        else infield.innerHTML = initial_state;
+        for (key in hidden_links){
+			hlink = get(key);
 			//make it appear again
 			hlink.style.visibility = 'visible';
 			hlink.style.position =  'relative';

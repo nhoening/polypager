@@ -53,6 +53,14 @@ a.help{
 	color: blue;
 }
 
+.filled{
+    border: 1px solid grey;
+    height: 19px;
+    background-color: #eee;
+    color: #111;
+}
+
+
 #_nogarbageplease_ {visibility:hidden;} /*not visible for humans, only for (dumb) spam machines*/
 
 #commentform {

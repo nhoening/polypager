@@ -521,6 +521,10 @@ function getEntity($page_name) {
 					//important: we need something here (for the admin list) - so we take the first field...
 					if ($entity["title_field"] == "") $entity["title_field"] = $entity["fields"][0]["name"];
 					
+                    if($page_info["tablename"] != "") {
+						$entity = addFields($entity,$page_info["tablename"]);
+					}
+                    
 					//hide those from input
 					$entity["hidden_form_fields"] .= ','.$entity["time_field"]["name"];
 					$entity["hidden_form_fields"] .= ','.$entity["date_field"]["name"];
@@ -529,12 +533,10 @@ function getEntity($page_name) {
 					//let the hidden fields be filled from the field list
 					$e = array();
 					$e[0] = 'hidden_fields';
-					$e[1] = $entity["hidden_fields"];
+                    $e[1] = getListOfFields($params['page']);
 					$entity['fillafromb'][] = $e;
 					
-					if($page_info["tablename"] != "") {
-						$entity = addFields($entity,$page_info["tablename"]);
-					}
+					
                     
                     //get valuelist for group field if none is set
                     $f = getEntityField($entity['group']['field'],$entity);

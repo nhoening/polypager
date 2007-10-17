@@ -50,12 +50,20 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	global $params;
 	$indent = translateIndent($ind);
 
+    
+    //do we fill this field from a list?
+    $need_filler = false;
+	$entity = getEntity(getMultipageNameByNr($params['nr']));
+	if ($entity != "" and $entity["fillafromb"] != ''){
+		foreach($entity["fillafromb"] as $f) {
+			if('_formfield_'.$f[0] == $name) $need_filler = true;
+		}
+	}
+    
 	//write Opening Tag and JS Calls
 	$inputType = "input";
 	if(isTextAreaType($type)) $inputType = "textarea";
-	if (gettype($value) == "string" and $inputType != "textarea") {
-		
-	}
+
 	echo($indent);
 	if ($inputType != "textarea") echo('<'.$inputType.' id="'.$name.'_input" tabindex="'.$tabindex.'"');
 	
@@ -77,12 +85,14 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         //$value = utf8_str_replace("&", "&amp;", $value);
         //we cannot write " inside of input-Elements (they're standalone in XHTML)
 		$value = utf8_str_replace('"', "&quot;", $value);
+        if ($need_filler) $t = 'hidden'; else $t = 'text';
 		if ($size > 36) {
-			if ($value == "") {echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="text"');}
-			else {echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
+			//if ($value == "") echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'"');
+			//else 
+            echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'" value="'.$value.'"');
 		}else {
-			if ($value == "") {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text"');}
-			else {echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="text" value="'.$value.'"');}
+			if ($value == "") echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'"');
+			else echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'" value="'.$value.'"');
 		}
 		
 	} else if (isDateType($type)) {
@@ -111,37 +121,49 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         echo('<button id="_datefield_setter'.$name.'">...</button>');
     }
     
-	//do we fill this field from a list?
-	$entity = getEntity(getMultipageNameByNr($params['nr']));
-	if ($entity != "" and $entity["fillafromb"] != ''){
-		foreach($entity["fillafromb"] as $f) {
-			if('_formfield_'.$f[0] == $name) writeFiller($f, getListOfFields($params['name']), $value, $indent);
-		}
-	}
+	if($need_filler) writeFiller($f, $value, '', $indent);
 
 }
 
 /*
-  display a list from which the user can click items into the actual textbox
+  display a list from which the user can click items into a box
+  (the actual textbox is hidden, but also gets filled)
   @param spec specification of that input ([field_name, values_already_in_there])
-  @param fields possible values that might be input to that field
+  @param possible possible values that might be input to that field
   @param value value of the field (so far)
+  @param present_value value of the field (so far) if it should be presented differently than stored
   @param inp_name name of the input field
 */
-function writeFiller($spec, $fields, $value, $ind=10){
+function writeFiller($spec, $value, $present_value="", $ind=10){
     $inp_name = '_formfield_'.$spec[0].'_input';
+    $fill_name = '_filled_'.$spec[0].'_input';
 	$indent = translateIndent($ind);
-	if ($spec[1] != ''){
+    
+    $show_val = $value;
+    if ($present_value != "") $show_val = $present_value;
+    
+    //the visible filled box
+    echo($indent.'<div class="filled" id="'.$fill_name.'">');
+    $filled = utf8_explode(',', $show_val);
+    for($i = 0; $i < count($filled); $i++) {
+        if($filled[$i]!='') {
+            echo('<a onclick="moveContent()">'.$filled[$i].'</a>'."\n");
+            if ($i < count($filled)-1) echo(','); 
+        }
+    }
+    echo($indent."</div>\n");
+	
+    if ($spec[1] != ''){
 		//this is what we want in b
-		$diff1 = array_in_one(utf8_explode(',',$spec[1]), $fields);
-		//this is what we don't want from that
-		$b = array_in_one($fields, utf8_explode(',',$value));
+		//$diff1 = arrays_exor(utf8_explode(',',$spec[1]), $fields);
+		//this is what we still can put into it
+		$b = arrays_exor($spec[1], utf8_explode(',',$value));
 		echo($indent.'<div class="filler">'.__('choose:'));
 		$helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
 		writeHelpLink($indent, $helptext);
-		echo($indent.'(<a onclick="reset(\''.$inp_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
+		echo($indent.'(<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
 		for($i = 0; $i < count($b); $i++) {
-			echo($indent.'<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\')">'.trim($b[$i]).'</a>'."\n");
+			echo($indent.'<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$fill_name.'\',\''.$inp_name.$i.'filler\');moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\');">'.trim($b[$i]).'</a>'."\n");
             if ($i < count($b)-1) echo('&nbsp;-&nbsp;');
 		}
 		echo("\n".$indent."</div>\n");
@@ -151,14 +173,15 @@ function writeFiller($spec, $fields, $value, $ind=10){
 
 /*
  returns an array containing only what was not in both input arrays
+ (Exclusive OR)
 */
-function array_in_one($a1, $a2) {
+function arrays_exor($a1, $a2) {
 	$r = array();
 	for($i = 0; $i < count($a1); $i++) {
-		if($a1[$i] != '' and !in_array($a1[$i], $a2)) $r[count($r)] = $a1[$i];
+		if($a1[$i] != '' and !in_array($a1[$i], $a2)) $r[] = $a1[$i];
 	}
 	for($j = 0; $j < count($a2); $j++) {
-		if($a2[$j] != '' and !in_array($a2[$j], $a1)) $r[count($r)] = $a2[$j];	
+		if($a2[$j] != '' and !in_array($a2[$j], $a1)) $r[] = $a2[$j];	
 	}
 	return $r;
 }
@@ -252,7 +275,7 @@ function writeRelationalTableInputs($indent, $entity){
             while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
                 $poss_vals[] = $row['poss'];
             }
-            echo('<input type="text" size="36" id="_formfield_'.$c[0].'_input'.'" value="'.$vals.'"/>'."\n");
+            echo('<input type="hidden" size="36" id="_formfield_'.$c[0].'_input'.'" value="'.$vals.'"/>'."\n");
             $fillafromb = array($c[0], $vals);
             writeFiller($fillafromb, $poss_vals, $vals, $indent);
         }
@@ -485,14 +508,5 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	}
 }	//end function writeHTMLForm()
 
-/*get format string for the calendar*/
-function getDateFormat($type){
-    switch($type){
-        case 'date': return '%Y-%m-%d';
-        case 'datetime': return '%Y-%m-%d %I:%M:%S';
-        case 'time': case 'timestamp': return '%I:%M:%S';
-        case 'year': return '%Y';
-        default: return '';
-    }
-}
+
 ?>
