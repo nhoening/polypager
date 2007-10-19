@@ -326,8 +326,8 @@ function getTranslation($text) {
 'with keyword:' => 'mit Stichwort:',
 'search' => 'Suchen',
 'Search this site for:' => 'Suche:',
-'Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).'
-    => 'Geben Sie ein oder mehrere Suchw&ouml;rter an (mehrere Suchw&ouml;rter werden mit dem UND-Operator verbunden).',
+'Enter one or more keywords here to search for on this website.'
+    => 'Geben Sie ein oder mehrere Suchw&ouml;rter an, nach denen Sie auf dieser Website suchen m&ouml;chten.',
 'wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.'
 	=> 'Wow, Sie haben Ihren Kommentar schnell eingegeben. So schnell, dass ich Sie als Maschine klassifiziert habe, und Ihren Kommentar als Spam. Letzterer wurde nicht gespeichert.',
 'Your text contains tags that are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;. Your comment has not been saved.'

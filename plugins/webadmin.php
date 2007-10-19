@@ -283,6 +283,8 @@ if (!empty($_SERVER['SCRIPT_NAME'])) {
 	$self = '';
 }
 
+if ($self == 'php') $self = 'webadmin.php'; // I met a server where this happened...
+
 if (!empty($_SERVER['SERVER_SOFTWARE'])) {
 	if (utf8_strtolower(utf8_substr($_SERVER['SERVER_SOFTWARE'], 0, 6)) == 'apache') {
 		$apache = true;
