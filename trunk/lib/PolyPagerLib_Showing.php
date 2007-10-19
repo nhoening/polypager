@@ -582,9 +582,10 @@ require_once("PolyPagerLib_HTMLForms.php");
         foreach ($keywords as $kw)
             if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
         echo(implode(',',$l));
-        $helptext = __('Enter one or more keywords here to search for (multiple keywords will be connected by the AND - operator).');
+        $helptext = __('Enter one or more keywords here to search for on this website.');
         echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.utf8_str_replace("\'","'", utf8_str_replace('\"',"'", $_GET["kw"])).'" name="kw"/><button type="submit">go</button>'."\n");
-        writeHelpLink($indent.'     ', $helptext);
+        $sys_info = getSysInfo();
+        if($sys_info['hide_public_popups'] == '0') writeHelpLink($indent.'     ', $helptext);
         echo($indent.'    </form>'."\n");
             
         echo($indent.'</div>'."\n");
@@ -1179,8 +1180,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$nind = $ind + 1;
 			if ($page_info["commentable"] == "1" and $params["step"] == 1) {
                 
-                echo($indent.'<div id="comments"><a class="target" name="comments_anchor"></a>'."\n");
-                
                 $href='javascript:document.edit_form._formfield_name_input.focus();';
                 echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                 echo($indent.'  <span class="comment_rss">'."\n");
@@ -1188,7 +1187,9 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can be follow the discussion without always coming here to check for new comments.";
                 writeHelpLink($indent."     ",$helptext);
                 echo($indent.'  </span>'."\n");
-                    
+                
+                echo($indent.'<div id="comments"><a class="target" name="comments_anchor"></a>'."\n");
+                
 				if($comment_count > 0) {
 					writeComments($comments, $nind);
 				}
