@@ -126,7 +126,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
 		//------------------------ topic (for admin list)
 		$params["topic"] = $_POST['topic'];
-		if ($params["topic"] == "") $params["topic"] = $_GET["topic"];
+		if (!isset($params["topic"] )) $params["topic"] = $_GET["topic"];
 		
 		//------------------------ the page name
         //first, let's see if there are pages at all
@@ -157,6 +157,8 @@ require_once("PolyPagerLib_HTMLForms.php");
             }
 		}
 		
+        
+        
         //one more exception: if there is no page but command is _search, 
         //let's help the user out and conduct pagewise search
         if (($params["page"]=="" or $params["page"]=='cmd=_search') and $_GET["cmd"]=="_search")
@@ -168,8 +170,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 
 			//-------------------------cmd param
 			$params["cmd"] = $_POST['cmd'];		//commands: show|_search|Show month|Show year
-			if ($params["cmd"] == "") {$params["cmd"] = $_GET['cmd'];}
-			if ($params["cmd"] == "") {$params["cmd"] = "show";}	//(default)
+			if (!isset($params["cmd"])) {$params["cmd"] = $_GET['cmd'];}
+			if (!isset($params["cmd"])) {$params["cmd"] = "show";}	//(default)
 			
 			//"_search" at page-place overwrites cmd!
 			if($params['page']=="_search") $params['cmd'] = "_search";
@@ -193,8 +195,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			//2. a nr is given - show only this entry
 			if ($_POST["nr"] != "" or $_GET["nr"] != "") $params["step"] = "1";
 			//3. coming in explicitly
-			if ($_GET["step"] != "") $params["step"] = $_GET["step"];	//coming in per GET?
-			if ($_POST["step"] != "") $params["step"] = $_POST["step"]; //coming in per POST?
+			if (isset($_GET["step"])) $params["step"] = $_GET["step"];	//coming in per GET?
+			if (isset($_POST["step"])) $params["step"] = $_POST["step"]; //coming in per POST?
 			//nothing found yet? use default
 			if ($params["step"] == "") $params["step"] = $default_step;
 			
@@ -203,7 +205,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$params["group"] = urldecode($_GET["group"]);	//show only this group
             
 			if ($params["group"] == "") { $params["group"] = $_POST["group"]; } //coming in per POST?
-			if ($params["group"] == "" and isSinglepage($params["page"])) {	
+			if (!isset($params["group"]) and isSinglepage($params["page"])) {	
 				//in singlepages, group is called another name for db reasons
 				$params["group"] = $_GET["the_group"];
 				if ($params["group"] == "") { $params["group"] = $_POST["the_group"]; }
@@ -246,7 +248,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if ($had_value) $params["search"] = $search;
 			}
 			if ($debug) { echo('				<div class="debug">page param is: '.$params["page"].', topic param is: '.$params["topic"].'</div>'."\n"); }
-		}else{
+		}else{ // fall back
             $params["topic"] = "content";
             $params["from"] = "admin";
         }

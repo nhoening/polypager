@@ -125,7 +125,7 @@ function getEditParameters() {
 		if ($params["group"] == '') { $params["group"] = urldecode($_POST["group"]); } //coming in per POST?
         
 		//-------------------------topic (for admin list)
-		$params["topic"] = $_POST["topic"];
+		$params["topic"] = $_POST["topic"];      
 		if ($params["topic"] == "") {$params["topic"] = $_GET["topic"];}
         if ($params["topic"] == "") {$params["topic"] = "content";}
 		
