@@ -138,31 +138,31 @@ body {
 
 #main_menu ul
 {
-margin: 0;
-white-space: nowrap;
-padding: 0;
+    margin: 0;
+    white-space: nowrap;
+    padding: 0;
 }
 
 
 #main_menu li
 {
-display: inline;
-list-style-type: none;
+    display: inline;
+    list-style-type: none;
 }
 
 
-#main_menu a
+#main_menu>li>a
 {
-padding: 1px 8px 1px 24px;
-border: 1px solid #e57c00;
-background-color: #999;
-background-image: url(pics/menu_down.gif);
+    padding: 1px 8px 1px 24px;
+    border: 1px solid #e57c00;
+    background-color: #999;
+    background-image: url(pics/menu_down.gif);
 }
 
-#main_menu a:link, #main_menu a:visited
+#main_menu>a:link, #main_menu>a:visited
 {
-color: #EEE;
-text-decoration: none;
+    color: #EEE;
+    text-decoration: none;
 }
 
 #main_menu a:hover
@@ -172,8 +172,7 @@ text-decoration: none;
     color: #333;
 }
 
-#main_menu>li.here>a:link, #main_menu>li.here>a:visited, #main_menu>li.here>a:hover,
-#main_menu>li>ul>li.here>a:link, #main_menu>li>ul>li.here>a:visited, #main_menu>li>ul>li>a:hover
+#main_menu>li.here>a:link, #main_menu>li.here>a:visited, #main_menu>li.here>a:hover
 {
     border: 1px solid #84a0b9 !important;
     background-color: #FF6600 !important;
@@ -181,6 +180,33 @@ text-decoration: none;
     color: #333 !important;
 }
 
+#main_menu>li>ul>li.here>a:link, #main_menu>li>ul>li.here>a:visited {
+    border: 1px solid #e57c00 ;
+	padding: 0px 3px;
+}
+
+#main_menu>li>ul>li>a:hover {
+	border: 1px solid #84a0b9;
+	background: transparent;
+	color: #e57c00 !important;
+}
+
+#main_menu>li>ul {
+	margin: 12px 1em 0px 0px;
+}
+
+#main_menu>li>ul{
+	margin: 0px;
+}
+
+#main_menu>li>ul>li {
+	margin-left: 5px;
+}
+
+#main_menu>li>ul>li a{
+	border: 1px solid #fff;
+	padding: 0px 3px;
+}
 
 /* ----- sidepane ----- */
 

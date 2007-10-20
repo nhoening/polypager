@@ -103,11 +103,14 @@ body
 
 }
 
+/* ---------- menus -------- */
 
 #title #text a,
-ul#main_menu li a, #sub_menus ul li a
-{
+#main_menu>li>a{
 	color:#FFFFFF;
+}
+#main_menu>li>ul>li>a{
+	color:#DDDDDD;
 }
 
 #main_menu {
@@ -120,7 +123,7 @@ ul#main_menu li a, #sub_menus ul li a
 	list-style:none !important;
 	z-index:4;
 }
-ul#main_menu li, #sub_menus ul li  {
+ul#main_menu>li, #main_menu>li>ul>li  {
 	float:left;
 	margin:0 0 0 0;
 	padding-top: 3px;
@@ -128,27 +131,28 @@ ul#main_menu li, #sub_menus ul li  {
 	padding-left: 5px;;
 }
 
-ul#main_menu li {
-	position:relative; top: 1px;
-}
-ul#main_menu li a:link, #sub_menus li a:link {
+ul#main_menu>li>a:link, #main_menu>li>ul>li>a:link {
 	padding-right: 4px;
 	display:block; /*so we can control all aspects without worrying about the inline box*/
 }
 
 
 /* these are the sublists */
-#sub_menus {
+#main_menu>li {
 	margin: 0 2px 0 0;
 	height: 0px;
 	z-index: 5;
 }
-#sub_menus ul {
-	position: absolute; top: 83px;
-	margin-right: 135px;
+#main_menu>li>ul {
+	position: absolute; top: 16px; left:0px;
 	height: 19px;
 	list-style:none ! important;
 	z-index: 5; /*selecting links over the "data"-pane works so*/
+}
+
+#main_menu>li:hover>ul {
+    display:block !important;
+    float:left;
 }
 
 /* -------- */
@@ -262,6 +266,7 @@ h3 a:hover
 }
 #title{ margin-left: 400px; }
 
+/* -- not rewired for PP yet --
 .commentlink { text-align: right; }
 
 ol.commentlist
@@ -289,6 +294,7 @@ ol.myresponse
 .commentlist li p {
 	margin: .7em;
 }
+*/
 
 #comments
 {
