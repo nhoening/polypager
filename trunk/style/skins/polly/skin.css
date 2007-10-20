@@ -131,7 +131,8 @@ body {
 /* ----- menus ----- */
 
 /*menu idea from http://css.maxdesign.com.au/listamatic/horizontal07.htm */
-#main_menu{
+#main_menu
+{
     margin-top: 3.5em;
     margin-right: 1em;
 }
@@ -156,6 +157,7 @@ body {
     padding: 1px 8px 1px 24px;
     border: 1px solid #e57c00;
     background-color: #999;
+    color: #fff;
     background-image: url(pics/menu_down.gif);
 }
 
