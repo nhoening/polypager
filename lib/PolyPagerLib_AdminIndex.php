@@ -459,6 +459,7 @@
 		
 		
 		echo($indent.'<form action="." name="choiceForm" id="choiceForm" method="get">'."\n");
+
 		//option list
 		if ($topic == 'content' or $topic == 'fields') {
 			if ($topic == 'content') {
