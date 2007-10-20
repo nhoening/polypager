@@ -286,7 +286,7 @@
                 }
                 echo($indent.'	</ul>'."\n");
                 
-            } else if (isSinglePage($p["name"])){
+            } /*else if (isSinglePage($p["name"])){
                 //display submenu for this page with section names
 				$headings = $sections[$p["name"]]; //Array with section names for this page
 				
@@ -309,7 +309,7 @@
 					echo($indent.'		<li></li>'."\n");
 				}
 				echo($indent.'	</ul>'."\n");
-            }
+            }*/
         }
 		
     }
