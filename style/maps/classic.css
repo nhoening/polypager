@@ -163,17 +163,6 @@ div.show div.options span.whole_link{
 }
 /* ----------------end show - divs ------------------------- */
 
-/* ------------------- menue------------------------------- */
-/*#menu {
-	float: right;
-	margin-bottom: 1em;
-}
-#menu ul{
-	list-style:none ! important;
-}*/
-#menuend, .menuend{
-	float:none;
-}
 
 #main_menu {
 	margin: 0 0 0 0;
@@ -181,7 +170,7 @@ div.show div.options span.whole_link{
 	list-style:none !important;
 	z-index:4;
 }
-ul#main_menu li, #sub_menus ul li  {
+#main_menu >li{
 	float:right;
 	margin:0 0 0 0;
 	padding-right: 5px;
@@ -189,15 +178,28 @@ ul#main_menu li, #sub_menus ul li  {
 	height: 19px;
 }
 
-#sub_menus {
+#main_menu ul {
 	margin: 0 2px 0 0;
 	height: 0px;
 	z-index: 2;
 }
-#sub_menus ul {
-	height: 19px;
+
+#main_menu ul {
+    position: absolute; top: 97px; right:10px;
+    padding-top: 5px ! important;
+	height: 26px;
 	list-style:none ! important;
 	z-index: 2; /*selecting links over the "data"-pane works so*/
+    display:none; 
+}
+#main_menu li:hover ul {
+    display:block !important;
+    float:right;
+}
+
+
+#menuend, .menuend{
+	float:none;
 }
 /* -----------------end menue ------------------------------ */
 

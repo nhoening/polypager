@@ -143,11 +143,13 @@ white-space: nowrap;
 padding: 0;
 }
 
+
 #main_menu li
 {
 display: inline;
 list-style-type: none;
 }
+
 
 #main_menu a
 {
@@ -165,46 +167,20 @@ text-decoration: none;
 
 #main_menu a:hover
 {
-border: 1px solid #e57c00;
-background-image: url(pics/menu_hov.gif);
-color: #333;
+    border: 1px solid #e57c00;
+    background-image: url(pics/menu_hov.gif);
+    color: #333;
 }
 
-#main_menu .here a:link, #main_menu .here a:visited, #main_menu .here a:hover
+#main_menu>li.here>a:link, #main_menu>li.here>a:visited, #main_menu>li.here>a:hover,
+#main_menu>li>ul>li.here>a:link, #main_menu>li>ul>li.here>a:visited, #main_menu>li>ul>li>a:hover
 {
-border: 1px solid #84a0b9 !important;
-background-color: #FF6600 !important;
-background-image: url(pics/menu_on.gif) !important;
-color: #333 !important;
+    border: 1px solid #84a0b9 !important;
+    background-color: #FF6600 !important;
+    background-image: url(pics/menu_on.gif) !important;
+    color: #333 !important;
 }
 
-
-#sub_menus {
-	margin: 12px 1em 0px 0px;
-}
-
-#sub_menus ul{
-	margin: 2px 0px 0px 0px;
-}
-
-#sub_menus li {
-	margin-left: 5px;
-}
-
-#sub_menus li a{
-	border: 1px solid #fff;
-	padding: 0px 3px;
-}
-
-#sub_menus li:hover a, #sub_menus li.here a {
-	border: 1px solid #84a0b9;
-	background: transparent;
-	color: #e57c00 !important;
-}
-
-#sub_menus li.here a {
-	border: 1px solid #e57c00 ;
-}
 
 /* ----- sidepane ----- */
 

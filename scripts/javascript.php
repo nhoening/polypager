@@ -68,7 +68,6 @@ function toggleVisibility(theElementID, theLinkID, text_invis, text_vis) {
 	}
 }
 
-
 function toggle_ability(theClass) {
 	var inputs = getElementsByClass(theClass);
 	var l = inputs.length;
@@ -88,45 +87,6 @@ function toggle_ability(theClass) {
 	else link.style.backgroundImage = "url(<? echo($pic_url);?>ok.gif)";
 }
 
-function toggleMenuVisibility(menu_name) {	
-	var menu;	 	//holds the actual submenu to show (menu_name + "_menu")
-	var main_li;  	//the main_menu li actually klicked
-	var main_a;		//the main_menu a actually klicked
-	//hide all submenus - we only show one
-	<?
-	$pages = getPages();
-	foreach($pages as $p) {
-		if ($p["in_menue"] == "1") {
-			//echo('	menus[menus.length] = get("'.$p["name"].'_menu");'."\n");
-			echo('	menu = get("'.$p["name"].'_menu");'."\n");
-			echo('	if (("'.$p["name"].'" != menu_name) && menu) menu.style.visibility = "hidden";'."\n");
-		}
-	}
-	?>
-	
-	//also, turn off all bg-images in the main-menu elements
-	<?
-	foreach($pages as $p) {
-		if ($p["in_menue"] == "1") {
-			echo('	main_li = get("'.$p["name"].'_li");'."\n");
-			echo('	if (main_li) main_li.className = "not_here";	//'."\n");
-		}
-	}
-	?>
-	
-	//now, toggle visibility
-	menu = get(menu_name+"_menu");
-	if (menu.style.visibility == "visible") {
-		menu.style.visibility = "hidden";
-	} else {
-		menu.style.visibility = "visible";
-	}
-	
-	//maintain bg doors of the klicked entry
-	main_li = get(menu_name+"_li");
-	main_li.className = "here";
-
-}
 
 // get an element - the function is similar to "$()" used in prototype.js
 function get(e_name) {
