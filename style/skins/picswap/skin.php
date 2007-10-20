@@ -199,11 +199,12 @@ body {
 	-moz-border-radius: 2em;
 	-o-border-radius: 2em;
 	opera-border-radius: 2em;
-}*/
+}
 
 .show_entry_with_options {
 	background: transparent url(pics/<?=$colorset;?>/corner_s.gif) bottom left no-repeat;
 }
+*/
 
 .list_entry {
 	border-left: 5px solid #<?=getColor('dark'); ?>;
@@ -233,16 +234,19 @@ body {
 	width: 100%;
 }
 
-div.show .options {
-	border-left: 3px solid #d0ccc6;
-	/*border-bottom: 3px solid #d0ccc6;*/
-	padding: 0;
-	background: transparent url(pics/<?echo($colorset);?>/corner_b.gif) bottom left no-repeat;
-}
-div.show .options span {
-	 font-size: 0.85em;
-	 color: #d0ccc6;
 
+div.show_entry_with_options>.options {
+	/*border-left: 3px solid #d0ccc6;
+	background: transparent url(pics/<?echo($colorset);?>/corner_b.gif) bottom left no-repeat;*/
+    margin-top: 3px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+div.show_entry_with_options .options span {
+	 font-size: 0.85em;
+	 color: #aaa;
+     margin-right: 10px;
 }
 .edit {
 	display:block;
@@ -256,6 +260,7 @@ div.show .options span.whole_link{
 /* ----------------end show - divs ------------------------- */
 
 /* ------------------- menue------------------------------- */
+
 #menu {
 	background:transparent;
 }
@@ -267,61 +272,62 @@ div.show .options span.whole_link{
 	position: relative; top: 94px; left: 0px !important;
 	background: url(../../pics/fill_dark.gif);
 }
-ul#main_menu li, #sub_menus ul li  {
+ul#main_menu>li>a:hover, #main_menu>li>ul>li a:hover {
+	height: 19px !important;
+}
+ul#main_menu>li>a:link, #main_menu>li>ul>li a:link {
+	color: #<?=getColor('contrast'); ?> ! important;
+	text-decoration: none;
+}
+ul#main_menu>li>a:visited, #main_menu>li>ul>li>a:visited {
+	color: #<?=getColor('contrast'); ?> ! important;
+	text-decoration: none;
+}
+ul#main_menu>li, #sub_menus>ul>li  {
 	background:transparent;
 }
 
-ul#main_menu li {
-	position:relative; top: 1px;
-}
 
-ul#main_menu li a:link, #sub_menus li a:link {
-	padding-right: 4px;
-	display:block; 
-}
-
-ul#main_menu li a:hover, #sub_menus li a:hover {
-	height: 19px !important;
-}
-
-ul#main_menu li a:link, #sub_menus li a:link {
-	color: #<?=getColor('contrast'); ?> ! important;
-	text-decoration: none;
-}
-ul#main_menu li a:visited, #sub_menus li a:visited {
-	color: #<?=getColor('contrast'); ?> ! important;
-	text-decoration: none;
-}
 /* hovering and here: sliding doors */
-ul#main_menu li:hover, ul#main_menu li.here {
+ul#main_menu>li:hover, ul#main_menu>li.here {
 	background:transparent url(pics/<?echo($colorset);?>/tab_left.gif) no-repeat top left !important;
 }
-ul#main_menu li:hover a, ul#main_menu li.here a {
+ul#main_menu>li:hover>a, ul#main_menu>li.here>a {
 	background:transparent url(pics/<?echo($colorset);?>/tab_right.gif) no-repeat top right !important;
 }
-ul#main_menu li a:active, #sub_menus li a:active {
+ul#main_menu>li>a:active, #main_menu>li>ul>li>a:active {
 	color: #<?=getColor('contrast'); ?> ! important;
 	text-decoration: none;
 }
-/* these are the sublists */
-#sub_menus { left: 0px;}
-#sub_menus ul {position: absolute; top: 123px; right:10px;}
+
+#main_menu>li>ul {top: 17px; right:10px;}
+#main_menu>li>ul>li {padding-left:5px;}
+#main_menu>li>ul>li>a {padding-right:2px;}
+#main_menu>li>a {padding-right:2px;}
 
 /* hovering and here: sliding doors */
-#sub_menus li:hover, #sub_menus li.here {
+#main_menu>li>ul>li:hover, #main_menu>li>ul>li.here {
 	background:transparent url(pics/<?echo($colorset);?>/tab_left_sub.gif) no-repeat top left !important;
 }
-#sub_menus li:hover a, #sub_menus li.here a {
+#main_menu>li>ul>li:hover a, #main_menu>li>ul>li.here a {
 	background:transparent url(pics/<?echo($colorset);?>/tab_right_sub.gif) no-repeat top right !important;
 	color: #<?=getColor('dark'); ?> !important;
 }
 
 /* "here" must be visible a little*/
-ul#main_menu li.here a, #sub_menus li.here a {
+#main_menu>li.here>a, #sub_menus>li.here>a {
 	text-decoration: underline;
 }
 
-/* -----------------end menue ------------------------------ */
+#main_menu li
+{
+    display: inline;
+    list-style-type: none;
+}
+
+
+
+/* -----------------end menue ------------------------------ 
 
 /* ----------------------- typography ---------------------- */
 /* --  1. Links -- */
