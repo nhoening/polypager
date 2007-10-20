@@ -149,7 +149,6 @@
 		global $params;
 		$dblink = getDBLink();
 		global $debug;
-		$no_sys_tables = false;
 		
 		/* ---------------------- getting sections --------------------------*/
 		$query = "SELECT id, pagename, heading, publish, in_submenu, order_index from _sys_sections
@@ -177,7 +176,6 @@
 		
 		/* -------------------end getting sections --------------------------*/
 		
-		/* ---------------------- writing menues ----------------------------*/
 		echo($indent.'<ul id="main_menu">'."\n");
 		$sys_info = getSysInfo();
 		
@@ -214,94 +212,82 @@
 					}
 					else $classAtt = 'not_here';
 	
-					if (isMultipage($p["name"])) {
-						$tmp_entity = getEntity($p["name"]);
-						if ($tmp_entity["group"] != "") $has_sub = true;
-						else $has_sub = false;
-					} else {
-						if ($sections[$p["name"]] == "") $has_sub = false;
-						else $has_sub = true;
-					}
                     $theLink = "?".urlencode($p["name"]);
-					if (!$has_sub or $sys_info["submenus_always_on"] == 1) {
-						echo($indent.'	<li class="'.$classAtt.'"><a id="'.buildValidIDFrom($p["name"]).'_menulink" href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"]."</a></li>\n");
-					} else {
-						echo($indent.'	<li class="'.$classAtt.'" id="'.buildValidIDFrom($p["name"]).'_li">'.'<a id="'.buildValidIDFrom($p["name"]).'_menulink" href="javascript:toggleMenuVisibility(\''.$p["name"].'\')">'.$p["name"]."</a></li>\n");
-					}
+
+                    echo($indent.'	<li class="'.$classAtt.'"><a id="'.buildValidIDFrom($p["name"]).'_menulink" href="'.$path_to_root_dir.'/'.$theLink.'">'.$p["name"].'</a>'."\n");
+                    writeSubmenus($p, $sections, 5);
+                    echo($indent.'	</li>'."\n");
+
 				}
 			}
 			$counter++;
 		}
 		
+        echo($indent.'</ul>'."\n");
 		
-		echo($indent.'</ul>'."\n");
-		/* -------------------end writing menues ----------------------------*/
-		
-		/* ---------------------- writing submenues -------------------------*/
-		echo($indent.'<div id="sub_menus">'."\n");
-		$pages = getPages();
-		$not_used_singlepages = array();
-		//first multi/singlepages with groups
-		foreach ($pages as $p) {
-			$tmp_entity = getEntity($p["name"]);
-			if($p["in_menue"] == "1") { 
-				$page_info = getPageInfo($p["name"]);
-				
-				//if it is a singlepage, grouplist should have values
-				if((isMultipage($p["name"]) and $tmp_entity["group"]["field"] != "")
-				or (isSinglePage($p["name"]) and $page_info["grouplist"] != "")) {
-					//display submenu for $p["name"] with group entries
-					if(isMultipage($p["name"])) {
-						$efield = getEntityField($tmp_entity["group"]["field"],$tmp_entity);
-						$gfield = $efield["valuelist"];
-					}
-					//for singlepages, all groups without "standard" (is not in 
-					//the db, so page_info does not have it)
-					else $gfield = $page_info["grouplist"];
-					
-					$a = utf8_explode(',', stripCSVList($gfield));
-					
-					//test if one of the groups was selected
-					$ul_visibility = "hidden";
-					if ($params['page'] == $p["name"] and !includedByAdminScript($path_to_root_dir)) {
-						if ($sys_info["submenus_always_on"] == 1) {
-							$ul_visibility = "visible";
-						} else {
-							for($x=0;$x < count($a);$x++){
-								if ($a[$x] == $params['group']) {$ul_visibility = "visible"; break;}
-							}
-						}
-					}
-					echo($indent.'	<ul id="'.$p["name"].'_menu" style="visibility:'.$ul_visibility.'">'."\n");
-					//for on-click-submenus, we provide an extra submenu to see them
-					//all (because the main menu entry's function now is showing the
-					//submenus)
-					if($sys_info["submenus_always_on"] == 0){
-						echo($indent.'		<li><a href="'.$path_to_root_dir.'/?'.$p["name"].'">'.__('all').' '.$p["name"]."</a></li>\n");
-					}
-					$x=0;
-					for(;$x < count($a);$x++){
-						if ($a[$x] != "") {
-							//test if THIS group was selected
-							if ($a[$x] == $params["group"]) $classAtt="here"; else $classAtt="not_here";
-							echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group='.urlencode($a[$x]).'">'.preserveMarkup($a[$x]).'</a></li>'."\n");
-						}
-					}
-					if ($x==0) {	//ul yhould not be empty - that's not valid'
-						echo($indent.'		<li></li>'."\n");
-					}
-					echo($indent.'	</ul>'."\n");
-				}else if (isSinglePage($p["name"])){
-					//save it for later
-					$not_used_singlepages[count($not_used_singlepages)] = $p;
-				}
-			}
-		}
-		
-		//now we try all the rest
-		foreach ($not_used_singlepages as $p) {
-			if($p["in_menue"] == "1") {
-				//display submenu for this page with section names
+	}
+	
+    
+    /**
+    *  write a submenu unordered list for this page
+    *  $p the pagename
+    *  $sections
+    */
+    function writeSubmenus($p, $sections, $ind=5){
+        $indent = translateIndent($ind);
+        global $path_to_root_dir;
+        global $params;
+        global $debug;
+        $sys_info = getSysInfo();
+        $tmp_entity = getEntity($p["name"]);
+        
+        if($p["in_menue"] == "1") {
+            $page_info = getPageInfo($p["name"]);
+            
+            //first multi/singlepages with groups 
+            if((isMultipage($p["name"]) and $tmp_entity["group"]["field"] != "")
+            or (isSinglePage($p["name"]) and $page_info["grouplist"] != "")) {
+                //display submenu for $p["name"] with group entries
+                if(isMultipage($p["name"])) {
+                    $efield = getEntityField($tmp_entity["group"]["field"],$tmp_entity);
+                    $gfield = $efield["valuelist"];
+                }
+                //for singlepages, all groups without "standard" (is not in 
+                //the db, so page_info does not have it)
+                else $gfield = $page_info["grouplist"];
+                
+                $a = utf8_explode(',', stripCSVList($gfield));
+                
+                //test if one of the groups was selected
+                $ul_visibility = "none";
+                if ($params['page'] == $p["name"] and !includedByAdminScript($path_to_root_dir)) {
+                    if ($sys_info["submenus_always_on"] == 1) {
+                        $ul_visibility = "block";
+                    }
+                }
+                
+                echo($indent.'	<ul id="'.$p["name"].'_menu" style="display:'.$ul_visibility.';">'."\n");
+                //for on-click-submenus, we provide an extra submenu to see them
+                //all (because the main menu entry's function now is showing the
+                //submenus)
+                if($sys_info["submenus_always_on"] == 0){
+                    echo($indent.'		<li><a href="'.$path_to_root_dir.'/?'.$p["name"].'">'.__('all').' '.$p["name"]."</a></li>\n");
+                }
+                $x=0;
+                for(;$x < count($a);$x++){
+                    if ($a[$x] != "") {
+                        //test if THIS group was selected
+                        if ($a[$x] == $params["group"]) $classAtt="here"; else $classAtt="not_here";
+                        echo($indent.'		<li class="'.$classAtt.'"><a href="'.$path_to_root_dir.'/?'.$p["name"].'&amp;group='.urlencode($a[$x]).'">'.preserveMarkup($a[$x]).'</a></li>'."\n");
+                    }
+                }
+                if ($x==0) {	//ul yhould not be empty - that's not valid'
+                    echo($indent.'		<li></li>'."\n");
+                }
+                echo($indent.'	</ul>'."\n");
+                
+            } else if (isSinglePage($p["name"])){
+                //display submenu for this page with section names
 				$headings = $sections[$p["name"]]; //Array with section names for this page
 				
 				if($sys_info["submenus_always_on"] == 1 and $p["name"] == $params["page"]) {
@@ -323,13 +309,11 @@
 					echo($indent.'		<li></li>'."\n");
 				}
 				echo($indent.'	</ul>'."\n");
-			}
-		}
-		echo($indent.'</div>'."\n");
-		/* -------------------end writing submenues -------------------------*/
+            }
+        }
 		
-	}
-	
+    }
+    
 	/**
 	 * returns true when the including script is in the admin area
 	 */
