@@ -163,7 +163,7 @@ div.show div.options span.whole_link{
 }
 /* ----------------end show - divs ------------------------- */
 
-
+/* -------------------- menue ------------------------------ */
 #main_menu {
 	margin: 0 0 0 0;
 	height: 19px;
@@ -185,7 +185,7 @@ div.show div.options span.whole_link{
 }
 
 #main_menu ul {
-    position: absolute; top: 97px; right:10px;
+    position: absolute; top: 93px; right:10px;
     padding-top: 5px ! important;
 	height: 26px;
 	list-style:none ! important;
