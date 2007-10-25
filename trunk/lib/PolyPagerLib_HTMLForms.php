@@ -56,7 +56,11 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	$entity = getEntity(getMultipageNameByNr($params['nr']));
 	if ($entity != "" and $entity["fillafromb"] != ''){
 		foreach($entity["fillafromb"] as $f) {
-			if('_formfield_'.$f[0] == $name) $need_filler = true;
+			if('_formfield_'.$f[0] == $name) { 
+                $need_filler = true;
+                $fillafromb = $f;
+                break;
+            }
 		}
 	}
     
@@ -121,53 +125,66 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         echo('<button id="_datefield_setter'.$name.'">...</button>');
     }
     
-	if($need_filler) writeFiller($f, $value, '', $indent);
+	if($need_filler) writeFiller($name, array(explode(',', $value), array()), array($fillafromb[1], array()), $indent);
 
 }
 
 /*
   display a list from which the user can click items into a box
-  (the actual textbox is hidden, but also gets filled)
-  @param spec specification of that input ([field_name, values_already_in_there])
-  @param possible possible values that might be input to that field
-  @param value value of the field (so far)
-  @param present_value value of the field (so far) if it should be presented differently than stored
-  @param inp_name name of the input field
+  (the actual textbox also gets filled but should be hidden)
+  @fieldname fieldname
+  @param values: values of the field (so far) : array of two value arrays (2nd can carry presentation vals)
+  @param possible_values: array of two value arrays (2nd can carry presentation vals)
 */
-function writeFiller($spec, $value, $present_value="", $ind=10){
-    $inp_name = '_formfield_'.$spec[0].'_input';
-    $fill_name = '_filled_'.$spec[0].'_input';
+function writeFiller($fieldname, $values, $possible_values, $ind=10){
+    $inp_name = $fieldname.'_input';
+    $fill_name = '_filled_'.$fieldname.'_input';
 	$indent = translateIndent($ind);
     
-    $show_val = $value;
-    if ($present_value != "") $show_val = $present_value;
-    
+    $show_vals = $values[0];
+    if (count($values[1]) > 0) $show_vals = $values[1] ;
+
     //the visible filled box
-    echo($indent.'<div class="filled" id="'.$fill_name.'">');
-    $filled = utf8_explode(',', $show_val);
-    for($i = 0; $i < count($filled); $i++) {
-        if($filled[$i]!='') {
-            echo('<a onclick="moveContent()">'.$filled[$i].'</a>'."\n");
-            if ($i < count($filled)-1) echo(','); 
+    echo($indent.'<div class="filled" id="'.$fill_name.'">'."\n");
+    for($i = 0; $i < count($show_vals); $i++) {
+        if($show_vals[$i]!='') {
+            echo('<a onclick="moveContent()">'.$show_vals[$i].'</a>'."\n");
+            if ($i < count($show_vals)-1) echo(','); 
         }
     }
     echo($indent."</div>\n");
 	
-    if ($spec[1] != ''){
-		//this is what we want in b
-		//$diff1 = arrays_exor(utf8_explode(',',$spec[1]), $fields);
-		//this is what we still can put into it
-		$b = arrays_exor($spec[1], utf8_explode(',',$value));
-		echo($indent.'<div class="filler">'.__('choose:'));
-		$helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
-		writeHelpLink($indent, $helptext);
-		echo($indent.'(<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
-		for($i = 0; $i < count($b); $i++) {
-			echo($indent.'<a id="'.$inp_name.$i.'filler" onclick="moveContent(\''.$fill_name.'\',\''.$inp_name.$i.'filler\');moveContent(\''.$inp_name.'\',\''.$inp_name.$i.'filler\');">'.trim($b[$i]).'</a>'."\n");
-            if ($i < count($b)-1) echo('&nbsp;-&nbsp;');
-		}
-		echo("\n".$indent."</div>\n");
-	}
+    // show what can still be filled in
+    
+    
+    $show_poss_vals = $possible_values[0];
+    if (count($possible_values[1]) > 0) {
+        $fillfrom = $inp_name.'fillfrom';
+        $show_poss_vals = $possible_values[1] ;
+        //the invisible from box
+        echo($indent.'<div class="filled" style="display:none;" id="'.$fieldname.'_from">'."\n");
+        for($i = 0; $i < count($possible_values[0]); $i++) {
+            if($possible_values[0][$i]!='') {
+                echo('<span id="'.$fillfrom.$i.'filler">'.$possible_values[0][$i].'</span>'."\n");
+            }
+        }
+        echo($indent."</div>\n");
+        
+    } else $fillfrom = $inp_name;
+
+    $b = arrays_exor($show_poss_vals, $show_vals);
+    echo($indent.'<div class="filler">'.__('choose:'));
+    $helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
+    writeHelpLink($indent, $helptext);
+    echo($indent.'(<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
+    for($i = 0; $i < count($b); $i++) {
+        echo($indent.'<a  id="'.$inp_name.$i.'filler"'); 
+        echo(' onclick="moveContent(\''.$fill_name.'\',\''.$inp_name.$i.'filler\');');
+        echo('moveContent(\''.$inp_name.'\',\''.$fillfrom.$i.'filler\');');
+        echo('">'.trim($b[$i]).'</a>'."\n");
+        if ($i < count($b)-1) echo('&nbsp;-&nbsp;');
+    }
+    echo("\n".$indent."</div>\n");
 }
 
 
@@ -259,25 +276,28 @@ function writeRelationalTableInputs($indent, $entity){
     $can = getRelationCandidatesFor($entity['tablename']);
     foreach ($can as $c) {
         if ($c[1] <= 2){ 
-            // get values of rows with this key as first entry
-            $query = 'SELECT (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS '.$c[2][1]['fk']['field'];
+            // get values of rows in relational table with this key as first entry
+            $query = 'SELECT '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS '.$c[2][1]['fk']['field'];
             $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
             $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
             $res = pp_run_query($query);
+            $already_show_vals = array();
+            $already_save_vals = array();
             while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                $vals .= $row[$c[2][1]['fk']['field']].',';
+                $already_show_vals[] = $row[$c[2][1]['fk']['field']];
+                $already_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
             }
-            $vals = preg_replace('@,$@', '', $vals); // get rid of comma
             //now get possible values
-            $query = 'SELECT '.$c[2][1]['title_field'].' AS poss FROM ' .$c[2][1]['fk']['ref_table'];
+            $query = 'SELECT '.$c[2][1]['title_field'].', '.$c[2][0]['fk']['ref_field'].' FROM ' .$c[2][1]['fk']['ref_table'];
             $res = pp_run_query($query);
-            $poss_vals = array();
+            $poss_show_vals = array();
+            $poss_save_vals = array();
             while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                $poss_vals[] = $row['poss'];
+                $poss_show_vals[] = $row[$c[2][1]['title_field']];
+                $poss_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
             }
-            echo('<input type="hidden" size="36" id="_formfield_'.$c[0].'_input'.'" value="'.$vals.'"/>'."\n");
-            $fillafromb = array($c[0], $vals);
-            writeFiller($fillafromb, $poss_vals, $vals, $indent);
+            echo('<input type="hidden" size="36" name="_formfield_'.$c[0].'_input" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
+            writeFiller('_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $indent);
         }
     }
 }
@@ -331,7 +351,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         $target_page = $params["page"];
     }
     
-	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;'.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
+	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
 	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
@@ -480,7 +500,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'    </table>'."\n");
     echo($indent.'    </form>'."\n");
     
-    // for date fields: add calendar (popup)
+    // for date fields: add javascript for calendar (popup)
     foreach($entity['fields'] as $f){
         if (isDateType($f['data_type']) and !eregi($f['name'],$entity["hidden_form_fields"])){
             echo($indent.'	<script type="text/javascript">'."\n");

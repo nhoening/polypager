@@ -188,6 +188,15 @@ function getEditParameters() {
                 }
             }
             
+            
+           // fields for relational tables
+           $can = getRelationCandidatesFor($entity['tablename']);
+           foreach ($can as $c) {
+               if ($c[1] <= 2){
+                   echo("for ".'_formfield_'.$c[0].'_input I got: '.$_POST['_formfield_'.$c[0].'_input']);
+               }
+           }
+           
             //-------------------------anti spam trap field
             $params["values"]["_nogarbageplease_"] = $_POST["_nogarbageplease_"];
             if ($params["values"]["_nogarbageplease_"] == "") {$params["values"]["_nogarbageplease_"] = $_GET["_nogarbageplease_"];}

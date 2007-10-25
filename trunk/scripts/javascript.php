@@ -101,6 +101,8 @@ function get(e_name) {
 	return the_element;
 }
 
+String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); }
+
 // appends ", " + source.innerHTML
 // to target and makes source invisible
 var hidden_links = new Array();
@@ -118,11 +120,11 @@ function moveContent(target, source) {
 	var source_link = get(source);
     var sep = "";
     if (target_element.nodeName == 'INPUT') {
-        if(target_element.value != "") sep = ","
-        target_element.value = target_element.value + sep + source_link.innerHTML;
+        if(target_element.value.trim() != "") sep = ","
+        target_element.value = "" + target_element.value + sep + String(source_link.innerHTML);
     }else {
-        if(target_element.innerHTML != "") sep = ","
-        target_element.innerHTML = target_element.innerHTML + sep + '<a onclick="">' + source_link.innerHTML + '</a>';
+        if(target_element.innerHTML.trim() != "") sep = ","
+        target_element.innerHTML = target_element.innerHTML + sep + '<a onclick="">' + String(source_link.innerHTML) + '</a>';
     }
     
 	source_link.style.visibility = 'hidden';
