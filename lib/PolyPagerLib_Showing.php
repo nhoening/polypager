@@ -963,7 +963,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                     
 			uasort($entity["fields"], "cmpByOrderIndexAsc");
 			foreach ($entity["fields"] as $f) {
-
+                
 				if (($entity["group"] == "" or $f["name"] != $entity["group"]["field"]))
 				$content = $row[$f["name"]];
 				if ($f["not_brief"] != "1") {
@@ -1009,14 +1009,13 @@ require_once("PolyPagerLib_HTMLForms.php");
 				//show field only when it is brief and not the only entry and not grouping criteria
 				}else if($f["name"] != $entity["group"]["field"] and ($not_brief == false or $params["step"] == 1)) {
 					//another obstacle: in $list_view, we only show titles
-					//and: no fields described as "hidden" within the entity or (more important) the (multi)page
+					//and: no fields described as "hidden" within the entity or (more important) the (multi)page (for the title field inj list view its ok though)
 					$hidden_fields = utf8_explode(",",$entity["hidden_fields"]);
 					if(isMultipage($params["page"])) {
 						$hidden_fields = array_merge($hidden_fields, utf8_explode(',',$page_info["hidden_fields"]));
 					}
 					if ((!$list_view or $entity["title_field"] == $f["name"]) and
-						!(in_array($f["name"],$hidden_fields)))	{
-						
+						!(in_array($f["name"], $hidden_fields)) or ($list_view and $entity["title_field"] == $f["name"]))	{
 						// type - dependent operations on field content
 						
 						//text that doesn't come from a text area still must be escaped before showing
