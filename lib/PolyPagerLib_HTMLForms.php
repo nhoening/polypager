@@ -148,41 +148,38 @@ function writeFiller($fieldname, $values, $possible_values, $ind=10){
     echo($indent.'<div class="filled" id="'.$fill_name.'">'."\n");
     for($i = 0; $i < count($show_vals); $i++) {
         if($show_vals[$i]!='') {
-            echo('<a onclick="moveContent()">'.$show_vals[$i].'</a>'."\n");
+            echo('  <a id="'.$fill_name.$i.'" onclick="moveContent(\''.$inp_name.'\',\''.$fill_name.'\','.$i.')">'.$show_vals[$i].'</a>'."\n");
             if ($i < count($show_vals)-1) echo(','); 
         }
     }
     echo($indent."</div>\n");
 	
     // show what can still be filled in
-    
-    
     $show_poss_vals = $possible_values[0];
     if (count($possible_values[1]) > 0) {
-        $fillfrom = $inp_name.'fillfrom';
         $show_poss_vals = $possible_values[1] ;
         //the invisible from box
-        echo($indent.'<div class="filled" style="display:none;" id="'.$fieldname.'_from">'."\n");
+        /*echo($indent.'<div class="filled" style="display:none;" id="'.$fieldname.'_from">'."\n");
         for($i = 0; $i < count($possible_values[0]); $i++) {
             if($possible_values[0][$i]!='') {
-                echo('<span id="'.$fillfrom.$i.'filler">'.$possible_values[0][$i].'</span>'."\n");
+                echo($indent.'  <span id="'.$fillfrom.$i.'filler">'.$possible_values[0][$i].'</span>'."\n");
             }
         }
-        echo($indent."</div>\n");
-        
-    } else $fillfrom = $inp_name;
+        echo($indent."</div>\n");*/
+    }
 
-    $b = arrays_exor($show_poss_vals, $show_vals);
-    echo($indent.'<div class="filler">'.__('choose:'));
+    // the box to fill from
+    $s = arrays_exor($show_poss_vals, $show_vals);
+    echo($indent.'<div class="filler" id="'.$inp_name.'">'.__('choose:')."\n");
     $helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
-    writeHelpLink($indent, $helptext);
-    echo($indent.'(<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
-    for($i = 0; $i < count($b); $i++) {
-        echo($indent.'<a  id="'.$inp_name.$i.'filler"'); 
-        echo(' onclick="moveContent(\''.$fill_name.'\',\''.$inp_name.$i.'filler\');');
-        echo('moveContent(\''.$inp_name.'\',\''.$fillfrom.$i.'filler\');');
-        echo('">'.trim($b[$i]).'</a>'."\n");
-        if ($i < count($b)-1) echo('&nbsp;-&nbsp;');
+    writeHelpLink($indent.' ', $helptext);
+    echo($indent.'  (<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
+    for($i = 0; $i < count($s); $i++) {
+        echo($indent.'  <a id="'.$inp_name.$i.'"'."\n"); 
+        echo($indent.'    onclick="moveContent(\''.$fill_name.'\',\''.$inp_name.'\','.$i.');"'."\n");
+        //echo($indent.'    moveContent(\''.$inp_name.'\',\''.$fillfrom.$i.'filler\');"'."\n");
+        echo($indent.'  >'.trim($s[$i]).'</a>'."\n");
+        if ($i < count($s)-1) echo($indent.'&nbsp;-&nbsp;'."\n");
     }
     echo("\n".$indent."</div>\n");
 }
@@ -272,7 +269,8 @@ function cmpByFormGroup($a, $b) {
 /*  Write HTML Form code to fill data in relational tables
     This makes only sense for 2-column relational tables, where the first references this table
 */
-function writeRelationalTableInputs($indent, $entity){
+function writeRelationalTableInputs($ind, $entity){
+    $indent = translateIndent($ind);
     $can = getRelationCandidatesFor($entity['tablename']);
     foreach ($can as $c) {
         if ($c[1] <= 2){ 
@@ -296,10 +294,11 @@ function writeRelationalTableInputs($indent, $entity){
                 $poss_show_vals[] = $row[$c[2][1]['title_field']];
                 $poss_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
             }
-            echo('<input type="hidden" size="36" name="_formfield_'.$c[0].'_input" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
-            writeFiller('_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $indent);
+            echo($indent.'<input type="hidden" size="36" name="_formfield_'.$c[0].'_input" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
+            writeFiller('_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $ind);
         }
     }
+    //echo('<script type="text/Javascript">function doit(){alert("submitted");} document.forms[0].addEventListener("onsubmit", doit, true);</script>'."\n");
 }
 
 
@@ -324,7 +323,6 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	//(good for detecting commentspam/sblog) - thanks to oswaldism.de
 	echo($indent.'<script language="JavaScript" type="text/javascript">'."\n");
 	echo($indent.' var loaded=Math.round(new Date().getTime());'."\n");
-
 	echo($indent.' function oswald(formname)'."\n");
 	echo($indent.' {'."\n");
 	echo($indent.'   var now=Math.round(new Date().getTime());'."\n");
@@ -455,7 +453,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	
     // this writes input elements to fill data in purely relational
     //tables for which this table is responsible
-    writeRelationalTableInputs($indent, $entity);
+    writeRelationalTableInputs($nind+2, $entity);
     
     
 	// ------ submit section ------
