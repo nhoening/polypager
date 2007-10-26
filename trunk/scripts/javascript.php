@@ -102,57 +102,76 @@ function get(e_name) {
 }
 
 String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); }
-
-// appends ", " + source.innerHTML
-// to target and makes source invisible
-var hidden_links = new Array();
-var first_time_over = 0;
-var initial_state = ''
-function moveContent(target, source) {
-	var target_element = get(target);
-    
-    //just remembering what had been here at loadtime
-	if (first_time_over == 0){
-		first_time_over = 1;
-		if (target_element.nodeName == 'INPUT') initial_state = target_element.value;
-	}
-    
-	var source_link = get(source);
-    var sep = "";
-    if (target_element.nodeName == 'INPUT') {
-        if(target_element.value.trim() != "") sep = ","
-        target_element.value = "" + target_element.value + sep + String(source_link.innerHTML);
-    }else {
-        if(target_element.innerHTML.trim() != "") sep = ","
-        target_element.innerHTML = target_element.innerHTML + sep + '<a onclick="">' + String(source_link.innerHTML) + '</a>';
+Array.prototype.contains = function(obj)
+{
+    var i, listed = false;
+    for (i=0; i<this.length; i++)
+    {
+        if (this[i] === obj)
+        {
+            listed = true;
+            break;
+        }
     }
+    return listed;
+};
+
+var hidden_links = new Array();
+
+function showLink(parent_id, link_index, source_id) {
+    link_id = parent_id + String(link_index);
+    hlink = get(link_id);
+    // if it was hidden, make it visible
+    if (link_id in hidden_links){ 
+        hlink.style.display = 'inline';
+        hidden_links[link_id] = false;
+    // if it doesnt exist yet, create it
+    } else if (!hlink){
+        target_element = document.getElementById(parent_id);
+        source_link = document.getElementById(source_id  + String(link_index));
+        sep = '';
+        if(target_element.innerHTML.trim() != "") sep = ",";
+        target_element.innerHTML = target_element.innerHTML + sep + '<a id="' + link_id + '" onclick="moveContent(\'' + source_id + '\', \'' + parent_id + '\', ' + link_index + ')">' + String(source_link.innerHTML) + '</a>';
+    }
+}
+
+function hideLink(parent_id, link_index){
+    hlink = get(parent_id + String(link_index));
+    if(hlink) {
+        hlink.style.display = 'none';
+        hidden_links[parent_id + String(link_index)] = true;
+    }
+}
+
+// appends "," + indexed link from source
+// to target and makes source link invisible
+var initial_states = new Array();
+function moveContent(target, source, index) {
+	var target_element = get(target);
+    var source_element = get(source);
+    // just remembering what had been
+	if (!(target in initial_states)) initial_states[target] = target_element.innerHTML;
     
-	source_link.style.visibility = 'hidden';
-	source_link.style.position =  'absolute';
-	source_link.style.top = getMetric(-10000);
-	source_link.style.left = getMetric(-10000);
-	hidden_links[source] = true;
+    // add source content to target content, hide source link
+    showLink(target, index, source);
+    hideLink(source, index);
+}
+
+function reset(inputfieldname){
+    for (key in hidden_links) {
+        if (hidden_links[key] == true) {
+            l = get(key);
+            l.style.display = 'inline';
+        }
+    }
+    hidden_links = Array();
+    infield = get(inputfieldname);
+    infield.innerHTML = initial_states[inputfieldname];
 }
 
 function getMetric(num) {
 	if(n_6) { return parseInt(num) + 'px';}
 	else return parseInt(num);
-}
-
-function reset(inputfieldname){
-	if (first_time_over != 0){
-		infield = get(inputfieldname);
-		if (infield.nodeName == 'INPUT') infield.value = initial_state;
-        else infield.innerHTML = initial_state;
-        for (key in hidden_links){
-			hlink = get(key);
-			//make it appear again
-			hlink.style.visibility = 'visible';
-			hlink.style.position =  'relative';
-			hlink.style.top = getMetric(0);
-			hlink.style.left = getMetric(0);
-		}
-	}
 }
 
 /* open link in a new window */
@@ -183,7 +202,6 @@ function submit_form_by_selection(command) {
 function checkValues(pageName) {
 	var results = "";
 	var tmp = "";
-	//alert("checking " + pageName);
 	
 	/*if (pageName=="_sys_singlepages") {
 		if (isNaN(document.forms[0].menue_index_input.value)) {
