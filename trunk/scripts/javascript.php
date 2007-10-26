@@ -102,37 +102,25 @@ function get(e_name) {
 }
 
 String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); }
-Array.prototype.contains = function(obj)
-{
-    var i, listed = false;
-    for (i=0; i<this.length; i++)
-    {
-        if (this[i] === obj)
-        {
-            listed = true;
-            break;
-        }
-    }
-    return listed;
-};
 
 var hidden_links = new Array();
 
-function showLink(parent_id, link_index, source_id) {
-    link_id = parent_id + String(link_index);
-    hlink = get(link_id);
+function showLink(parent_id, tindex, source_id, sindex) {
+    var link_id = parent_id + String(tindex);
+    var tlink = get(link_id);
     // if it was hidden, make it visible
-    if (link_id in hidden_links){ 
-        hlink.style.display = 'inline';
+    if (link_id in hidden_links){
+        tlink.style.display = 'inline';
         hidden_links[link_id] = false;
     // if it doesnt exist yet, create it
-    } else if (!hlink){
+    } else if (!tlink){
         target_element = document.getElementById(parent_id);
-        source_link = document.getElementById(source_id  + String(link_index));
-        sep = '';
-        if(target_element.innerHTML.trim() != "") sep = ",";
-        target_element.innerHTML = target_element.innerHTML + sep + '<a id="' + link_id + '" onclick="moveContent(\'' + source_id + '\', \'' + parent_id + '\', ' + link_index + ')">' + String(source_link.innerHTML) + '</a>';
+        source_link = document.getElementById(source_id  + String(sindex));
+        var sep = ''; if(target_element.innerHTML.trim() != "") sep = "&nbsp;";
+        var cl = ''; if (source_link.getAttribute('class') != null) cl = 'class="' + source_link.getAttribute('class') + '"';
+        target_element.innerHTML = target_element.innerHTML + sep + '<a ' + cl + ' id="' + link_id + '" onclick="moveContent(\'' + source_id + '\', ' + sindex + ', \'' + parent_id + '\', ' + tindex + ')">' + String(source_link.innerHTML) + '</a>';
     }
+    else alert('I know about tlink, it is not hidden and I didnt create it: ' + link_id);
 }
 
 function hideLink(parent_id, link_index){
@@ -146,15 +134,16 @@ function hideLink(parent_id, link_index){
 // appends "," + indexed link from source
 // to target and makes source link invisible
 var initial_states = new Array();
-function moveContent(target, source, index) {
+function moveContent(target, tindex, source, sindex) {
 	var target_element = get(target);
     var source_element = get(source);
     // just remembering what had been
 	if (!(target in initial_states)) initial_states[target] = target_element.innerHTML;
+    if (!(source in initial_states)) initial_states[source] = source_element.innerHTML;
     
     // add source content to target content, hide source link
-    showLink(target, index, source);
-    hideLink(source, index);
+    showLink(target, tindex, source, sindex);
+    hideLink(source, sindex);
 }
 
 function reset(inputfieldname){
