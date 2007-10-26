@@ -33,6 +33,9 @@ set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT']
 require_once("fckeditor.php");
 require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 
+$filler_needed = array();
+$relational_filler_needed = array();
+
 /* 	writes out one HTML Form Input Element
 	you can specifiy the following:
 	$tabindex: The tabindex in the Form
@@ -48,33 +51,20 @@ require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 */
 function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full_editor, $dis, $ind=9) {
 	global $params;
+    global $filler_needed;
 	$indent = translateIndent($ind);
-
-    
-    //do we fill this field from a list?
-    $need_filler = false;
-	$entity = getEntity(getMultipageNameByNr($params['nr']));
-	if ($entity != "" and $entity["fillafromb"] != ''){
-		foreach($entity["fillafromb"] as $f) {
-			if('_formfield_'.$f[0] == $name) { 
-                $need_filler = true;
-                $fillafromb = $f;
-                break;
-            }
-		}
-	}
     
 	//write Opening Tag and JS Calls
 	$inputType = "input";
 	if(isTextAreaType($type)) $inputType = "textarea";
 
 	echo($indent);
-	if ($inputType != "textarea") echo('<'.$inputType.' id="'.$name.'_input" tabindex="'.$tabindex.'"');
+	if ($inputType != "textarea") echo('<'.$inputType.' id="_formfield_'.$name.'_input" tabindex="'.$tabindex.'"');
 	
 	//now all inner stuff (attributes, value...)
     
 	if ($inputType == "textarea")	{
-		$oFCKeditor = new FCKeditor($name);
+		$oFCKeditor = new FCKeditor('_formfield_'.$name);
 		if (!$full_editor) $oFCKeditor->ToolbarSet = 'Basic';
         else $oFCKeditor->ToolbarSet = 'PolyPager';
 		$path = getPathFromDocRoot();
@@ -89,14 +79,14 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         //$value = utf8_str_replace("&", "&amp;", $value);
         //we cannot write " inside of input-Elements (they're standalone in XHTML)
 		$value = utf8_str_replace('"', "&quot;", $value);
-        if ($need_filler) $t = 'hidden'; else $t = 'text';
+        if (in_array($name, $filler_needed)) $t = 'hidden'; else $t = 'text';
 		if ($size > 36) {
 			//if ($value == "") echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'"');
 			//else 
-            echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'" value="'.$value.'"');
+            echo(' size="36" maxlength="'.$size.'" name="'.'_formfield_'.$name.'" type="'.$t.'" value="'.$value.'"');
 		}else {
-			if ($value == "") echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'"');
-			else echo(' size="'.$size.'" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'" value="'.$value.'"');
+			if ($value == "") echo(' size="'.$size.'" maxlength="'.$size.'" name="'.'_formfield_'.$name.'" type="'.$t.'"');
+			else echo(' size="'.$size.'" maxlength="'.$size.'" name="'.'_formfield_'.$name.'" type="'.$t.'" value="'.$value.'"');
 		}
 		
 	} else if (isDateType($type)) {
@@ -105,13 +95,13 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         //we add a calendar, though (see below)
         
 	} else if (eregi('int',$type) or $type=="float" or $type=="double" or $type=="decimal") {
-		echo(' size="10" maxlength="'.$size.'" name="'.$name.'" type="text"');
+		echo(' size="10" maxlength="'.$size.'" name="'.'_formfield_'.$name.'" type="text"');
 		if ($value!="") echo(' value="'.$value.'"');
 	} else if ($type=="bool") {
-		if ($value=="") {echo(' name="'.$name.'" type="checkbox"');}
+		if ($value=="") {echo(' name="'.'_formfield_'.$name.'" type="checkbox"');}
 		else {
-			if ($value=="1") {echo(' size="1" name="'.$name.'" type="checkbox" checked="true"');}
-			else {echo(' size="1" name="'.$name.'" type="checkbox"');}
+			if ($value=="1") {echo(' size="1" name="'.'_formfield_'.$name.'" type="checkbox" checked="true"');}
+			else {echo(' size="1" name="'.'_formfield_'.$name.'" type="checkbox"');}
 		}
 	}
 	//now the closing tag
@@ -122,11 +112,14 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	
     //calendar fields
     if (isDateType($type)){
-        echo('<button id="_datefield_setter'.$name.'">...</button>');
+        echo('<button id="_datefield_setter'.'_formfield_'.$name.'_input">...</button>');
     }
     
-	if($need_filler) writeFiller($name, array(explode(',', $value), array()), array($fillafromb[1], array()), $indent);
-
+	if(in_array($name, $filler_needed)) {
+        $entity = getEntity(getMultipageNameByNr($params['nr']));
+        foreach ($entity['fillafromb'] as $fill) if($fill[0] == $name) $fillafromb = $fill;
+        writeFiller('_formfield_'.$name, array(explode(',', $value), array()), array($fillafromb[1], array()), ++$ind);
+    }
 }
 
 /*
@@ -137,7 +130,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
   @param possible_values: array of two value arrays (2nd can carry presentation vals)
 */
 function writeFiller($fieldname, $values, $possible_values, $ind=10){
-    $inp_name = $fieldname.'_input';
+    $inp_name = '_filler_'.$fieldname.'_input';
     $fill_name = '_filled_'.$fieldname.'_input';
 	$indent = translateIndent($ind);
     
@@ -148,8 +141,9 @@ function writeFiller($fieldname, $values, $possible_values, $ind=10){
     echo($indent.'<div class="filled" id="'.$fill_name.'">'."\n");
     for($i = 0; $i < count($show_vals); $i++) {
         if($show_vals[$i]!='') {
-            echo('  <a id="'.$fill_name.$i.'" onclick="moveContent(\''.$inp_name.'\',\''.$fill_name.'\','.$i.')">'.$show_vals[$i].'</a>'."\n");
-            if ($i < count($show_vals)-1) echo(','); 
+            //if (count($values[1]) > 0) $cl = $values[0][$i]; else $cl = $values[1][$i];
+            echo('  <a class="_'.$values[0][$i].'" id="'.$fill_name.(-1*($i+1)).'" onclick="moveContent(\''.$inp_name.'\','.(-1*($i+1)).',\''.$fill_name.'\','.(-1*($i+1)).')">'.$show_vals[$i].'</a>'."\n");
+            if ($i < count($show_vals)-1) echo('&nbsp;');
         }
     }
     echo($indent."</div>\n");
@@ -158,14 +152,6 @@ function writeFiller($fieldname, $values, $possible_values, $ind=10){
     $show_poss_vals = $possible_values[0];
     if (count($possible_values[1]) > 0) {
         $show_poss_vals = $possible_values[1] ;
-        //the invisible from box
-        /*echo($indent.'<div class="filled" style="display:none;" id="'.$fieldname.'_from">'."\n");
-        for($i = 0; $i < count($possible_values[0]); $i++) {
-            if($possible_values[0][$i]!='') {
-                echo($indent.'  <span id="'.$fillfrom.$i.'filler">'.$possible_values[0][$i].'</span>'."\n");
-            }
-        }
-        echo($indent."</div>\n");*/
     }
 
     // the box to fill from
@@ -175,11 +161,12 @@ function writeFiller($fieldname, $values, $possible_values, $ind=10){
     writeHelpLink($indent.' ', $helptext);
     echo($indent.'  (<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
     for($i = 0; $i < count($s); $i++) {
-        echo($indent.'  <a id="'.$inp_name.$i.'"'."\n"); 
-        echo($indent.'    onclick="moveContent(\''.$fill_name.'\',\''.$inp_name.'\','.$i.');"'."\n");
-        //echo($indent.'    moveContent(\''.$inp_name.'\',\''.$fillfrom.$i.'filler\');"'."\n");
+        echo($indent.'  <a id="'.$inp_name.($i+1).'"'."\n"); 
+        //echo($indent.'    class="'); if (count($possible_values[1]) > 0) echo('_'.$possible_values[0][$i]); echo('"'."\n");
+        echo($indent.'    class="_'.$possible_values[0][$i].'"'."\n");
+        echo($indent.'    onclick="moveContent(\''.$fill_name.'\','.($i+1).',\''.$inp_name.'\','.($i+1).');"'."\n");
         echo($indent.'  >'.trim($s[$i]).'</a>'."\n");
-        if ($i < count($s)-1) echo($indent.'&nbsp;-&nbsp;'."\n");
+        if ($i < count($s)-1) echo($indent.'&nbsp;'."\n");
     }
     echo("\n".$indent."</div>\n");
 }
@@ -213,6 +200,7 @@ function arrays_exor($a1, $a2) {
 	$js: any javascript you might want to add to the select element
 */
 function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js, $ind=9) {
+    $name = '_formfield_'.$name;
 	$indent = translateIndent($ind);
 	if ($dis)	{
 		$disabled = ' disabled="disabled" ';
@@ -298,7 +286,6 @@ function writeRelationalTableInputs($ind, $entity){
             writeFiller('_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $ind);
         }
     }
-    //echo('<script type="text/Javascript">function doit(){alert("submitted");} document.forms[0].addEventListener("onsubmit", doit, true);</script>'."\n");
 }
 
 
@@ -309,6 +296,8 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	$indent = translateIndent($ind);
 	$nind = $ind + 1;
 	global $params;
+    global $filler_needed;
+    global $relational_filler_needed;
 	$entity = getEntity($params["page"]);
 	$page_info = getPageInfo($params["page"]);
     $sys_info = getSysInfo();
@@ -331,6 +320,30 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.' }'."\n");
 	echo($indent.'</script>'."\n");
 	
+    //do we fill fields from a list?
+    $entity = getEntity(getMultipageNameByNr($params['nr']));
+	if ($entity != "" and $entity["fillafromb"] != ''){
+		foreach($entity["fillafromb"] as $f)  if (in_array($f[0], getListOfFields($params['page']))) $filler_needed[] = $f[0];
+	}
+    $entity = getEntity($params["page"]);
+    $can = getRelationCandidatesFor($entity['tablename']);
+    foreach ($can as $c) $relational_filler_needed[] = $c[0];
+    
+    echo($indent.'<script language="JavaScript" type="text/javascript">'."\n");
+	echo($indent.' function transferFilled()'."\n");
+	echo($indent.' {'."\n");
+    $fillers = array_merge($filler_needed, $relational_filler_needed);
+    foreach ($fillers as $f){
+        echo($indent.'   var vals = new Array();'."\n");
+        echo($indent.'   var elems = document.getElementById("_filled__formfield_'.$f.'_input").getElementsByTagName("a");'."\n");
+        echo($indent.'   for(x=0; x<elems.length; x++) vals[vals.length] = elems[x].getAttributeNode("class").nodeValue.substring(1);'."\n");
+	    echo($indent.'   document.getElementById("_formfield_'.$f.'_input").value='.'vals.join(",");'."\n");
+	}
+    echo($indent.'   return true;'."\n");
+	echo($indent.' }'."\n");
+	echo($indent.'</script>'."\n");
+    
+    
 	// empty form - we might have values in $params["values"] preconfigured (e.g. for hidden fields) - a little trick convention
     // or we can look into the group param value or the field's database defaults
 	// if new, let's show that this is NOT a saved entry
@@ -349,7 +362,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         $target_page = $params["page"];
     }
     
-	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\');">'."\n");
+	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\') && transferFilled();">'."\n");
 	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
@@ -430,10 +443,10 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 			if ($f['valuelist'] == "") {
 				echo($indent.'			<td class="data"');
 				if(isTextAreaType($f['data_type'])) echo(' colspan="2" ');
-				echo('>'."\n");writeInputElement($index, $f['data_type'], $f['size'], '_formfield_'.$f['name'], $f['class'], $val, $full_editor, $dis, $nind+3);
+				echo('>'."\n");writeInputElement($index, $f['data_type'], $f['size'], $f['name'], $f['class'], $val, $full_editor, $dis, $nind+3);
 			} else {
 				echo($indent.'			<td class="data">'."\n");
-				writeOptionList($index, '_formfield_'.$f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
+				writeOptionList($index, $f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
 			}
 			echo("\n".$indent.'			</td>'."\n"); 
 			echo($indent.'		</tr>'."\n");

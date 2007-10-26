@@ -292,8 +292,6 @@ function getEditQuery($command, $theID) {
 		}
 	}
 	
-
-
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -309,8 +307,6 @@ function getEditQuery($command, $theID) {
 		$x--;
 		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1); //remove comma
 
-		
-        
 		$queryA[] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
@@ -350,8 +346,8 @@ function getEditQuery($command, $theID) {
 		$x--;
 		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
 		if ($entity["pk"] != "") {
-			if (isNumericType($entity["pk_type"])) $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = $theID";
-			else $queryA[count($queryA)] = " WHERE ".$entity["pk"]." = '".$theID."'";
+			if (isNumericType($entity["pk_type"])) $queryA[] = " WHERE ".$entity["pk"]." = $theID";
+			else $queryA[] = " WHERE ".$entity["pk"]." = '".$theID."'";
 		}
 		$query .= implode($queryA);
 	}

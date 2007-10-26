@@ -536,8 +536,6 @@ function getEntity($page_name) {
                     $e[1] = getListOfFields($params['page']);
 					$entity['fillafromb'][] = $e;
 					
-					
-                    
                     //get valuelist for group field if none is set
                     $f = getEntityField($entity['group']['field'],$entity);
                     if ($entity["group"] != "" and $f['valuelist'] == ""){
