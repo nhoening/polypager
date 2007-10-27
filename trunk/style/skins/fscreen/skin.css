@@ -307,7 +307,7 @@ ol.myresponse
     background: url('images/comments.gif') left top no-repeat;
 }
 
-#comments .value, .options, #search, #toc, .list_entry{
+#comments .value, .options, #search, #toc, .list_entry, .related{
 	border: 1px solid #3f3f3f;
 	padding:10px;
 	background-color:#323232;
@@ -352,7 +352,8 @@ ol.myresponse
 	margin-bottom:15px;
 }
 
-#sidepane div div.entry a, li.link a, ul.fk_link li a{
+/* cool link lists */
+#sidepane div div.entry a, li.link a, ul.fk_link li a, .related li a{
 	background-image: url(images/bull.gif);
 	background-repeat: no-repeat;
 	background-position: 0 .5em;
@@ -360,6 +361,12 @@ ol.myresponse
 	margin-left:5px;
 }
 
+.related ul {
+    list-style: none;
+}
+
+/*	table of contents	
+----------------------------------------*/
 
 #toc ul {
 	list-style: none;

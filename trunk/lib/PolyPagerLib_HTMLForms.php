@@ -142,7 +142,7 @@ function writeFiller($fieldname, $values, $possible_values, $ind=10){
     for($i = 0; $i < count($show_vals); $i++) {
         if($show_vals[$i]!='') {
             //if (count($values[1]) > 0) $cl = $values[0][$i]; else $cl = $values[1][$i];
-            echo('  <a class="_'.$values[0][$i].'" id="'.$fill_name.(-1*($i+1)).'" onclick="moveContent(\''.$inp_name.'\','.(-1*($i+1)).',\''.$fill_name.'\','.(-1*($i+1)).')">'.$show_vals[$i].'</a>'."\n");
+            echo('  <a style="display:inline;" class="_'.$values[0][$i].'" id="'.$fill_name.(-1*($i+1)).'" onclick="moveContent(\''.$inp_name.'\','.(-1*($i+1)).',\''.$fill_name.'\','.(-1*($i+1)).')">'.$show_vals[$i].'</a>'."\n");
             if ($i < count($show_vals)-1) echo('&nbsp;');
         }
     }
@@ -258,20 +258,22 @@ function cmpByFormGroup($a, $b) {
     This makes only sense for 2-column relational tables, where the first references this table
 */
 function writeRelationalTableInputs($ind, $entity){
+    global $params;
     $indent = translateIndent($ind);
     $can = getRelationCandidatesFor($entity['tablename']);
     foreach ($can as $c) {
         if ($c[1] <= 2){ 
             // get values of rows in relational table with this key as first entry
-            $query = 'SELECT '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS '.$c[2][1]['fk']['field'];
+            $query = 'SELECT '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
             $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
             $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
+            $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$params['nr'];
             $res = pp_run_query($query);
             $already_show_vals = array();
             $already_save_vals = array();
             while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                $already_show_vals[] = $row[$c[2][1]['fk']['field']];
-                $already_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
+                $already_show_vals[] = $row['Title'];
+                $already_save_vals[] = $row[$c[2][1]['fk']['field']];
             }
             //now get possible values
             $query = 'SELECT '.$c[2][1]['title_field'].', '.$c[2][0]['fk']['ref_field'].' FROM ' .$c[2][1]['fk']['ref_table'];
@@ -282,7 +284,7 @@ function writeRelationalTableInputs($ind, $entity){
                 $poss_show_vals[] = $row[$c[2][1]['title_field']];
                 $poss_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
             }
-            echo($indent.'<input type="hidden" size="36" name="_formfield_'.$c[0].'_input" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
+            echo($indent.'<input type="hidden" size="36" name="_formfield_'.$c[0].'" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
             writeFiller('_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $ind);
         }
     }
@@ -336,7 +338,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     foreach ($fillers as $f){
         echo($indent.'   var vals = new Array();'."\n");
         echo($indent.'   var elems = document.getElementById("_filled__formfield_'.$f.'_input").getElementsByTagName("a");'."\n");
-        echo($indent.'   for(x=0; x<elems.length; x++) vals[vals.length] = elems[x].getAttributeNode("class").nodeValue.substring(1);'."\n");
+        echo($indent.'   for(x=0; x<elems.length; x++) if(elems[x].getAttributeNode("style").nodeValue.match("inline") != null) vals[vals.length] = elems[x].getAttributeNode("class").nodeValue.substring(1);'."\n");
 	    echo($indent.'   document.getElementById("_formfield_'.$f.'_input").value='.'vals.join(",");'."\n");
 	}
     echo($indent.'   return true;'."\n");
