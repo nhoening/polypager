@@ -1009,13 +1009,13 @@ require_once("PolyPagerLib_HTMLForms.php");
 				//show field only when it is brief and not the only entry and not grouping criteria
 				}else if($f["name"] != $entity["group"]["field"] and ($not_brief == false or $params["step"] == 1)) {
 					//another obstacle: in $list_view, we only show titles
-					//and: no fields described as "hidden" within the entity or (more important) the (multi)page (for the title field inj list view its ok though)
+					//and: no fields described as "hidden" within the entity or (more important) the (multi)page (for the title field in list view its ok though)
 					$hidden_fields = utf8_explode(",",$entity["hidden_fields"]);
 					if(isMultipage($params["page"])) {
 						$hidden_fields = array_merge($hidden_fields, utf8_explode(',',$page_info["hidden_fields"]));
 					}
 					if ((!$list_view or $entity["title_field"] == $f["name"]) and
-						!(in_array($f["name"], $hidden_fields)) or ($list_view and $entity["title_field"] == $f["name"]))	{
+						!(in_array($f["name"], $hidden_fields))  or $entity["title_field"] == $f["name"] )	{
 						// type - dependent operations on field content
 						
 						//text that doesn't come from a text area still must be escaped before showing
@@ -1130,9 +1130,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$wlink = "?".$pagename.'&amp;nr='.$row[$entity["pk"]];
 			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
 		}
-		//echo($indent."</div>"."\n");
-        
+		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
+     
+        if (!$list_view) showRelatedValues(++$ind);
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == 0 ) {
@@ -1202,6 +1203,37 @@ require_once("PolyPagerLib_HTMLForms.php");
         echo($indent."</div>"."\n");
 	}
 	
+    
+    /* */
+    function showRelatedValues($ind){
+        $indent = translateIndent($ind);
+        global $params;
+        $can = getRelationCandidatesFor($entity['tablename']);
+        foreach ($can as $c) {
+            if ($c[1] <= 2){
+                $query = 'SELECT (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'];
+                $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
+                $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
+                $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
+                $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$params['nr'].';';
+                
+                //echo($query);
+                //run Query
+                $res = pp_run_query($query);
+                //if (mysql_errno(getDBLink()) != 0)  return;
+                
+                echo($indent.'<div class="related"><div>'.__('Related ').$c[2][1]['fk']['ref_table'].':</div>'."\n");
+                echo($indent.'  <ul>'."\n");
+                while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                    echo($indent.'      <li><a href="">'.$row['Title']."</a></li>&nbsp;\n");
+                }
+                echo($indent.'  </ul>'."\n");
+                echo($indent.'<div>'."\n");
+            }
+        }
+    }
+    
+    
 	/* gets a resultset of comments according to params
 	*/
 	function getComments() {

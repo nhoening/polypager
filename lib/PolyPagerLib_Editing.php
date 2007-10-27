@@ -193,7 +193,7 @@ function getEditParameters() {
            $can = getRelationCandidatesFor($entity['tablename']);
            foreach ($can as $c) {
                if ($c[1] <= 2){
-                   echo("for ".'_formfield_'.$c[0].'_input I got: '.$_POST['_formfield_'.$c[0].'_input']);
+                   $params["values"][$c[0]] = $_POST['_formfield_'.$c[0]];
                }
            }
            
@@ -281,7 +281,7 @@ function getEditQuery($command, $theID) {
 								$params['values'][$fk['field']] = null;
 							}
 							//add Query with recursicve call
-							$tmp = getEditQuery($command,$row[getPKName($referencing_table)]);;
+							$tmp = getEditQuery($command,$row[getPKName($referencing_table)]);
 							if ($tmp == ""); return;	//error
 							$queries = array_merge($tmp,$queries);
 						}
@@ -290,8 +290,24 @@ function getEditQuery($command, $theID) {
 				$params = $params_backup;
 			}
 		}
-	}
 	
+        // make entries into relational tables if data comes for that
+        // important: the first of the two keys determines what we replace
+        $can = getRelationCandidatesFor($entity['tablename']);
+        foreach ($can as $c) {
+            if ($c[1] <= 2){
+                $fkval = $params['values'][$c[2][0]['fk']['ref_field']];
+                $queries[] = "DELETE FROM ".$c[0]." WHERE ".$c[2][0]['fk']['field']." = ".$fkval.";";
+                echo(":".$params['values'][$c[0]].":");
+                if ($params['values'][$c[0]] != "") {
+                    $fkrefs = explode(',', $params['values'][$c[0]]);
+                    foreach ($fkrefs as $ref) 
+                        $queries[] = "INSERT INTO ".$c[0]." VALUES (".$fkval.",".$ref.");";
+                }
+            }
+        }
+        
+	}
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -370,7 +386,7 @@ function getEditQuery($command, $theID) {
 	
 	$query .= ';';
 	$queries[] = $query;
-	//print_r($queries);
+	print_r($queries);
 	return $queries;
 }
 

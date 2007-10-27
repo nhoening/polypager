@@ -55,7 +55,7 @@ a.help{
 
 .filled{
     border: 1px solid grey;
-    height: 19px;
+    min-height: 19px;
     background-color: #eee;
     color: #111;
 }

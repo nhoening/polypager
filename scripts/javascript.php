@@ -118,7 +118,7 @@ function showLink(parent_id, tindex, source_id, sindex) {
         source_link = document.getElementById(source_id  + String(sindex));
         var sep = ''; if(target_element.innerHTML.trim() != "") sep = "&nbsp;";
         var cl = ''; if (source_link.getAttribute('class') != null) cl = 'class="' + source_link.getAttribute('class') + '"';
-        target_element.innerHTML = target_element.innerHTML + sep + '<a ' + cl + ' id="' + link_id + '" onclick="moveContent(\'' + source_id + '\', ' + sindex + ', \'' + parent_id + '\', ' + tindex + ')">' + String(source_link.innerHTML) + '</a>';
+        target_element.innerHTML = target_element.innerHTML + sep + '<a ' + cl + ' id="' + link_id + '" style="display:inline;" onclick="moveContent(\'' + source_id + '\', ' + sindex + ', \'' + parent_id + '\', ' + tindex + ')">' + String(source_link.innerHTML) + '</a>';
     }
     else alert('I know about tlink, it is not hidden and I didnt create it: ' + link_id);
 }
