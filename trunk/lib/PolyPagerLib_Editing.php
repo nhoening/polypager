@@ -144,7 +144,7 @@ function getEditParameters() {
 				$values = array();
 				foreach($entity["fields"] as $f) {
 					$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
-                    if ($values[$f["name"]] == "") $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
+                    if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
 					//Booleans umwandeln
 					if ($f["data_type"] == "bool") {
 						if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
@@ -152,7 +152,7 @@ function getEditParameters() {
 					}
 					if(in_array($f["name"],$consistency_fields)) {
 						$values['old_formfield_'.$f["name"]] = filterSQL($_POST['old_formfield_'.$f["name"]]);
-						if ($values['old_formfield_'.$f["name"]] == "") $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
+						if (!isset($values['old_formfield_'.$f["name"]])) $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
 					}
 				}
 				if(isSinglepage($params["page"])) {
@@ -290,16 +290,17 @@ function getEditQuery($command, $theID) {
 				$params = $params_backup;
 			}
 		}
-	
+	}
+    	
+    if ($command == "edit" || $command == "entry" || $command == "delete"){
         // make entries into relational tables if data comes for that
         // important: the first of the two keys determines what we replace
         $can = getRelationCandidatesFor($entity['tablename']);
         foreach ($can as $c) {
             if ($c[1] <= 2){
                 $fkval = $params['values'][$c[2][0]['fk']['ref_field']];
-                $queries[] = "DELETE FROM ".$c[0]." WHERE ".$c[2][0]['fk']['field']." = ".$fkval.";";
-                echo(":".$params['values'][$c[0]].":");
-                if ($params['values'][$c[0]] != "") {
+                if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".$c[2][0]['fk']['field']." = ".$fkval.";";
+                if ($params['values'][$c[0]] != "" and $command != "delete") {
                     $fkrefs = explode(',', $params['values'][$c[0]]);
                     foreach ($fkrefs as $ref) 
                         $queries[] = "INSERT INTO ".$c[0]." VALUES (".$fkval.",".$ref.");";
@@ -386,7 +387,7 @@ function getEditQuery($command, $theID) {
 	
 	$query .= ';';
 	$queries[] = $query;
-	print_r($queries);
+	//print_r($queries);
 	return $queries;
 }
 

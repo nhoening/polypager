@@ -311,6 +311,7 @@ ol.myresponse
 	border: 1px solid #3f3f3f;
 	padding:10px;
 	background-color:#323232;
+	margin-bottom:5px;
 }
 .sys_msg, .sys_msg_admin{
 	border: 1px solid #6f3f3f;

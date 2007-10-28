@@ -176,7 +176,8 @@ function writeData($ind=5) {
 			//------------------------ showing data   --------------
 			
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
-			writeToc($res, false, $nind);
+            
+			if (mysql_num_rows($res) > 0) writeToc($res, false, $nind);
 			
             $showid = "";
             
