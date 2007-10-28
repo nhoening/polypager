@@ -1204,12 +1204,15 @@ require_once("PolyPagerLib_HTMLForms.php");
 	}
 	
     
-    /* */
+    /* show a list of values that are referenced from this table via a relational table
+        (where this table links to the first field)
+    */
     function showRelatedValues($ind){
         $indent = translateIndent($ind);
         global $params;
+        $entity = getEntity();
         $can = getRelationCandidatesFor($entity['tablename']);
-        foreach ($can as $c) {
+        foreach ($can as $c) {            
             if ($c[1] <= 2){
                 $query = 'SELECT '.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
@@ -1221,7 +1224,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $res = pp_run_query($query);
                 if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  return;
                 
-                echo($indent.'<div class="related"><h3>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h3>'."\n");
+                echo($indent.'<div class="related"><h4>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h4>'."\n");
                 echo($indent.'  <ul>'."\n");
                 while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
                     echo($indent.'      <li><a href="?'.$c[2][1]['likely_page'].'&amp;nr='.$row[$c[2][1]['fk']['field']].'">'.$row['Title']."</a></li>\n");
