@@ -118,7 +118,9 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	if(in_array($name, $filler_needed)) {
         $entity = getEntity(getMultipageNameByNr($params['nr']));
         foreach ($entity['fillafromb'] as $fill) if($fill[0] == $name) $fillafromb = $fill;
-        writeFiller('_formfield_'.$name, array(explode(',', $value), array()), array($fillafromb[1], array()), ++$ind);
+        $field = getEntityField($name, $entity);
+        $n = $name; if($field['label'] != '') $n = $field['label'];
+        writeFiller('', '_formfield_'.$name, array(explode(',', $value), array()), array($fillafromb[1], array()), ++$ind);
     }
 }
 
@@ -129,24 +131,26 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
   @param values: values of the field (so far) : array of two value arrays (2nd can carry presentation vals)
   @param possible_values: array of two value arrays (2nd can carry presentation vals)
 */
-function writeFiller($fieldname, $values, $possible_values, $ind=10){
+function writeFiller($entity_name, $fieldname, $values, $possible_values, $ind=10){
     $inp_name = '_filler_'.$fieldname.'_input';
     $fill_name = '_filled_'.$fieldname.'_input';
 	$indent = translateIndent($ind);
     
     $show_vals = $values[0];
     if (count($values[1]) > 0) $show_vals = $values[1] ;
-
+    
+    echo($indent.'<div class="filling">'.__('choose ').$entity_name.":\n");
+    
     //the visible filled box
-    echo($indent.'<div class="filled" id="'.$fill_name.'">'."\n");
+    echo($indent.'  <div class="filled" id="'.$fill_name.'">'."\n");
     for($i = 0; $i < count($show_vals); $i++) {
         if($show_vals[$i]!='') {
             //if (count($values[1]) > 0) $cl = $values[0][$i]; else $cl = $values[1][$i];
-            echo('  <a style="display:inline;" class="_'.$values[0][$i].'" id="'.$fill_name.(-1*($i+1)).'" onclick="moveContent(\''.$inp_name.'\','.(-1*($i+1)).',\''.$fill_name.'\','.(-1*($i+1)).')">'.$show_vals[$i].'</a>'."\n");
+            echo('      <a style="display:inline;" class="_'.$values[0][$i].'" id="'.$fill_name.(-1*($i+1)).'" onclick="moveContent(\''.$inp_name.'\','.(-1*($i+1)).',\''.$fill_name.'\','.(-1*($i+1)).')">'.$show_vals[$i].'</a>'."\n");
             if ($i < count($show_vals)-1) echo('&nbsp;');
         }
     }
-    echo($indent."</div>\n");
+    echo($indent."  </div>\n");
 	
     // show what can still be filled in
     $show_poss_vals = $possible_values[0];
@@ -156,19 +160,21 @@ function writeFiller($fieldname, $values, $possible_values, $ind=10){
 
     // the box to fill from
     $s = arrays_exor($show_poss_vals, $show_vals);
-    echo($indent.'<div class="filler" id="'.$inp_name.'">'.__('choose:')."\n");
-    $helptext = __('This list is here to make sensible suggestions to fill the field above conveniently. Click on an item to paste it into the text box. You can also write something else in there if you know what you are doing :-) Clicking reset will restore the state to the load-time of the page.');
+    echo($indent.'  <div class="filler" id="'.$inp_name.'">'.__('from:')."\n");
+    $helptext = __('This lower list is here to make sensible suggestions to fill the upper list conveniently. Click on an item to paste it into the text box. Clicking reset will restore the state of both lists to the load-time of the page.');
     writeHelpLink($indent.' ', $helptext);
-    echo($indent.'  (<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;-&nbsp;'."\n");
+    echo($indent.'      (<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;'."\n");
     for($i = 0; $i < count($s); $i++) {
-        echo($indent.'  <a id="'.$inp_name.($i+1).'"'."\n"); 
+        echo($indent.'      <a id="'.$inp_name.($i+1).'"'."\n"); 
         //echo($indent.'    class="'); if (count($possible_values[1]) > 0) echo('_'.$possible_values[0][$i]); echo('"'."\n");
-        echo($indent.'    class="_'.$possible_values[0][$i].'"'."\n");
-        echo($indent.'    onclick="moveContent(\''.$fill_name.'\','.($i+1).',\''.$inp_name.'\','.($i+1).');"'."\n");
-        echo($indent.'  >'.trim($s[$i]).'</a>'."\n");
+        echo($indent.'      class="_'.$possible_values[0][$i].'"'."\n");
+        echo($indent.'      onclick="moveContent(\''.$fill_name.'\','.($i+1).',\''.$inp_name.'\','.($i+1).');"'."\n");
+        echo($indent.'      >'.trim($s[$i]).'</a>'."\n");
         if ($i < count($s)-1) echo($indent.'&nbsp;'."\n");
     }
-    echo("\n".$indent."</div>\n");
+    echo("\n".$indent." </div>\n");
+    
+    echo($indent.'</div>');
 }
 
 
@@ -285,7 +291,7 @@ function writeRelationalTableInputs($ind, $entity){
                 $poss_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
             }
             echo($indent.'<input type="hidden" size="36" name="_formfield_'.$c[0].'" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
-            writeFiller('_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $ind);
+            writeFiller($c[2][1]['fk']['ref_table'], '_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $ind);
         }
     }
 }
@@ -338,7 +344,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
     foreach ($fillers as $f){
         echo($indent.'   var vals = new Array();'."\n");
         echo($indent.'   var elems = document.getElementById("_filled__formfield_'.$f.'_input").getElementsByTagName("a");'."\n");
-        echo($indent.'   for(x=0; x<elems.length; x++) if(elems[x].getAttributeNode("style").nodeValue.match("inline") != null) vals[vals.length] = elems[x].getAttributeNode("class").nodeValue.substring(1);'."\n");
+        echo($indent.'   for(x=0; x<elems.length; x++) {'."\n");
+        echo($indent.'      var val = elems[x].getAttributeNode("class").nodeValue.substring(1);'."\n");
+        echo($indent.'      if(elems[x].getAttributeNode("style").nodeValue.match("inline") != null && !vals.contains(val)) vals[vals.length] = val;}'."\n");
 	    echo($indent.'   document.getElementById("_formfield_'.$f.'_input").value='.'vals.join(",");'."\n");
 	}
     echo($indent.'   return true;'."\n");
@@ -425,7 +433,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 				echo('<input type="hidden" name="old_formfield_'.$f['name'].'" value="'.$val.'"/>'."\n");
 			}
 			echo($indent.'			<td class="label"><label for="_formfield_'.$f['name'].'_input">');
-			if ($f['label'] != "") echo($f['label'].':'); else echo(__($f['name'].':'));
+			if ($f['label'] != "") echo($f['label'].':'); else echo(__($f['name']).':');
 			if ($f["help"] != "") writeHelpLink($indent, $f["help"]);	
 			echo($indent.'</label></td>'."\n");
 			
@@ -466,9 +474,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	}
 	if ($entity['formgroups']=="") echo($indent.'		</table>'."\n"); //otherwise a table for each fieldset
 	
-    // this writes input elements to fill data in purely relational
-    //tables for which this table is responsible
-    writeRelationalTableInputs($nind+2, $entity);
+    // This writes input elements to fill data in purely relational
+    // tables for which this table is responsible. This cannot happen when inserting because we need the PK
+    if($params['cmd'] != "new") writeRelationalTableInputs($nind+2, $entity);
     
     
 	// ------ submit section ------

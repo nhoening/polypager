@@ -1015,7 +1015,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 						$hidden_fields = array_merge($hidden_fields, utf8_explode(',',$page_info["hidden_fields"]));
 					}
 					if ((!$list_view or $entity["title_field"] == $f["name"]) and
-						!(in_array($f["name"], $hidden_fields))  or $entity["title_field"] == $f["name"] )	{
+						(!(in_array($f["name"], $hidden_fields)) or $entity["title_field"] == $f["name"] ))	{
 						// type - dependent operations on field content
 						
 						//text that doesn't come from a text area still must be escaped before showing
@@ -1133,7 +1133,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
      
-        if (!$list_view) showRelatedValues(++$ind);
+        if (!$list_view and $params['step'] == 1) showRelatedValues(++$ind);
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == 0 ) {
@@ -1211,24 +1211,23 @@ require_once("PolyPagerLib_HTMLForms.php");
         $can = getRelationCandidatesFor($entity['tablename']);
         foreach ($can as $c) {
             if ($c[1] <= 2){
-                $query = 'SELECT (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'];
+                $query = 'SELECT '.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
                 $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
                 $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$params['nr'].';';
-                
-                //echo($query);
+
                 //run Query
                 $res = pp_run_query($query);
-                //if (mysql_errno(getDBLink()) != 0)  return;
+                if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  return;
                 
-                echo($indent.'<div class="related"><div>'.__('Related ').$c[2][1]['fk']['ref_table'].':</div>'."\n");
+                echo($indent.'<div class="related"><h3>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h3>'."\n");
                 echo($indent.'  <ul>'."\n");
                 while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                    echo($indent.'      <li><a href="">'.$row['Title']."</a></li>&nbsp;\n");
+                    echo($indent.'      <li><a href="?'.$c[2][1]['likely_page'].'&amp;nr='.$row[$c[2][1]['fk']['field']].'">'.$row['Title']."</a></li>\n");
                 }
                 echo($indent.'  </ul>'."\n");
-                echo($indent.'<div>'."\n");
+                echo($indent.'</div>'."\n");
             }
         }
     }

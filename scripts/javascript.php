@@ -102,7 +102,12 @@ function get(e_name) {
 }
 
 String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g, ''); }
-
+Array.prototype.contains = function (element) {
+    for (var i = 0; i < this.length; i++) 
+            if (this[i] == element) return true;
+    return false;
+};
+  
 var hidden_links = new Array();
 
 function showLink(parent_id, tindex, source_id, sindex) {
@@ -147,15 +152,17 @@ function moveContent(target, tindex, source, sindex) {
 }
 
 function reset(inputfieldname){
-    for (key in hidden_links) {
-        if (hidden_links[key] == true) {
-            l = get(key);
-            l.style.display = 'inline';
+    if (inputfieldname in initial_states) {
+        for (key in hidden_links) {
+            if (hidden_links[key] == true) {
+                l = get(key);
+                l.style.display = 'inline';
+            }
         }
+        hidden_links = Array();
+        infield = get(inputfieldname);
+        infield.innerHTML = initial_states[inputfieldname];
     }
-    hidden_links = Array();
-    infield = get(inputfieldname);
-    infield.innerHTML = initial_states[inputfieldname];
 }
 
 function getMetric(num) {

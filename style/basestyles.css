@@ -44,10 +44,17 @@ a.help{
 	background-color:#bcb;
 	color: #434;
 }
+
+.filling {
+    border: 1px solid grey;
+    color: #434;
+    background-color:#bcb; 
+}
+
 .filler{
 	padding: 3px;
 	margin-bottom: 7px;
-	width: 500px;
+    border:none !important;
 }
 .filler a{
 	color: blue;
@@ -57,7 +64,8 @@ a.help{
     border: 1px solid grey;
     min-height: 19px;
     background-color: #eee;
-    color: #111;
+    color: blue;
+    margin: 0px 2px 0px 2px;
 }
 
 
