@@ -82,8 +82,8 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 				$i_manipulated = false;
 				$error_msg_text .= '				<div class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error($link).'</div>'."\n";
 			} else {
-				$sys_msg_text .= '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
-				if ($debug) { $sys_msg_text .= '<div class="debug">I used this query: '.$query.'.</div>';}
+				$sys_msg_text .= '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>'."\n";
+				if ($debug) { $sys_msg_text .= '<div class="debug">I used this query: '.$query.'.</div>'."\n";}
 				$params["cmd"]="show";
 			}
 	

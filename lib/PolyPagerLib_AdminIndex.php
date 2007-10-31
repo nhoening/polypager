@@ -49,7 +49,7 @@
 		echo($indent.'	<a onclick="openWindow(this.href, \'File Manager\', 800, 500, 100, 100, \'yes\'); return false" href="'.$the_url.'/plugins/webadmin.php"  onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('files').'</a>&nbsp;|&nbsp;'."\n");
 		$linkText = __('By clicking on this link, you can see what pages you have and maybe enter new ones or delete some.');
 		echo($indent.'	<a href=".?page=_sys_pages&amp;topic=pages&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" title="" onfocus="this.blur()">'.__('pages').'</a>'."\n");
-		echo($indent.'</div>');
+		echo($indent.'</div>'."\n");
 	}
 	
     function getMySQLCharsetter() {
@@ -457,7 +457,6 @@
 		$link = getDBLink();
 		$topic = $params["topic"];
 		
-		
 		echo($indent.'<form action="." name="choiceForm" id="choiceForm" method="get">'."\n");
 
 		//option list
@@ -544,7 +543,7 @@
 			$params["nr"] = "";	//we want no special entry, but all
 			
 			$queries = getQuery(false);
-			
+            
 			// send show quer(y|ies) to DBMS now
 			$res = array();
 			$fehler_text = "";
@@ -559,7 +558,7 @@
 	
 			if ($fehler_text == "") {
 				
-				if (isMultipage($params["page"]) and $params["max"] == "") { //no other way... db is empty
+				if (isMultipage($params["page"]) and $params["max"] == "" and isset($params["max"])) { //no other way... db is empty
 					echo($indent.'	<ul id="menu">'."\n");
 					echo($indent.'		<div class="sys_msg_admin">'.__('There is no entry in the database yet...').'</div>'."\n");
 					echo($indent.'		<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");

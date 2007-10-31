@@ -182,7 +182,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$params["nr"] = $_POST['nr'];	//starting point
 			if ($params["nr"] == "") $params["nr"] = $_GET['nr'];  //coming in per GET?
 			//pages with countable Primary Key need a max nr
-			if (isNumericType($entity['pk_type'])){ //if (eregi('int',$entity['pk_type'])){
+			if (isNumericType($entity['pk_type'])){ 
 				$params["max"] = getMaxNr($params["page"]);
 				if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
 			}
