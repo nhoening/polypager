@@ -76,7 +76,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				$i_manipulated = false;
 				$sys_msg_admin_text .= '				<div class="sys_msg_admin">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
 			} else {
-				$sys_msg_admin_text = '<div class="sys_msg_admin">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>';
+				$sys_msg_admin_text = '<div class="sys_msg_admin">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>'."\n";
 				
 				ensureConsistency($params);
 				
@@ -95,15 +95,13 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				//now that we have the new ID, we can feed it
 				handleFeed($params);
 				
-				
-				// now we switch to another command (see getEditParameters() for documentation)
-				if(isMultipage($params["page"])) {
-					if($params["cmd"] == "delete") $params["cmd"]="new"; else $params["cmd"]="show";
-				} else {
-					if($params["cmd"] == "delete") $params["cmd"]="show";
-				}
-					
-				
+				// now we might switch to another command (see getEditParameters() for documentation)
+				//if(isMultipage($params["page"])) {
+				//	if($params["cmd"] == "delete") $params["cmd"]="new"; else $params["cmd"]="show";
+				//} else {
+				//	if($params["cmd"] == "delete") $params["cmd"]="show";
+				//}
+                
 			}
 		} else {
 			$queries = getEditQuery($params["cmd"], "");
@@ -149,6 +147,14 @@ function writeData($ind=4) {
 		echo($indent.$sys_msg_admin_text);
 	}
 	
+    //show the list instead of an empry form
+    if ($params['cmd'] == 'delete') {
+        $params["step"] = 'all';
+        admin_list($nind);
+        return;
+    }
+    
+    
 	$title = __('Editing').' '.$params["page"];
 	$entity = getEntity($params["page"]);
 

@@ -543,10 +543,10 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	echo($indent.'</div>'."\n");
         
 	// are tables/pages linking to this entity via foreign keys?
-	$references = getReferencingTableData($entity);
+	/*$references = getReferencingTableData($entity);
 	foreach($references as $r){
 		echo('<div class="sys_msg">there is sthg linking here: table "'.$r['table_name'].'", page is "'.$r['likely_page'].'"</div>');
-	}
+	}*/
 }	//end function writeHTMLForm()
 
 
