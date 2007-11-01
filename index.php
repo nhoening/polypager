@@ -149,18 +149,19 @@ function writeData($ind=5) {
 	global $params;
 	global $sys_msg_text;
 	global $error_msg_text;
+
+        
+	//sys msg? write it 
+	if ($sys_msg_text != "") {
+		echo($sys_msg_text);
+	}
     
     //error? write it and return
 	if ($error_msg_text != "") {
 		echo($error_msg_text);
 		return;
 	}
-	
     
-	//sys msg? write it 
-	if ($sys_msg_text != "") {
-		echo($sys_msg_text);
-	}
 	if ($known_page) {
 		if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
 			echo($indent.'<ul id="menu">'."\n");
