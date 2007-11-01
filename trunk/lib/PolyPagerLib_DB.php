@@ -295,22 +295,25 @@ function addFields($entity,$name, $not_for_field_list = "") {
 		}
 		
 		// -- now we enrich with data from the _sys_fields table
-		$query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
-		$res = pp_run_query($query);
-		while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-			for($i=0;$i<count($fields);$i++){
-				
-				if ($fields[$i]["name"] == $row["name"]) {
-					$fields[$i]["label"] = $row["label"];
-					$fields[$i]["validation"] = $row["validation"];
-					if ($fields[$i]["valuelist"]=="")	//if from db (set/enum-type), it shouldn't be overwritten
-						$fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
-					$fields[$i]["not_brief"] = $row["not_brief"];
-					$fields[$i]["order_index"] = $row["order_index"];
-				}
-				if(eregi('int',$fields[$i]["data_type"]) and $fields[$i]["size"] != 1) $fields[$i]["validation"] = 'number';
-			}
-		}
+        if ($page_info != ""){
+            $query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
+            $res = pp_run_query($query);
+            while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                for($i=0;$i<count($fields);$i++){
+                    
+                    if ($fields[$i]["name"] == $row["name"]) {
+                        $fields[$i]["label"] = $row["label"];
+                        $fields[$i]["validation"] = $row["validation"];
+                        if ($fields[$i]["valuelist"]=="")	//if from db (set/enum-type), it shouldn't be overwritten
+                            $fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
+                        $fields[$i]["not_brief"] = $row["not_brief"];
+                        $fields[$i]["order_index"] = $row["order_index"];
+                    }
+                    if(eregi('int',$fields[$i]["data_type"]) and $fields[$i]["size"] != 1) $fields[$i]["validation"] = 'number';
+                }
+            }
+        }
+        
 		uasort($fields,"cmpByOrderIndexAsc");
 		$entity["fields"] = $fields;
         

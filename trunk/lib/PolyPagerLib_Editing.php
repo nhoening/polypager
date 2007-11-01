@@ -243,6 +243,7 @@ function getEditQuery($command, $theID) {
 	$query = "";        # we'll build in this string
 	$queries = array(); # and add it to this array we'll return
 	
+        
 	// resolve foreign keys that the user entered (the constraints in the db are 
 	// the dbs thing)
 	if ($command == "edit" || $command == "delete"){
@@ -315,6 +316,7 @@ function getEditQuery($command, $theID) {
 		$queryA = array();
 		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
 		$x = 1;
+
 		foreach($entity["fields"] as $f) {
 			// add it if it is set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
 			if (isset($params["values"][$f["name"]])) {
