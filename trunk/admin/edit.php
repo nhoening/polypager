@@ -130,6 +130,11 @@ function writeData($ind=4) {
 	
     echo($indent.'<h1>Admin Area</h1>'."\n");
     
+    //sys msg? write it 
+	if ($sys_msg_admin_text != "") {
+		echo($indent.$sys_msg_admin_text);
+	}
+    
     //error? write it and return
 	if ($error_msg_text != "") {
 		echo($error_msg_text);
@@ -142,10 +147,7 @@ function writeData($ind=4) {
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
 	}
 	
-	//sys msg? write it 
-	if ($sys_msg_admin_text != "") {
-		echo($indent.$sys_msg_admin_text);
-	}
+
 	
     //show the list instead of an empry form
     if ($params['cmd'] == 'delete') {

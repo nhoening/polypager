@@ -2,8 +2,10 @@
 	/*	this is the PolyPager default template. 
 		It fits best to the picswap-skin
 
-        Please rename it to template.php, so that PolyPager can find it.
-        Then, a new version of PolyPager will not overwrite your changes.
+    If you want to make your own changes to the template for this skin, 
+    please rename this file to template.php and edit that one. PolyPager will 
+    find and use it and your changes will not be overwritten when you update 
+    to a new version.
 	
 		For a overview of the writeX()-methods, see the FAQ on 
 		http://polypager.nicolashoening.de?FAQ

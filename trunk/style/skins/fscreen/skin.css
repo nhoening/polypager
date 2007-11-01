@@ -114,9 +114,10 @@ body
 }
 
 #main_menu {
-	position: relative;
-	top: 52px;
+	position: absolute;
+	top: 80px;
 	height: 38px;
+    width: 700px;
 	background-image: url(images/nav.gif);
 	background-repeat: repeat-x;
 	margin: 0 0 0 0;
@@ -259,14 +260,14 @@ h3 a:hover
 	font-size: 1.7em !important;
 }
 .title{margin-top: 30px;}
-.list_entry .title {margin-top:3px;}
+.list_entry .title, #title {margin-top:3px;}
 .list_entry {
 	border: 1px solid grey;
 	margin-top: 4px;
 }
-#title{ margin-left: 400px; }
-
-/* -- not rewired for PP yet --
+#title{ margin-left: 150px; }
+/*
+ -- not rewired for PP yet --
 .commentlink { text-align: right; }
 
 ol.commentlist
@@ -409,12 +410,13 @@ form td.label{
 	text-align:right;
 }
 
-/*#searchform input
+#searchform input
 {
 	width: 122px;
 	margin: .3em 0 1em 0;
+    margin: 0;
 }
-*/
+
 
 
 /*	footer styles 	*/

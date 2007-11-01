@@ -53,25 +53,25 @@ if ($params["page"] == "" or isAKnownPage($params["page"])){
 	//installation of database
 	if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
 		$error = create_sys_Tables($link);
-		$sys_msg_admin = __('attempted to create sys tables... ');
-		if ($error != "") $sys_msg_admin = $sys_msg_admin.__('The dbms reported the following error: ').$error;
-		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
-		$sys_msg_admin = $sys_msg_admin."<br/>\n";
+		$sys_msg_text = __('attempted to create sys tables... ');
+		if ($error != "") $sys_msg_text .= __('The dbms reported the following error: ').$error;
+		else $sys_msg_text .= __('The dbms reported no errors.');
+		$sys_msg_text .= "<br/>\n";
 		
 	}
 	
 	//template creation
 	if ($_GET["template_name"] != "") {
 		$error = executeTemplate($_GET["template_name"], $_GET["page_name"]);
-		$sys_msg_admin = $sys_msg_admin.__('attempted to create a page by template... ');
-		if ($error != "") $sys_msg_admin = $sys_msg_admin.__('The dbms reported the following error: ').$error;
-		else $sys_msg_admin = $sys_msg_admin.__('The dbms reported no errors.');
-		$sys_msg_admin = $sys_msg_admin."<br/>\n";
+		$sys_msg_text .= __('attempted to create a page by template... ');
+		if ($error != "") $sys_msg_text .= __('The dbms reported the following error: ').$error;
+		else $sys_msg_text .= __('The dbms reported no errors.');
+		$sys_msg_text .= "<br/>\n";
 	}
 
 }else{
 	$title = __('unknown page').': '.$params["page"];
-	$sys_msg_admin .= '<div class="sys_msg_admin">'.__('There is no known page specified.').'</div>'."\n";
+	$sys_msg_text .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
 }
 $title = "Admin Area";
 
@@ -80,22 +80,22 @@ $title = "Admin Area";
 function writeData($ind=5) {
 	$indent = translateIndent($ind);
 	global $params;
-	global $sys_msg_admin;
+	global $sys_msg_text;
 	global $error_msg_text;
-
+    
+	echo($indent.'<h1>Admin Area</h1>'."\n");
+	
+	//sys msg? write it 
+	if ($sys_msg_text != "") {
+		echo($indent.'<div id="sys_msg_admin">'.$sys_msg_text.'</div>'."\n");
+	}
+	
     //error? write it and return
 	if ($error_msg_text != "") {
 		echo($error_msg_text);
 		return;
 	}
     
-	echo($indent.'<h1>Admin Area</h1>'."\n");
-	
-	//sys msg? write it 
-	if ($sys_msg_admin != "") {
-		echo($indent.'<div class="sys_msg_admin">'.$sys_msg_admin.'</div>'."\n");
-	}
-	
 	if ($params["page"] == "" or isAKnownPage($params["page"])){
 		showAdminOptions();
 		

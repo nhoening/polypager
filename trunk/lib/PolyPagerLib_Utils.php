@@ -186,7 +186,7 @@ function preserveMarkup($content){
    remember that templates expect writeData() !
 */
 function useTemplate($path_to_root_dir){
-	global $area, $path_to_root_dir, $error_msg_text;
+	global $area, $path_to_root_dir, $error_msg_text, $sys_msg_text;
 	$sys_info = getSysInfo();
     
 	//this is the first place where we see that sys-tables don't exist!!
@@ -194,18 +194,23 @@ function useTemplate($path_to_root_dir){
 		$link_text = __('PolyPager found the database. Very good. <br/>But: it seems that it does not yet have its database configured. By clicking on the following link you can assure that all the tables that PolyPager needs to operate are being created (if they have not been already).<br/>');
 		$link_href = "admin/?&cmd=create";
 		global $area;
-		if ($area == '_admin')$link_href = './?&cmd=create';
+		if ($area == '_admin') $link_href = './?&cmd=create';
 		if ($area == '_gallery') $link_href = '../../admin/?&cmd=create';
 		$error_msg_text .= '<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>'."\n";
 	}
 	if (utf8_strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
 	else $skin = $sys_info['skin'];
-	$template_path = $path_to_root_dir."/style/skins/".$skin."/template.php";
-	if (file_exists($template_path)){
-		@include($template_path);
-	}else{
-		if($area=='_admin') echo('<div class="sys_msg">'.__('Warning: The selected skin couldn\'t be found.').'</div>');
-		@include($path_to_root_dir."/style/skins/default/template.php");
+    $template_dirpath = $path_to_root_dir."/style/skins/".$skin;
+	$template_filepath = $template_dirpath."/template.php";
+	if (file_exists($template_filepath)){
+		@include($template_filepath);
+	}else if (file_exists($template_dirpath)){
+		//if($area == '_admin') $sys_msg_text .= '<div class="sys_msg">The template.php file in the '.$skin.'-directory couldn\'t be found.</div>'."\n";
+		// we fall silently back to the template file
+        @include($template_dirpath."/template.php.template");
+	}else {
+		$sys_msg_text .= '<div class="sys_msg">'.__('Warning: The selected skin couldn\'t be found.').'</div>'."\n";
+		@include($path_to_root_dir."/style/skins/polly/template.php.template");
 	}
 }
 

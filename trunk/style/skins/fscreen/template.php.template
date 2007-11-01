@@ -1,5 +1,11 @@
 <?php 
-// rename this file to template.php to make this skin work
+/*
+    If you want to make your own changes to the template for this skin, 
+    please rename this file to template.php and edit that one. PolyPager will 
+    find and use it and your changes will not be overwritten when you update 
+    to a new version.
+*/
+
 writeDocType();?>
 <html>
 <?php writeHeader();?>
