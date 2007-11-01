@@ -1,6 +1,9 @@
 <?php	
 	/*	this is the PolyPager default template. 
 		It fits best to the picswap-skin
+
+        Please rename it to template.php, so that PolyPager can find it.
+        Then, a new version of PolyPager will not overwrite your changes.
 	
 		For a overview of the writeX()-methods, see the FAQ on 
 		http://polypager.nicolashoening.de?FAQ
@@ -17,8 +20,8 @@
 <html>
 <?php writeHeader();?>
 	<body>
-        <div id="top"></div>
-        <div id="container">
+		<div id="container">
+
 			<div id="header">
 <?php writeTitle();?>
 <?php writeMenu();?>
@@ -41,7 +44,6 @@
 		
 			</div>
 <?php writeFooter();?>
-        </div>
-        <div id="bottom"></div>
+		</div>
 	</body>
 </html>

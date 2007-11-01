@@ -1,4 +1,6 @@
-<?php writeDocType();?>
+<?php 
+// rename this file to template.php to make this skin work
+writeDocType();?>
 <html>
 <?php writeHeader();?>
 	<body>
