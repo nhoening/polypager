@@ -82,6 +82,7 @@
                       `skin` varchar(120) NOT NULL default '',
                       `submenus_always_on` tinyint(1) NOT NULL default '0',
                       `hide_public_popups` tinyint(1) NOT NULL default '0',
+                      `whole_site_admin_access` tinyint(1) NOT NULL default '0',
                       `link_to_gallery_in_menu` tinyint(1) NOT NULL default '0',
                       `gallery_name` varchar(120) NOT NULL default 'gallery',
                       `gallery_index` smallint(6) NOT NULL default '99',
