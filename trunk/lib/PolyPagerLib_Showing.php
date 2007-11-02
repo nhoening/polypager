@@ -785,7 +785,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			if ($entity["group"] != "" or $as_toc) {
 				$group_field_save = "foo";	//initial
 				if ($params["page"]!='_search') $before_first_entry = true;
-                else $before_first_entry = false; //if we don't find sthg while searching pagewide, noone cares 
+                else $before_first_entry = false; //if we don't find sthg while searching pagewide, no sone cares 
 				if ($as_toc) { 
 					$html_type = "ul";
 					$html_type2 = "li";
@@ -817,7 +817,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				//this is only done by default before the first entry
 				echo($indent.'<'.$html_type.' class="group">'."\n");
 			}else {
-				$before_first_entry = false; //we don't want an error message then
+				$before_first_entry = true; //we dont want an error message then
 			}
 			
 			
@@ -859,7 +859,6 @@ require_once("PolyPagerLib_HTMLForms.php");
                         $heading = '<a href="?'.urlencode($row["pagename"]).'&amp;nr='.$tmp_row["pk"].'">'.$tmp_row["title"].'</a>';
                     }
 					if ($before_first_entry == true) {
-						$before_first_entry = false; //indicates we indeed had data
 						//heading
 						if (!(isSinglepage($params["page"]) and $row[$entity["group"]["field"]] == "standard") and $row[$entity["group"]["field"]] != "")
 							echo($indent.'	<'.$html_type2.' class="group_heading">'.$heading.'</'.$html_type2.'>'."\n");
@@ -874,6 +873,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 					//save actual value
 					$group_field_save = $row[$entity["group"]["field"]];
 				}
+                
+                if ($before_first_entry == true) $before_first_entry = false; //indicates we indeed had data
+                        
 				//this is what we want to do basically...
 				if ($as_toc) {	//we need only titles here
 					$name = getTitle($entity,$row);
@@ -901,7 +903,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			}
 			//if there was no data, give a hint
 			if ($before_first_entry == true and !$as_toc) {
-				echo($indent.'<div class="sys_msg">'.__('There is no entry in the database meeting the search criteria...').'</div>'."\n");
+				echo($indent.'<div class="sys_msg">'.__('No fitting entry in the database was found...').'</div>'."\n");
 			}
 			//reset result set
 			if (mysql_num_rows($res) > 0)mysql_data_seek($res,0);
