@@ -351,7 +351,7 @@ function getEntity($page_name) {
 				$entity["group"] = $group;
                 
                 $param_group = urldecode($_GET["group"]);
-                if ($param_group == '') { $param_group = urldecode($_POST["group"]); } //coming in per POST?
+                if ($param_group == '')  $param_group = urldecode($_POST["group"]);  //coming in per POST?
 				$fields = getListOfFields($param_group);
 				if (count($fields) > 0) {
 					// when field options of simple pages are edited by 
@@ -390,6 +390,20 @@ function getEntity($page_name) {
 					$t = __('[This field is disabled because the database specifies these values]').$t;
 					setEntityFieldValue("valuelist", "help", $t);
 				}
+                
+                //get valuelist for group field if none is set
+                $page_info = getPageInfo($param_group);
+                if ($entity['fields']['valuelist'] == ""){
+                    $q = "SELECT ".$page_info["group_field"]." FROM ".$page_info["tablename"]." GROUP BY ".$page_info["group_field"];
+                    $res = pp_run_query($q);
+                    $group_vals = array();
+                    while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
+                        $group_vals[] = $row[$page_info["group_field"]];
+                    global $params;
+                    if ($params['cmd'] == "new" and $params["values"] = "")  $params['values'] = array();
+                    $params['values']['valuelist'] = implode(',', $group_vals);
+                }
+                    
 				
 				$entity["hidden_form_fields"] = "foreign_key_to,on_update,on_delete";//this feature is not clearly defined as from 0.9.7
 				
@@ -397,10 +411,10 @@ function getEntity($page_name) {
 				setEntityFieldValue("validation", "help", __('you can chose a validation method that is checked on the content of this field when you submit a form.'));
 				setEntityFieldValue("not_brief", "help", __('check this box when this field contains much data (e.g. long texts). It will then only be shown if the page shows one entry and a link to it otherwise.'));
 				setEntityFieldValue("order_index", "help", __('when shown, the fields of an entry are ordered by the order in their table (0 to n). you can change the order index for this field here.'));
-				setEntityFieldValue("foreign_key_to", "help", __('Here you can specify a Foreign Key - relation. If this field corresponds entries of this page to another, say so here (for example, the field [bookid] on the page [chapters] could reference the page [books]). One advantege would be that you can chose from a convenient list when you edit entries of this page (rather than, for example, always type the bookid by hand). For more advantages, see the fields on_update and on_delete below.'));
-				$update_delete_help = 'If you have chosen to reference another page with this field (see above), then you can specify here how PolyPager should behave when something happens to the referenced entry. To use the example from the help on the reference-field: If you delete/update the bookid, then what happens to its chapters? You might want PolyPager to do nothing (NO ACTION), restrict it (RESTRICT), forward the change/deletion to referencing entries of this page (CASCADE) or just delete the reference to that entry (SET NULL).';
-				setEntityFieldValue("on_update", "help", __($update_delete_help));
-				setEntityFieldValue("on_delete", "help", __($update_delete_help));
+				//setEntityFieldValue("foreign_key_to", "help", __('Here you can specify a Foreign Key - relation. If this field corresponds entries of this page to another, say so here (for example, the field [bookid] on the page [chapters] could reference the page [books]). One advantege would be that you can chose from a convenient list when you edit entries of this page (rather than, for example, always type the bookid by hand). For more advantages, see the fields on_update and on_delete below.'));
+				//$update_delete_help = 'If you have chosen to reference another page with this field (see above), then you can specify here how PolyPager should behave when something happens to the referenced entry. To use the example from the help on the reference-field: If you delete/update the bookid, then what happens to its chapters? You might want PolyPager to do nothing (NO ACTION), restrict it (RESTRICT), forward the change/deletion to referencing entries of this page (CASCADE) or just delete the reference to that entry (SET NULL).';
+				//setEntityFieldValue("on_update", "help", __($update_delete_help));
+				//setEntityFieldValue("on_delete", "help", __($update_delete_help));
 			}
 			//	table for comments
 			else if ($page_name == "_sys_comments") {
@@ -545,7 +559,7 @@ function getEntity($page_name) {
                         while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
                             $group_vals[] = $row[$entity['group']['field']];
                         setEntityFieldValue($entity['group']['field'], 'valuelist', implode(',',$group_vals));
-                    } 
+                    }
                     
 				}
 			}
@@ -569,7 +583,6 @@ function getEntity($page_name) {
 						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM ".$rt['table_name'];
 						//singlepages can operate on the page level whith all data being in one table...
 						if ($rt['fk']['ref_page'] != '' and isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
-						//echo('fk . query:'.$q."\n");
 						$result = pp_run_query($q);
 						
 						$tmp = array();
@@ -585,7 +598,7 @@ function getEntity($page_name) {
 				}
 			}
 			
-
+            
             // guess title field if not set
             if ($entity["title_field"] == "") $entity["title_field"] = guessTextField($entity,false);
             // because: if titles change, I always want to know (if they are no blob)

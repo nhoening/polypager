@@ -315,9 +315,12 @@ function addFields($entity,$name, $not_for_field_list = "") {
             }
         }
         
-        for($i=0;$i<count($fields);$i++)
+        // group field : valuelist stuff
+        for($i=0;$i<count($fields);$i++){
+            // remember from where the values come   
             if ($fields[$i]["valuelist"]!="")$fields[$i]['valuelist_fromdb'] = true;
             else $fields[$i]['valuelist_fromdb'] = false;
+        }
         
 		uasort($fields,"cmpByOrderIndexAsc");
 		$entity["fields"] = $fields;

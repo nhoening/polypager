@@ -89,7 +89,10 @@ function getEditParameters() {
 		global $HTTP_GET_VARS;
 		$_POST =& $HTTP_POST_VARS; $_GET =& $HTTP_GET_VARS;
 	}
-
+    
+    global $params;
+    if ($params == "") $params = array();
+    
 	//------------------------- page check ----------------------------
 	//the "page" param
 	$query_array = utf8_explode("&", $_SERVER["QUERY_STRING"]);
