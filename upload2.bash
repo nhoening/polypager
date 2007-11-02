@@ -9,10 +9,6 @@
 # go to the polypager directory (contains export)
 cd ../..
 
-# remove PolyPager_Config.php (in order not to overwrite settings)
-# comment this out for new installations!!
-mv export/PolyPager_Config.php .
-
 # make file descriptor (FD) 6 a copy of stdout (FD 1)
 exec 6>&1
 # open tmpfile for writing
@@ -37,5 +33,4 @@ lftp -f tmplftpfile $1
 
 # clean up
 rm tmplftpfile
-mv PolyPager_Config.php export
 cd branches/maintenance
