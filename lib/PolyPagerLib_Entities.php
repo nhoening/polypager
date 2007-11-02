@@ -117,6 +117,8 @@ function getEntity($page_name) {
 				setEntityFieldValue("lang", "formgroup", 'misc');
 				setEntityFieldValue("skin", "formgroup", 'misc');
 				setEntityFieldValue("submenus_always_on", "formgroup", 'misc');
+                setEntityFieldValue("whole_site_admin_access", "formgroup", 'misc');
+                
 				$entity['formgroups']['captcha'] = array(4,'hide');
 				setEntityFieldValue("use_captchas", "formgroup", 'captcha');
 				setEntityFieldValue("public_captcha_key", "formgroup", 'captcha');
