@@ -143,7 +143,11 @@ function getEditParameters() {
 				$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
 				$values = array();
 				foreach($entity["fields"] as $f) {
-					$values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
+                    if ($f['valuelist'] != ""){ //try possible new entry first
+                        $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"].'_new']);
+                        if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"].'_new']);
+                    }
+					if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
                     if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
 					//Booleans umwandeln
 					if ($f["data_type"] == "bool") {
