@@ -97,7 +97,7 @@
         $res = pp_run_query($query);
         if(mysql_num_rows($res) == 0) { //fill in one row if its not there already for some reason
             $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 'gallery', 99, '0','','') ;";
+                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 0, 'gallery', 99, '0','','') ;";
             $res = mysql_query($query, $link);
             $fehler_nr = mysql_errno($link);
             $fehler_text = mysql_error($link);

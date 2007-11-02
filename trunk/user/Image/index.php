@@ -54,6 +54,12 @@ require_once("PolyPagerLib_Utils.php");
 require_once("PolyPagerLib_Showing.php");
 require_once("PolyPagerLib_Sidepane.php");
 
+$sys_info = getSysInfo();
+if ($sys_info['whole_site_admin_access']) {
+    set_include_path(get_include_path() . PATH_SEPARATOR . '..'. FILE_SEPARATOR . '..'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR);
+    include('auth.php');
+}
+
 // ---------------------------------------
 
 $qdig_version = '1.2.9.3';
@@ -521,7 +527,7 @@ $pathname_maxlen  = 100;    // Max. number of characters in a pathname.
 $imgname_maxlen   = 100;    // Max. number of characters in an image filename.
 $extra_paranoia   = FALSE;  // Do extra-strict checking for '..'.
 $ignore_dotfiles  = FALSE;  // Ignore files that start with '.'.
-$ignore_dotdirs   = FALSE;  // Ignore directories that start with '.'.
+$ignore_dotdirs   = TRUE;  // Ignore directories that start with '.'.
 // HTML Header settings are only effective for stand-alone Qdig.
 $header['zap_frames']    = FALSE; // Break out of a frameset.
 $header['ie_imgbar_off'] = TRUE;  // Suppress IE6's image toolbar.

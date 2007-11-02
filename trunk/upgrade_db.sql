@@ -6,6 +6,10 @@
 --BUT: please execute them chronologically, one version after the
 --other
 
+
+-- 1.0rc5
+ALTER TABLE  `_sys_sys` ADD  `whole_site_admin_access` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `hide_public_popups` ;
+
 -- 1.0rc3
 ALTER TABLE `_sys_sys` ADD `use_captchas` TINYINT( 1 ) NOT NULL DEFAULT '0' COMMENT 'True if Captchas shall prevent comment spam',
 ADD `public_captcha_key` VARCHAR( 50 ) NOT NULL COMMENT 'provided by recaptcha.org',

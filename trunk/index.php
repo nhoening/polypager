@@ -37,6 +37,7 @@ require_once("PolyPagerLib_Showing.php");
 $sys_info = getSysInfo();
 header( 'Content-Type: text/html; charset='.$sys_info['encoding'] );
 
+if ($sys_info['whole_site_admin_access']) include('admin'.FILE_SEPARATOR.'auth.php');
 
 // ---------------------------------------
 
