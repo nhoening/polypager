@@ -108,6 +108,7 @@ function getReferencedTableData($entity){
 function getReferencingTableData($entity){
 	$fks = getForeignKeys();
 	$tables = array();
+    
 	foreach ($fks as $fk){
 		$referencing_table = "";
 		$title_field = "";
@@ -340,6 +341,7 @@ function getRelationCandidatesFor($tablename){
     // find tables that link to this table from their 1st field
     $linking_tables = array();
     $rf = getReferencingTableData($entity);
+    
     foreach ($rf as $t) {
         // make sure we know what the 1st field is
         $res = pp_run_query('SHOW COLUMNS FROM '.$t['table_name']);
@@ -377,14 +379,14 @@ Searches the database for foreign keys (possible in InnoDB tables, for example)
 and returns an array of them. This is the structure you get:
 
 fks
-  |_key - name
-             |_ "table"
-             |_ "field"
-             |_ "ref_table"
-             |_ "ref_field"
-             |_ "on_update"
-             |_ "on_delete"
-			 |_ 'in_db"
+  |_
+     |_ "table"
+     |_ "field"
+     |_ "ref_table"
+     |_ "ref_field"
+     |_ "on_update"
+     |_ "on_delete"
+     |_ 'in_db"
 
 The user can also enter references from fields to pages in the interface.
 Those will be collected, too (from the table _sys_fields).
@@ -401,10 +403,11 @@ According to this, the key-name will be:
 $fks = "";
 function getForeignKeys(){
 	global $db,$fks;
-	$tables = mysql_list_tables($db, getDBLink());
-	$num_tables = mysql_num_rows($tables);
-	
+
 	if ($fks == "" or count($fks)==0){
+        $tables = mysql_list_tables($db, getDBLink());
+        $num_tables = mysql_num_rows($tables);
+    
 		$fk = array();
 		
 		for($x = 0; $x < $num_tables; $x++){
@@ -484,7 +487,7 @@ function getForeignKeys(){
 								// A MARKER THAT THIS IS REALLY A CONSTRAINT FROM THE DB
 								$fk["in_db"] = 1;
 							}
-							$fks['table_'.$fk['ref_table'].'_'.$fk['field']] = $fk;
+							$fks[] = $fk;
 						} else {	// that's all, folks
 							break;
 						}
@@ -494,7 +497,7 @@ function getForeignKeys(){
 		} // end for all tables
 		
 		// Now look in the _sys_fields data for manually specified foreign keys
-		$query = "SELECT pagename, name, foreign_key_to, on_update, on_delete FROM _sys_fields WHERE foreign_key_to != ''";
+		/*$query = "SELECT pagename, name, foreign_key_to, on_update, on_delete FROM _sys_fields WHERE foreign_key_to != ''";
 		$res = pp_run_query($query);
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
 			$fk = array();
@@ -513,7 +516,7 @@ function getForeignKeys(){
 			$fk["on_delete"] = $row["on_delete"];
 			$fk["in_db"] = 0;
 			$fks['page_'.$fk["ref_page"].'_'.$fk["field"]]  = $fk;
-		}
+		}*/
 	}
 	//return an array so that foreach loops on this will work
 	if ($fks=="") return array();

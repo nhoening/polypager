@@ -327,8 +327,10 @@ require_once("PolyPagerLib_HTMLForms.php");
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
 			if ($entity['pk'] == "") {
-				global $sys_msg_text;
-				$sys_msg_text .= '<div class="sys_msg">'.$entity['tablename'].':'.__('This table has no primary key!').'</div>';
+                if ($entity != "") {
+                    global $sys_msg_text;
+                    $sys_msg_text .= '<div class="sys_msg">'.$entity['tablename'].':'.__('This table has no primary key!').'</div>';
+                }
 				continue;
 			}
 			// ---------- first the easy cases: 
