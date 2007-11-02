@@ -309,9 +309,9 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	$entity = getEntity($params["page"]);
 	$page_info = getPageInfo($params["page"]);
     $sys_info = getSysInfo();
-	$hidden_form_fields = utf8_explode(",",$entity["hidden_form_fields"]);
-	$disabled_fields = utf8_explode(",",$entity["disabled_fields"]);
-	$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
+	$hidden_form_fields = utf8_explode(",", $entity["hidden_form_fields"]);
+	$disabled_fields = utf8_explode(",", $entity["disabled_fields"]);
+	$consistency_fields = utf8_explode(",", $entity["consistency_fields"]);
 	
 	if ($show) $display = 'display:block;'; else $display = 'display:none;';
 	if ($id) $id_text = $id; else $id_text = '';
@@ -459,7 +459,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 				writeOptionList($index, $f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
                 if ($f['group_field'] != "" and !$f['valuelist_from_db']){
                     $index++;
-                    echo($indent.'			'.__('other: ').'<input tabindex="'.$index.'" type="text" name="_formfield_'.$f['name'].'_new" size="12"/>'."\n");
+                    echo($indent.'			'.__('other').': <input tabindex="'.$index.'" type="text" name="_formfield_'.$f['name'].'_new" size="12"/>'."\n");
                 }
             }
 			echo("\n".$indent.'			</td>'."\n"); 

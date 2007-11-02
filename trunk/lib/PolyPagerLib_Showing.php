@@ -122,7 +122,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$_POST =& $HTTP_POST_VARS; $_GET =& $HTTP_GET_VARS; 
 		}
 		
-		$params = array();
+        global $params;
+		if ($params == "") $params = array();
 		
 		//------------------------ topic (for admin list)
 		$params["topic"] = $_POST['topic'];

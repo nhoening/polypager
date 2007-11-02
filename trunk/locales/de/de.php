@@ -207,6 +207,7 @@ function getTranslation($text) {
 	'Diese untere Liste ist hier um Ihnen sinnvolle Vorschl&auml;ge zum F&uuml;llen des obigen Listfelds zu geben. Klicken Sie auf einen Eintrag, um ihn in das Feld zu kopieren. Der reset-link stellt den Zustand zum Zeitpunkt des letzten Ladens der Seite wieder her.',
 '(show)' => '(zeigen)',
 '(hide)' => '(verstecken)',
+'other' => 'anders',
 
 /*	lib/PolyPagerLib_Utils.php	*/
 'the latest entries:'	=> 'Die neuesten Eintr&auml;ge:',
