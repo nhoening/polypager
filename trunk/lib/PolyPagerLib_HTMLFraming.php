@@ -267,12 +267,7 @@
                 }
                 
                 echo($indent.'	<ul id="'.$p["name"].'_menu" style="display:'.$ul_visibility.';">'."\n");
-                //for on-click-submenus, we provide an extra submenu to see them
-                //all (because the main menu entry's function now is showing the
-                //submenus)
-                if($sys_info["submenus_always_on"] == 0){
-                    echo($indent.'		<li><a href="'.$path_to_root_dir.'/?'.$p["name"].'">'.__('all').' '.$p["name"]."</a></li>\n");
-                }
+
                 $x=0;
                 for(;$x < count($a);$x++){
                     if ($a[$x] != "") {
