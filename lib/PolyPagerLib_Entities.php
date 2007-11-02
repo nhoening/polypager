@@ -520,8 +520,6 @@ function getEntity($page_name) {
 					}
 
 					$entity["title_field"] = $page_info["title_field"];
-					//important: we need something here (for the admin list) - so we take the first field...
-					if ($entity["title_field"] == "") $entity["title_field"] = $entity["fields"][0]["name"];
 					
                     if($page_info["tablename"] != "") {
 						$entity = addFields($entity,$page_info["tablename"]);
