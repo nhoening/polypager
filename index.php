@@ -28,6 +28,10 @@ if ( !defined('FILE_SEPARATOR') ) {
     define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
 
+if (!file_exists("PolyPager_Config.php"))
+    die('I need the file "PolyPager_Config.php" in the root directory to go on. <br/><br/> It specifies where to find the database. <br/> You should find "PolyPager_Config.php.template" in your root directory. <br/><br/>Please copy it to make "PolyPager_Config.php" and adjust the values in there.');
+
+
 set_include_path(get_include_path().PATH_SEPARATOR .'.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
 require_once("PolyPagerLib_HTMLFraming.php");
 require_once("PolyPagerLib_Utils.php");

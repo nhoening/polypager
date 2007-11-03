@@ -46,6 +46,7 @@ if ( !defined('FILE_SEPARATOR') ) {
 }
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot());
+
 require_once("PolyPager_Config.php");
 require_once("lib"  . FILE_SEPARATOR .  "PolyPagerLib_DB.php");
 require_once("lib"  . FILE_SEPARATOR .  "PolyPagerLib_Entities.php");
