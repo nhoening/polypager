@@ -19,6 +19,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
 
+
 // PATH_SEPARATOR doesn't exist in versions of php before  4.3.4. here is the trick to declare it anyway :
 if ( !defined('PATH_SEPARATOR') ) {
     define('PATH_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? ';' : ':');
@@ -111,7 +112,6 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	$entity = getEntity($params["page"]);
     $queries = getQuery(true);
     
-
 	// send show quer(y|ies) to DBMS now
 	$res = array();
 	foreach(array_keys($queries) as $qkey){

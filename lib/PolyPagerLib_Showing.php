@@ -327,7 +327,7 @@ require_once("PolyPagerLib_HTMLForms.php");
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
 			if ($entity['pk'] == "") {
-                if ($entity != "") {
+                if ($entity != "" and $entity['tablename'] != '') {
                     global $sys_msg_text;
                     $sys_msg_text .= '<div class="sys_msg">'.$entity['tablename'].':'.__('This table has no primary key!').'</div>';
                 }
@@ -463,9 +463,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
 						if ($params["search"]["kw"] != "") {
 							$keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
-                            //if ($said_where) $a[] = " AND ";
-                            //else $a[] = " WHERE ";
-                            $a[1] = " WHERE ";
+                            if ($said_where) $a[] = " AND ";
+                            else $a[] = " WHERE ";
+                            //$a[1] = " WHERE ";
 							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
 								echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
 								continue; //show nothing
@@ -905,7 +905,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				echo($indent.'</'.$html_type.'>'."\n");
 			}
 			//if there was no data, give a hint
-			if ($before_first_entry == true and !$as_toc) {
+			if ($params['page'] != '_search' and $before_first_entry == true and !$as_toc) {
 				echo($indent.'<div class="sys_msg">'.__('No fitting entry in the database was found...').'</div>'."\n");
 			}
 			//reset result set
@@ -960,6 +960,8 @@ require_once("PolyPagerLib_HTMLForms.php");
             //we always want the title first when we show search results
             if($entity["title_field"]!="" and ($params['page']=='_search' or $params["cmd"] == "_search" )) {
                 $title = strip_tags($row[$entity["title_field"]]);
+                
+                if ($title == '') $title = getFirstWords($row[guessTextField($entity)], 5);
                 foreach(getSearchKeywords() as $k){
                     $title = eregi_replace(escape_regex($k),'<span class="high">'.escape_regex($k).'</span>', $title);
                 }
