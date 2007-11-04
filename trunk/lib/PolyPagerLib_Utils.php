@@ -569,11 +569,11 @@ function getTitle($entity,$row){
 /*
  * guesses what field might be containing the
  * interesting text in the named entity
- * (used for RSS)
+ * (used for example for RSS)
  */
 function guessTextField($entity, $prefer_long_text=true) {
 	$the_field = "";                              
-	//first blob field ?
+	//try long texts
 	for($i=0; $i<count($entity["fields"]); $i++) {
         $dt = $entity["fields"][$i]["data_type"];
 		if (($prefer_long_text and isTextAreaType($dt)) or
@@ -582,7 +582,7 @@ function guessTextField($entity, $prefer_long_text=true) {
 			break;
 		}
 	}
-	//else: first text field ?
+	//now others
 	if ($the_field == "")
 		for($i=0; $i<count($entity["fields"]); $i++) {
             $dt = $entity["fields"][$i]["data_type"];
