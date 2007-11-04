@@ -140,8 +140,10 @@ foreach($skins as $s) $good_paths[] = '/style/skins/'.$s.'/';
 $good_files = array(
  'template.php', 'user.css'
 );
-$pics = scandir_n('../style/skins/picswap/pics/bg',0,true,false);
-foreach($pics as $f) $good_files[] = $f;
+if (file_exists("../style/skins/picswap")) {
+    $pics = scandir_n('../style/skins/picswap/pics/bg',0,true,false);
+    foreach($pics as $f) $good_files[] = $f;
+}
 // --------- end nh added vars
 
 /* Size of the edit textarea
