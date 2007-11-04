@@ -28,6 +28,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 include("./lib/PolyPagerLib_Utils.php");
 include("./lib/PolyPagerLib_Sidepane.php");
 
+if ($sys_info['whole_site_admin_access']) include('admin'.FILE_SEPARATOR.'auth.php');
 
 $sys_info = getSysInfo();
 header("Content-type: text/xml; charset=".$sys_info["encoding"]);
