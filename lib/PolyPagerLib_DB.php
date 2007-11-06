@@ -341,9 +341,8 @@ function getRelationCandidatesFor($tablename){
     // find tables that link to this table from their 1st field
     $linking_tables = array();
     $rf = getReferencingTableData($entity);
-    
+    // make sure we know what the 1st field is
     foreach ($rf as $t) {
-        // make sure we know what the 1st field is
         $res = pp_run_query('SHOW COLUMNS FROM '.$t['table_name']);
         $row = mysql_fetch_array($res, MYSQL_ASSOC);
         if ($row['Field'] == $t['fk']['field']) $linking_tables[] = $t['table_name'];

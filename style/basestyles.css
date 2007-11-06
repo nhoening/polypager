@@ -49,6 +49,8 @@ a.help{
     border: 1px solid grey;
     color: #434;
     background-color:#bcb; 
+    height:6em;
+    overflow: auto;
 }
 
 .filler{
@@ -58,6 +60,7 @@ a.help{
 }
 .filler a{
 	color: blue;
+    text-decoration: underline;
 }
 
 .filled{
@@ -67,7 +70,10 @@ a.help{
     color: blue;
     margin: 0px 2px 0px 2px;
 }
-
+.filled a{
+	color: blue;
+    text-decoration: underline;
+}
 
 #_nogarbageplease_ {visibility:hidden;} /*not visible for humans, only for (dumb) spam machines*/
 

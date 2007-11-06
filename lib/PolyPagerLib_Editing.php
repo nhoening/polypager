@@ -235,6 +235,7 @@ function getEditParameters() {
 	return $params;
 }
 
+
 /*
 	builds a query, depending on command.
 	if id is empty, it uses the param id
@@ -299,24 +300,7 @@ function getEditQuery($command, $theID) {
 			}
 		}
 	}
-    	
-    if ($command == "edit" || $command == "entry" || $command == "delete"){
-        // make entries into relational tables if data comes for that
-        // important: the first of the two keys determines what we replace
-        $can = getRelationCandidatesFor($entity['tablename']);
-        foreach ($can as $c) {
-            if ($c[1] <= 2){
-                $fkval = $params['values'][$c[2][0]['fk']['ref_field']];
-                if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".$c[2][0]['fk']['field']." = ".$fkval.";";
-                if ($params['values'][$c[0]] != "" and $command != "delete") {
-                    $fkrefs = explode(',', $params['values'][$c[0]]);
-                    foreach ($fkrefs as $ref) 
-                        $queries[] = "INSERT INTO ".$c[0]." VALUES (".$fkval.",".$ref.");";
-                }
-            }
-        }
-        
-	}
+    
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -400,6 +384,32 @@ function getEditQuery($command, $theID) {
 	return $queries;
 }
 
+
+/* */
+function getRelationalQueries(){
+    global $params;
+    $queries = array();
+    
+    if ($params['cmd'] == "edit" || $params['cmd'] == "entry" || $params['cmd'] == "delete"){
+        // make entries into relational tables if data comes for that
+        // important: the first of the two keys determines what we replace
+        $can = getRelationCandidatesFor($entity['tablename']);
+        foreach ($can as $c) {
+            if ($c[1] <= 2){
+                $fkval = $params['values'][$c[2][0]['fk']['ref_field']];
+                if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".$c[2][0]['fk']['field']." = ".$fkval.";";
+                if ($params['values'][$c[0]] != "" and $command != "delete") {
+                    $fkrefs = explode(',', $params['values'][$c[0]]);
+                    foreach ($fkrefs as $ref) 
+                        $queries[] = "INSERT INTO ".$c[0]." VALUES (".$fkval.",".$ref.");";
+                }
+            }
+        }
+	}
+    return $queries;
+}
+
+
 /*
  * handles the feed table
  */
@@ -416,6 +426,7 @@ function getEditQuery($command, $theID) {
     $res = pp_run_query($query);
     
     if($params["feed"] == '1') {
+        
         //delete all possible entries with the same pagename/id from the feed list
         if($params["cmd"] != "entry") $res = pp_run_query("DELETE FROM _sys_feed WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";");
 

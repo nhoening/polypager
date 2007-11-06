@@ -338,6 +338,7 @@ function getTranslation($text) {
 'you searched for:' => 'Sie suchten nach:',
 'show index' => 'zeige Index',
 'hide index' => 'verstecke Index',
+'comments' => 'Kommentare',
 'add a comment' => 'Kommentar schreiben',
 'This Link gives you an RSS feed that tracks all comments on this entry. That way you can be follow the discussion without always coming here to check for new comments.'
     => 'Dieser Link f&uuml;hrt zu einem RSS Feed. Damit k&ouml;nnen Sie eine Disukussion verfolgen, ohne immer pers&ouml;nlich hier nach neuen Kommentaren zu suchen.',

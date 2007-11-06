@@ -94,20 +94,20 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		//we just do the same as for strings (see above)
         //we add a calendar, though (see below)
         
-	} else if (eregi('int',$type) or $type=="float" or $type=="double" or $type=="decimal") {
+	} else if (eregi('int',$type) or $type == "float" or $type == "double" or $type == "decimal") {
 		echo(' size="10" maxlength="'.$size.'" name="'.'_formfield_'.$name.'" type="text"');
-		if ($value!="") echo(' value="'.$value.'"');
-	} else if ($type=="bool") {
-		if ($value=="") {echo(' name="'.'_formfield_'.$name.'" type="checkbox"');}
+		if ($value != "") echo(' value="'.$value.'"');
+	} else if ($type == "bool") {
+		if ($value == "") echo(' name="'.'_formfield_'.$name.'" type="checkbox"');
 		else {
-			if ($value=="1") {echo(' size="1" name="'.'_formfield_'.$name.'" type="checkbox" checked="true"');}
-			else {echo(' size="1" name="'.'_formfield_'.$name.'" type="checkbox"');}
+			if ($value == "1") echo(' size="1" name="'.'_formfield_'.$name.'" type="checkbox" checked="true"');
+			else echo(' size="1" name="'.'_formfield_'.$name.'" type="checkbox"');
 		}
-	}
+	}else {
+         echo(' name="'.'_formfield_'.$name.'" type="'.$type.'"');
+    }
 	//now the closing tag
-	if ($dis)	{
-		echo(' disabled="disabled" ');
-	}
+	if ($dis) echo(' disabled="disabled" ');
 	if ($inputType != "textarea") echo('/>'."\n");
 	
     //calendar fields
@@ -141,7 +141,7 @@ function writeFiller($entity_name, $fieldname, $values, $possible_values, $ind=1
     
     echo($indent.'<div class="filling">'.__('choose ').$entity_name.":\n");
     
-    //the visible filled box
+    // ------------- the visible filled box ------------- 
     echo($indent.'  <div class="filled" id="'.$fill_name.'">'."\n");
     for($i = 0; $i < count($show_vals); $i++) {
         if($show_vals[$i]!='') {
@@ -152,25 +152,27 @@ function writeFiller($entity_name, $fieldname, $values, $possible_values, $ind=1
     }
     echo($indent."  </div>\n");
 	
+    
+    // ------------- the box to fill from ------------- 
+    
     // show what can still be filled in
     $show_poss_vals = $possible_values[0];
-    if (count($possible_values[1]) > 0) {
-        $show_poss_vals = $possible_values[1] ;
-    }
+    if (count($possible_values[1]) > 0)  $show_poss_vals = $possible_values[1] ;
+    $s_show = arrays_exor($show_poss_vals, $show_vals);
+    $s_real = $s_show;
+    
+    if (count($possible_values[1]) > 0)  $s_real = arrays_exor($possible_values[0], $values[0]);
 
-    // the box to fill from
-    $s = arrays_exor($show_poss_vals, $show_vals);
     echo($indent.'  <div class="filler" id="'.$inp_name.'">'.__('from:')."\n");
     $helptext = __('This lower list is here to make sensible suggestions to fill the upper list conveniently. Click on an item to paste it into the text box. Clicking reset will restore the state of both lists to the load-time of the page.');
     writeHelpLink($indent.' ', $helptext);
     echo($indent.'      (<a onclick="reset(\''.$inp_name.'\');reset(\''.$fill_name.'\');">'.__('reset').'</a>)&nbsp;'."\n");
-    for($i = 0; $i < count($s); $i++) {
+    for($i = 0; $i < count($s_show); $i++) {
         echo($indent.'      <a id="'.$inp_name.($i+1).'"'."\n"); 
-        //echo($indent.'    class="'); if (count($possible_values[1]) > 0) echo('_'.$possible_values[0][$i]); echo('"'."\n");
-        echo($indent.'      class="_'.$possible_values[0][$i].'"'."\n");
+        echo($indent.'      class="_'.$s_real[$i].'"'."\n");
         echo($indent.'      onclick="moveContent(\''.$fill_name.'\','.($i+1).',\''.$inp_name.'\','.($i+1).');"'."\n");
-        echo($indent.'      >'.trim($s[$i]).'</a>'."\n");
-        if ($i < count($s)-1) echo($indent.'&nbsp;'."\n");
+        echo($indent.'      >'.trim($s_show[$i]).'</a>'."\n");
+        if ($i < count($s_show)-1) echo($indent.'&nbsp;'."\n");
     }
     echo("\n".$indent." </div>\n");
     
@@ -241,7 +243,7 @@ function proposeFeeding($tabindex, $value, $ind=11) {
     $entity = getEntity();
     if ($entity["publish_field"]!="") $helptext .= __(' (If you do not publish this entry, it will be invisible there, too)');
 	echo($indent.'<span id="feedbox">feed now:'."\n");
-	writeInputElement($tabindex, 'bool', 1, '_formfield_feedbox', '', $value, false, false);
+	writeInputElement($tabindex, 'bool', 1, 'feedbox', '', $value, false, false);
 	writeHelpLink($indent, $helptext);
 	echo($indent.'</span>'."\n");
 }
@@ -274,6 +276,7 @@ function writeRelationalTableInputs($ind, $entity){
             $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
             $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
             $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$params['nr'];
+            $query .= ' ORDER BY Title';
             $res = pp_run_query($query);
             $already_show_vals = array();
             $already_save_vals = array();
@@ -282,7 +285,7 @@ function writeRelationalTableInputs($ind, $entity){
                 $already_save_vals[] = $row[$c[2][1]['fk']['field']];
             }
             //now get possible values
-            $query = 'SELECT '.$c[2][1]['title_field'].', '.$c[2][0]['fk']['ref_field'].' FROM ' .$c[2][1]['fk']['ref_table'];
+            $query = 'SELECT '.$c[2][1]['title_field'].', '.$c[2][0]['fk']['ref_field'].' FROM ' .$c[2][1]['fk']['ref_table'].' ORDER BY '.$c[2][1]['title_field'];
             $res = pp_run_query($query);
             $poss_show_vals = array();
             $poss_save_vals = array();
@@ -300,7 +303,7 @@ function writeRelationalTableInputs($ind, $entity){
 /* writes out an HTML Form for singlepages, multipages and other stuff
 that is described in $entity. It can fill the form with data from $row
 */
-function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
+function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id='', $enctype='application/x-www-form-urlencoded') {
 	$indent = translateIndent($ind);
 	$nind = $ind + 1;
 	global $params;
@@ -372,7 +375,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
         $target_page = $params["page"];
     }
     
-	echo($indent.'	<form accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\') && transferFilled();">'."\n");
+	echo($indent.'	<form enctype="'.$enctype.'"accept-charset="'.$sys_info["encoding"].'" name="edit_form" id="'.$id_text.'" class="edit" action="'.$action_target.'?'.urlencode($target_page).'&amp;nr='.$target_nr.'" method="post" onsubmit="return oswald(\'edit_form\') && transferFilled();">'."\n");
 	echo($indent.'		<input name="_nogarbageplease_" id="_nogarbageplease_" value=""/>'."\n"); //this gets hidden by css to trap machine spam
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
@@ -480,7 +483,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	
     // This writes input elements to fill data in purely relational
     // tables for which this table is responsible. This cannot happen when inserting because we need the PK
-    if($params['cmd'] != "new") writeRelationalTableInputs($nind+2, $entity);
+    writeRelationalTableInputs($nind+2, $entity);
     
     
 	// ------ submit section ------
@@ -516,7 +519,8 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id) {
 	//echo($indent.'		<td class="form_options"><input type="checkbox" name="opt"/> '.__('show next entry').'</td>'."\n");
 	echo($indent.'			<td class="form_submits">'."\n");
 	if($params["cmd"] == "new") $feed = 1; else $feed = 0;
-	if (!ereg('_sys_', $params["page"]))  proposeFeeding(++$index, $feed, $nind+3);
+	if (!ereg('_sys_', $params["page"]) and $entity['no_feeding'] != 1)  proposeFeeding(++$index, $feed, $nind+3);
+    
 	echo($indent.'				<br/><input type="hidden" id="cmd" name="cmd" value="'.$next_command.'"/>'."\n");
 	echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
 	if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
