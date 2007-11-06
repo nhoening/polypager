@@ -50,7 +50,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 	// -------------------- maybe we need a data manipulation FIRST
 	// -------------------- afterwards we'll select data to show
 		$i_manipulated = true;	//positive assumption
-		
+        
 		if ($params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {
 	
 			//if system data has been changed, reset $sys_info
@@ -81,9 +81,16 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				
 				ensureConsistency($params);
 				
-				//reset lazy data - so all we show is fresh
+                // get relational queries for the (maybe new) entry
+                $rel_queries = getRelationalQueries();
+                print_r($rel_queries);
+                if ($rel_queries != "")
+				    foreach($rel_queries as $q)
+					    if ($q!="") pp_run_query($q);
+                
+                // reset lazy data - so all we show is fresh
 				resetLazyData();
-				
+                
 				// make a new SELECT Query (we must show something) - later this could get more dynamic
 				$queries = getEditQuery("show", "");
 				$query = $queries[0];
@@ -95,13 +102,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				
 				//now that we have the new ID, we can feed it
 				handleFeed($params);
-				
-				// now we might switch to another command (see getEditParameters() for documentation)
-				//if(isMultipage($params["page"])) {
-				//	if($params["cmd"] == "delete") $params["cmd"]="new"; else $params["cmd"]="show";
-				//} else {
-				//	if($params["cmd"] == "delete") $params["cmd"]="show";
-				//}
                 
 			}
 		} else {
@@ -147,8 +147,6 @@ function writeData($ind=4) {
 	if($debug) {
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
 	}
-	
-
 	
     //show the list instead of an empry form
     if ($params['cmd'] == 'delete') {

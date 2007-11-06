@@ -753,6 +753,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$indent = translateIndent($ind);
 		global $params;
 		$page_info = getPageInfo($params["page"]);
+        
 		if ($page_info["hide_toc"] == 0 ) {
 			echo($indent.'<!-- table of contents-->'."\n");
 			echo($indent.'<div id="toc">'."\n");
@@ -885,7 +886,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$name = preserveMarkup($name);
 					echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
 					// show referencing table stuff
-                    if (count($rt)>0){
+                    if (count($rt)>0 and count($fk_rows)>0){
                         echo($indent.'		<ul class="fk_link">'."\n");
                         for ($x=0;$x<count($rt);$x++){
                             foreach($fk_rows as $fk_row){
@@ -1140,7 +1141,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
      
-        if (!$list_view and $params['step'] == 1) showRelatedValues(++$ind);
+        if (!$list_view) showRelatedEntries(++$ind);
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == 0 ) {
@@ -1168,7 +1169,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if ($params["step"] != 1) {
 					if($comment_count > 0) {
 						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
-						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">comments('.$comment_count.')</a></span>'."\n");
+						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('comments').'('.$comment_count.')</a></span>'."\n");
 					} else {
 						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
 						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
@@ -1214,7 +1215,7 @@ require_once("PolyPagerLib_HTMLForms.php");
     /* show a list of values that are referenced from this table via a relational table
         (where this table links to the first field)
     */
-    function showRelatedValues($ind){
+    function showRelatedEntries($ind){
         $indent = translateIndent($ind);
         global $params;
         $entity = getEntity();

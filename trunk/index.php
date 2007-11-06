@@ -183,8 +183,8 @@ function writeData($ind=5) {
 			
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
             
-			if (mysql_num_rows($res) > 0) writeToc($res, false, $nind);
-			
+			if (mysql_num_rows($res[$params["page"]])) writeToc($res, false, $nind);
+            
             $showid = "";
             
 			echo($indent.'<div class="show"');
