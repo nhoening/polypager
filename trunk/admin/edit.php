@@ -69,6 +69,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
                     if($params["cmd"] == "entry") {
 					    //later, we should show the highest number (that is the one we just inserted)
                         $newID = mysql_insert_id();
+                        $params['values'][$entity['pk']] = $newID;
                     }
 				}
 			} else $fehler_nr = 1;
@@ -83,7 +84,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				
                 // get relational queries for the (maybe new) entry
                 $rel_queries = getRelationalQueries();
-                print_r($rel_queries);
                 if ($rel_queries != "")
 				    foreach($rel_queries as $q)
 					    if ($q!="") pp_run_query($q);

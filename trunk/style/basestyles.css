@@ -16,7 +16,7 @@
 }
 
 a.help{
-	text-decoration: none;
+	text-decoration: none !important;
 	background: transparent url(pics/help.gif) top left no-repeat;
 }
 
