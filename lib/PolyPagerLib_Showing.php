@@ -1141,7 +1141,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
      
-        if (!$list_view) showRelatedEntries(++$ind);
+        if (!$list_view and $params["page"]!="_search") showRelatedEntries($row[$entity['pk']], ++$ind);
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
 			if ($page_info["hide_options"] == 0 ) {
@@ -1215,9 +1215,9 @@ require_once("PolyPagerLib_HTMLForms.php");
     /* show a list of values that are referenced from this table via a relational table
         (where this table links to the first field)
     */
-    function showRelatedEntries($ind){
+    function showRelatedEntries($id, $ind){
         $indent = translateIndent($ind);
-        global $params;
+        //global $params;
         $entity = getEntity();
         $can = getRelationCandidatesFor($entity['tablename']);
         foreach ($can as $c) {            
@@ -1226,7 +1226,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
                 $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
-                $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$params['nr'].';';
+                $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$id.';';
 
                 //run Query
                 $res = pp_run_query($query);

@@ -460,7 +460,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
 			} else {
 				echo($indent.'			<td class="data">'."\n");
 				writeOptionList($index, $f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
-                if ($f['group_field'] != "" and !$f['valuelist_from_db']){
+                if ($f['valuelist'] != "" and !$f['valuelist_from_db']){ // if we got them by selecting them 'manually', not from _sys_fields
                     $index++;
                     echo($indent.'			'.__('other').': <input tabindex="'.$index.'" type="text" name="_formfield_'.$f['name'].'_new" size="12"/>'."\n");
                 }
