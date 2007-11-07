@@ -148,7 +148,7 @@ function getEditParameters() {
 				foreach($entity["fields"] as $f) {
                     if ($f['valuelist'] != ""){ //try possible new entry first
                         $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"].'_new']);
-                        if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"].'_new']);
+                        if (!isset($values[$f["name"]]) or $values[$f["name"]]=="") $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"].'_new']);
                     }
 					if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
                     if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
