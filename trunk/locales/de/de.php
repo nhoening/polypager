@@ -53,8 +53,8 @@ function getTranslation($text) {
 'Here you can make statements about another field.'	=> 'Hier k&ouml;nnen Sie zu einem weiteren Feld Angaben machen.',
 'Here you can insert a new page.'	=> 'Hier k&ouml;nnen Sie eine neue Seite erstellen.',
 'new entry'	=> 'neuer Eintrag',
-'Here you can edit the intro text of this page.'	
-	=> 'Hier k&ouml;nnen Sie den Intro-Text dieser Multipage editieren.',
+'Here you can edit an introduction text for this page. (It will only be seen if the skin template uses writeIntroDiv())'	
+	=> 'Hier k&ouml;nnen Sie einen kurzen Beschreibungs-Text f&uuml;r diese Seite editieren. (Man wird ihn nur sehen koennen, wenn das Skin-Template writeIntroDiv verwendet)',
 'show'	=> 'zeige',
 'show intro of page'	=> 'zeige intro der Seite:',
 'page:' => 'Seite:',

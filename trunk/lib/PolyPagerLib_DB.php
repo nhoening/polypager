@@ -305,7 +305,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
                     if ($fields[$i]["name"] == $row["name"]) {
                         $fields[$i]["label"] = $row["label"];
                         $fields[$i]["validation"] = $row["validation"];
-                        if ($fields[$i]["valuelist"]=="")	//if from db (set/enum-type), it shouldn't be overwritten
+                        if ($fields[$i]["valuelist"] == "")	//if from db (set/enum-type), it shouldn't be overwritten
                             $fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
                         $fields[$i]["not_brief"] = $row["not_brief"];
                         $fields[$i]["order_index"] = $row["order_index"];
@@ -319,8 +319,8 @@ function addFields($entity,$name, $not_for_field_list = "") {
         // group field : valuelist stuff
         for($i=0;$i<count($fields);$i++){
             // remember from where the values come   
-            if ($fields[$i]["valuelist"]!="")$fields[$i]['valuelist_fromdb'] = true;
-            else $fields[$i]['valuelist_fromdb'] = false;
+            if ($fields[$i]["valuelist"]!="") $fields[$i]['valuelist_from_db'] = true;
+            else $fields[$i]['valuelist_from_db'] = false;
         }
         
 		uasort($fields,"cmpByOrderIndexAsc");

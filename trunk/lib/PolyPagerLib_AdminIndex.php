@@ -506,7 +506,7 @@
 		$entity = getEntity($params["page"]);
 		//Links, first for contents
 		if ($params["page"] != "" and $params["topic"] == "content") {
-			$link_text = __('Here you can edit the intro text of this page.');
+			$link_text = __('Here you can edit an introduction text for this page. (It will only be seen if the skin template uses writeIntroDiv())');
 			//if (isMultipage($params["page"])) 
 				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr='.urlencode($params["page"]).'&page='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
 			$link_text = __('Here you can insert a new entry for this page.');
