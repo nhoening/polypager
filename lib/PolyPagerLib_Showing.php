@@ -1220,7 +1220,8 @@ require_once("PolyPagerLib_HTMLForms.php");
         //global $params;
         $entity = getEntity();
         $can = getRelationCandidatesFor($entity['tablename']);
-        foreach ($can as $c) {            
+
+        foreach ($can as $c) { 
             if ($c[1] <= 2){
                 $query = 'SELECT '.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
@@ -1230,7 +1231,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 
                 //run Query
                 $res = pp_run_query($query);
-                if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  return;
+                if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  continue;
                 
                 echo($indent.'<div class="related"><h4>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h4>'."\n");
                 echo($indent.'  <ul>'."\n");
