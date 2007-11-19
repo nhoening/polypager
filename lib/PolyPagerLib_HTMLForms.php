@@ -75,6 +75,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		$oFCKeditor->Height = '300' ;
 		$oFCKeditor->Config['CustomConfigurationsPath'] = str_replace("\\", '/', $path).'plugins/fckconfig.php'  ;
 		$oFCKeditor->Create() ;
+    } else if ($type == 'file') { echo(' name="'.'_formfield_'.$name.'" type="file"');
 	} else if (isTextType($type) or isDateType($type)) {
         //$value = utf8_str_replace("&", "&amp;", $value);
         //we cannot write " inside of input-Elements (they're standalone in XHTML)
@@ -361,7 +362,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
     // or we can look into the group param value or the field's database defaults
 	// if new, let's show that this is NOT a saved entry
 	if ($params["cmd"] == "new" and $params["page"] != "_sys_comments"){
-		echo($indent.'<div class="sys_msg">'.__('this item has not yet been inserted into the database!').'</div>');
+		echo($indent.'<div class="sys_msg">'.__('This form has not yet been submitted.').'</div>');
 	}
 	$target_nr = $params["nr"]; 
     if ($target_nr == "") $target_nr = $params["values"]["nr"];

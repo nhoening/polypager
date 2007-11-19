@@ -38,7 +38,7 @@ function isTimeType($type) {
 /* returns wether this MySQL type is a text type */
 function isTextType($type) {
 	return ($type == "string" or $type == "varchar" or $type == "tinytext" or
-        $type == "set" or $type == "enum" or $type == "char" or isTextAreaType($type));
+        $type == "set" or $type == "enum" or $type == "char" or $type == "file" or isTextAreaType($type));
 }
 
 /* returns wether this MySQL type is a type that PolyPager handles with a text area*/
@@ -61,6 +61,7 @@ function getReferencedTableData($entity){
 	$tables = array();
     foreach ($entity['fields'] as $f){
         $fk = getFK($entity['tablename'], $f['name']);
+        
         $referenced_table = "";
         $title_field = "";
         $likely_page = "";

@@ -311,6 +311,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
 		$queries = array();
 		$pagelist = $params["page"];
+        
 		// multiple?
 		if($params['page']=="_search") {
 			if ($params['search']['kw']==""){
@@ -326,6 +327,8 @@ require_once("PolyPagerLib_HTMLForms.php");
             $pagename = $p;
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
+            
+            
 			if ($entity['pk'] == "") {
                 if ($entity != "" and $entity['tablename'] != '') {
                     global $sys_msg_text;
@@ -396,8 +399,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 					// are we linking to pages/tables via foreign keys?
 					$references = getReferencedTableData($entity);
 					$ref_fields = array();
-					foreach($references as $r)$ref_fields[$r['fk']['field']] = $r['fk']['ref_table'].'||'.$r['title_field'].'||'.$r['fk']['ref_field'];
-		
+					foreach($references as $r) $ref_fields[$r['fk']['field']] = $r['fk']['ref_table'].'||'.$r['title_field'].'||'.$r['fk']['ref_field'];
+                    
 					$a = array();
 					$a[0] = "SELECT "; 
 					$a[0] .= $entity["tablename"].'.'.$entity['pk'].",";
@@ -407,7 +410,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 							$ref = utf8_explode('||',$ref_fields[$f['name']]);
 							// using subselect so that we get NULL when the refencing field IS NULL
 							$a[0] .= '(SELECT name FROM '.$ref[0].' WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
-							$a[0] .= ' as '.$f['name'].",";
+							$a[0] .= ' AS '.$f['name'].",";
 						}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
 					}
 					
@@ -423,7 +426,17 @@ require_once("PolyPagerLib_HTMLForms.php");
                     //let's track if we said "WHERE"
                     $said_where = false;
                     
-					if (isMultipage($pagename)) {
+                    if (isSinglepage($pagename)) {
+						$a[1] = "WHERE _sys_sections.pagename = '$pagename'";
+						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
+						if ($params["group"] != "" and $params["group"] != "_sys_all"){
+							//"standard" entries are -per definition- always shown!
+							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR _sys_sections.the_group = 'standard')";
+						}
+                        $said_where = true;
+					}
+					else {
+                        
 						//helper vars
 						if ($params["step"] != "all") {
 							$next = $params["nr"] + ($params["step"]-1);
@@ -439,7 +452,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 						if (isNumericType($entity["pk_type"])) {
                             $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
                             $said_where = true;
-                        }else if ($params['nr']!="") {
+                        }else if ($params['nr'] != "") {
                             $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
                             $said_where = true;
                         }
@@ -448,14 +461,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 							$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
                             $said_where = false;
 						}
-					} else if (isSinglepage($pagename)) {
-						$a[1] = "WHERE _sys_sections.pagename = '$pagename'";
-						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
-						if ($params["group"] != "" and $params["group"] != "_sys_all"){
-							//"standard" entries are -per definition- always shown!
-							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR _sys_sections.the_group = 'standard')";
-						}
-                        $said_where = true;
 					}
                     
 					// -- special case search - new query --
@@ -957,6 +962,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$briefly = false;	//turns true when some fields are not shown
 		$the_url = '?'.urlencode($pagename).'&amp;nr='.$row[$entity['pk']];
         
+       
+        
 		if ($entity["fields"] != "") {
             //we always want the title first when we show search results
             if($entity["title_field"]!="" and ($params['page']=='_search' or $params["cmd"] == "_search" )) {
@@ -1109,6 +1116,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 								echo('</div>'."\n");
 							}
 							
+                            // data_type = file is a backdoor hack to get a file chooser in the form.
+                            // Here, the best guess at this time is that it is an image, but that might evolve
+                            if($f['data_type'] == 'file') $content = '<img src="'.$content.'"/>';
+                            
 							//now, finally, the value
 							if($f["name"] == $entity["title_field"]) {
 								$theClass = "title";
@@ -1140,7 +1151,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		}
 		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'</div>');
-     
+        
         if (!$list_view and $params["page"]!="_search") showRelatedEntries($row[$entity['pk']], ++$ind);
         
 		if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
@@ -1219,6 +1230,7 @@ require_once("PolyPagerLib_HTMLForms.php");
         $indent = translateIndent($ind);
         //global $params;
         $entity = getEntity();
+        
         $can = getRelationCandidatesFor($entity['tablename']);
 
         foreach ($can as $c) { 
@@ -1228,7 +1240,6 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
                 $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$id.';';
-
                 //run Query
                 $res = pp_run_query($query);
                 if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  continue;

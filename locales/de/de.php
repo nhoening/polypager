@@ -141,8 +141,8 @@ function getTranslation($text) {
 'Creating a multipage' => 'Multipage - Erstellung',
 'Editing a singlepage' => 'Singlepage - Bearbeitung',
 'Creating a singlepage' => 'Singlepage - Erstellung',
-'this item has not yet been inserted into the database!' => 
-	'dieser Eintrag wurde noch nicht in der Datenbank gespeichert!',
+'This form has not yet been submitted.' => 
+	'Dieses Formular wurde noch nicht gespeichert.',
 
 /*	index.php	*/
 'DB-Error:'	=> 'Datenbank_Fehler:',
