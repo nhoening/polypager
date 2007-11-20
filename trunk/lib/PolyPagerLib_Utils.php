@@ -490,38 +490,39 @@ $page_info = "";
 $old_page_infos = "";
 function getPageInfo($page_name) {
 	global $page_info;
-    if ($page_name == "") return $page_info;
-	if ($page_info == "" or $page_info["name"] != $page_name) {
-        if (getAlreadyBuiltPageInfo($page_name) != "") {
-			$page_info = getAlreadyBuiltPageInfo($page_name);
-        } else {
-            $page_info = array();
-            if (isSinglePage($page_name)) $query = "SELECT * FROM _sys_singlepages";
-            else if (isMultiPage($page_name)) $query = "SELECT * FROM _sys_multipages";
-            else { //no page? maybe a table. try the first page for this table
-                $pq = "SELECT name FROM _sys_multipages WHERE tablename = '".$page_name."'";
-                $res = pp_run_query($pq);
-                if($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                    $page_name = $row["name"];
-                    $query = "SELECT * FROM _sys_multipages";
+    if (isAKnownPage($page_name)) {
+        if ($page_name == "") return $page_info;
+        if ($page_info == "" or $page_info["name"] != $page_name) {
+            if (getAlreadyBuiltPageInfo($page_name) != "") {
+                $page_info = getAlreadyBuiltPageInfo($page_name);
+            } else {
+                $page_info = array();
+                if (isSinglePage($page_name)) $query = "SELECT * FROM _sys_singlepages";
+                else if (isMultiPage($page_name)) $query = "SELECT * FROM _sys_multipages";
+                else { //no page? maybe a table. try the first page for this table
+                    $pq = "SELECT name FROM _sys_multipages WHERE tablename = '".$page_name."'";
+                    $res = pp_run_query($pq);
+                    if($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                        $page_name = $row["name"];
+                        $query = "SELECT * FROM _sys_multipages";
+                    }
                 }
+                if ($query != "") {
+                    $query = $query." WHERE name = '".$page_name."'";
+                    $res = mysql_query($query, getDBLink());
+                    $page_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
+                }
+                //adding this if page info is used for queries
+                if(isSinglePage($page_name)) {
+                    $page_info["tablename"] = '_sys_sections';
+                    $page_info["title_field"] = 'heading';
+                }
+                else if (isASysPage($page_name)) $page_info["tablename"] = $page_name;
+                //adding this for comment preview
+                if($page_name=='_sys_comments') $page_info["hide_toc"] = 1;
             }
-            if ($query != "") {
-                $query = $query." WHERE name = '".$page_name."'";
-                $res = mysql_query($query, getDBLink());
-                $page_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
-            }
-            //adding this if page info is used for queries
-            if(isSinglePage($page_name)) {
-                $page_info["tablename"] = '_sys_sections';
-                $page_info["title_field"] = 'heading';
-            }
-            else if (isASysPage($page_name)) $page_info["tablename"] = $page_name;
-            //adding this for comment preview
-            if($page_name=='_sys_comments') $page_info["hide_toc"] = 1;
         }
 	}
-	
 	return $page_info;
 }
 
