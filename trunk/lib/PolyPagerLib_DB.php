@@ -319,8 +319,8 @@ function addFields($entity,$name, $not_for_field_list = "") {
         
         // group field : valuelist stuff
         for($i=0;$i<count($fields);$i++){
-            // remember from where the values come   
-            if ($fields[$i]["valuelist"]!="") $fields[$i]['valuelist_from_db'] = true;
+            // remember from where the values come
+            if ($fields[$i]["valuelist"] != "") $fields[$i]['valuelist_from_db'] = true;
             else $fields[$i]['valuelist_from_db'] = false;
         }
         
