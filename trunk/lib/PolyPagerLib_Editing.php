@@ -348,16 +348,14 @@ function getEditQuery($command, $theID) {
 		$x = 1;
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]])) {
-				if (!isTextType($f["data_type"]) and !isDateType($f["data_type"]) and $f["data_type"] != 'time') $queryA[$x] = " ".$f['name']." = ".$params['values'][$f['name']].",";
-				else $queryA[$x] = " ".$f["name"]." = '".$params["values"][$f['name']]."',";
+                $queryA[$x] .= " ".nameEqValueEscaped($f["data_type"], $f["name"], $params["values"][$f['name']]).',';
 				$x++;
 			}
 		}
 		$x--;
 		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
 		if ($entity["pk"] != "") {
-			if (isNumericType($entity["pk_type"])) $queryA[] = " WHERE ".$entity["pk"]." = $theID";
-			else $queryA[] = " WHERE ".$entity["pk"]." = '".$theID."'";
+            $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 		}
 		$query .= implode($queryA);
 	}
@@ -366,15 +364,17 @@ function getEditQuery($command, $theID) {
 	//------------------- delete ----------------------------------
 	else if ($command == "delete") {	// DELETE Query
 		$query .= "DELETE FROM ".$page_info["tablename"];
-		if ($entity["pk"] != "" and isNumericType($entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
-		else if ($entity["pk"] != "") $query .= " WHERE ".$entity["pk"]." = '".$theID."'";
+        if ($entity["pk"] != "")
+            $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 	}
 	//---------------end delete -----------------------------------
 	//------------------- show ----------------------------------------
 	else if ($command == "show") {		// SELECT Query
 		$query .= "SELECT * FROM ".$page_info["tablename"];
-		if ($entity["pk"] != "" and isNumericType($entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
-		else if ($entity["pk"] != "") $query .= " WHERE ".$entity["pk"]." = '".$theID."'";
+        if ($entity["pk"] != "")
+		    //if (isNumericType($entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
+            //else $query .= " WHERE ".$entity["pk"]." = '".$theID."'";
+            $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 	}
 	//---------------end show -----------------------------------------
 	
@@ -385,23 +385,30 @@ function getEditQuery($command, $theID) {
 }
 
 
-/* */
+/* build some queries to maintain m:n relations that are depicted via 
+   Foreign Keys*/
 function getRelationalQueries(){
     global $params;
     $queries = array();
-    
     if ($params['cmd'] == "edit" || $params['cmd'] == "entry" || $params['cmd'] == "delete"){
         // make entries into relational tables if data comes for that
         // important: the first of the two keys determines what we replace
         $can = getRelationCandidatesFor($entity['tablename']);
         foreach ($can as $c) {
             if ($c[1] <= 2){
-                $fkval = $params['values'][$c[2][0]['fk']['ref_field']];
-                if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".$c[2][0]['fk']['field']." = ".$fkval.";";
+                $fk_val = $params['values'][$c[2][0]['fk']['ref_field']];
+                $ent = getEntity($c[2][0]['fk']['table']);
+                $fk_field = getEntityField($c[2][0]['fk']['field'], $ent);
+                $ref_field = getEntityField($c[2][1]['fk']['field'], $ent);
+                if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".nameEqValueEscaped($fk_field['data_type'], $c[2][0]['fk']['field'], $fk_val);
+                echo("got fkrefs for ".$c[0].":".$params['values'][$c[0]]);
                 if ($params['values'][$c[0]] != "" and $command != "delete") {
                     $fkrefs = explode(',', $params['values'][$c[0]]);
+                    
                     foreach ($fkrefs as $ref) 
-                        $queries[] = "INSERT INTO ".$c[0]." VALUES (".$fkval.",".$ref.");";
+                        $queries[] = "INSERT INTO ".$c[0]." VALUES (".
+                        escapeValue($fk_field['data_type'],  $fk_val).",".
+                        escapeValue($ref_field['data_type'],  $ref).");";
                 }
             }
         }
