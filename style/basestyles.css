@@ -49,7 +49,7 @@ a.help{
     border: 1px solid grey;
     color: #434;
     background-color:#bcb; 
-    height:6em;
+    max-height:9em;
     overflow: auto;
 }
 

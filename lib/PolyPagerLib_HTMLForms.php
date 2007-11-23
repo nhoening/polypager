@@ -273,11 +273,13 @@ function writeRelationalTableInputs($ind, $entity){
     foreach ($can as $c) {
         if ($c[1] <= 2){ 
             // get values of rows in relational table with this key as first entry
+            $id_field = getEntityField($c[2][0]['fk']['field'], $entity);
             $query = 'SELECT '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
             $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
             $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
-            $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$params['nr'];
+            $query .= ' AND '.$c[2][0]['fk']['table'].'.'.nameEqValueEscaped($id_field['data_type'], $c[2][0]['fk']['field'], $params['nr']);
             $query .= ' ORDER BY Title';
+            
             $res = pp_run_query($query);
             $already_show_vals = array();
             $already_save_vals = array();
@@ -286,13 +288,15 @@ function writeRelationalTableInputs($ind, $entity){
                 $already_save_vals[] = $row[$c[2][1]['fk']['field']];
             }
             //now get possible values
-            $query = 'SELECT '.$c[2][1]['title_field'].', '.$c[2][0]['fk']['ref_field'].' FROM ' .$c[2][1]['fk']['ref_table'].' ORDER BY '.$c[2][1]['title_field'];
+            $query = 'SELECT '.$c[2][1]['title_field'].' AS Title, '.$c[2][1]['fk']['ref_field'].' AS VAL FROM ' .$c[2][1]['fk']['ref_table'].' ORDER BY '.$c[2][1]['title_field'];
+            
+            
             $res = pp_run_query($query);
             $poss_show_vals = array();
             $poss_save_vals = array();
             while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                $poss_show_vals[] = $row[$c[2][1]['title_field']];
-                $poss_save_vals[] = $row[$c[2][0]['fk']['ref_field']];
+                $poss_show_vals[] = $row['Title'];
+                $poss_save_vals[] = $row['VAL'];
             }
             echo($indent.'<input type="hidden" size="36" name="_formfield_'.$c[0].'" id="_formfield_'.$c[0].'_input" value="'.$vals.'"/>'."\n");
             writeFiller($c[2][1]['fk']['ref_table'], '_formfield_'.$c[0], array($already_save_vals, $already_show_vals), array($poss_save_vals, $poss_show_vals), $ind);
@@ -344,6 +348,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
     echo($indent.'<script language="JavaScript" type="text/javascript">'."\n");
 	echo($indent.' function transferFilled()'."\n");
 	echo($indent.' {'."\n");
+    
     $fillers = array_merge($filler_needed, $relational_filler_needed);
     foreach ($fillers as $f){
         echo($indent.'   var vals = new Array();'."\n");

@@ -530,4 +530,17 @@ function getFK($tablename, $fieldname){
 }
 
 
+
+/* return "name = value" escape value with quotes if needed*/
+function nameEqValueEscaped($data_type, $field_name, $value){
+    return " ".$field_name." = ".escapeValue($data_type, $value);
+}
+
+function escapeValue($data_type, $value){
+    if (!isTextType($data_type) and !isDateType($data_type) and $data_type != 'time') 
+        return $value;
+    else return "'".$value."'";
+}
+
+
 ?>
