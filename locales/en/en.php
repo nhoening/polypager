@@ -45,6 +45,7 @@ function getTranslation($text) {
 'edited_field' => 'last-edited-field',	
 'title_field' => 'title-field',
 'hide_comments' => 'hide comments',
+'only_admin_access' => 'access only to admin',
 'search_month' => 'search for month', 	
 'search_year' => 'search for year',
 'search_keyword' => 'search for keyword',	
@@ -54,6 +55,7 @@ function getTranslation($text) {
 //_sys_fields
 'not_brief' => 'content is not really short',
 'order_index' => 'order index',
+'embed_in' => 'embed in',
  
 //_sys_sys
 'admin_name' => 'administrator-name',

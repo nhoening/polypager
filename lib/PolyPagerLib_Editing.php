@@ -343,21 +343,16 @@ function getEditQuery($command, $theID) {
 
 	//------------------- edit ------------------------------------
 	else if ($command == "edit") {			// UPDATE Query
-		$queryA = array();
-		$queryA[0] = "UPDATE ".$page_info["tablename"]." SET";
-		$x = 1;
+		$query = "UPDATE ".$page_info["tablename"]." SET";
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]])) {
-                $queryA[$x] .= " ".nameEqValueEscaped($f["data_type"], $f["name"], $params["values"][$f['name']]).',';
-				$x++;
+                $query .= " ".nameEqValueEscaped($f["data_type"], $f["name"], $params["values"][$f['name']]).',';
 			}
 		}
-		$x--;
-		$queryA[$x] = utf8_substr($queryA[$x], 0, utf8_strlen($queryA[$x])-1);
+		$query = utf8_substr($query, 0, utf8_strlen($query)-1);
 		if ($entity["pk"] != "") {
             $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 		}
-		$query .= implode($queryA);
 	}
 	//---------------end edit -------------------------------------
 
