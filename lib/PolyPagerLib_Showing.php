@@ -1331,7 +1331,7 @@ require_once("PolyPagerLib_HTMLForms.php");
         $php_version = explode('.', phpversion());
         $sys_info = getSysInfo();
         if ($sys_info['use_captchas'] == 1) {
-            if ($_POST["recaptcha_response_field"] and $php_version[0] >= 5 ) {
+            if ($_POST["recaptcha_response_field"]){ // and $php_version[0] >= 5 ) {
                 $resp = recaptcha_check_answer($sys_info['private_captcha_key'],
                                           $_SERVER["REMOTE_ADDR"],
                                           $_POST["recaptcha_challenge_field"],
