@@ -172,19 +172,20 @@
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
 		
-		$query = "CREATE TABLE IF NOT EXISTS `_sys_singlepages` (
-					  `id` int(11) NOT NULL auto_increment,
-					  `name` varchar(120) NOT NULL default '',
-					  `in_menue` tinyint(1) NOT NULL default '1',
-					  `menue_index` mediumint(9) NOT NULL default '1',
-					  `commentable` tinyint(1) NOT NULL default '0',
-					  `hide_options` tinyint(1) NOT NULL default '1',
-					  `hide_search` tinyint(1) NOT NULL default '1',
-					  `hide_toc` tinyint(1) NOT NULL default '1',
-					  `default_group` varchar(60) NOT NULL default '',
-					  `grouplist` varchar(255) NOT NULL default '',
-					  PRIMARY KEY  (`id`),
-					  UNIQUE KEY `name` (`name`)
+		$query = "CREATE TABLE `_sys_singlepages` (
+                      `id` int(11) NOT NULL auto_increment,
+                      `name` varchar(120) NOT NULL default '',
+                      `in_menue` tinyint(1) NOT NULL default '1',
+                      `menue_index` mediumint(9) NOT NULL default '1',
+                      `commentable` tinyint(1) NOT NULL default '0',
+                      `only_admin_access` tinyint(1) NOT NULL default '0',
+                      `hide_options` tinyint(1) NOT NULL default '1',
+                      `hide_search` tinyint(1) NOT NULL default '1',
+                      `hide_toc` tinyint(1) NOT NULL default '1',
+                      `default_group` varchar(60) NOT NULL default '',
+                      `grouplist` varchar(255) NOT NULL default '',
+                      PRIMARY KEY  (`id`),
+                      UNIQUE KEY `name` (`name`)
 					) ENGINE=MyISAM $charsetter;";
 		$res = mysql_query($query, $link);
 		$fehler_nr = $fehler_nr.mysql_errno($link);
@@ -212,6 +213,7 @@
 					  `title_field` varchar(60) NOT NULL default '',
 					  `step` varchar(12) NOT NULL default 'all',
 					  `commentable` tinyint(1) NOT NULL default '0',
+                      `only_admin_access` tinyint(1) NOT NULL default '0',
 					  `hide_comments` tinyint(1) NOT NULL default '1',
 					  `search_month` tinyint(1) NOT NULL default '0',
 					  `search_year` tinyint(1) NOT NULL default '0',
@@ -235,6 +237,7 @@
                       `valuelist` varchar(255) NOT NULL default '',
                       `validation` varchar(60) NOT NULL default '',
                       `not_brief` tinyint(1) NOT NULL default '0',
+                      `embed_in` varchar(140) NOT NULL,
                       `foreign_key_to` varchar(200) NOT NULL,
                       `on_update` varchar(20) NOT NULL,
                       `on_delete` varchar(20) NOT NULL,

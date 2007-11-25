@@ -247,6 +247,8 @@ function getTranslation($text) {
 => 'Machen Sie hier einen Haken wenn der Inhalt des Felds sehr lang werden kann. Dann wird es nur angezeigt, wenn auf der Seite gerade nur einen Eintrag zu sehen ist (ansonsten ein Link)',
 'when shown, the fields of an entry are ordered by the order in their table (0 to n). you can change the order index for this field here.'
 => 'Bei der Anzeige eines Eintrags werden die Felder in der Reihenfolge der Tabelle angezeigt (0 bis n). Hier k&ouml;nnen Sie den index f&uuml;r dieses Feld &auml;ndern.',
+'you can embed the contents of this field within a string when it is displayed. Use &quot;[CONTENT]&quot; to represent its content. For instance, &lt; img src=&quot;path/to/[CONTENT]&quot;/> lets you display image names as actual image on the page.'
+=> 'Sie k&ouml;nnen den Inhalt dieses Felds in text einbetten, wenn es angezeigt wird, Benutzen Sie &quot;[CONTENT]&quot; um dabei den Inhalt zu representieren. Zum Beispiel, &lt; img src=&quot;path/to/[CONTENT]&quot;/> zeigt einen Bildnamen als tats&auml;chliches Bild auf der Seite.'
 'when this field is checked, you will find a link to this page in the menu.'
 => 'Wenn dieses Feld markiert ist, wird PolyPager einen Link zu dieser Seite im Men&uuml; erstellen.',
 'this field holds a number which determines the order in which pages that are shown in the menu (see above) are arranged.'
@@ -269,6 +271,8 @@ function getTranslation($text) {
 => 'Wenn dieses Feld markiert ist, werden neue Eintr&auml;ge dieser Seite gef&uuml;ttert. Das bedeutet, sie werden in der Liste namens &quot;Die neuesten Eintr&auml;ge&quot; erscheinen und per RSS verf&uuml;gbar sein.',
 'this field has currently no meaning (that means: it is not yet implemented)'
 => 'dieses Feld hat beim derzeitigen Entwicklungsstand noch keine Bedeutung (es wurde noch nichts daf&uuml;r implementiert).',
+'this field should be checked if you want only admins to see it (you can also protect all pages at once in the system settings)'
+=> 'Dieses Feld sollte markiert sein, wenn diese Seite nur f&uuml;r Administratoren zug&auml;nglich sein soll (Sie k&ouml;nnen auch alle Seiten auf einmal besch&uuml;tzen, siehe Systemeigenschaften).',
 'if this field is checked, users can search for entries of this page made in a particular month.'
 => 'Wenn dieses Feld markiert ist, k&ouml;nnen Besucher nach Eintr&auml;gen dieser Seite suchen, die in einem bestimmten Monat erstellt wurden.',
 'if this field is checked, users can search for entries of this page made in a particular year.'
@@ -393,6 +397,7 @@ function getTranslation($text) {
 'feed' => 'feed',
 'step' => 'Schritt',
 'commentable' => 'kommentierbar',
+'only_admin_access' => 'Zugang nur f&uuml;r Admins',
 'hide_comments' => 'verstecke Kommentare', 	
 'taggable' => 'tags benutzbar',
 'search_month' => 'Suche nach Monat', 	
@@ -410,6 +415,7 @@ function getTranslation($text) {
 'validation' => 'Validierung',
 'not_brief' => 'Inhalt ist nicht gerade kurz',
 'order_index' => 'Reihenfolgeindex',
+'embed_in' => 'einbetten in',
 
 //_sys_comments
 'Date' => 'Datum',

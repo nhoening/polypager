@@ -310,7 +310,7 @@ function addFields($entity,$name, $not_for_field_list = "") {
                             $fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
                         $fields[$i]["not_brief"] = $row["not_brief"];
                         $fields[$i]["order_index"] = $row["order_index"];
-                        
+                        $fields[$i]["embed_in"] = $row["embed_in"];
                     }
                     if(eregi('int',$fields[$i]["data_type"]) and $fields[$i]["size"] != 1) $fields[$i]["validation"] = 'number';
                 }

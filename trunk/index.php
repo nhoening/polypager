@@ -42,7 +42,7 @@ require_once("PolyPagerLib_Showing.php");
 $sys_info = getSysInfo();
 header( 'Content-Type: text/html; charset='.$sys_info['encoding'] );
 
-if ($sys_info['whole_site_admin_access']) include('admin'.FILE_SEPARATOR.'auth.php');
+if ($sys_info['whole_site_admin_access']) require_once('admin'.FILE_SEPARATOR.'auth.php');
 
 // ---------------------------------------
 
@@ -58,6 +58,9 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	$error_msg_text .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
 } else if ($error_msg_text == "") {
 
+    $page_info = getPageInfo($show_params["page"]);
+    if ($page_info['only_admin_access']) require_once('admin'.FILE_SEPARATOR.'auth.php');
+    
 	// maybe we need a comment insertion FIRST
 	//- afterwards we'll select data to show
 	$i_manipulated = true;	//positive assumption

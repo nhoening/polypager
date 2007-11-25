@@ -215,6 +215,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("hide_search", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_labels", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_comments", "formgroup", 'what to hide or show');
+                setEntityFieldValue("only_admin_access", "formgroup", 'what to hide or show');
 				$entity['formgroups']['fields with special meaning'] = array(3,'hide');
 				setEntityFieldValue("publish_field", "formgroup", 'fields with special meaning');
 				setEntityFieldValue("group_field", "formgroup", 'fields with special meaning');
@@ -254,7 +255,8 @@ function getEntity($page_name) {
 				setEntityFieldValue("feed", "help", __('if this field is checked, new entries of this page will be fed. That means they will be listed under the latest entries (right on the page) and they will be available via RSS.'));
 				setEntityFieldValue("step", "help", __('here you specify how many entries should be shown on one page. You can use a number or simply all'));
 				setEntityFieldValue("hide_comments", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
-				setEntityFieldValue("taggable", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
+				setEntityFieldValue("only_admin_access", "help", __('this field should be checked if you want only admins to see it (you can also protect all pages at once in the system settings)'));
+                setEntityFieldValue("taggable", "help", __('this field has currently no meaning (that means: it is not yet implemented)'));
 				setEntityFieldValue("search_month", "help", __('if this field is checked, users can search for entries of this page made in a particular month.'));
 				setEntityFieldValue("search_year", "help", __('if this field is checked, users can search for entries of this page made in a particular year.'));
 				setEntityFieldValue("search_keyword", "help", __('if this field is checked, users can search for entries of this page by typing in a keyword.'));
@@ -287,11 +289,13 @@ function getEntity($page_name) {
 				setEntityFieldValue("hide_options", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_toc", "formgroup", 'what to hide or show');
 				setEntityFieldValue("hide_search", "formgroup", 'what to hide or show');
+                setEntityFieldValue("only_admin_access", "formgroup", 'what to hide or show');
 				$entity['formgroups']['misc'] = array(3,'hide');
 				setEntityFieldValue("commentable", "formgroup", 'misc');
 				setEntityFieldValue("grouplist", "formgroup", 'misc');
 				
 				setEntityFieldValue("name", "help", __('the name of the page.'));
+				setEntityFieldValue("only_admin_access", "help", __('this field should be checked if you want only admins to see it (you can also protect all pages at once in the system settings)'));
 				setEntityFieldValue("in_menue", "help", __('when this field is checked, you will find a link to this page in the menu.'));
 				setEntityFieldValue("menue_index", "help", __('this field holds a number which determines the order in which pages that are shown in the menu (see above) are arranged.'));
 				setEntityFieldValue("commentable", "help", __('when this field is checked, entries on this page will be commentable by users.'));
@@ -346,9 +350,11 @@ function getEntity($page_name) {
 
 				$entity = addFields($entity,$entity["tablename"]);
 				
+                /*
 				$group = array("field"=>"pagename",
 								"order"=>"DESC");
 				$entity["group"] = $group;
+                */
                 
                 $param_group = urldecode($_GET["group"]);
                 if ($param_group == '')  $param_group = urldecode($_POST["group"]);  //coming in per POST?
@@ -375,6 +381,7 @@ function getEntity($page_name) {
 					setEntityFieldValue("name", "valuelist", __('there is no table specified for this page yet'));
 				}
 				setEntityFieldValue("pagename", "valuelist", implode(',', getPageNames()));
+                setEntityFieldValue("pagename", "valuelist_from_db", false);
 				setEntityFieldValue("validation", "valuelist", 'no validation,number,any_text,email');	//not really ready yet
 				setEntityFieldValue("foreign_key_to", "valuelist", ','.implode(',', getPageNames()));
 				setEntityFieldValue("on_update", "valuelist", "SET NULL,NO ACTION,CASCADE,RESTRICT");
@@ -383,7 +390,7 @@ function getEntity($page_name) {
 				
 				$entity["disabled_fields"] .= ",pagename";
 				//enum or set fields have a valuelist in the db: make it impossible to change
-				$f = getEntityField($_GET["name"],$entity);
+				$f = getEntityField($_GET["name"], $entity);
 				$t = __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.');
 				if($f['data_type']=="enum" or $f['data_type']=="set"){
 					$entity["disabled_fields"] .= ',valuelist';
@@ -393,8 +400,9 @@ function getEntity($page_name) {
                 
                 //get valuelist for group field if none is set
                 $page_info = getPageInfo($param_group);
-                if ($entity['fields']['valuelist'] == ""){
+                if ($page_info["group_field"] != "" and $page_info["group_field"] == $f['name']){
                     $q = "SELECT ".$page_info["group_field"]." FROM ".$page_info["tablename"]." GROUP BY ".$page_info["group_field"];
+                    echo($q);
                     $res = pp_run_query($q);
                     $group_vals = array();
                     while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
@@ -411,7 +419,9 @@ function getEntity($page_name) {
 				setEntityFieldValue("validation", "help", __('you can chose a validation method that is checked on the content of this field when you submit a form.'));
 				setEntityFieldValue("not_brief", "help", __('check this box when this field contains much data (e.g. long texts). It will then only be shown if the page shows one entry and a link to it otherwise.'));
 				setEntityFieldValue("order_index", "help", __('when shown, the fields of an entry are ordered by the order in their table (0 to n). you can change the order index for this field here.'));
-				//setEntityFieldValue("foreign_key_to", "help", __('Here you can specify a Foreign Key - relation. If this field corresponds entries of this page to another, say so here (for example, the field [bookid] on the page [chapters] could reference the page [books]). One advantege would be that you can chose from a convenient list when you edit entries of this page (rather than, for example, always type the bookid by hand). For more advantages, see the fields on_update and on_delete below.'));
+				setEntityFieldValue("embed_in", "help", __('you can embed the contents of this field within a string when it is displayed. Use &quot;[CONTENT]&quot; to represent its content. For instance, &lt; img src=&quot;path/to/[CONTENT]&quot;/> lets you display image names as actual image on the page.'));
+				
+                //setEntityFieldValue("foreign_key_to", "help", __('Here you can specify a Foreign Key - relation. If this field corresponds entries of this page to another, say so here (for example, the field [bookid] on the page [chapters] could reference the page [books]). One advantege would be that you can chose from a convenient list when you edit entries of this page (rather than, for example, always type the bookid by hand). For more advantages, see the fields on_update and on_delete below.'));
 				//$update_delete_help = 'If you have chosen to reference another page with this field (see above), then you can specify here how PolyPager should behave when something happens to the referenced entry. To use the example from the help on the reference-field: If you delete/update the bookid, then what happens to its chapters? You might want PolyPager to do nothing (NO ACTION), restrict it (RESTRICT), forward the change/deletion to referencing entries of this page (CASCADE) or just delete the reference to that entry (SET NULL).';
 				//setEntityFieldValue("on_update", "help", __($update_delete_help));
 				//setEntityFieldValue("on_delete", "help", __($update_delete_help));

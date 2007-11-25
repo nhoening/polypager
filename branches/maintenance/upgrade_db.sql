@@ -9,6 +9,9 @@
 
 -- 1.0rc5
 ALTER TABLE  `_sys_sys` ADD  `whole_site_admin_access` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `hide_public_popups` ;
+ALTER TABLE `_sys_singlepages` ADD `only_admin_access` TINYINT( 1 ) NOT NULL DEFAULT '0' AFTER `commentable` ;
+ALTER TABLE `_sys_multipages` ADD `only_admin_access` TINYINT( 1 ) NOT NULL DEFAULT '0' AFTER `commentable` ;
+ALTER TABLE `_sys_fields` ADD `embed_in` VARCHAR( 140 ) NOT NULL AFTER `not_brief` ;
 
 -- 1.0rc3
 ALTER TABLE `_sys_sys` ADD `use_captchas` TINYINT( 1 ) NOT NULL DEFAULT '0' COMMENT 'True if Captchas shall prevent comment spam',

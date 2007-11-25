@@ -1130,8 +1130,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 							if($f["name"] == $entity["title_field"] and !$list_view) {	//make a link
 								echo('<a class="entry_title_link" href="'.$the_url.'">');
 							}
-							
+                            
+                            if (strstr($f['embed_in'], '[CONTENT]') and $f['embed_in'] != "") $content = str_replace('[CONTENT]', $content, $f['embed_in']);
 							echo($content);
+                            
 							if($f["name"] == $entity["title_field"] and !$list_view) {	//close a link
 								echo('</a>'."\n");
 							}else echo("\n");
@@ -1327,11 +1329,11 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');
 		if ($comment != $stripped_comment) 
 			return __('Your text contains tags that are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;. Your comment has not been saved.');
-		// check 3: was there a reCAPTCHA response? (only works with PHP5)
+		// check 3: was there a reCAPTCHA response?
         $php_version = explode('.', phpversion());
         $sys_info = getSysInfo();
         if ($sys_info['use_captchas'] == 1) {
-            if ($_POST["recaptcha_response_field"]){ // and $php_version[0] >= 5 ) {
+            if ($_POST["recaptcha_response_field"]){ 
                 $resp = recaptcha_check_answer($sys_info['private_captcha_key'],
                                           $_SERVER["REMOTE_ADDR"],
                                           $_POST["recaptcha_challenge_field"],
