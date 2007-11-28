@@ -396,7 +396,7 @@ function getRelationalQueries(){
                 $fk_field = getEntityField($c[2][0]['fk']['field'], $ent);
                 $ref_field = getEntityField($c[2][1]['fk']['field'], $ent);
                 if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".nameEqValueEscaped($fk_field['data_type'], $c[2][0]['fk']['field'], $fk_val);
-                echo("got fkrefs for ".$c[0].":".$params['values'][$c[0]]);
+
                 if ($params['values'][$c[0]] != "" and $command != "delete") {
                     $fkrefs = explode(',', $params['values'][$c[0]]);
                     
