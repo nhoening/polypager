@@ -248,7 +248,7 @@ function getTranslation($text) {
 'when shown, the fields of an entry are ordered by the order in their table (0 to n). you can change the order index for this field here.'
 => 'Bei der Anzeige eines Eintrags werden die Felder in der Reihenfolge der Tabelle angezeigt (0 bis n). Hier k&ouml;nnen Sie den index f&uuml;r dieses Feld &auml;ndern.',
 'you can embed the contents of this field within a string when it is displayed. Use &quot;[CONTENT]&quot; to represent its content. For instance, &lt; img src=&quot;path/to/[CONTENT]&quot;/> lets you display image names as actual image on the page.'
-=> 'Sie k&ouml;nnen den Inhalt dieses Felds in text einbetten, wenn es angezeigt wird, Benutzen Sie &quot;[CONTENT]&quot; um dabei den Inhalt zu representieren. Zum Beispiel, &lt; img src=&quot;path/to/[CONTENT]&quot;/> zeigt einen Bildnamen als tats&auml;chliches Bild auf der Seite.'
+=> 'Sie k&ouml;nnen den Inhalt dieses Felds in Text einbetten, wenn es angezeigt wird, Benutzen Sie &quot;[CONTENT]&quot; um dabei den Inhalt zu repr&auml;sentieren. Zum Beispiel: &lt; img src=&quot;path/to/[CONTENT]&quot;/> zeigt einen Bildnamen als tats&auml;chliches Bild auf der Seite.',
 'when this field is checked, you will find a link to this page in the menu.'
 => 'Wenn dieses Feld markiert ist, wird PolyPager einen Link zu dieser Seite im Men&uuml; erstellen.',
 'this field holds a number which determines the order in which pages that are shown in the menu (see above) are arranged.'
