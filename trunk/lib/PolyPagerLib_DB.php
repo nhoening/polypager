@@ -3,6 +3,7 @@
 /* this code provides the code to setup the MySQL database
 	it builds a connection (a link) to the db (once only) and returns it.
 */
+if (!function_exists("getDBLink")){ // for upgrades from <= 1.0rc4 to >= 1.0rc5
 $the_db_link = "";
 function getDBLink() {
 	global $the_db_link;
@@ -31,6 +32,8 @@ function getDBName() {
 	global $db;
 	return $db;
 }
+}
+
 
 /*
  * run the query and append error msg to the buffer (if given) 
