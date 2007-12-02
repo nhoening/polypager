@@ -432,7 +432,7 @@ function getEntity($page_name) {
 
 				$entity["hide_labels"] = "1";
                 
-				$entity["hidden_fields"] = "pagename,pageid,is_spam";
+				$entity["hidden_fields"] = "pagename,pageid,is_spam,email";
 				$entity["hidden_form_fields"] = "pagename,pageid,insert_date,insert_time,is_spam";
 				
 				$entity["order_by"] = "insert_date";
