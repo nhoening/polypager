@@ -547,7 +547,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
                 echo($indent.'  showsTime      :    true,'."\n");
             echo($indent.'  firstDay       :   0,      //0-6'."\n");
             echo($indent.'	ifFormat    : "'.getDateFormat($f['data_type']).'",    // the date format'."\n");
-            echo($indent.'	button      : "_datefield_setter_formfield_'.$f['name'].'"       // ID of the button'."\n");
+            echo($indent.'	button      : "_datefield_setter_formfield_'.$f['name'].'_input"       // ID of the button'."\n");
             echo($indent.'	}'."\n");
             echo($indent.'	);'."\n");
             echo($indent.'	</script>'."\n");
