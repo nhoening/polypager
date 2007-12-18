@@ -25,7 +25,7 @@
 	2. every string should be in one line (also in the original file, of course)
 	@param text: the text to be translated
 */
-function getTranslation($text) {
+function getTranslation_de($text) {
 	$translation_table = array(
 /*	admin/index.php	*/
 'Your administrator-name or the administrator-password is empty. You should consider going to the ' =>
@@ -157,10 +157,10 @@ function getTranslation($text) {
 'new entry in page'	=> 'neuer Eintrag auf der Seite',
 'No fitting entry in the database was found...'	=> 
     'Es wurde kein passender Eintrag in der Datenbank gefunden...',
-'you are seeing a selection of all entries on this page. ' =>
-	'Sie sehen nur eine Auswahl aller Eintr&auml;ge dieser Seite.',
-' to see all there are.' =>
-	', um alle zu sehen.',
+'You are seeing a selection of all entries on this page. ' =>
+	'Sie sehen nur eine Auswahl aller Eintr&auml;ge dieser Seite. ',
+'See all there are.' =>
+	'Alle anzeigen.',
 
 /*	lib/PolyPagerLib_Editing.php	*/
 'Error: command is %s, but no id is given'	=> 'Fehler: Kommando ist %s, aber es wurde keine id angegeben.',

@@ -275,18 +275,20 @@ function cmpByOrderIndexAsc($a, $b) {
 	return ($a['order_index'] < $b['order_index']) ? -1 : 1;
 }
 
+
 /*returns a (translated) text. this is not the
 	GNU gettext module, but it could be used by replacing this method*/
 function __($text) {
-	global $_SERVER;
+	//global $_SERVER;
 	$sys = getSysInfo();
 	$lang = $sys["lang"];
-	set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'locales'.FILE_SEPARATOR.$lang);
+	//set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'locales'.FILE_SEPARATOR.$lang);
 	if ($lang == "") {	//do nothing
 		return $text;
 	} else {
-		require_once($lang.'.php');
-		$translation = getTranslation($text);
+		require_once('locales'.FILE_SEPARATOR.$lang.FILE_SEPARATOR.$lang.'.php');
+		//$translation = getTranslation($text);
+        $translation = call_user_func('getTranslation_'.$lang, $text);
 		if ($translation == "") {
 			return $text;
 			//maybe send an error email to admin?
