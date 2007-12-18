@@ -64,7 +64,7 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	// maybe we need a comment insertion FIRST
 	//- afterwards we'll select data to show
 	$i_manipulated = true;	//positive assumption
-	if ($show_params["cmd"] == "entry") {	//for this script there can only be comment entries!
+	if ($show_params["cmd"] == "entry") {	// we have a comment entry (for this script there can only be those to be edited)
 
 		require_once("PolyPagerLib_Editing.php");
 		$entity = getEntity("_sys_comments");
@@ -73,10 +73,6 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 		//let's first check if the comment was ok
 		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"], $params["values"]["_nogarbageplease_"]);
 		if ($msg == "") {	//seems ok
-			if ($debug) {
-				echo('<div class="debug">Page: '.$params["page"].'</div>');
-				echo('<div class="debug">cmd: '.$params["cmd"].'</div>');
-			}
 	
 			$queries = getEditQuery($params["cmd"], "");
 			$query = $queries[0];
@@ -199,7 +195,7 @@ function writeData($ind=5) {
             
             $num = mysql_num_rows($res[$params['page']]);
             if ($num > 0 and ($num < getMaxCount($params["page"] ))) {
-                echo('<div class="sys_msg">'.__('you are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&amp;step=all">Click</a>'.__(' to see all there are.').'</div>');
+                echo('<div class="sys_msg">'.__('You are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&amp;step=all">'.__('See all there are.').'</a></div>');
             }
             
 			echo($indent.'</div>'."\n");  //end of class "show"

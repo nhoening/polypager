@@ -19,13 +19,13 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' .
 */
 
-/*This function gives german translations for english texts
+/*This function gives english translations for english texts (e.g. labels)
 	two things need to be followed:
 	1. do HTML-Umlaute like &uuml;, also no "..." in either text
 	2. every string should be in one line (also in the original file, of course)
 	@param text: the text to be translated
 */
-function getTranslation($text) {
+function getTranslation_en($text) {
 	$translation_table = array(
 /* Labels */
 //_sys_multipages / _sys_singlepages

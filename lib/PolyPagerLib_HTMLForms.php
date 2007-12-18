@@ -28,9 +28,9 @@
  */
 
 //we could be called from two places - so include both possibilities and no one gets hurt
-set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'plugins'.FILE_SEPARATOR.'FCKeditor'.FILE_SEPARATOR);
+//set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'plugins'.FILE_SEPARATOR.'FCKeditor'.FILE_SEPARATOR);
 
-require_once("fckeditor.php");
+require_once('plugins' . FILE_SEPARATOR . 'FCKeditor' . FILE_SEPARATOR . "fckeditor.php");
 require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 
 $filler_needed = array();
