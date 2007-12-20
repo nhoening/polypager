@@ -465,51 +465,48 @@ require_once("PolyPagerLib_HTMLForms.php");
                     
 					// -- special case search - new query --
 					//Keyword search works page AND sitewide
-					if($entity["search"]["keyword"] == '1' or $params['page']=='_search') { 
-						if ($params["search"]["kw"] != "") {
-							$keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
-                            if ($said_where) $a[] = " AND ";
-                            else $a[] = " WHERE ";
-                            //$a[1] = " WHERE ";
-							if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
-								echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
-								continue; //show nothing
-							} else {
-								$a[] = " (";
-								// get all keywords
-								$kws = getSearchKeywords();
-                                $found_a_textfield = false;
-								foreach($entity["fields"] as $f) {
-                                    if (isTextType($f["data_type"])){
-                                        $found_a_textfield = true;
-                                        $table_field = $entity["tablename"].'.'.$f['name'];
-                                        //remember: BLOB fields are case-sensitive! you should take text for those
-                                        $a[] = " (";
-                                        foreach($kws as $k)
-                                            $a[] = " ".$table_field." LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
-                                        // replace last AND with OR
-                                        $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
-                                        $a[] = " ) OR";
-                                    }
-								}
-								if ($found_a_textfield) $a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
-                                else continue;  //no text fields? no query for this table needed
-								$a[] = ")";
-							}
+					if(($entity["search"]["keyword"] == '1' or $params['page'] == '_search') and $params["search"]["kw"] != "") {
+                        $keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
+                        if ($said_where) $a[] = " AND ";
+                        else $a[] = " WHERE ";
+                        //$a[1] = " WHERE ";
+                        if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
+                            echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
+                            continue; //show nothing
+                        } else {
+                            $a[] = " (";
+                            // get all keywords
+                            $kws = getSearchKeywords();
+                            $found_a_textfield = false;
+                            foreach($entity["fields"] as $f) {
+                                if (isTextType($f["data_type"])){
+                                    $found_a_textfield = true;
+                                    $table_field = $entity["tablename"].'.'.$f['name'];
+                                    //remember: BLOB fields are case-sensitive! you should take text for those
+                                    $a[] = " (";
+                                    foreach($kws as $k)
+                                        $a[] = " ".$table_field." LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
+                                    // replace last AND with OR
+                                    $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
+                                    $a[] = " ) OR";
+                                }
+                            }
+                            if ($found_a_textfield) $a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
+                            else continue;  //no text fields? no query for this table needed
+                            $a[] = ")";
 						}
 					}
 
 					// The other search possibilities work only per page
-					else if($params["search"] != "") {
+					if($params["search"] != "" and $params['page'] != '_search') {
 						if($entity["search"]["year"] == '1' or $entity["search"]["month"] == '1') {
 							if ($params["search"]["y"] != "" or $params["search"]["m"] != "") {
 								$month = $params["search"]["m"];
 								$year = $params["search"]["y"];
                                 
-								//if ($said_where) $a[] = " AND ";
-                                //else $a[] = " WHERE ";
-                                $a[1] = " WHERE ";
-								//if december, increment year for enddate, else only the month
+								if ($said_where) $a[] = " AND ";
+                                else $a[] = " WHERE ";
+                                //if december, increment year for enddate, else only the month
 								if ($month == "") {
 									$nextYear = $year + 1;
 									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$nextYear-01-01' ";
@@ -1207,7 +1204,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                 echo($indent.'  <span class="comment_rss">'."\n");
                 echo($indent.'      <a href="rss.php?p='.$pagename.'&amp;nr='.$params["nr"].'&amp;channel=comments">follow comments per RSS</a>'."\n");
-                $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can be follow the discussion without always coming here to check for new comments.";
+                $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can follow the discussion without always coming here to check for new comments.";
                 writeHelpLink($indent."     ",$helptext);
                 echo($indent.'  </span>'."\n");
                 
@@ -1317,7 +1314,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 	 * 
 	 * @param comment the entered text
 	 * @param time the time it took in milliseconds
-     * @param nogarbageplease the content of a hidden field that should not be ssen by humans (but by machines)
+     * @param nogarbageplease the content of a hidden field that should not be seen by humans (but by machines)
 	 */
 	function checkComment($comment, $time, $nogarbageplease) {
         // check 1: a field hidden by CSS that humans can't see. Only machines would see it and fill it out.
