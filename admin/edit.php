@@ -88,9 +88,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				    foreach($rel_queries as $q)
 					    if ($q!="") pp_run_query($q);
                 
-                // reset lazy data - so all we show is fresh
-				resetLazyData();
-                
 				// make a new SELECT Query (we must show something) - later this could get more dynamic
 				$queries = getEditQuery("show", "");
 				$query = $queries[0];
@@ -104,6 +101,8 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				handleFeed($params);
                 
 			}
+            // reset lazy data - so all we show is fresh
+			resetLazyData();
 		} else {
 			$queries = getEditQuery($params["cmd"], "");
 			$query = $queries[0];

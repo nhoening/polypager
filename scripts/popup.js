@@ -118,7 +118,7 @@ function nudge(x,y)
   //down: when I am close to the bottom, move it up
   //I estimate the lines that fit in the width, assuming a char width of 10 pixels
   // and a (little pessimistic) line height of 20 (That should work for most cases)
-  est_lines = parseInt(get("pup").innerHTML.length / (parseInt(skin.width)/10) );
+  est_lines = parseInt(document.getElementById("pup").innerHTML.length / (parseInt(skin.width)/10) );
   if((newtop + parseInt(est_lines * 20)) > window.innerHeight) {
   	newtop = parseInt(window.innerHeight) - parseInt(est_lines * 20); //correct
   }

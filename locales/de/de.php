@@ -332,7 +332,7 @@ function getTranslation_de($text) {
 'for keyword:' => 'nach Stichwort:',
 'with keyword:' => 'mit Stichwort:',
 'search' => 'Suchen',
-'Search this site for:' => 'Suche:',
+'Search' => 'Suche',
 'Enter one or more keywords here to search for on this website.'
     => 'Geben Sie ein oder mehrere Suchw&ouml;rter an, nach denen Sie auf dieser Website suchen m&ouml;chten.',
 'wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.'
