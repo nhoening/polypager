@@ -582,7 +582,7 @@ require_once("PolyPagerLib_HTMLForms.php");
     */
 	function writeSearchBox($keywords="", $ind=5){
         $indent = translateIndent($ind);
-        echo($indent.'<div id="searchbox"><div class="description">'.__('Search this site for:')."</div>\n");
+        echo($indent.'<div id="searchbox"><div class="description">'.__('Search').":</div>\n");
         global $path_to_root_dir;
         $keywords = utf8_explode(',',$keywords);
         $l = array();
