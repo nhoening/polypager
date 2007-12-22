@@ -581,21 +581,24 @@ require_once("PolyPagerLib_HTMLForms.php");
         @keywords a comma separated list of keywords
     */
 	function writeSearchBox($keywords="", $ind=5){
-        $indent = translateIndent($ind);
-        echo($indent.'<div id="searchbox"><div class="description">'.__('Search').":</div>\n");
-        global $path_to_root_dir;
-        $keywords = utf8_explode(',',$keywords);
-        $l = array();
-        foreach ($keywords as $kw)
-            if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
-        echo(implode(',',$l));
-        $helptext = __('Enter one or more keywords here to search for on this website.');
-        echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.utf8_str_replace("\'","'", utf8_str_replace('\"',"'", $_GET["kw"])).'" name="kw"/><button type="submit">go</button>'."\n");
         $sys_info = getSysInfo();
-        if($sys_info['hide_public_popups'] == '0') writeHelpLink($indent.'     ', $helptext);
-        echo($indent.'    </form>'."\n");
-            
-        echo($indent.'</div>'."\n");
+        if (!$sys_info['no_tables']) {
+            $indent = translateIndent($ind);
+            echo($indent.'<div id="searchbox"><div class="description">'.__('Search').":</div>\n");
+            global $path_to_root_dir;
+            $keywords = utf8_explode(',',$keywords);
+            $l = array();
+            foreach ($keywords as $kw)
+                if ($kw!="") $l[] = $indent.'    <a href="'.$path_to_root_dir.'?_search&kw='.$kw.'">'.$kw.'</a>'."\n";
+            echo(implode(',',$l));
+            $helptext = __('Enter one or more keywords here to search for on this website.');
+            echo($indent.'    <form action="'.$path_to_root_dir.'" method="get"><input type="hidden" name="page" value="_search"/><input size="13" type="text" value="'.utf8_str_replace("\'","'", utf8_str_replace('\"',"'", $_GET["kw"])).'" name="kw"/><button type="submit">go</button>'."\n");
+            $sys_info = getSysInfo();
+            if($sys_info['hide_public_popups'] == '0') writeHelpLink($indent.'     ', $helptext);
+            echo($indent.'    </form>'."\n");
+                
+            echo($indent.'</div>'."\n");
+        }
     }
     
     
