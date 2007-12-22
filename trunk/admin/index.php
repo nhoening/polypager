@@ -87,7 +87,7 @@ function writeData($ind=5) {
 	
 	//sys msg? write it 
 	if ($sys_msg_text != "") {
-		echo($indent.'<div id="sys_msg_admin">'.$sys_msg_text.'</div>'."\n");
+		echo($indent.'<div class="sys_msg_admin">'.$sys_msg_text.'</div>'."\n");
 	}
 	
     //error? write it and return
