@@ -350,25 +350,25 @@ function getEntity($page_name) {
 
 				$entity = addFields($entity,$entity["tablename"]);
 				
-                /*
-				$group = array("field"=>"pagename",
-								"order"=>"DESC");
+                // for showing sys_fields, we pass a group parameter with the page
+                // and then this helps to build the query
+				$group = array("field"=>"pagename", "order"=>"DESC");
 				$entity["group"] = $group;
-                */
+                
                 
                 $param_group = urldecode($_GET["group"]);
-                if ($param_group == '')  $param_group = urldecode($_POST["group"]);  //coming in per POST?
-				$fields = getListOfFields($param_group);
+                if ($param_group == '')  $param_group = urldecode($_POST["group"]);
+				$fields = getListOfNonExistingFields($param_group);
 				if (count($fields) > 0) {
 					// when field options of simple pages are edited by 
 					// the users, I prefer to not show'em all
 					if ($params['page']=='_sys_fields' && isSinglePage($param_group)){
 						$flist = implode(',', $fields);
-						$flist = utf8_str_replace('input_date','',$flist); //internal date field
-						$flist = utf8_str_replace('edited_date','',$flist); //internal date field
-						$flist = utf8_str_replace('the_group','',$flist); //internal field
-						$flist = utf8_str_replace('publish','',$flist); //just boolean
-						$flist = utf8_str_replace('in_submenu','',$flist); //just boolean
+						$flist = utf8_str_replace('input_date','',$flist); 
+						$flist = utf8_str_replace('edited_date','',$flist); 
+						$flist = utf8_str_replace('the_group','',$flist);
+						$flist = utf8_str_replace('publish','',$flist);
+						$flist = utf8_str_replace('in_submenu','',$flist);
 						$flist = utf8_str_replace('pagename','',$flist); 
 						while (ereg(',,',$flist)) $flist = utf8_str_replace(',,',',',$flist);
 						//now commas at start or end have to go
@@ -381,7 +381,7 @@ function getEntity($page_name) {
 					setEntityFieldValue("name", "valuelist", __('there is no table specified for this page yet'));
 				}
 				setEntityFieldValue("pagename", "valuelist", implode(',', getPageNames()));
-                setEntityFieldValue("pagename", "valuelist_from_db", false);
+                setEntityFieldValue("pagename", "valuelist_from_db", true); //user cannot add any
 				setEntityFieldValue("validation", "valuelist", 'no validation,number,any_text,email');	//not really ready yet
 				setEntityFieldValue("foreign_key_to", "valuelist", ','.implode(',', getPageNames()));
 				setEntityFieldValue("on_update", "valuelist", "SET NULL,NO ACTION,CASCADE,RESTRICT");
@@ -662,7 +662,7 @@ function setEntityFieldValue($f_name, $attr_name, $attr_value) {
 }
 
 /*gets an array with field data from the entity*/
-function getEntityField($fname,$entity) {
+function getEntityField($fname, $entity) {
 	if($entity["fields"] != "") foreach ($entity["fields"] as $f) if ($f["name"] == $fname) return $f;
 	return "";
 }
@@ -723,5 +723,22 @@ function getListOfValueListFields($entity_name) {
 	}
 	if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
 	return $dfields;
+}
+
+function getListOfNonExistingFields($entity_name){
+    if ($entity_name != "") {
+		global $entity;
+		$actual_entity = $entity;	//save it
+		$entity = getEntity($entity_name);
+	} else $entity = getEntity("");
+    $query = "SELECT name from _sys_fields WHERE pagename = '".$entity['tablename']."'";
+    $result = pp_run_query($query);
+    $all = getListOfFields($entity_name);
+    $existing = array();
+    while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+        $existing[] = $row['name'];
+    }
+    if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
+    return arrays_exor($all, $existing);
 }
 ?>
