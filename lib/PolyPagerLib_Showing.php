@@ -328,7 +328,6 @@ require_once("PolyPagerLib_HTMLForms.php");
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
             
-            
 			if ($entity['pk'] == "") {
                 if ($entity != "" and $entity['tablename'] != '') {
                     global $sys_msg_text;

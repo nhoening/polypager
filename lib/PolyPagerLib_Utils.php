@@ -127,6 +127,21 @@ function stripCSVList($csv_string) {
 }
 
 /*
+ returns an array containing only what was not in both input arrays
+ (Exclusive OR)
+*/
+function arrays_exor($a1, $a2) {
+	$r = array();
+	for($i = 0; $i < count($a1); $i++) {
+		if($a1[$i] != '' and !in_array($a1[$i], $a2)) $r[] = $a1[$i];
+	}
+	for($j = 0; $j < count($a2); $j++) {
+		if($a2[$j] != '' and !in_array($a2[$j], $a1)) $r[] = $a2[$j];	
+	}
+	return $r;
+}
+
+/*
  * returns a string like this: '2006-27-4' from an array
  * like those gotten from getdate()
  */
