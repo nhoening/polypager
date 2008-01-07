@@ -12,7 +12,7 @@ var nav = (document.layers);
 var old = browser.isNS && (!document.layers && !document.getElementById);
 var n_6 = browser.isNS6up;
 var opera = browser.isOpera; // this is only opera
-if (browser.isSafari || browser.isFirefox || browser.isMozilla || browser.isKonqueror) n_6 = true; //they work the same for this
+if (browser.isSafari || browser.isFirefox || browser.isMozilla || browser.isKonqueror || browser.isGecko) n_6 = true; //they work the same for this
 
 // create the popup box - inline so everyone, including Opera, will tell the width
 document.write('<div id="pup" style="visibility:hidden;display:inline;"></div>');
