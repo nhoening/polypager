@@ -71,7 +71,7 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 		$params = getEditParameters();
 		
 		//let's first check if the comment was ok
-		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"], $params["values"]["_nogarbageplease_"]);
+		$msg = checkComment($params["values"]["comment"], $params["values"]["time_needed"], $params["values"]["nogarbageplease_"]);
 		if ($msg == "") {	//seems ok
 	
 			$queries = getEditQuery($params["cmd"], "");
