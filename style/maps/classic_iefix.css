@@ -1,9 +1,10 @@
 /*kommt nur zum Einsatz fuer Browser ie5 oder hoeher fuer fixed navi + siteinfo
 Danke an Fabrice Pascal - http://www.fabrice-pascal.de/artikel/posfixedie6/*/
 /*zur Zeit MS only*/
-/*body {
-	overflow-y: hidden; 
-}*/
+body {
+	/*overflow-y: hidden; */
+	behavior: url(cssfocusandhover.htc);
+}
 
 #header {
 	height: 135px !important; /*IE counts borders extra*/
@@ -12,9 +13,11 @@ Danke an Fabrice Pascal - http://www.fabrice-pascal.de/artikel/posfixedie6/*/
 #title {
 	width: 800px !important;
 }
+
 #data, #data_admin, #data_gallery{
     /*don't know why this is needed, but otherwise we have a gap*/
     position:relative;top:-60px !important;
+	padding-left: 25px !important;
 }
 #data, #data_admin, #data_gallery, #impressum {
 	width: 800px; /*IE counts borders extra*/
@@ -38,16 +41,30 @@ div.show_entry div.title,
 }
 
 #main_menu {
-	top:92px;
+	position: absolute !important; top:25px; left:0px !important;
 	width: 799px !important;
 }
-#sub_menus { 
-	position: relative; top: 95px; left: 0px;
+
+#main_menu li ul { 
+	position: relative !important; top: 25px !important; left: 70px;
+	text-align: center;
 }
-#sub_menus ul {
+#main_menu li ul li{ 
+	list-style:none !important;
+    display: inline !important;
+}
+
+#main_menu li ul {
 	margin-left: 0px;
 }
-ul#main_menu li a:hover, #sub_menus li a:hover {
+#main_menu li a  {
+    float:right !important;
+}
+#main_menu li ul li a  {
+    float:none !important;
+}
+
+ul#main_menu li a:hover{
 	/*a fix I don't know the reason for...*/
 	width: 0px;
 	white-space: nowrap;

@@ -154,14 +154,18 @@ body {
 
 #main_menu>li>a
 {
-    padding: 1px 8px 1px 24px;
     border: 1px solid #e57c00;
     background-color: #999;
     color: #fff;
     background-image: url(pics/menu_down.gif);
 }
 
-#main_menu>a:link, #main_menu>a:visited
+#main_menu li a
+{
+    padding: 1px 8px 1px 24px !important;
+}
+	
+#main_menu>li>a:link, #main_menu>li>a:visited
 {
     color: #EEE;
     text-decoration: none;
@@ -184,7 +188,6 @@ body {
 
 #main_menu>li>ul>li.here>a:link, #main_menu>li>ul>li.here>a:visited {
     border: 1px solid #e57c00 ;
-	padding: 0px 3px;
 }
 
 #main_menu>li>ul>li>a:hover {
@@ -205,9 +208,8 @@ body {
 	margin-left: 5px;
 }
 
-#main_menu>li>ul>li a{
+#main_menu>li>ul>li>a{
 	border: 1px solid #fff;
-	padding: 0px 3px;
 }
 
 /* ----- sidepane ----- */
@@ -316,7 +318,7 @@ body {
 	width: 480px !important;
 }
 
-.title{
+.entry_title{
 	padding: 25px 0px;
     margin-top: 0px;
     margin-bottom: 0.7em;
@@ -389,7 +391,7 @@ td.label{
 	margin-top:10px;
 }
 
-#data_admin .title{
+#data_admin .entry_title{
 	text-align: left;
 	padding: 5px 0px;
 }

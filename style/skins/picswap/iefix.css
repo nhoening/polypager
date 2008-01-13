@@ -7,3 +7,22 @@
 body { behavior:url(cssfocusandhover.htc) !important; }
 
 /* ----------------------------------------------- */
+
+#data, #data_admin, #data_gallery {
+	margin-top: 60px;
+}
+
+
+#main_menu {
+	position: absolute !important; top:115px; left:10px !important;
+	width: 799px !important;
+}
+
+#main_menu li ul { 
+	position: relative !important; top: 17px !important; left: 62px !important;
+	text-align: center;
+}
+
+#main_menu li a:hover {
+	color: #fff;
+}
