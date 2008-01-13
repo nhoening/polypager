@@ -255,16 +255,16 @@ h3 a:hover
 	text-decoration:underline;
 }
 
-.title a, .comment_prefix,
+.entry_title a, .comment_prefix,
 .description, .description a{
 	margin-top: 10px;
 	color:#91B476;
 }
-.title a, #title #text a{
+.entry_title a, #title #text a{
 	font-size: 1.7em !important;
 }
-.title{margin-top: 30px;}
-.list_entry .title, #title {margin-top:3px;}
+.entry_title{margin-top: 30px;}
+.list_entry .entry_title, #title {margin-top:3px;}
 .list_entry {
 	border: 1px solid grey;
 	margin-top: 4px;

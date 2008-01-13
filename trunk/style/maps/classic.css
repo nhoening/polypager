@@ -34,8 +34,7 @@ body {
 #title #text {
 	float:left;
 }
-#title a {
-	width: 300px;
+#title a  {
 	float:none;
 }
 
@@ -144,13 +143,13 @@ div.show_entry, div.show_entry_with_options {
 	padding: 4px 1em 4px 1em;
 }
 
-.show * .title * {
+.show * .entry_title * {
 	line-height:23px !important;
 	min-height:23px !important;
 	width: 470px;
 }
 
-div.show div.title div.value {
+div.show div.entry_title div.value {
 	font-size: 1.2em;
 }
 
@@ -170,7 +169,7 @@ div.show div.options span.whole_link{
 	list-style:none !important;
 	z-index:4;
 }
-#main_menu >li{
+#main_menu li{
 	float:right;
 	margin:0 0 0 0;
 	padding-right: 5px;

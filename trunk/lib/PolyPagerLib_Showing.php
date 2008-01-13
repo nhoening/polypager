@@ -1121,7 +1121,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                             
 							//now, finally, the value
 							if($f["name"] == $entity["title_field"]) {
-								$theClass = "title";
+								$theClass = "entry_title";
 							} else $theClass = "value"; 
 							
 							echo($indent.'		<div class="'.$theClass.'">'."\n");
