@@ -186,25 +186,24 @@ body {
     color: #333 !important;
 }
 
-#main_menu>li>ul>li.here>a:link, #main_menu>li>ul>li.here>a:visited {
+.sub_menu>li.here>a:link, .sub_menu>li.here>a:visited {
     border: 1px solid #e57c00 ;
 }
 
-#main_menu>li>ul>li>a:hover {
+.sub_menu  li a:hover {
 	border: 1px solid #84a0b9;
-	background: transparent;
+	background: transparent !important;
 	color: #e57c00 !important;
 }
-
-#main_menu>li>ul {
+.sub_menu {
 	margin: 12px 1em 0px 0px;
 }
 
-#main_menu>li>ul{
+.sub_menu {
 	margin: 0px;
 }
 
-#main_menu>li>ul>li {
+.sub_menu li {
 	margin-left: 5px;
 }
 

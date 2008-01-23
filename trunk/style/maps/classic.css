@@ -169,6 +169,7 @@ div.show div.options span.whole_link{
 	list-style:none !important;
 	z-index:4;
 }
+
 #main_menu li{
 	float:right;
 	margin:0 0 0 0;
@@ -177,7 +178,7 @@ div.show div.options span.whole_link{
 	height: 19px;
 }
 
-#main_menu ul {
+#sub_menu {
 	margin: 0 2px 0 0;
 	height: 0px;
 	z-index: 2;
@@ -191,9 +192,13 @@ div.show div.options span.whole_link{
 	z-index: 2; /*selecting links over the "data"-pane works so*/
     display:none; 
 }
+
+.sub_menu {
+    float:right !important;
+}
+
 #main_menu li:hover ul {
     display:block !important;
-    float:right;
 }
 
 

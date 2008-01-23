@@ -266,7 +266,7 @@
                     }
                 }
                 
-                echo($indent.'	<ul id="'.$p["name"].'_menu" style="display:'.$ul_visibility.';">'."\n");
+                echo($indent.'	<ul class="sub_menu" id="'.$p["name"].'_menu" style="display:'.$ul_visibility.';">'."\n");
 
                 $x=0;
                 for(;$x < count($a);$x++){
