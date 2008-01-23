@@ -47,7 +47,7 @@ body {
     background-image: url(pics/menu_down.gif);
 }
 
-#main_menu li ul li a
+.sub_menu li a
 {
     border: 1px solid #e57c00 !important;
     background-color: #fff !important;
@@ -55,28 +55,9 @@ body {
     background-image: none !important;
 }
 
-#main_menu li ul li.here a:link, #main_menu li ul li.here a:visited {
+.sub_menu li.here a:link, .sub_menu li.here a:visited {
     border: 1px solid #e57c00 !important;
 }
 
-#main_menu li ul li a:hover {
-	border: 1px solid #84a0b9;
-	background: transparent !important;
-	color: #e57c00 !important;
-}
 
-#main_menu li ul {
-	margin: 12px 1em 0px 0px;
-}
 
-#main_menu li ul{
-	margin: 0px;
-}
-
-#main_menu li ul li {
-	margin-left: 5px;
-}
-
-#main_menu li ul li a{
-	border: 1px solid #fff;
-}

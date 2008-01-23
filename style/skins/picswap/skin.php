@@ -218,14 +218,14 @@ body {
 	width: 60px;
 }
 
-.title {
+.entry_title {
 	background: transparent url(pics/<?echo($colorset);?>/heading.gif) top left repeat-y;
 	padding-left: 3px;
 	color: #<?=getColor('contrast'); ?>;
 }
 
-.title a.entry_title_link {text-decoration: none;}
-.title a.entry_title_link:hover {color:#<?=getColor('contrast'); ?>;}
+.entry_title a.entry_title_link {text-decoration: none;}
+.entry_title a.entry_title_link:hover {color:#<?=getColor('contrast'); ?>;}
 
 .label{
     text-align:left;

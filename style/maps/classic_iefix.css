@@ -40,33 +40,27 @@ div.show_entry div.title,
 	overflow:hidden;
 }
 
+
 #main_menu {
 	position: absolute !important; top:25px; left:0px !important;
 	width: 799px !important;
 }
 
-#main_menu li ul { 
-	position: relative !important; top: 25px !important; left: 70px;
-	text-align: center;
-}
-#main_menu li ul li{ 
-	list-style:none !important;
-    display: inline !important;
-}
-
-#main_menu li ul {
-	margin-left: 0px;
-}
-#main_menu li a  {
+.sub_menu li {
     float:right !important;
 }
-#main_menu li ul li a  {
-    float:none !important;
+
+.sub_menu { 
+    position: absolute !important; top: 26px !important; left:0px !important; 
+	float:right !important;
+	width: 799px !important;
 }
 
-ul#main_menu li a:hover{
+
+#main_menu li a:hover{
 	/*a fix I don't know the reason for...*/
 	width: 0px;
+	height: 19px !important;
 	white-space: nowrap;
 }
 
