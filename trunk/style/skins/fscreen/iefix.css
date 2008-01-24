@@ -7,9 +7,6 @@ body { behavior:url(cssfocusandhover.htc) !important; }
 	position:absolute; left:50%;
 	width: 760px;
 }
-#sub_menus ul{
-	position:relative; top: 30px !important;
-}
 .search_toggle a {
 	text-decoration: none !important;
 	width: 20px !important;

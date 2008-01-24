@@ -60,6 +60,8 @@ if ($sys_info['whole_site_admin_access']) {
     include('auth.php');
 }
 
+
+
 // ---------------------------------------
 
 $qdig_version = '1.2.9.3';
@@ -3694,8 +3696,5 @@ function writeData($ind=1) {
 //---------------- more PolyPager Code -----------
 }
 
-//now ... we are ready to import a PHP/HTML template
-if (utf8_strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
-else $skin = $sys_info['skin'];
-@include("../../style/skins/".$skin."/template.php");
+useTemplate($path_to_root_dir);
 ?>
