@@ -35,6 +35,10 @@ body, p, a li, blockquote, h1, h2, h3{
 	margin: 0 auto 0 auto;
 }
 
+#qdig {
+	width: 100%;
+}
+
 #header
 {
 	height: 100px;
@@ -110,11 +114,11 @@ body, p, a li, blockquote, h1, h2, h3{
 /* ---------- menus -------- */
 
 #title #text a,
-#main_menu>li>a{
+#main_menu li a{
 	color:#FFFFFF;
 }
-#main_menu>li>ul>li>a{
-	color:#DDDDDD;
+.sub_menu li a{
+	color:#DDDDDD !important;
 }
 
 #main_menu {
@@ -128,7 +132,7 @@ body, p, a li, blockquote, h1, h2, h3{
 	list-style:none !important;
 	z-index:4;
 }
-ul#main_menu>li, #main_menu>li>ul>li  {
+#main_menu li, .sub_menu li  {
 	float:left;
 	margin:0 0 0 0;
 	padding-top: 3px;
@@ -136,28 +140,31 @@ ul#main_menu>li, #main_menu>li>ul>li  {
 	padding-left: 5px;;
 }
 
-ul#main_menu>li>a:link, #main_menu>li>ul>li>a:link {
+#main_menu li a:link {
 	padding-right: 4px;
 	display:block; /*so we can control all aspects without worrying about the inline box*/
 }
 
 
-/* these are the sublists */
-#main_menu>li {
+/* all li in main and sublist */
+#main_menu li {
 	margin: 0 2px 0 0;
 	height: 0px;
 	z-index: 5;
 }
-#main_menu>li>ul {
+
+/* these are the sublists */
+.sub_menu {
 	position: absolute; top: 16px; left:0px;
 	height: 19px;
 	list-style:none ! important;
-	z-index: 5; /*selecting links over the "data"-pane works so*/
+	width: 799px !important;
+	float:left !important;
 }
 
-#main_menu>li:hover>ul {
+#main_menu li:hover ul {
     display:block !important;
-    float:left;
+    float:left !important;
 }
 
 /* -------- */
@@ -258,7 +265,7 @@ h3 a:hover
 .entry_title a, .comment_prefix,
 .description, .description a{
 	margin-top: 10px;
-	color:#91B476;
+	color:#91B476 !important;
 }
 .entry_title a, #title #text a{
 	font-size: 1.7em !important;
