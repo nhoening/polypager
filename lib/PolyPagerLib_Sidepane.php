@@ -44,6 +44,8 @@ function cmpDate($a, $b) {
 	named "theID", "theDate", "theText" and "thePage" 
 	params: count - the number of entries you want,
 			comments - set to true if you want to get comments
+            restricted - set to true if access-restricted entries should be included
+                            (authentication is not handled here!)
 */
 function getFeed($amount, $comments = false, $restricted = false) {
 	// get requested page descriptions
@@ -97,7 +99,7 @@ function getFeed($amount, $comments = false, $restricted = false) {
 	//enrich with text from the tables themselves
     while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
         $the_page = getPageInfo($row['thePage']);
-        if ($the_page["name"] != "" && $the_page['only_admin_access'] != '1') {
+        if ($the_page["name"] != "" && !($the_page['only_admin_access'] == '1' and !$restricted)) {
             $entity = getEntity($row['thePage']);
             if (!$comments) {   // get text from original page for feeds
                 $field = guessTextField($entity);
