@@ -291,7 +291,7 @@ $grayout_color          = '';  // Grayed-out text
 $gallery_table_bg_clr   = '';  // Background color of the gallery table.
 $image_table_bg_clr     = '';  // Background color of image area.
 // Arbitrary code can be inserted before or after the gallery table.
-$pre_gallery            = '<h1>Aufgenommen</h1>';  // User-defined output before gallery
+$pre_gallery            = '';  // User-defined output before gallery
 $post_gallery           = '';  // User-defined output after gallery
 
 

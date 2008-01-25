@@ -189,8 +189,8 @@ function getTranslation_de($text) {
 'all' => 'alle',
 
 /*	lib/PolyPagerLib_Sidepane.php	*/
-'the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.'
-	=> 'der RSS-Feed f&uuml;r diese Seite. &lt;br/&gt;Das bedeutet, dass Sie unter diesem Link die neuesten Eintr&auml;ge dieser Website sehen. Der Link selbst f&uuml;hrt zur XML-Ansicht. Wenn Sie wollen, k&ouml;nnen Sie die URL dieses Links Ihrem News Feed Programm hinzuf&uuml;gen',
+'Below you see a list of the latest entries on this website. This link explains how you can subscribe to them via an RSS-Feed.'
+	=> 'Unten sehen Sie eine Liste der neuesten Eintr&auml;ge auf dieser Webseite. Dieser Link erkl&auml;rt, wie Sie diese als RSS-Feed abonieren k&ouml;nnen.',
 'from the page' => 'von der Seite',
 'This is a demo version of PolyPager' => 'Dies ist eine Demo-Version von PolyPager',
 'Admin name and password are set to "admin". Have fun!' =>
@@ -364,7 +364,21 @@ function getTranslation_de($text) {
 
 /* rss.php */
 'Comments on ' => 'Kommentare auf ',
-
+'A feed is the web way of a newspaper subscribtion. It is a special webpage that delivers articles in a special format. ' 
+    => 'Ein Feed ist der Web-Weg eines Zeitungs-Abonnements. Es ist eine spezielle Webseite, die Eintr&auml:ge in einem speziellen Format ausliefert. ',
+'If you tell a Feed Reader program where to find that script, it will keep you up to date with all your favourite websites without you having to visit them to check for new entries! ' 
+    => 'Wenn Sie die Adresse dieser Seite einem Feed Reader Programm mitteilen, wird es Sie &uuml;ber all Ihre Lieblingswebseiten auf dem Laufenden halten, ohne dass Sie selbst nach neuen Eintr&auml;genb suchen m&uuml;ssen!',
+'This page explains how you can define what that feed should deliver:' 
+    => 'Diese Seite beschreibt wie Sie definieren k&ouml;nnen, was der Feed liefern sollte:',
+'The standard address of this feed is ' => 'Die Standard-Adresse dieses Feeds ist ',
+'To see the comments, use ' => 'Um die Kommentare zu sehen, verwenden Sie ',
+'You can request to receive only updates from specific pages by passing the feed a list of pagenames. For instance, assuming this website had two pages called "page1" and "page2", you could use this address: ' 
+    => 'Sie k&ouml;nnen nur Updates von spzifischen Seiten dieser Website anfordern, indem Sie dem Skript eine Liste mit Seitennamen &uuml;bergeben. Zum Beispiel, angenommen diese Website h&auml;tte zwei Seiten namens page1 und page2, dann k&ouml;nnten Sie diese Adresse angeben: ',
+'Some pages can only be seen by people with password-protected access to this site. You can request to include such items in your feed, but then you will have to authenticate yourself. Some feed readers do not allow to do this and if you fail to authenticate, you will not see any items. If you want to authenticate, point your feed reader to ' 
+    => 'Manche Seiten k&ouml;nnen nur von Leuten gesehen werden, die einen Passwort-Zugang besitzen. Sie k&ouml;nnen solche Eintr&auml;lge anfordern, aber dann werden Sie sich im Feed Reader authentifizieren m&uuml;ssen. Manche Feed Reader erm&ouml;glichen dies nocht nicht. Wenn Sie sich nicht authentifizieren k&uoml;nnen, werden Sie dann auch gar keine Eintr&auml;ge sehen. Um sich zu authentifizieren, verwenden Sie ',
+'These extra arguments can also be combined. For instance, to see all comments on page1: ' 
+    => 'Dierse Extra Argumente k&ouml;nenn auch kombiniert werden. Zum Beispiel, f&uuml;r alle Kommentare auf der Seite page1: ',
+   
 
 /* formgroups*/
 'admin' => 'Admin',
