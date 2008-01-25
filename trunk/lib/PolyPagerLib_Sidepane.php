@@ -45,55 +45,63 @@ function cmpDate($a, $b) {
 	params: count - the number of entries you want,
 			comments - set to true if you want to get comments
 */
-function getFeed($amount, $comments = false) {
-	//get requested page descriptions
+function getFeed($amount, $comments = false, $restricted = false) {
+	// get requested page descriptions
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
 	$p = utf8_explode(',',$p);
-	//get requested entry number
+	// get requested entry number
     if ($comments) {
         $nr = $_GET['nr']; 
         if($nr=='') $nr = $_POST['nr'];
     }
     
-	//make a filter with what was requested
-    if (!$comments) $where = ' WHERE public = 1';
-	if($p[0] != '') {
-        if (!$comments) $where .= " AND (";
-        else $where = " WHERE (";
-		for($i=0;$i<count($p);$i++) {
-			$page = $p[$i];
-			$where .= " pagename = '".urldecode(filterSQL($page))."'";
-			if($i+1 < count($p)) $where .= ' OR'; 
-		}
-        $where .= ")";
-    }
+    $sys = getSysInfo();
+    // when all access is restricted and we don't want to see restricted, show nothing
+    if ($sys['whole_site_admin_access'] and !$restricted){
+        $query = "SELECT * FROM _sys_sys WHERE 1=2";
+    } else {
     
-    if ($comments and $nr!=""){
-        $where .= " AND pageid = ".$nr;
+        //make a filter with what was requested
+        if (!$comments) $where = ' WHERE public = 1';
+        if($p[0] != '') {
+            if (!$comments) $where .= " AND (";
+            else $where = " WHERE (";
+            for($i=0;$i<count($p);$i++) {
+                $page = $p[$i];
+                $where .= " pagename = '".urldecode(filterSQL($page))."'";
+                if($i+1 < count($p)) $where .= ' OR'; 
+            }
+            $where .= ")";
+        }
+        
+        if ($comments and $nr!=""){
+            $where .= " AND pageid = ".$nr;
+        }
+    
+        
+        if (!$comments) $query = "SELECT id AS theID, edited_date AS theDate,".
+                                "title AS theText,".
+                                "pagename AS thePage FROM _sys_feed";
+        else $query = "SELECT pageid AS theID, insert_date AS theDate,".
+                                "comment AS theContent, id as CommentID,".
+                                "pagename AS thePage FROM _sys_comments";
+        $query .= $where;
+        $query .= " ORDER BY theDate DESC LIMIT ".$sys["feed_amount"];
+        
+        
     }
-
-	$sys = getSysInfo();
-    if (!$comments) $query = "SELECT id AS theID, edited_date AS theDate,".
-							"title AS theText,".
-							"pagename AS thePage FROM _sys_feed";
-    else $query = "SELECT pageid AS theID, insert_date AS theDate,".
-							"comment AS theContent, id as CommentID,".
-							"pagename AS thePage FROM _sys_comments";
-	$query .= $where;
-    $query .= " ORDER BY theDate DESC LIMIT ".$sys["feed_amount"];
-	$res = pp_run_query($query);
-	$feeds = array();
 	
-    //echo('<!-- query: '.$query.'-->');
-    
+    $res = pp_run_query($query);
+    $feeds = array();
+        
 	//enrich with text from the tables themselves
     while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
         $the_page = getPageInfo($row['thePage']);
-        if ($the_page["name"] != "") {
+        if ($the_page["name"] != "" && $the_page['only_admin_access'] != '1') {
             $entity = getEntity($row['thePage']);
             if (!$comments) {   // get text from original page for feeds
                 $field = guessTextField($entity);
-                if ($field=="") $field = $the_page["title_field"];
+                if ($field == "") $field = $the_page["title_field"];
                 $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
     
                 if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
@@ -106,7 +114,6 @@ function getFeed($amount, $comments = false) {
                 }
             } else {
                 $field = $the_page["title_field"];
-                echo('<!--field:'.$row['thePage'].'-->');
                 if ($field=="") $field = guessTextField($entity);
                 $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
                 if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
@@ -127,9 +134,9 @@ function writeFeedDiv($ind=5) {
 	$feed_amount = $sys_info["feed_amount"];
 	if ($feed_amount > 0) {
 		$res = getFeed($feed_amount);
-		if ($sys_info['hide_public_popups']==0) $text = ' onmouseover="popup(\''.__('the RSS feed for this site. &lt;br/&gt; That means you will get to see the newest entries in the XML-Format.&lt;br/&gt;If you want, you can add that URL to your favorite news feed program.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+		if ($sys_info['hide_public_popups']==0) $text = ' onmouseover="popup(\''.__('Below you see a list of the latest entries on this website. This link explains how you can subscribe to them via an RSS-Feed.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 		else $text = '';
-		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="./'.$path_to_root_dir.'/rss.php">'.__('the latest entries:').'</a></div>'."\n");
+		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="./'.$path_to_root_dir.'/rss.php?explain=1">'.__('the latest entries:').'</a></div>'."\n");
 		for ($x=0;$x<count($res);$x++) {
 			$row = $res[$x];
 			echo($indent.'	<div class="entry">'."\n");

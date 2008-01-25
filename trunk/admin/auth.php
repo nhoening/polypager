@@ -23,6 +23,7 @@
 		define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 	}
 	//make sure this works from whereever we are
+    set_include_path(get_include_path() . PATH_SEPARATOR . '.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
 	set_include_path(get_include_path() . PATH_SEPARATOR . '..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
 	set_include_path(get_include_path() . PATH_SEPARATOR . '..'.FILE_SEPARATOR. '..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
 	set_include_path(get_include_path() . PATH_SEPARATOR . '..'.FILE_SEPARATOR. '..'.FILE_SEPARATOR. '..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR);
