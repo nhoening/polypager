@@ -59,10 +59,9 @@ function getTranslation_de($text) {
 'show intro of page'	=> 'zeige intro der Seite:',
 'page:' => 'Seite:',
 'comments' => 'Kommentare',
-'feeds' => 'Feeds',
-'view the comments list.' => 'rufen Sie die Kommentarliste auf.',
-'view the feed list. delete here what you do not want in the feed (latest entries) list.' =>
-	'Rufen Sie hier die Feed-Liste auf. L&ouml;schen Sie dort, was Sie lieber nicht im Feed (der Liste der letzten Eintr&auml;ge) sehen wollen.',					
+'feed' => 'Feed',
+'view the comments on this entry.' => 'Zeigen Sie die Kommentare f&uuml;r diesen Eintrag an.',
+'view the feed for this entry.' => 'Editieren Sie den Feed f&uuml;r diesen Eintrag.',					
 'create'	=> 'Erstelle',
 'the system table(s)'	=> 'die Systemtabellen',
 'create a new table from a template'	=> 'erstelle eine neue Tabelle aus einer Vorlage',
@@ -208,6 +207,8 @@ function getTranslation_de($text) {
 '(show)' => '(zeigen)',
 '(hide)' => '(verstecken)',
 'other' => 'anders',
+'This Entry has not received any comments yet.' => 'Dieser Eintrag wurde noch nicht kommentiert.',
+'This Entry has not been fed yet.' => 'Dieser Eintrag wurde noch nicht in den Feed &uuml;bernommen.',
 
 /*	lib/PolyPagerLib_Utils.php	*/
 'the latest entries:'	=> 'Die neuesten Eintr&auml;ge:',
@@ -408,7 +409,6 @@ function getTranslation_de($text) {
 'date_field' => 'Datums-Feld',
 'edited_field' => 'zuletzt-editiert-Feld',	
 'title_field' => 'Titel-Feld',
-'feed' => 'feed',
 'step' => 'Schritt',
 'commentable' => 'kommentierbar',
 'only_admin_access' => 'Zugang nur f&uuml;r Admins',

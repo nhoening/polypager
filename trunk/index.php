@@ -175,7 +175,10 @@ function writeData($ind=5) {
 		} else {
 			
 			//you could type in a too high number - senseless 
-			if (!$i_manipulated and $params["nr"] > $params["max"]) { $params["nr"] = $params["max"]; echo('<div class="sys_msg">'.__('the chosen number was too high - showing newest').'</div>');};
+			if (!$i_manipulated and $params["nr"] > $params["max"]) { 
+                $params["nr"] = $params["max"]; 
+                //echo('<div class="sys_msg">'.__('the chosen number was too high - showing newest').'</div>');
+            }
 			
 			$page_info = getPageInfo($params["page"]);
 			//------------------------ showing data   --------------

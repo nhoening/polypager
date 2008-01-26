@@ -538,7 +538,26 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
     }
     
 	echo($indent.'</div>'."\n");
+    
+    if(!isASysPage($params["page"]) and $params["cmd"] != "new") {
+        $comments = getComments();
         
+		if ($comments == "") $comment_count = 0;
+		else $comment_count = mysql_num_rows($comments);
+        $comment_help = __('view the comments on this entry.');
+        
+        $q = "Select pk from _sys_feed WHERE pagename = '".$params['page']."' and id = '".$params['nr']."'";
+        $res = pp_run_query($q);
+        $row = mysql_fetch_array($res, MYSQL_ASSOC);
+        $feed_help = __('view the feed for this entry.');
+
+        echo($indent.'		<div class="sys_msg_admin">'."\n");
+        if ($comment_count > 0) echo($indent.'			<a onmouseover="popup(\''.$comment_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="index.php?_sys_comments&amp;group='.$params['page'].'&amp;nr='.$params['nr'].'">'.__('comments').'('.$comment_count.')</a>'."\n");
+        else echo($indent.'			'.__('This Entry has not received any comments yet.')."\n");
+        if ($row['pk'] != '') echo($indent.'			&nbsp;|&nbsp;<a onmouseover="popup(\''.$feed_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()"  href="edit.php?_sys_feed&amp;group='.$params['page'].'&amp;nr='.$row['pk'].'">'.__('feed').'</a>'."\n");
+        else echo($indent.'			&nbsp;|&nbsp;'.__('This Entry has not been fed yet.')."\n");
+        echo($indent.'		</div>'."\n");
+    }
 	// are tables/pages linking to this entity via foreign keys?
 	/*$references = getReferencingTableData($entity);
 	foreach($references as $r){
