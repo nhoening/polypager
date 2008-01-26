@@ -337,7 +337,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			}
 			// ---------- first the easy cases: 
 			
-			// all comments
+			// all comments - not needed?
 			if (utf8_strpos($params["cmd"], "_sys_comments_all") > 0) {
 				$entity = getEntity("_sys_comments");
 				$theQuery = "SELECT * FROM _sys_comments
@@ -348,9 +348,11 @@ require_once("PolyPagerLib_HTMLForms.php");
 			// comments for one entry
 			else if (utf8_strpos($params["cmd"], "_sys_comments") > 0) {
 				$entity = getEntity("_sys_comments");
+                $pg = $_GET['group'];
+                if ($pg == '') $pg = $params['page'];
 				$theQuery = "SELECT * FROM _sys_comments
-							WHERE pagename = '$pagename'
-							AND pageid = ".$params["nr"]."
+							WHERE pagename = '".$pg.
+							"' AND pageid = ".$params["nr"]."
 							AND is_spam = 0
 							ORDER BY insert_date ASC";
 			}
@@ -359,6 +361,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			else if (utf8_strpos($params["cmd"], "_sys_feed") > 0) {
 				$entity = getEntity("_sys_feed");
 				$theQuery = "SELECT * FROM _sys_feed 
+                            WHERE pagename = '".$_GET['group'].
+							"' AND id = ".$params["nr"]."
 							ORDER BY edited_date DESC";
 			}
 			

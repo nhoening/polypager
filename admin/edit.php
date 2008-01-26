@@ -162,28 +162,30 @@ function writeData($ind=4) {
 	if ($page == "_sys_singlepages" or $page == "_sys_multipages" or $page == "_sys_intros") $page = "_sys_pages";
 	
 	//showing some navigation links
-	echo($indent.'	<ul>'."\n");
-	if ($page == "_sys_pages" and $params["cmd"] != "new") {	//entry on that  page
-		$pname = $params["values"]["name"];
-		if ($pname == "") $pname = $_GET["name"];
-		if ($pname == "") $pname = $_GET["page"];
-        if ($pname == "") $pname = $_GET["nr"];
-		echo($indent.'		<li><a
-			onmouseover="popup(\''.sprintf(__('click to make a new entry on the %s - page'),$pname).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
-			href="edit.php?'.urlencode($pname).'&amp;cmd=new&amp;from='.$params["from"].'&topic=content&group='.urlencode($params["group"]).'">'.__('insert a new entry').'</a></li>'."\n");
-	} else if ($entity["one_entry_only"] != "1" and $params["cmd"] != "new"){
-		echo($indent.'		<li>'.__('insert a').' <a
-			onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$params["page"]).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
-			href="edit.php?'.urlencode($params["page"]).'&amp;cmd=new&amp;from='.$params["from"].'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('new record').'</a></li>'."\n");
-	}
-	
-	if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.urlencode($page).'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('back to list view').'</a></li>'."\n");
-	if ($params["from"] == "admin" and $params["page"]!="_sys_sys") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
-	$page_info = getPageInfo($params["page"]);
-	if($page_info["in_menue"] == "0" and !utf8_strpos($params["page"], "_sys_")) {
-		echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.urlencode($params['page']).'&amp;group='.urlencode($params['group']).'">'.__('see the page').'</a></li>'."\n");
-	}
-	echo($indent.'	</ul>'."\n");
+    if(!isASysPage($params["page"])){
+        echo($indent.'	<ul>'."\n");
+        if ($page == "_sys_pages" and $params["cmd"] != "new") {	//entry on that  page
+            $pname = $params["values"]["name"];
+            if ($pname == "") $pname = $_GET["name"];
+            if ($pname == "") $pname = $_GET["page"];
+            if ($pname == "") $pname = $_GET["nr"];
+            echo($indent.'		<li><a
+                onmouseover="popup(\''.sprintf(__('click to make a new entry on the %s - page'),$pname).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
+                href="edit.php?'.urlencode($pname).'&amp;cmd=new&amp;from='.$params["from"].'&topic=content&group='.urlencode($params["group"]).'">'.__('insert a new entry').'</a></li>'."\n");
+        } else if ($entity["one_entry_only"] != "1" and $params["cmd"] != "new"){
+            echo($indent.'		<li>'.__('insert a').' <a
+                onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$params["page"]).'\')" onmouseout="kill()" title="" onfocus="this.blur()"
+                href="edit.php?'.urlencode($params["page"]).'&amp;cmd=new&amp;from='.$params["from"].'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('new record').'</a></li>'."\n");
+        }
+        
+        if ($params["from"] == "list") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the list overview where you chose the edited entry.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".?'.urlencode($page).'&topic='.$params["topic"].'&group='.urlencode($params["group"]).'">'.__('back to list view').'</a></li>'."\n");
+        if ($params["from"] == "admin" and $params["page"]!="_sys_sys") echo($indent.'		<li><a onmouseover="popup(\''.__('go back to the administration page.').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href=".">'.__('back to admin index').'</a></li>'."\n");
+        $page_info = getPageInfo($params["page"]);
+        if($page_info["in_menue"] == "0" and !utf8_strpos($params["page"], "_sys_")) {
+            echo($indent.'		<li><a onmouseover="popup(\''.__('click to see the public page').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="../?'.urlencode($params['page']).'&amp;group='.urlencode($params['group']).'">'.__('see the page').'</a></li>'."\n");
+        }
+        echo($indent.'	</ul>'."\n");
+    }
 
 	//heading with explanation what to do here
 	if (!isASysPage($params["page"])) {

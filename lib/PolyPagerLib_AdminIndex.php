@@ -466,12 +466,12 @@
 		//option list
 		if ($topic == 'content' or $topic == 'fields') {
 			if ($topic == 'content') {
-				$comment_help = __('view the comments list.');
+				/*$comment_help = __('view the comments list.');
 				$feed_help = __('view the feed list. delete here what you do not want in the feed (latest entries) list.');
 				echo($indent.'		<div class="sys_msg_admin">'."\n");
 				echo($indent.'			<a onmouseover="popup(\''.$comment_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="?_sys_comments">'.__('comments').'</a>&nbsp;|&nbsp;'."\n");
 				echo($indent.'			<a onmouseover="popup(\''.$feed_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()"  href="?_sys_feed">'.__('feeds').'</a>'."\n");
-				echo($indent.'		</div>'."\n");
+				echo($indent.'		</div>'."\n");*/
 				echo($indent.'		'.__('page:').'<select name="page" onchange="document.choiceForm.submit();">'."\n");
 				$page_selector = $params["page"];
 			}else if ($topic == 'fields') {
@@ -543,9 +543,11 @@
 			writeSearchForm(false, $nind);
 			//build Query
 			//this helps getQuery know what we want
-			if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"].'_all';
-			$params["nr"] = "";	//we want no special entry, but all
-			
+			//if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"].'_all';
+			//$params["nr"] = "";	//we want no special entry, but all
+            if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"];
+            //echo($params["cmd"]);
+			//$params['page'] = $params['group'];
 			$queries = getQuery(false);
             
 			// send show quer(y|ies) to DBMS now
@@ -570,7 +572,10 @@
 				} else {
 				
 					//you could type in a too high number - senseless
-					if ($params["nr"] > $params["max"]) { $params["nr"] = $params["max"]; echo('<div class="sys_msg_admin">'.__('the chosen number was too high - showing newest').'</div>');};
+					if ($params["nr"] > $params["max"]) { 
+                        $params["nr"] = $params["max"]; 
+                        //echo('<div class="sys_msg_admin">'.__('the chosen number was too high - showing newest').'</div>');
+                    }
 					//-------------------------- end  ---------------------------------
 					
 					
