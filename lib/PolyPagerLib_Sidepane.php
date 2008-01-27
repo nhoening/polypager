@@ -44,10 +44,12 @@ function cmpDate($a, $b) {
 	named "theID", "theDate", "theText" and "thePage" 
 	params: count - the number of entries you want,
 			comments - set to true if you want to get comments
-            restricted - set to true if access-restricted entries should be included
-                            (authentication is not handled here!)
+            restricted - 1 if all access-restricted entries should be included
+                            (look out: authentication is not handled here!)
+                         2 if page-wise restricted entries should be excluded
+                         3 if no access-restricted entries should be included
 */
-function getFeed($amount, $comments = false, $restricted = false) {
+function getFeed($amount, $comments = false, $restricted = 3) {
 	// get requested page descriptions
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
 	$p = utf8_explode(',',$p);
@@ -59,7 +61,7 @@ function getFeed($amount, $comments = false, $restricted = false) {
     
     $sys = getSysInfo();
     // when all access is restricted and we don't want to see restricted, show nothing
-    if ($sys['whole_site_admin_access'] and !$restricted){
+    if ($sys['whole_site_admin_access'] and $restricted == 3){
         $query = "SELECT * FROM _sys_sys WHERE 1=2";
     } else {
     
@@ -99,7 +101,7 @@ function getFeed($amount, $comments = false, $restricted = false) {
 	//enrich with text from the tables themselves
     while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
         $the_page = getPageInfo($row['thePage']);
-        if ($the_page["name"] != "" && !($the_page['only_admin_access'] == '1' and !$restricted)) {
+        if ($the_page["name"] != "" && !($the_page['only_admin_access'] == '1' and $restricted > 1)) {
             $entity = getEntity($row['thePage']);
             if (!$comments) {   // get text from original page for feeds
                 $field = guessTextField($entity);
@@ -135,7 +137,7 @@ function writeFeedDiv($ind=5) {
     global $path_to_root_dir;
 	$feed_amount = $sys_info["feed_amount"];
 	if ($feed_amount > 0) {
-		$res = getFeed($feed_amount);
+		$res = getFeed($feed_amount, false, 2);
 		if ($sys_info['hide_public_popups']==0) $text = ' onmouseover="popup(\''.__('Below you see a list of the latest entries on this website. This link explains how you can subscribe to them via an RSS-Feed.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
 		else $text = '';
 		echo($indent.'<div id="feeds"><div class="description"><a'.$text.' href="./'.$path_to_root_dir.'/rss.php?explain=1">'.__('the latest entries:').'</a></div>'."\n");
