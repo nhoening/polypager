@@ -366,19 +366,21 @@ function getTranslation_de($text) {
 /* rss.php */
 'Comments on ' => 'Kommentare auf ',
 'A feed is the web way of a newspaper subscribtion. It is a special webpage that delivers articles in a special format. ' 
-    => 'Ein Feed ist der Web-Weg eines Zeitungs-Abonnements. Es ist eine spezielle Webseite, die Eintr&auml:ge in einem speziellen Format ausliefert. ',
+    => 'Ein Feed ist der Web-Weg eines Zeitungs-Abonnements. Es ist eine spezielle Webseite, die Eintr&auml;ge in einem speziellen Format ausliefert. ',
 'If you tell a Feed Reader program where to find that script, it will keep you up to date with all your favourite websites without you having to visit them to check for new entries! ' 
-    => 'Wenn Sie die Adresse dieser Seite einem Feed Reader Programm mitteilen, wird es Sie &uuml;ber all Ihre Lieblingswebseiten auf dem Laufenden halten, ohne dass Sie selbst nach neuen Eintr&auml;genb suchen m&uuml;ssen!',
+    => 'Wenn Sie die Adresse dieser Seite einem Feed Reader Programm mitteilen, wird es Sie &uuml;ber all Ihre Lieblingswebseiten auf dem Laufenden halten, ohne dass Sie selbst nach neuen Eintr&auml;gen suchen m&uuml;ssen!',
 'This page explains how you can define what that feed should deliver:' 
     => 'Diese Seite beschreibt wie Sie definieren k&ouml;nnen, was der Feed liefern sollte:',
 'The standard address of this feed is ' => 'Die Standard-Adresse dieses Feeds ist ',
+'Important: Entries that are not listed in this feed may be invisible due to access restrictions (see below).'
+    => 'Wichtig: Eintr&auml;ge, die hier nicht zu sehen sind, k&ouml;nnten aus Zugangsberechtigungsgr&uuml;nden unsichtbar sein (siehe unten).',
 'To see the comments, use ' => 'Um die Kommentare zu sehen, verwenden Sie ',
 'You can request to receive only updates from specific pages by passing the feed a list of pagenames. For instance, assuming this website had two pages called "page1" and "page2", you could use this address: ' 
-    => 'Sie k&ouml;nnen nur Updates von spzifischen Seiten dieser Website anfordern, indem Sie dem Skript eine Liste mit Seitennamen &uuml;bergeben. Zum Beispiel, angenommen diese Website h&auml;tte zwei Seiten namens page1 und page2, dann k&ouml;nnten Sie diese Adresse angeben: ',
+    => 'Sie k&ouml;nnen nur Updates von spezifischen Seiten dieser Website anfordern, indem Sie dem Skript eine Liste mit Seitennamen &uuml;bergeben. Zum Beispiel, angenommen diese Website h&auml;tte zwei Seiten namens page1 und page2, dann k&ouml;nnten Sie diese Adresse angeben: ',
 'Some pages can only be seen by people with password-protected access to this site. You can request to include such items in your feed, but then you will have to authenticate yourself. Some feed readers do not allow to do this and if you fail to authenticate, you will not see any items. If you want to authenticate, point your feed reader to ' 
-    => 'Manche Seiten k&ouml;nnen nur von Leuten gesehen werden, die einen Passwort-Zugang besitzen. Sie k&ouml;nnen solche Eintr&auml;lge anfordern, aber dann werden Sie sich im Feed Reader authentifizieren m&uuml;ssen. Manche Feed Reader erm&ouml;glichen dies nocht nicht. Wenn Sie sich nicht authentifizieren k&uoml;nnen, werden Sie dann auch gar keine Eintr&auml;ge sehen. Um sich zu authentifizieren, verwenden Sie ',
+    => 'Manche Seiten k&ouml;nnen nur von Leuten gesehen werden, die einen Passwort-Zugang besitzen. Sie k&ouml;nnen solche Eintr&auml;ge anfordern, aber dann werden Sie sich im Feed Reader authentifizieren m&uuml;ssen. Manche Feed Reader erm&ouml;glichen dies nocht nicht. Wenn Sie sich nicht authentifizieren k&ouml;nnen, werden Sie dann auch gar keine Eintr&auml;ge sehen. Um sich zu authentifizieren, verwenden Sie ',
 'These extra arguments can also be combined. For instance, to see all comments on page1: ' 
-    => 'Dierse Extra Argumente k&ouml;nenn auch kombiniert werden. Zum Beispiel, f&uuml;r alle Kommentare auf der Seite page1: ',
+    => 'Diese Extra-Argumente k&ouml;nenn auch kombiniert werden. Zum Beispiel, f&uuml;r alle Kommentare auf der Seite page1: ',
    
 
 /* formgroups*/

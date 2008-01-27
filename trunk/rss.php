@@ -32,7 +32,6 @@ require_once('.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
 require_once('.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Sidepane.php');
 
 
-
 //get the path to this URI
 $doc_root_folders = utf8_explode("/", $_SERVER['DOCUMENT_ROOT']);
 $cwd__folders = utf8_explode("/", getcwd());
@@ -47,6 +46,7 @@ if($_GET["explain"] == '1') {
     $t1 .= __('If you tell a Feed Reader program where to find that script, it will keep you up to date with all your favourite websites without you having to visit them to check for new entries! ');
     $t1 .= __('This page explains how you can define what that feed should deliver:');
     $t2 = '<p>'.__('The standard address of this feed is ').'<a href="http://'.urldecode($base_url).'/rss.php">http://'.urldecode($base_url).'/rss.php'.'</a></p>';
+    $t2 .= '<p>'.__('Important: Entries that are not listed in this feed may be invisible due to access restrictions (see below).').'</p>';
     $t2 .= '<p>'.__('To see the comments, use ').'<a href="http://'.urldecode($base_url).'/rss.php?channel=comments">http://'.urldecode($base_url).'/rss.php?channel=comments'.'</a></p>';
     $t2 .= '<p>'.__('You can request to receive only updates from specific pages by passing the feed a list of pagenames. For instance, assuming this website had two pages called "page1" and "page2", you could use this address: ').'<a href="http://'.urldecode($base_url).'/rss.php?p=page1,page2">http://'.urldecode($base_url).'/rss.php?p=page1,page2'.'</a></p>';
     $t2 .= '<p>'.__('Some pages can only be seen by people with password-protected access to this site. You can request to include such items in your feed, but then you will have to authenticate yourself. Some feed readers do not allow to do this and if you fail to authenticate, you will not see any items. If you want to authenticate, point your feed reader to ').' <a href="http://'.urldecode($base_url).'/rss.php?restricted=1">http://'.urldecode($base_url).'/rss.php?restricted=1'.'</a></p>';
@@ -66,9 +66,9 @@ if($_GET["explain"] == '1') {
 // see if access-restricted items are wanted
 // If so, we include authentification
 // caution: some feedreaders are not capable of this!
-$show_restricted = false;
-if ($_GET["restricted"] == '1') $show_restricted = true;
-if ($show_restricted) include('.'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR.'auth.php');
+$show_restricted = 3;
+if ($_GET["restricted"] == '1') $show_restricted = 1;
+if ($show_restricted == 1) include('.'.FILE_SEPARATOR.'admin'.FILE_SEPARATOR.'auth.php');
 
 
 $sys_info = getSysInfo();
