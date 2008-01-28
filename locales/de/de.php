@@ -381,7 +381,7 @@ function getTranslation_de($text) {
     => 'Manche Seiten k&ouml;nnen nur von Leuten gesehen werden, die einen Passwort-Zugang besitzen. Sie k&ouml;nnen solche Eintr&auml;ge anfordern, aber dann werden Sie sich im Feed Reader authentifizieren m&uuml;ssen. Manche Feed Reader erm&ouml;glichen dies nocht nicht. Wenn Sie sich nicht authentifizieren k&ouml;nnen, werden Sie dann auch gar keine Eintr&auml;ge sehen. Um sich zu authentifizieren, verwenden Sie ',
 'These extra arguments can also be combined. For instance, to see all comments on page1: ' 
     => 'Diese Extra-Argumente k&ouml;nenn auch kombiniert werden. Zum Beispiel, f&uuml;r alle Kommentare auf der Seite page1: ',
-   
+'How To Feed This Site' => 'Zugang Zu Feeds Auf Dieser Website',
 
 /* formgroups*/
 'admin' => 'Admin',

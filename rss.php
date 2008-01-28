@@ -54,7 +54,7 @@ if($_GET["explain"] == '1') {
     require_once('lib'.FILE_SEPARATOR.'PolyPagerLib_BasicInclude.php'); 
     function writeData(){
         global $t1, $t2;
-        echo('<h1 class="entry_title">'.__('How To Feed This Site').'</h1>'."\n");
+        echo('<div class="entry_title">'.__('How To Feed This Site').'</div>'."\n");
         echo('<p>'.$t1.'</p>'."\n");
         echo($t2."\n");
     }
