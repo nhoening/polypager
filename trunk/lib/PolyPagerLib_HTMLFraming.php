@@ -47,7 +47,7 @@
 		echo($indent.'<head>'."\n");
 		echo($indent.'	<title>');  if ($title != '') echo($title.' - '); echo($sys_info["title"].'</title>'."\n");
 		echo($indent.'	<meta http-equiv="Content-type" content="text/html; charset='.$sys_info['encoding'].'"/>'."\n");
-		echo($indent.'	<meta name="description" content="'.$sys_info["title"].'"/>'."\n");
+		echo($indent.'	<meta name="description" content="'.str_replace("\"", "'", $sys_info["title"]).'"/>'."\n");
 		echo($indent.'	<meta name="DC.creator" content="'.$sys_info["author"].'"/>'."\n");
 		echo($indent.'	<meta name="DC.generator" content="PolyPager Version '.$version.'"/>'."\n");
 		echo($indent.'	<meta name="keywords" content="'.$sys_info["keywords"].'"/>'."\n");
@@ -98,8 +98,8 @@
         }
 
 		if ($sys_info["feed_amount"] > 0) {
-			echo($indent.'	<link rel="alternate" type="application/rss+xml" title="'.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
-            echo($indent.'	<link rel="alternate" type="application/rss+xml" title="Comments on '.$sys_info["title"].' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
+			echo($indent.'	<link rel="alternate" type="application/rss+xml" title="'.str_replace("\"", "'", $sys_info["title"]).' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
+            echo($indent.'	<link rel="alternate" type="application/rss+xml" title="Comments on '.str_replace("\"", "'", $sys_info["title"]).' as RSS-Feed" href="'.$path_to_root_dir.'/rss.php"></link>'."\n");
 		}
 		echo('	</head>'."\n");
 	}

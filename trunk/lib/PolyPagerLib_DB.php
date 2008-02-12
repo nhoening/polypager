@@ -228,7 +228,7 @@ function getPKType($table){
     "not_brief" - if 1, and several entries are shown, then this field will not be shown
                 because it's too long (there will be a link to the whole entry)
 */
-function addFields($entity,$name, $not_for_field_list = "") {
+function addFields($entity, $name, $not_for_field_list = "") {
 		$fields = array();
 		$page_info = getPageInfo($entity['pagename']);
 		global $db;
