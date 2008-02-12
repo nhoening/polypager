@@ -383,11 +383,8 @@ td.label{
 .list_entry{
 	margin-top:20px;
 }
-
 .adop{
-	float: left;
-	width: 80px;
-	margin-top:10px;
+    margin-top:5px;
 }
 
 #data_admin .entry_title{

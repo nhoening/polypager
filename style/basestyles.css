@@ -25,9 +25,21 @@ a.help{
 	background: transparent url(pics/no.gif) top right no-repeat;
 }
 
-.list_pic a img{
+/* */
+.list_entry{
+	margin-top:20px;
+    line-height:23px !important;
+	min-height:23px !important;
+	width: 470px;
+}
+.adop{
+	float: left;
+	width: 100px;
+}
+.adop a img{
 	border: 0;
 }
+
 
 .comment_prefix {padding: 5px;}
 

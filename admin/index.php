@@ -34,6 +34,8 @@ require_once("PolyPagerLib_AdminIndex.php");
 require_once("PolyPagerLib_Utils.php");
 require_once("PolyPagerLib_Showing.php");
 require_once("PolyPagerLib_Sidepane.php");
+require_once("PolyPagerLib_Editing.php");
+
 
 $sys_info = getSysInfo();
 header( 'Content-Type: text/html; charset='.$sys_info['encoding'].'' );
@@ -48,53 +50,54 @@ $link = getDBLink();
 $params = getShowParameters();
 $params["step"] = "all";	//we're showing list views, so show all
 
+
 if ($params["page"] == "" or isAKnownPage($params["page"])){
 	/* --------------- evaluate actions, print message ------------ */
-	//installation of database
+    
+    // multiple copmmands
+    execBatchCmds();
+    
+	// installation of database
 	if ($_POST["cmd"] == "create" or $_GET["cmd"] == "create") {
 		$error = create_sys_Tables($link);
-		$sys_msg_text = __('attempted to create sys tables... ');
-		if ($error != "") $sys_msg_text .= __('The dbms reported the following error: ').$error;
-		else $sys_msg_text .= __('The dbms reported no errors.');
-		$sys_msg_text .= "<br/>\n";
-		
+		$sys_msg = __('attempted to create sys tables... ');
+		if ($error != "") $sys_msg .= __('The dbms reported the following error: ').$error;
+		else $sys_msg .= __('The dbms reported no errors.');
+		$sys_msg .= "<br/>\n";
+		$sys_msg_text[] = $sys_msg;
 	}
 	
-	//template creation
+	// template creation
 	if ($_GET["template_name"] != "") {
 		$error = executeTemplate($_GET["template_name"], $_GET["page_name"]);
-		$sys_msg_text .= __('attempted to create a page by template... ');
-		if ($error != "") $sys_msg_text .= __('The dbms reported the following error: ').$error;
-		else $sys_msg_text .= __('The dbms reported no errors.');
-		$sys_msg_text .= "<br/>\n";
+		$sys_msg .= __('attempted to create a page by template... ');
+		if ($error != "") $sys_msg .= __('The dbms reported the following error: ').$error;
+		else $sys_msg .= __('The dbms reported no errors.');
+		$sys_msg .= "<br/>\n";
+        $sys_msg_text[] = $sys_msg;
 	}
 
 }else{
 	$title = __('unknown page').': '.$params["page"];
-	$sys_msg_text .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
+	$sys_msg_text[] = __('There is no known page specified.');
 }
 $title = "Admin Area";
 
+
+$sys_info = getSysInfo();
+if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
+    $sys_msg_text[] = __('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!');
+}
+    
 
 /* the function that writes out the data */
 function writeData($ind=5) {
 	$indent = translateIndent($ind);
 	global $params;
-	global $sys_msg_text;
-	global $error_msg_text;
     
 	echo($indent.'<h1>Admin Area</h1>'."\n");
-	
-	//sys msg? write it 
-	if ($sys_msg_text != "") {
-		echo($indent.'<div class="sys_msg_admin">'.$sys_msg_text.'</div>'."\n");
-	}
-	
-    //error? write it and return
-	if ($error_msg_text != "") {
-		echo($error_msg_text);
-		return;
-	}
+        
+    if (clearMsgStack()) return;
     
 	if ($params["page"] == "" or isAKnownPage($params["page"])){
 		showAdminOptions();
@@ -109,6 +112,7 @@ function writeData($ind=5) {
 		
 		admin_list($ind);
 	}
+    if (clearMsgStack()) return;
 }
 
 useTemplate($path_to_root_dir);

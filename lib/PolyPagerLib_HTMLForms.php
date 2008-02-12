@@ -512,7 +512,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
     
 	echo($indent.'				<br/><input type="hidden" id="cmd" name="cmd" value="'.$next_command.'"/>'."\n");
 	echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="return checkValues(\''.$params['page'].'\');">'.__('Save').'</button>'."\n");
-	if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete();">'.__('Delete').'</button>'."\n");
+	if($params["cmd"] != "new" and $entity["one_entry_only"] != "1") echo($indent.'				<button tabindex="'.++$index.'" type="submit" onclick="get(\'cmd\').value=\'delete\';return checkDelete(false);">'.__('Delete').'</button>'."\n");
 	echo($indent.'			    </td>'."\n");
 	echo($indent.'		    </tr>'."\n");
 	echo($indent.'    </table>'."\n");

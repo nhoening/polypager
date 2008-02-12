@@ -77,7 +77,7 @@ function getTranslation_de($text) {
 'hide templates' => 'verstecke Schablonen',
 'show templates' => 'zeige Schablonen',
 
-/* admin/list.php */
+/* PolyPagerLib_Adminindex.php */
 'Admininstration view of page' => 'Administrationsansicht der Seite',
 'get list' => 'zeige Liste',
 'There is no entry in the database for this page...' => 'In der Datenbank gibt es keinen Eintrag f&uuml;r diese Seite',
@@ -100,6 +100,8 @@ function getTranslation_de($text) {
 'a simple guestbook' => 'ein einfaches G&auml;stebuch',
 'an FAQ (Frequently asked questions)' => 'ein FAQ (Frequently asked questions)',
 'a Weblog (often called Blog)' => 'ein Webtagebuch (oft Blog genannt)',
+'The commands have been successfully executed.' =>
+    'Die Kommandos wurden erfolgreich ausgef&uuml;hrt.',
 
 /*	admin/edit.php */
 'There is no page specified.'	=> 'Es wurde keine Seite angegeben.',
@@ -233,8 +235,8 @@ function getTranslation_de($text) {
 'please specify any text here.' => 'Bitte geben Sie hier irgendeinen Text ein.',
 'there is no table specified for this page yet' 
 => 'f&uuml;r diese Seite ist noch keine Tabelle angegeben',
-'Warning: The selected skin couldn\'t be found.'
-=>'Achtung: Die angegebene Skin konnte nicht gefunden werden.',
+'Warning: No template could be found for the selected skin.'
+=>'Achtung: F&uuml;r die angegebene Skin konnte kein template - file gefunden werden.',
 'there is no table in the database yet'
 => 'es gibt noch keine (nicht-System-)Tabellen in der Datenbank.',
 'the name of the page.' => 'der Name der Seite',
@@ -353,7 +355,8 @@ function getTranslation_de($text) {
 'In detail: the content' => 'Im Detail heisst das: Der Inhalt',
 'of the field' => 'des Felds',
 'does not match the Regular Expression' => 'passt nicht zum vorgegebenen regulaeren Ausdruck',
-'Are you sure you want to delete this entry?' => 'Sind Sie sicher, dass Sie diesen Eintrag loeschen wollen?',
+'Are you sure you want to delete this entry?' => 'Sind Sie sicher, dass Sie diesen Eintrag l&ouml;schen wollen?',
+'Are you sure you want to delete the selected entries?' => 'Sind Sie sicher, dass Sie die ausgew&auml;ten Eintr&aauml;ge l&ouml;schen wollen?',
 'The following of the data you entered do not meet the given specifications:' 
 	=> 'Folgende Eintraege sollten Sie vor dem Speichern noch korrigieren:',
 'a change this field is important for other fields in this form. I therefore would like to reload this page. OK?'

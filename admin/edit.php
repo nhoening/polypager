@@ -76,9 +76,9 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			
 			if ($fehler_nr != 0) {
 				$i_manipulated = false;
-				$sys_msg_admin_text .= '				<div class="sys_msg_admin">'.__('A database-error ocurred...').' '.$mysqlerror.'</div>'."\n";
+				$sys_msg_text[] = __('A database-error ocurred...').' '.$mysqlerror;
 			} else {
-				$sys_msg_admin_text = '<div class="sys_msg_admin">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>'."\n";
+				$sys_msg_text[] = sprintf(__('The %s-command was successful'), $params["cmd"]);
 				
 				ensureConsistency($params);
 				
@@ -101,7 +101,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				handleFeed($params);
                 
 			}
-            // reset lazy data - so all we show is fresh
+            // reset lazy data after possible database operations - so all we show is fresh
 			resetLazyData();
 		} else {
 			$queries = getEditQuery($params["cmd"], "");
@@ -110,7 +110,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 	// ---------------------------------------
 }else{
 	$title = __('unknown page').': '.$params["page"];
-	$error_msg_text = '<div class="sys_msg_admin">'.__('There is no known page specified.').'</div>'."\n";
+	$error_msg_text[] = __('There is no known page specified.');
 }
 
 if ($params["nr"] == "") $params["nr"] = $newID;
@@ -125,21 +125,10 @@ function writeData($ind=4) {
 	global $debug;
 	global $query;
 	global $i_manipulated;
-	global $sys_msg_admin_text;
-	global $error_msg_text;	//hopefully empty :-)
 	
     echo($indent.'<h1>Admin Area</h1>'."\n");
     
-    //sys msg? write it 
-	if ($sys_msg_admin_text != "") {
-		echo($indent.$sys_msg_admin_text);
-	}
-    
-    //error? write it and return
-	if ($error_msg_text != "") {
-		echo($error_msg_text);
-		return;
-	}
+    if (clearMsgStack()) return;
     
     showAdminOptions($indent.'	');
     
@@ -231,7 +220,7 @@ function writeData($ind=4) {
 				if($debug) { echo($indent.'<div class="debug">Query is: '.$query.'</div>'); }
 			if ($fehler_nr != 0) {
 				$fehler_text = mysql_error(getDBLink());
-				echo($indent.'<div class="sys_msg_admin">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n");
+				$sys_msg_text[] = '<div class="sys_msg_admin">'.__('DB-Error:').' '.$fehler_text;
 			}
 
 			while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
@@ -239,7 +228,7 @@ function writeData($ind=4) {
 				if($page_info['tablename']=='_sys_multipages'){
 					$table_entity = getEntity($row['tablename']);
 					if ($table_entity['pk_multiple'])
-						echo('<div class="sys_msg_admin">'.__('This table uses a primary key combined from multiple fields. This is not supported by PolyPager!').'</div>');
+						$sys_msg_text[] = __('This table uses a primary key combined from multiple fields. This is not supported by PolyPager!');
 				}
 				// now write all entries we have 
 				writeHTMLForm($row, "edit.php", true, true, $nind,"edit_form");
@@ -265,6 +254,7 @@ function writeData($ind=4) {
 			}
 		}
 	}
+    if (clearMsgStack()) return;
 }
 
 useTemplate($path_to_root_dir);

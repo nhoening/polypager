@@ -1,7 +1,7 @@
 <?
 /*
 	PolyPager - a lean, mean web publishing system
-	Copyright (C) 2006 Nicolas H�ning
+	Copyright (C) 2006 Nicolas Hoening
 	polypager.nicolashoening.de
 	
 	This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,10 @@ $version = '1.0rc5';
  */
 $run_as_demo = false;
 
+// these vars are used to stack messages (don't forget declare them global when using them)
+$sys_msg_text = array();
+$error_msg_text = array();
+
 /* ATTENTION: 	some of the functions here (the getters mostly)
 				use lazy instantiation:
 				never use those vars directly, although you could
@@ -55,9 +59,34 @@ require_once("plugins"  . FILE_SEPARATOR .  "utf8.php");
 $sys = getSysInfo();
 $lang = $sys["lang"];
 
+/* writes all messages on the stacks and clears them.
+   returns true if there have been error messages, false
+   otherwise (you might wish to quit processing)
+*/
+function clearMsgStack(){
+	global $sys_msg_text;
+	global $error_msg_text;
+    $had_errors = false;
+    
+    //sys msg? write them 
+	if (count($sys_msg_text) > 0) {
+		foreach ($sys_msg_text as $s)
+            echo($indent.'<div class="sys_msg">'.$s."</div>\n");
+        $sys_msg_text = array();
+	}
+    
+    //error? write them and return
+	if (count($error_msg_text) > 0) {
+        $had_errors = true;
+		foreach ($error_msg_text as $s)
+            echo($indent.'<div class="sys_msg">'.$s."</div>\n");
+        $error_msg_text = array();
+	}
+    return $had_errors;
+}
  
 /*
- * my own scandir() (PHP 4 doesn't have it) reads directory without "." or ".."
+ * my own scandir() (PHP 4 doesn't have it at all) - reads directory without "." or ".."
  * NOTE: it also doesn't show hidden files (starting with '.')!
  * @param sort lets you revert-sort the results when it's set to 1 (else: 0)
  * @param only_pics set it to true if you only want pics returned
@@ -212,7 +241,7 @@ function useTemplate($path_to_root_dir){
 		global $area;
 		if ($area == '_admin') $link_href = './?&cmd=create';
 		if ($area == '_gallery') $link_href = '../../admin/?&cmd=create';
-		$error_msg_text .= '<div id="no_tables_warning" class="sys_msg">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></div>'."\n";
+		$error_msg_text[] = '<span id="no_tables_warning">'.$link_text.'<a href="'.$link_href.'">click here to create the tables.</a></span>';
 	}
 	if (utf8_strpos($sys_info['skin'], 'picswap')>-1) $skin = 'picswap';
 	else $skin = $sys_info['skin'];
@@ -221,11 +250,11 @@ function useTemplate($path_to_root_dir){
 	if (file_exists($template_filepath)){
 		@include($template_filepath);
 	}else if (file_exists($template_dirpath)){
-		//if($area == '_admin') $sys_msg_text .= '<div class="sys_msg">The template.php file in the '.$skin.'-directory couldn\'t be found.</div>'."\n";
+		//if($area == '_admin') $sys_msg_text[] = 'The template.php file in the '.$skin.'-directory couldn\'t be found';
 		// we fall silently back to the template file
         @include($template_dirpath."/template.php.template");
 	}else {
-		$sys_msg_text .= '<div class="sys_msg">'.__('Warning: The selected skin couldn\'t be found.').'</div>'."\n";
+		$sys_msg_text[] = __('Warning: No template could be found for the selected skin.');
 		@include($path_to_root_dir."/style/skins/polly/template.php.template");
 	}
 }

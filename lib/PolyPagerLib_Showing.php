@@ -135,7 +135,7 @@ require_once("PolyPagerLib_HTMLForms.php");
         $sys_info = getSysInfo();
         if (count(getPageNames()) == 0 and !$sys_info['no_tables'] and !includedByAdminScript($path_to_root_dir)){
             global $error_msg_text;
-            $error_msg_text.= $indent.'<div class="sys_msg">'.__('There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.').'</div>'."\n";
+            $error_msg_text[] = __('There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.');
         }else{
             $params["page"] = urldecode($_POST["page"]);
             if ($params["page"] == "") {
@@ -153,7 +153,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $params["page"] = $sys_info["start_page"];
                 if ($params["page"] == "" and !$sys_info['no_tables'] and !includedByAdminScript($path_to_root_dir)) {
                     global $error_msg_text;
-                    $error_msg_text.= $indent.'<div class="sys_msg">'.__('There is no start page set. If you are the admin of this site, you can set it at <a href="admin/edit.php?_sys_sys">the system properties</a>.').'</div>'."\n";
+                    $error_msg_text[] = __('There is no start page set. If you are the admin of this site, you can set it at <a href="admin/edit.php?_sys_sys">the system properties</a>.');
                 }
             }
 		}
@@ -316,7 +316,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		if($params['page']=="_search") {
 			if ($params['search']['kw']==""){
                 global $sys_msg_text;
-				$sys_msg_text .= '<div class="sys_msg">'.__('please provide a keyword for your search.').'</div>';
+				$sys_msg_text[] = __('please provide a keyword for your search.');
 				return array();
 			}	
 			// search on every page
@@ -331,14 +331,14 @@ require_once("PolyPagerLib_HTMLForms.php");
 			if ($entity['pk'] == "") {
                 if ($entity != "" and $entity['tablename'] != '') {
                     global $sys_msg_text;
-                    $sys_msg_text .= '<div class="sys_msg">'.$entity['tablename'].':'.__('This table has no primary key!').'</div>';
+                    $sys_msg_text[] = $entity['tablename'].':'.__('This table has no primary key!');
                 }
 				continue;
 			}
 			// ---------- first the easy cases: 
 			
-			// all comments - not needed?
-			if (utf8_strpos($params["cmd"], "_sys_comments_all") > 0) {
+			// all comments 
+			if ($params['page'] == '_sys_comments' & $params["group"] == "_all_") {
 				$entity = getEntity("_sys_comments");
 				$theQuery = "SELECT * FROM _sys_comments
 							WHERE is_spam = 0
@@ -349,13 +349,13 @@ require_once("PolyPagerLib_HTMLForms.php");
 			else if (utf8_strpos($params["cmd"], "_sys_comments") > 0) {
 				$entity = getEntity("_sys_comments");
                 $pg = $_GET['group'];
-                if ($pg == '') $pg = $params['page'];
+                if ($pg == '' or !isAKnownPage($pg)) $pg = $params['page'];
 				$theQuery = "SELECT * FROM _sys_comments
-							WHERE pagename = '".$pg.
-							"' AND pageid = ".$params["nr"]."
-							AND is_spam = 0
-							ORDER BY insert_date ASC";
+							WHERE pagename = '".$pg."'";
+				if ($params['nr'] != "") $theQuery .= " AND pageid = ".$params["nr"];
+				$theQuery .= " AND is_spam = 0 ORDER BY insert_date ASC";
 			}
+            
 			
 			// feeds
 			else if (utf8_strpos($params["cmd"], "_sys_feed") > 0) {
@@ -786,10 +786,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$indent = translateIndent($ind);
 		global $params;
 		global $debug;
-		
+		global $error_msg_text;
+        
 		if (!$as_toc) writeSearchInfo();
-		
-
+	
 		foreach (array_keys($results) as $respage){
 			$res = $results[$respage];
 			$entity = getEntity($respage);
@@ -886,6 +886,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$group_field_save = $row[$entity["group"]["field"]];
 				}
                 
+                if($listview and mysql_num_rows($res) > 1 ) echo('<form action="." method="post">'."\n");
+                
                 if ($before_first_entry == true) $before_first_entry = false; //indicates we indeed had data
                         
 				//this is what we want to do basically...
@@ -909,6 +911,13 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 			}
 			
+            if($listview and mysql_num_rows($res) > 1) {
+                echo('<input name="page" type="hidden" value="'.$params['page'].'"/>'."\n");
+                echo('<input name="topic" type="hidden" value="content"/>'."\n");
+                echo('with selected: <input name="cmd" type="submit" value="delete" onclick="return checkDelete(true);"/>'."\n");
+                echo('</form>'."\n");
+            }
+            
 			//even more grouping stuff...
 			if ($entity["group"] != "" or $as_toc) {	//write end of last group div
 				echo($indent.'</'.$html_type.'>'."\n");
@@ -1052,7 +1061,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 						
 						
 						if($f["name"] == $entity["title_field"] and $list_view) {	//show some symbols for quick glance
-							echo($indent.'	<div class="adop">');
+							echo($indent.'	<div class="adop">'."\n");
 							//option _sys_pages can be two things.
 							if ($pagename == "_sys_pages") {
 								if (isSinglepage($unescaped_content)) $page = "_sys_singlepages"; 
@@ -1061,7 +1070,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 							} else {
 								$page = $pagename;
 							}
-							//make it no longer than 14 words
+                            $q = getEditQuery('delete', $row[$entity['pk']]);
+                            echo($indent.'		<input type="checkbox" name="batch_'.$page.'_'.$row[$entity['pk']].'" value="'.urlencode($q[0]).'"  />'."\n");
+                            
+							//make title no longer than 14 words
 							$content = trim(getFirstWords($content, 14));
 							//for entries on pages we can say if they are public
 							if (!utf8_strpos($params["page"], 'pages') and $params["page"] !='_sys_fields') {
@@ -1071,23 +1083,23 @@ require_once("PolyPagerLib_HTMLForms.php");
 									$linkText = __('This entry is not viewable to the public');
 									$pic = "ceye.gif";
 								}
-								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()"><img src="../style/pics/'.$pic.'"/></a></span>'."\n");
+								echo($indent.'		<a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()"><img src="../style/pics/'.$pic.'"/></a>'."\n");
 								
 							// a link to fields
 							}
 							if ($pagename == "_sys_pages") {
 								$linkText = __('make extra statements about fields of this page (a label, a list of possible values etc.)');
 								$the_href = '?_sys_fields&amp;group='.$content.'&amp;from=list&amp;topic=fields';
-								echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a></span>'."\n");
+								echo($indent.'		<a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a>'."\n");
 							}
 							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
-							echo($indent.'		<span class="list_pic"><a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a></span>'."\n");
+							echo($indent.'		<a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a>'."\n");
 							$the_href = 'edit.php?'.urlencode($page).'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
 							//check if we should give the old name for consistency reasons
 							$consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
 							if (in_array($f["name"],$consistency_fields)) $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];
-							echo($indent.'		<span class="list_pic"><a onclick="return checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete();" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a></span>'."\n");
-							echo($indent.'	</div>');
+							echo($indent.'		<a onclick="return checkDelete();" title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete(false);" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a>'."\n");
+							echo($indent.'	</div>'."\n");
 						}
 						
 						//comments have neat markup
