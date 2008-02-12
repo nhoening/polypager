@@ -267,9 +267,9 @@ function addFields($entity, $name, $not_for_field_list = "") {
 					   FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$entity["tablename"]."' AND TABLE_SCHEMA = '".$db."'";
 		}
 		//if we can't use it, do it the old way, with less information, sadly
-		if ($query=="") 
+		if ($query == "") 
 			$query = "SHOW COLUMNS FROM ".$entity["tablename"];
-		
+        
 		$res = pp_run_query($query);
 		$i = 0;
 		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
@@ -286,9 +286,9 @@ function addFields($entity, $name, $not_for_field_list = "") {
 			if (!eregi($row['Field'],$not_for_field_list) and $row['Extra']!='auto_increment') {
 				//determine length
 				$len = $row['CHARACTER_MAXIMUM_LENGTH'];
-				if ($len=="" or $len=="NULL") $len = $row['NUMERIC_PRECISION'];
+				if ($len == "" or $len == "NULL") $len = $row['NUMERIC_PRECISION'];
 				//those fields are not there when we said SHOW COLUMNS, so...
-				if ($len == "" or $len=="NULL") {
+				if ($len == "" or $len == "NULL") {
                     $hits = array();
 					eregi('[0-9]+',$row['Type'],$hits);
 					$len = $hits[0];

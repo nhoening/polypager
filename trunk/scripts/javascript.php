@@ -177,8 +177,9 @@ function openWindow(adress, title, width, height, top, left, scrollbars) {
 }
 
 //asks if deleting is really wanted
-function checkDelete(){
-	agree = confirm("<?echo(__('Are you sure you want to delete this entry?'));?>");
+function checkDelete(multiple){
+	if (multiple) agree = confirm("<?echo(__('Are you sure you want to delete the selected entries?'));?>");
+    else agree = confirm("<?echo(__('Are you sure you want to delete this entry?'));?>");
 	if (agree) {
 		return true;
 	}

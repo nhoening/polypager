@@ -3480,13 +3480,7 @@ function writeData($ind=1) {
 	$resize_msg,$post_gallery, $header, $orig_wd, $orig_err_rep_level;
     
     
-    global $error_msg_text;
-
-    //error? write it and return
-	if ($error_msg_text != "") {
-		echo($error_msg_text);
-		return;
-	}
+    clearMsgStack();
 // ----------- end PolyPager code ------------
 
 	/**

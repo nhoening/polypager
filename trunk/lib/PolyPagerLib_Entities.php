@@ -336,7 +336,7 @@ function getEntity($page_name) {
                 $group = array("field"=>"pagename",
 								   "order"=>"DESC");
 				$entity["group"] = $group;
-				//$entity["hidden_form_fields"] = "edited_date"; 
+				$entity["hidden_form_fields"] = "id"; 
 			}
 			//	table for intros
 			else if ($page_name == "_sys_intros") {
@@ -490,6 +490,7 @@ function getEntity($page_name) {
 				//might have been typed into the singlepage form - 
 				//"standard" is the standard group, not in the submenu and always visible
 				setEntityFieldValue("the_group", "valuelist", "standard,".stripCSVList($page_info["grouplist"]));
+                setEntityFieldValue("the_group", "valuelist_from_db", true); //user cannot add any via entry form
 				//if we have groups, this overwrites the anchor behavior!
 				if (trim($page_info["grouplist"]) == "") {
 					$entity["hidden_form_fields"] .=",the_group";
@@ -500,7 +501,7 @@ function getEntity($page_name) {
 					$entity["hidden_form_fields"] .=",in_submenu";
 				}
 				//help
-				setEntityFieldValue("grouplist", "help", __('the group of this entry (you will find the groups in the specifications for this page). The standard group contains entries that are always shown.'));
+				setEntityFieldValue("the_group", "help", __('the group of this entry (you will find the groups in the specifications for this page). The standard group contains entries that are always shown.'));
 			}
 			//this is needed when we actually show a multipage
 			else if (isMultipage($page_name)) {

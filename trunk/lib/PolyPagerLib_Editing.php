@@ -251,7 +251,7 @@ function getEditQuery($command, $theID) {
 	$query = "";        # we'll build in this string
 	$queries = array(); # and add it to this array we'll return
 	
-        
+
 	// resolve foreign keys that the user entered (the constraints in the db are 
 	// the dbs thing)
 	if ($command == "edit" || $command == "delete"){
@@ -367,8 +367,6 @@ function getEditQuery($command, $theID) {
 	else if ($command == "show") {		// SELECT Query
 		$query .= "SELECT * FROM ".$page_info["tablename"];
         if ($entity["pk"] != "")
-		    //if (isNumericType($entity["pk_type"])) $query .= " WHERE ".$entity["pk"]." = $theID";
-            //else $query .= " WHERE ".$entity["pk"]." = '".$theID."'";
             $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 	}
 	//---------------end show -----------------------------------------

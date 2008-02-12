@@ -47,6 +47,7 @@ if ($sys_info['whole_site_admin_access']) require_once('admin'.FILE_SEPARATOR.'a
 // ---------------------------------------
 
 $path_to_root_dir = ".";
+
 $link = getDBLink();
 $show_params = getShowParameters();
 
@@ -55,8 +56,8 @@ $area = ""; //one of '', '_admin', '_gallery' - makes your template flexible if 
 $known_page = isAKnownPage($show_params["page"]) || $show_params["page"] == "";
 
 if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($show_params["page"]))) {
-	$error_msg_text .= '<div class="sys_msg">'.__('There is no known page specified.').'</div>'."\n";
-} else if ($error_msg_text == "") {
+	$error_msg_text[] = __('There is no known page specified.');
+} else if (count($error_msg_text) == 0) {
 
     $page_info = getPageInfo($show_params["page"]);
     if ($page_info['only_admin_access']) require_once('admin'.FILE_SEPARATOR.'auth.php');
@@ -85,16 +86,16 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	
 			if ($fehler_nr != 0) {
 				$i_manipulated = false;
-				$error_msg_text .= '				<div class="sys_msg">'.__('A database-error ocurred:').' '.mysql_error($link).'</div>'."\n";
+				$error_msg_text[] = __('A database-error ocurred:').' '.mysql_error($link);
 			} else {
-				$sys_msg_text .= '<div class="sys_msg">'.sprintf(__('The %s-command was successful'), $params["cmd"]).'.</div>'."\n";
-				if ($debug) { $sys_msg_text .= '<div class="debug">I used this query: '.$query.'.</div>'."\n";}
+				$sys_msg_text[] = sprintf(__('The %s-command was successful'), $params["cmd"]);
+				if ($debug) { echo('<div class="debug">I used this query: '.$query.'.</div>'."\n");}
 				$params["cmd"]="show";
 			}
 	
 		}else{
 			$i_manipulated = false;
-			$sys_msg_text .= '<div class="sys_msg">'.$msg.'</div>';
+			$sys_msg_text[] = $msg;
 			//refill values for form
 			$show_params["values"]["name"] = $params["values"]["name"];
 			$show_params["values"]["email"] = $params["values"]["email"];
@@ -118,13 +119,13 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 		$error_nr = mysql_errno($link);
 		if ($error_nr != 0) {
 			$fehler_text = mysql_error($link);
-			$error_msg_text .= '<div class="sys_msg">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
+			$error_msg_text[] = __('DB-Error:').' '.$fehler_text;
 		}
 	}
 	
 	if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
-		$sys_msg_text .= '<div class="sys_msg">'.__('There is no entry in the database yet...').'</div>'."\n";
-		$sys_msg_text .= '<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n";
+		$sys_msg_text[] = __('There is no entry in the database yet...');
+		$sys_msg_text[] = '<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>';
 	}
 	
 	// set a title if we show one entry
@@ -151,20 +152,8 @@ function writeData($ind=5) {
     global $known_page;
 	global $i_manipulated;
 	global $params;
-	global $sys_msg_text;
-	global $error_msg_text;
 
-        
-	//sys msg? write it 
-	if ($sys_msg_text != "") {
-		echo($sys_msg_text);
-	}
-    
-    //error? write it and return
-	if ($error_msg_text != "") {
-		echo($error_msg_text);
-		return;
-	}
+    if (clearMsgStack()) return;
     
 	if ($known_page) {
 		if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
@@ -203,8 +192,10 @@ function writeData($ind=5) {
             
 			echo($indent.'</div>'."\n");  //end of class "show"
 			//--------------------- end showing data  --------------
+            
 		}
 	}
+    if (clearMsgStack()) return;
 }
 
 useTemplate($path_to_root_dir);

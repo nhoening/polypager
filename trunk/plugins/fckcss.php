@@ -9,11 +9,9 @@ require('..'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
 $sys_info = getSysInfo();
 //backdoor hack to get all picswap colorsets
 		if (utf8_strpos($sys_info['skin'],'picswap')>-1) {
-			$skin = 'picswap';
 			$css = 'picswap/'.$sys_info['skin'].'.css';
 		}else {
-			$skin = $sys_info["skin"];
-			$css = $skin.'/skin.css';
+			$css = $sys_info["skin"].'/skin.css';
 		}
 ?>
 
@@ -23,4 +21,5 @@ body {
 	color: #123;
 	background-color: #fff !important;
     background-image: none !important;
+    text-align:justified !important;
 }

@@ -213,9 +213,6 @@ body {
 
 .adop {
 	padding-left: 5px;
-	border-right: 5px solid #<?=getColor('dark'); ?>;
-	border-top: 2px solid #<?=getColor('dark'); ?>;
-	width: 60px;
 }
 
 .entry_title {

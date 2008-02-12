@@ -27,6 +27,7 @@
 	* executeTemplate($template_name, $page_name)
 	* ensureConsistency()
 	* admin_list()
+    * execBatchCmds()
 	*/
 	if ( !defined('FILE_SEPARATOR') ) {
 		define('FILE_SEPARATOR', ( utf8_substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
@@ -34,12 +35,7 @@
 	
 	/* --------------- show all options  ------------ */
 	function showAdminOptions($indent){
-		$the_url = "..";
-		
-        $sys_info = getSysInfo();
-        if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
-            echo('<div class="sys_msg_admin">'.__('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!')."</div>\n");
-        }
+        $the_url = "..";
     
 		echo($indent.'<div id="admin_options">'.__('Let\'s talk about...').'&nbsp;'."\n");
         $linkText = __('By clicking on this link, you can see (and search for) entries of the page you select. Note that this is the only place you will actually see not published entries/sections.');
@@ -456,6 +452,8 @@
 		$nind = $ind+1;
 		global $params;
 		global $debug;
+        global $error_msg_text;
+        global $sys_msg_text;
 		include_once("PolyPagerLib_Showing.php");
 		
 		$link = getDBLink();
@@ -466,20 +464,18 @@
 		//option list
 		if ($topic == 'content' or $topic == 'fields') {
 			if ($topic == 'content') {
-				/*$comment_help = __('view the comments list.');
-				$feed_help = __('view the feed list. delete here what you do not want in the feed (latest entries) list.');
-				echo($indent.'		<div class="sys_msg_admin">'."\n");
-				echo($indent.'			<a onmouseover="popup(\''.$comment_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="?_sys_comments">'.__('comments').'</a>&nbsp;|&nbsp;'."\n");
-				echo($indent.'			<a onmouseover="popup(\''.$feed_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()"  href="?_sys_feed">'.__('feeds').'</a>'."\n");
-				echo($indent.'		</div>'."\n");*/
 				echo($indent.'		'.__('page:').'<select name="page" onchange="document.choiceForm.submit();">'."\n");
 				$page_selector = $params["page"];
 			}else if ($topic == 'fields') {
 				echo($indent.'		<select name="group" onchange="document.choiceForm.submit();">'."\n");
 				$page_selector = $params["group"];
 			}
-			echo($indent.'			<option value="">--'.__('select page').'--</option>'."\n");
-			$pages =  getPageNames();
+            $pages =  getPageNames();
+			if (count($pages) > 1) {
+                echo($indent.'			<option value="">--'.__('select page').'--</option>'."\n");
+            }else{
+                $params['page'] = $pages[0]; //for the only option: pretend it was selected
+            }
 			foreach ($pages as $p) {
 				if ($page_selector == $p) $selected = "selected='selected'"; else $selected = "";
 				echo($indent.'			<option '.$selected.' value="'.urlencode($p).'">'.$p.'</option>'."\n");
@@ -487,18 +483,19 @@
 			echo($indent.'		</select>'."\n");
 		} else if ($topic == 'pages') {
 			$link_text = __('A page template creates a page for you that fulfills some well-known function which is used often on websites. So this might be useful for you. After you created the page, you can still edit its properties or delete it.');
-			echo($indent.'		<a id="templates_link"  onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleVisibility(\'template_msg\',\'templates_link\', \''.__('show templates').'\', \''.__('hide templates').'\');">'.__('show templates').'</a>&nbsp;|&nbsp;'."\n");
-			echo($indent.'		<span id="template_msg"  style="display:none;" class="sys_msg_admin">'."\n");
-			echo($indent.'		'.__('new page named').' <input type="text" name="page_name" maxlength="30"="60" size="20"/> '."\n");
-			echo($indent.'		'.__('from template:')."\n");			
-			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()"><img src="../style/pics/help.gif"/></a>'."\n");
-			echo($indent.'		<select name="template_name" >'."\n");
-			echo($indent.'			<option value="guestbook">'.__('a simple guestbook').'</option>'."\n");
-			echo($indent.'			<option value="faq">'.__('an FAQ (Frequently asked questions)').'</option>'."\n");
-			echo($indent.'			<option value="blog">'.__('a Weblog (often called Blog)').'</option>'."\n");
-			echo($indent.'		</select>'."\n");
-			echo($indent.'		<input type="submit" name="dummy" value="'.__('Go!').'"/><input type="hidden" name="page" value="_sys_pages"/>'."\n");
-			echo($indent.'		</span>'."\n");
+			$opt_text = $indent.'		<a id="templates_link"  onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="javascript:toggleVisibility(\'template_msg\',\'templates_link\', \''.__('show templates').'\', \''.__('hide templates').'\');">'.__('show templates').'</a>&nbsp;|&nbsp;'."\n";
+			$opt_text .= $indent.'		<span id="template_msg" style="display:none;" class="sys_msg_admin">'."\n";
+			$opt_text .= $indent.'		'.__('new page named').' <input type="text" name="page_name" maxlength="30"="60" size="20"/> '."\n";
+			$opt_text .= $indent.'		'.__('from template:')."\n";
+			$opt_text .= $indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()"><img src="../style/pics/help.gif"/></a>'."\n";
+			$opt_text .= $indent.'		<select name="template_name">'."\n";
+			$opt_text .= $indent.'			<option value="guestbook">'.__('a simple guestbook').'</option>'."\n";
+			$opt_text .= $indent.'			<option value="faq">'.__('an FAQ (Frequently asked questions)').'</option>'."\n";
+			$opt_text .= $indent.'			<option value="blog">'.__('a Weblog (often called Blog)').'</option>'."\n";
+			$opt_text .= $indent.'		</select>'."\n";
+			$opt_text .= $indent.'		<input type="submit" name="dummy" value="'.__('Go!').'"/><input type="hidden" name="page" value="_sys_pages"/>'."\n";
+			$opt_text .= $indent.'		</span>'."\n";
+            echo($opt_text);
 		}
 		if ($topic == 'fields') {
 			echo($indent.'		<input type="hidden" name="page" value="_sys_fields"/>'."\n");
@@ -558,7 +555,7 @@
 				$error_nr = mysql_errno($link);
 				if ($error_nr != 0) {
 					$fehler_text = mysql_error($link);
-					$error_msg_text .= '<div class="sys_msg_admin">'.__('DB-Error:').' '.$fehler_text.'</div>'."\n";
+					$error_msg_text[] = __('DB-Error:').' '.$fehler_text;
 				}
 			}
 	
@@ -574,7 +571,6 @@
 					//you could type in a too high number - senseless
 					if ($params["nr"] > $params["max"]) { 
                         $params["nr"] = $params["max"]; 
-                        //echo('<div class="sys_msg_admin">'.__('the chosen number was too high - showing newest').'</div>');
                     }
 					//-------------------------- end  ---------------------------------
 					
@@ -589,4 +585,21 @@
 			} 					//if no db error
 		}					//if page is valid
 	}
+    
+    /* process one command for several entries at once*/
+    function execBatchCmds(){
+        global $error_msg_text, $sys_msg_text;
+        $err_list = array();
+        $did_sthg = false;
+        foreach (array_keys($_POST) as $k) {
+            if (substr($k, 0, 6) == 'batch_') {
+                $did_sthg = true;
+                if (pp_run_query(urldecode($_POST[$k])) != 1)
+                    $error_msg_text[] = __('There was a problem executing this command: ').urldecode($_POST[$k]);
+            }
+        }
+        if (count($err_lust) == 0 and $did_sthg)
+            $sys_msg_text[] = __('The commands have been successfully executed.');
+
+    }
 ?>
