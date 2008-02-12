@@ -223,6 +223,8 @@ function getEntity($page_name) {
 				setEntityFieldValue("date_field", "formgroup", 'fields with special meaning');
 				setEntityFieldValue("edited_field", "formgroup", 'fields with special meaning');
 				setEntityFieldValue("title_field", "formgroup", 'fields with special meaning');
+                setEntityFieldValue("order_order", "formgroup", 'fields with special meaning');
+				setEntityFieldValue("order_by", "formgroup", 'fields with special meaning');
 				$entity['formgroups']['search'] = array(4,'hide');
 				setEntityFieldValue("search_month", "formgroup", 'search');
 				setEntityFieldValue("search_year", "formgroup", 'search');
@@ -231,8 +233,7 @@ function getEntity($page_name) {
 				$entity['formgroups']['misc'] = array(5,'hide');
 				setEntityFieldValue("commentable", "formgroup", 'misc');
 				setEntityFieldValue("step", "formgroup", 'misc');
-				setEntityFieldValue("order_order", "formgroup", 'misc');
-				setEntityFieldValue("order_by", "formgroup", 'misc');
+				
 				
 				//help texts
 				setEntityFieldValue("name", "help", __('the name of the page.'));
