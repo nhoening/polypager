@@ -39,7 +39,7 @@ function getTranslation_de($text) {
 'The dbms reported no errors.'	=> 'Das Datenbank-System hat keinen Fehler gemeldet.',
 'The system reported no errors.'	=> 'Das System hat keinen Fehler gemeldet.',
 'By clicking on this link, you will see a file browser where you can upload files and create folders to store what you need. There are directories for different types of files (File, Image, Media, Flash).'	
-	=> 'Wenn Sie auf diesen Link klicken, werden Sie einen Datei-Browser sehen, mit dem Sie Ihre Dateien auf dem Server verwalten k&ouml;nnen (Upload, eigen Ordner usw.). Zu Ihrer groben Orientierung gibt es vier Hauptverzeichnisse f&uuml;r verschiedene Dateitypen (File, Image, Media, Flash).',
+	=> 'Wenn Sie auf diesen Link klicken, werden Sie einen Datei-Browser sehen, mit dem Sie Ihre Dateien auf dem Server verwalten k&ouml;nnen (Upload, eigene Ordner usw.). Zu Ihrer groben Orientierung gibt es vier Hauptverzeichnisse f&uuml;r verschiedene Dateitypen (File, Image, Media, Flash).',
 'open file browser'	=> 'Datei-Browser &ouml;ffnen',
 'open list window' => 'Listen-Ansicht &ouml;ffnen',
 'On this page, you can make extra statements about fields, for example a label or a list of possible values. To do this, you need to create an entry for that field first.'
@@ -72,7 +72,8 @@ function getTranslation_de($text) {
 'pages' => 'Seiten',
 'content' => 'Inhalte',
 'fields' => 'Felder',
-'Let\'s talk about...' => 'Zeig mir...',
+'By clicking on this link, you can edit system information like the title of the website, the startpage, the language etc.'
+    => 'Wenn Sie auf diesen Link klicken, k&ouml;nnen Sie Systeminformationen ver&auml;ndern wie z.B. den Titel der Website, die Startseite, die Sprache etc.',
 'you have been logged out...' => 'Sie haben Sich abgemeldet...',
 'hide templates' => 'verstecke Schablonen',
 'show templates' => 'zeige Schablonen',

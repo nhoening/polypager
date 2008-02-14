@@ -21,5 +21,5 @@ body {
 	color: #123;
 	background-color: #fff !important;
     background-image: none !important;
-    text-align:justified !important;
+    text-align:left !important;
 }
