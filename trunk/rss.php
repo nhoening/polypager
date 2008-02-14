@@ -31,14 +31,7 @@ if ( !defined('FILE_SEPARATOR') ) {
 require_once('.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Utils.php');
 require_once('.'.FILE_SEPARATOR.'lib'.FILE_SEPARATOR.'PolyPagerLib_Sidepane.php');
 
-
-//get the path to this URI
-$doc_root_folders = utf8_explode("/", $_SERVER['DOCUMENT_ROOT']);
-$cwd__folders = utf8_explode("/", getcwd());
-//the difference between those is the path from doc root to the folder where
-//all files for this URI reside
-$path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));
-$base_url = $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
+$base_url = getBaseUrl();
 
 // First thing: Explain how this works if wanted
 if($_GET["explain"] == '1') {

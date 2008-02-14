@@ -84,7 +84,8 @@ function clearMsgStack(){
 	}
     return $had_errors;
 }
- 
+
+
 /*
  * my own scandir() (PHP 4 doesn't have it at all) - reads directory without "." or ".."
  * NOTE: it also doesn't show hidden files (starting with '.')!
@@ -284,6 +285,17 @@ function getPathFromDocRoot() {
 	if (substr( $path, 0, 1) != FILE_SEPARATOR) $path = FILE_SEPARATOR.$path;
 	if (substr( $path, strlen($path)-1, strlen($path)) != FILE_SEPARATOR) $path = $path.FILE_SEPARATOR;
 	return $path;
+}
+
+
+/* gets the path to this URL */
+function getBaseUrl(){
+    $doc_root_folders = utf8_explode("/", $_SERVER['DOCUMENT_ROOT']);
+    $cwd__folders = utf8_explode("/", getcwd());
+    //the difference between those is the path from doc root to the folder where
+    //all files for this URI reside
+    $path_from_doc_root = implode("/", array_diff($cwd__folders, $doc_root_folders));
+    return $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
 }
 
 /*writes a PolyPager standard help link (which is an icon, with hover-over text) */
