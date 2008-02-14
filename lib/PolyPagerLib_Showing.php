@@ -974,7 +974,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$briefly = false;	//turns true when some fields are not shown
 		$the_url = '?'.urlencode($pagename).'&amp;nr='.$row[$entity['pk']];
         
-       
+        if ($params['page'] == '_sys_comments') {
+            echo($indent.'  <a class="target" name="comment'.$row['id'].'">&nbsp;</a>'."\n");
+        }
         
 		if ($entity["fields"] != "") {
             //we always want the title first when we show search results
@@ -1103,10 +1105,12 @@ require_once("PolyPagerLib_HTMLForms.php");
 						}
 						
 						//comments have neat markup
-						if ($params["page"]=='_sys_comments' and $f['name']!='comment'){
+						if ($params["page"] == '_sys_comments' and $f['name'] != 'comment'){
 							if ($content != ""){
 								if ($f['name']=='name') $prefix = "from";
-								else if ($f['name']=='insert_date') $prefix = "on";
+								else if ($f['name']=='insert_date'){
+                                    $prefix = "on";
+                                }
 								else if ($f['name']=='email') $prefix = "email";
 								else if ($f['name']=='www') {
                                     $prefix = "www";
@@ -1162,6 +1166,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 			}
 		}
 
+        if ($params['page'] == '_sys_comments') {
+            echo($indent.'  <a href="http://'.getBaseUrl().'?'.$params['orig_page'].'&amp;nr='.$params['nr'].'#comment'.$row['id'].'">[link]</a>'."\n");
+        }
+        
 		if (!$list_view and $something_was_not_brief == true and $params["step"] != 1) { 	//show a link to the whole entry
 			$wlink = "?".$pagename.'&amp;nr='.$row[$entity["pk"]];
 			echo($indent.'	<div class="whole_link"><a href="'.$wlink.'">&gt;&gt;'.sprintf(__('show whole entry')).'</a></div>'."\n");
@@ -1294,17 +1302,16 @@ require_once("PolyPagerLib_HTMLForms.php");
 		global $params;
 		
 		//save what page we're on
-		$page = $params["page"];
+		$params['orig_page'] = $params["page"];
 		//use comments as page while writing them
 		$params["page"] = "_sys_comments";	
 		//write the results
 		while($row = mysql_fetch_array($comments, MYSQL_ASSOC)) {
-            echo($indent.'  <a class="target" name="comment'.$row['id'].'">&nbsp;</a>'."\n");
 			writeEntry($row, '_sys_comments', false, ++$ind);
 		}
 		
 		//set param back
-		$params["page"] = $page;
+		$params["page"] = $params['orig_page'];
 	}
 	
 	/* writes a comment form
