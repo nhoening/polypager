@@ -51,6 +51,7 @@ body {
 
 #data, #data_admin, #data_gallery {
 	/*min-height: 500px;*/
+    clear:right; /* clear the menu floats*/
 	width: 790px;
 	text-align: left;
 	top: 0px;
@@ -133,7 +134,7 @@ body {
 
 /* ------------------- show - divs ------------------------- */
 div.show {
-	margin-top: 1em;
+	margin-bottom: 1em;
 	margin-left: 4px;
 	width: 510px;
 	padding: 0;

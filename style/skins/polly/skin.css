@@ -99,20 +99,18 @@ body {
 }
 
 #data, #data_admin, #data_gallery {
-	margin-top: 70px;
 	padding-top: 0px !important;
 	margin-left: 20px;
 	margin-right: 20px;
 }
 
 #data_admin{
-	margin-top: 30px;
 	border-top: 1px solid #ccc;
 	width:750px!important;
 }
 
-#sidepane, #mainpane, .show_entry, .show {
-	margin-top: 0px !important;
+#sidepane, #mainpane {
+	margin-top: 30px;
 	padding-top: 0px !important;
 }
 
@@ -149,6 +147,7 @@ body {
 {
     display: inline;
     list-style-type: none;
+    min-height: 25px;
 }
 
 
