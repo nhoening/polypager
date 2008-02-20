@@ -64,7 +64,6 @@
 		$link = getDBLink();
         $charsetter = getMySQLCharsetter();
         
-        if ($debug) echo("create_sys_Tables on api: ".$client_api[0]);
         
 		$query = "CREATE TABLE `_sys_sys` (
                       `title` varchar(255) NOT NULL default '',
@@ -106,7 +105,7 @@
                       `id` bigint(20) NOT NULL auto_increment,
                       `input_date` datetime NOT NULL,
                       `edited_date` datetime default NULL,
-                      `pagename` varchar(50) NOT NULL default '',
+                      `pagename` varchar(120) NOT NULL default '',
                       `heading` varchar(200) NOT NULL default '',
                       `bla` text NOT NULL,
                       `publish` tinyint(1) NOT NULL default '1',
