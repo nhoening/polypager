@@ -15,8 +15,6 @@ body {
 }
 
 #data, #data_admin, #data_gallery{
-    /*don't know why this is needed, but otherwise we have a gap*/
-    position:relative;top:-60px !important;
 	padding-left: 25px !important;
 }
 #data, #data_admin, #data_gallery, #impressum {
@@ -44,6 +42,10 @@ div.show_entry div.title,
 #main_menu {
 	position: absolute !important; top:25px; left:0px !important;
 	width: 799px !important;
+}
+
+#main_menu li a{
+	white-space: nowrap;
 }
 
 .sub_menu li {
