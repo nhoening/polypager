@@ -284,15 +284,15 @@ function addFields($entity, $name, $not_for_field_list = "") {
 			}
             
 			if (!eregi($row['Field'],$not_for_field_list) and $row['Extra']!='auto_increment') {
-				//determine length
-				$len = $row['CHARACTER_MAXIMUM_LENGTH'];
-				if ($len == "" or $len == "NULL") $len = $row['NUMERIC_PRECISION'];
+				//determine length - use only "Type" due to http://polypager.nicolashoening.de/?bugs&nr=318
+				//$len = $row['CHARACTER_MAXIMUM_LENGTH'];
+				//if ($len == "" or $len == "NULL") $len = $row['NUMERIC_PRECISION'];
 				//those fields are not there when we said SHOW COLUMNS, so...
-				if ($len == "" or $len == "NULL") {
+				//if ($len == "" or $len == "NULL") {
                     $hits = array();
 					eregi('[0-9]+',$row['Type'],$hits);
 					$len = $hits[0];
-				}
+				//}
 				//support sets or enums, 
 				//but we save the valuelist - PolyPager can handle those
 				if (eregi('^set\(',$row['Type']) or eregi('^enum\(',$row['Type'])){
@@ -315,7 +315,6 @@ function addFields($entity, $name, $not_for_field_list = "") {
                 //if default is CURRENT_TIMESTAMP, then rettrieve it
                 if ($type="timestamp" and $row['Default']=="CURRENT_TIMESTAMP") $field['default'] = date("Y-m-d H:i:s");
                 
-				//echo("found field with name ".$field["name"].", default : ".$field["default"].", with size ".$field["size"].", with comment ".$field["help"]." and type ".$field["data_type"]."<br/>\n");
 				//IMPORTANT: In MySQL we code a boolean as int(1) !!!
 				if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) $field["data_type"] = "bool";
 				

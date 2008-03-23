@@ -190,7 +190,7 @@
 
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_multipages` (
 					  `id` int(11) NOT NULL auto_increment,
-					  `name` varchar(60) NOT NULL default '',
+					  `name` varchar(120) NOT NULL default '',
 					  `tablename` varchar(60) NOT NULL default '',
 					  `in_menue` tinyint(1) NOT NULL default '1',
 					  `menue_index` mediumint(9) NOT NULL default '0',
