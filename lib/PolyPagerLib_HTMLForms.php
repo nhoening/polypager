@@ -91,7 +91,6 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 		}
 		
 	} else if (isDateType($type)) {
-		//yet to be implemented in a specific and editable way - up to now (04/06) all dates are handled automatically
 		//we just do the same as for strings (see above)
         //we add a calendar, though (see below)
         
