@@ -9,6 +9,8 @@
 -- 1.0
 
 ALTER TABLE `_sys_sections` CHANGE `pagename` `pagename` VARCHAR( 120 )  NOT NULL ;
+ALTER TABLE `_sys_multipages` CHANGE `name` `name` VARCHAR( 120 ) NOT NULL ;
+ALTER TABLE `_sys_singlepages` CHANGE `name` `name` VARCHAR( 120 ) NOT NULL ;
 
 -- 1.0rc5
 ALTER TABLE  `_sys_sys` ADD  `whole_site_admin_access` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `hide_public_popups` ;

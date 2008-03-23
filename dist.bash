@@ -7,11 +7,11 @@
 if [ "$1" == "" ]; then
 	echo usage: ./dist.bash {version} or bash dist.bash {version}
 else
-	# export from trunk
-	cd ../../trunk
-	rm -r ../export
-	svn export . ../export
-	cd ../export
+    # export from trunk
+    cd ../../trunk
+    rm -r ../export
+    svn export . ../export
+    cd ../export
     mkdir ../dist/$1
     
     # first extract skins
@@ -26,7 +26,7 @@ else
     
     # now archive the rest
     zip -r ../dist/$1/PolyPager_$1.zip *
-	tar -cf ../dist/$1/PolyPager_$1.tar *
-	gzip -S .gz --best ../dist/$1/PolyPager_$1.tar 
-	cd ../branches/maintenance
+    tar -cf ../dist/$1/PolyPager_$1.tar *
+    gzip -S .gz --best ../dist/$1/PolyPager_$1.tar 
+    cd ../branches/maintenance
 fi
