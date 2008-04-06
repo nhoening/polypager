@@ -287,6 +287,15 @@ function getPathFromDocRoot() {
 	return $path;
 }
 
+/**
+ * returns true when the including script is in the admin area
+ */
+function includedByAdminScript() {
+    global $path_to_root_dir;
+    if ((eregi('index\.php', $_SERVER['SCRIPT_NAME']) and $path_to_root_dir == "..")
+        or (eregi('edit\.php', $_SERVER['SCRIPT_NAME']))) return true;
+    else return false;
+}
 
 /* gets the path to this URL */
 function getBaseUrl(){
