@@ -465,6 +465,7 @@ function getEntity($page_name) {
 				//too strict - people can write what they want here...
 				//setEntityFieldValue("www", "validation", "url");
 				setEntityFieldValue("name", "validation", "any_text");
+                setEntityFieldValue("email", "help", __('The eMail address will not be shown to the public.'));
 			}
 			//single pages
 			else if (isSinglepage($page_name)) {

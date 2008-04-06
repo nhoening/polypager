@@ -79,7 +79,7 @@
 		echo($indent.'	<![endif]-->'."\n");
         
         //include calendar if necessary
-        if (hasDateField($entity) and includedByAdminScript($path_to_root_dir)){
+        if (hasDateField($entity) and includedByAdminScript()){
             echo($indent.'	<style type="text/css">@import url(../plugins/jscalendar-1.0/skins/aqua/theme.css);</style>'."\n");
             echo($indent.'	<script type="text/javascript" src="../plugins/jscalendar-1.0/calendar.js"></script>'."\n");
             echo($indent.'	<script type="text/javascript" src="../plugins/jscalendar-1.0/lang/calendar-'.$sys_info['lang'].'.js"></script>'."\n");
@@ -87,7 +87,7 @@
         }
         
         //greybox for previews
-        if (includedByAdminScript($path_to_root_dir) or ($params["step"]==1) and $page_info["commentable"] == "1") {
+        if (includedByAdminScript() or ($params["step"]==1) and $page_info["commentable"] == "1") {
             echo($indent.'	<script type="text/javascript">'."\n");
             echo($indent.'	 var GB_ROOT_DIR = "'.$path_to_root_dir.'/plugins/greybox/";'."\n");
             echo($indent.'	</script>'."\n");
@@ -207,7 +207,7 @@
 				}else {
 					// if actual page menu entry has a special class
 					if (($params["page"] == $p["name"] and !$in_gallery) 
-						and !includedByAdminScript($path_to_root_dir)) {
+						and !includedByAdminScript()) {
 						$classAtt = 'here';	
 					}
 					else $classAtt = 'not_here';
@@ -260,7 +260,7 @@
                 
                 //test if one of the groups was selected
                 $ul_visibility = "none";
-                if ($params['page'] == $p["name"] and !includedByAdminScript($path_to_root_dir)) {
+                if ($params['page'] == $p["name"] and !includedByAdminScript()) {
                     if ($sys_info["submenus_always_on"] == 1) {
                         $ul_visibility = "block";
                     }
@@ -309,12 +309,4 @@
 		
     }
     
-	/**
-	 * returns true when the including script is in the admin area
-	 */
-	 function includedByAdminScript($path_to_root_dir) {
-	 	if ((eregi('index\.php', $_SERVER['SCRIPT_NAME']) and $path_to_root_dir == "..")
-			or (eregi('edit\.php', $_SERVER['SCRIPT_NAME']))) return true;
-	 	else return false;
-	 }
 ?>

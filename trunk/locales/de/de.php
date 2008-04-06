@@ -444,7 +444,8 @@ function getTranslation_de($text) {
 'eMail' => 'eMail',
 'Homepage' => 'Homepage',
 'Comment' => 'Kommentar',
- 
+'The eMail address will not be shown to the public.' => 'Die eMail Adresse wird nicht &ouml;ffentlich gezeigt werden.', 
+
 //_sys_sys
 'title' => 'Titel',
 'author' => 'Autor',

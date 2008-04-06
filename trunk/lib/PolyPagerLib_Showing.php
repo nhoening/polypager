@@ -133,7 +133,7 @@ require_once("PolyPagerLib_HTMLForms.php");
         //first, let's see if there are pages at all
         global $path_to_root_dir;
         $sys_info = getSysInfo();
-        if (count(getPageNames()) == 0 and !$sys_info['no_tables'] and !includedByAdminScript($path_to_root_dir)){
+        if (count(getPageNames()) == 0 and !$sys_info['no_tables'] and !includedByAdminScript()){
             global $error_msg_text;
             $error_msg_text[] = __('There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.');
         }else{
@@ -151,7 +151,7 @@ require_once("PolyPagerLib_HTMLForms.php");
             if ($params["page"] == "") {
                 $sys_info = getSysInfo();
                 $params["page"] = $sys_info["start_page"];
-                if ($params["page"] == "" and !$sys_info['no_tables'] and !includedByAdminScript($path_to_root_dir)) {
+                if ($params["page"] == "" and !$sys_info['no_tables'] and !includedByAdminScript()) {
                     global $error_msg_text;
                     $error_msg_text[] = __('There is no start page set. If you are the admin of this site, you can set it at <a href="admin/edit.php?_sys_sys">the system properties</a>.');
                 }
