@@ -11,7 +11,7 @@ var iex = browser.isIE || browser.isOpera; // opera has a similar engine to IE
 var nav = (document.layers);
 var old = browser.isNS && (!document.layers && !document.getElementById);
 var n_6 = browser.isNS6up;
-var opera = browser.isOpera; // this is only opera
+var op = browser.isOpera; // this is only opera
 if (browser.isSafari || browser.isFirefox || browser.isMozilla || browser.isKonqueror || browser.isGecko) n_6 = true; //they work the same for this
 
 // create the popup box - inline so everyone, including Opera, will tell the width
@@ -40,8 +40,8 @@ function assignSkin() {
 //getting the popwidth - we'll get this only once, too! 
 //Then it will always have the stylesheet value
 function assignPopWidth(){
-  	if (iex && !opera) popwidth = parseInt(document.getElementById("pup").currentStyle.width);
-	if (opera)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById('pup'),null).width);
+  	if (iex && !op) popwidth = parseInt(document.getElementById("pup").currentStyle.width);
+	if (op)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById('pup'),null).width);
 	if (n_6)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById("pup"),null).getPropertyValue('width'));
 	//skin.display = "none";	//turn "inline" off now, it widens the page horizontally when the parked popup is positioned
 }
