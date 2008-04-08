@@ -34,12 +34,6 @@ $sys_info = getSysInfo();
   see http://polypager.nicolashoening.de
   ----------------------------------------------------------------*/
   
-// id browsers
-var name = navigator.userAgent.toLowerCase()
-var opera = (name.indexOf("opera")> -1) //this is just Opera
-var iex=(document.all);	//this can also be Opera!
-var nav=(document.layers);
-var old=(navigator.appName=="Netscape" && !document.layers && !document.getElementById);
 var n_6=(window.sidebar);
 
 function getElementsByClass(classname){
