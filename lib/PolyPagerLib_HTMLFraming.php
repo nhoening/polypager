@@ -72,7 +72,8 @@
 			$css = $skin.'/skin.css';
 		}
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/skins/'.$css.'" type="text/css"></link>'."\n");
-		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/user.css" type="text/css"></link>'."\n");
+		if (file_exists($path_to_root_dir.'/style/user.css'))
+            echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/user.css" type="text/css"></link>'."\n");
 		echo($indent.'	<link rel="stylesheet" href="'.$path_to_root_dir.'/style/basestyles.css" type="text/css"></link>'."\n");
 		echo($indent.'	<!--[if lte IE 6]>'."\n");
 		echo($indent.'		<link href="'.$path_to_root_dir.'/style/skins/'.$skin.'/iefix.css" rel="stylesheet" type="text/css"/>'."\n");
