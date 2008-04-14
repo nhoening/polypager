@@ -331,7 +331,7 @@ ul#main_menu>li>a:active, #main_menu>li>ul>li>a:active {
 a {
 	text-decoration: none;
 	font-weight: bold;
-	color:#<?=getColor('contrast'); ?>;
+	color:#<?=getColor('contrast'); ?> !important;
 }
 
 a:visited {
