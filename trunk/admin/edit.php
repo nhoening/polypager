@@ -136,9 +136,10 @@ function writeData($ind=4) {
 		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
 	}
 	
-    //show the list instead of an empry form
+    //show the list instead of an empty form
     if ($params['cmd'] == 'delete') {
         $params["step"] = 'all';
+        $params["nr"] = "";	//we want no special entry, but all
         admin_list($nind);
         return;
     }

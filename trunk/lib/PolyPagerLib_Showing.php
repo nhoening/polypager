@@ -911,7 +911,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 			}
 			
-            if($listview and mysql_num_rows($res) > 1) {
+            if($listview and mysql_num_rows($res) > 0) {
                 echo('<input name="page" type="hidden" value="'.$params['page'].'"/>'."\n");
                 echo('<input name="topic" type="hidden" value="content"/>'."\n");
                 echo('with selected: <input name="cmd" type="submit" value="delete" onclick="return checkDelete(true);"/>'."\n");
@@ -992,7 +992,6 @@ require_once("PolyPagerLib_HTMLForms.php");
                     
 			uasort($entity["fields"], "cmpByOrderIndexAsc");
 			foreach ($entity["fields"] as $f) {
-                
 				if (($entity["group"] == "" or $f["name"] != $entity["group"]["field"]))
 				$content = $row[$f["name"]];
 				if ($f["not_brief"] != "1") {

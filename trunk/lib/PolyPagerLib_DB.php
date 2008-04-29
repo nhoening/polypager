@@ -283,7 +283,8 @@ function addFields($entity, $name, $not_for_field_list = "") {
 				$entity["pk_type"] = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
 			}
             
-			if (!eregi($row['Field'],$not_for_field_list) and $row['Extra']!='auto_increment') {
+            
+			if (!eregi($row['Field'],$not_for_field_list)){ 
 				//determine length - use only "Type" due to http://polypager.nicolashoening.de/?bugs&nr=318
 				//$len = $row['CHARACTER_MAXIMUM_LENGTH'];
 				//if ($len == "" or $len == "NULL") $len = $row['NUMERIC_PRECISION'];
@@ -312,8 +313,13 @@ function addFields($entity, $name, $not_for_field_list = "") {
 						"default"=>$row['Default'],
 						"valuelist"=>$valuelist);
                         
-                //if default is CURRENT_TIMESTAMP, then rettrieve it
+                //if default is CURRENT_TIMESTAMP, then retrieve it
                 if ($type="timestamp" and $row['Default']=="CURRENT_TIMESTAMP") $field['default'] = date("Y-m-d H:i:s");
+                
+                if ($row['Extra'] == 'auto_increment') {
+                    $entity['hidden_form_fields'].=','.$row['Field'];
+                    $field['auto'] = 1;
+                } else $field['auto'] = 0;
                 
 				//IMPORTANT: In MySQL we code a boolean as int(1) !!!
 				if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) $field["data_type"] = "bool";

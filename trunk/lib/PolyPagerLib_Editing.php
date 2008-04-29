@@ -310,7 +310,7 @@ function getEditQuery($command, $theID) {
 
 		foreach($entity["fields"] as $f) {
 			// add it if it is set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
-			if (isset($params["values"][$f["name"]])) {
+			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
 				$queryA[$x] = " ".$f["name"].","; $x++;
 			}
 		}
@@ -320,7 +320,7 @@ function getEditQuery($command, $theID) {
 		$queryA[] = ") VALUES ( ";
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]]) ) {
+			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
 				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time')
                     $val = "'".$params["values"][$f["name"]]."'";
                 else $val = $params["values"][$f["name"]];
@@ -345,7 +345,7 @@ function getEditQuery($command, $theID) {
 	else if ($command == "edit") {			// UPDATE Query
 		$query = "UPDATE ".$page_info["tablename"]." SET";
 		foreach($entity["fields"] as $f) {
-			if (isset($params["values"][$f["name"]])) {
+			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
                 $query .= " ".nameEqValueEscaped($f["data_type"], $f["name"], $params["values"][$f['name']]).',';
 			}
 		}
