@@ -271,7 +271,7 @@ function getEntity($page_name) {
 				$entity = addFields($entity,$entity["tablename"]);
 				
 				$entity["hidden_fields"] = "default_group";
-				$entity["hidden_form_fields"] = "default_group";
+				$entity["hidden_form_fields"] = "id,default_group";
 				
 				$entity["order_order"] = "ASC";
 				$entity["title_field"] = "name";
@@ -476,7 +476,7 @@ function getEntity($page_name) {
 				$entity["title_field"] = 'heading';
 				$entity["publish_field"] = 'publish';
 				$entity["order_by"] = 'order_index';
-				$entity["hidden_fields"] = "in_submenu,pagename,order_index,publish,the_group,edited_date,input_date,input_time";
+				$entity["hidden_fields"] = "id,in_submenu,pagename,order_index,publish,the_group,edited_date,input_date,input_time";
 				$entity["hidden_form_fields"] = ",pagename,input_date,input_time,edited_date";
                 
 				//date_field + time_field
