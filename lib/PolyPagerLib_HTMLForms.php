@@ -257,8 +257,8 @@ function writeRelationalTableInputs($ind, $entity){
         if ($c[1] <= 2){ 
             // get values of rows in relational table with this key as first entry
             $id_field = getEntityField($c[2][0]['fk']['field'], $entity);
-            $query = 'SELECT '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'].' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
-            $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
+            $query = 'SELECT '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM `'.$c[2][1]['fk']['ref_table'].'` WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
+            $query .= ' FROM `'.$c[2][0]['fk']['table'].'`,`'.$c[2][0]['fk']['ref_table'].'`';
             $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
             $query .= ' AND '.$c[2][0]['fk']['table'].'.'.nameEqValueEscaped($id_field['data_type'], $c[2][0]['fk']['field'], $params['nr']);
             $query .= ' ORDER BY Title';
@@ -271,7 +271,7 @@ function writeRelationalTableInputs($ind, $entity){
                 $already_save_vals[] = $row[$c[2][1]['fk']['field']];
             }
             //now get possible values
-            $query = 'SELECT '.$c[2][1]['title_field'].' AS Title, '.$c[2][1]['fk']['ref_field'].' AS VAL FROM ' .$c[2][1]['fk']['ref_table'].' ORDER BY '.$c[2][1]['title_field'];
+            $query = 'SELECT '.$c[2][1]['title_field'].' AS Title, '.$c[2][1]['fk']['ref_field'].' AS VAL FROM `' .$c[2][1]['fk']['ref_table'].'` ORDER BY '.$c[2][1]['title_field'];
             
             
             $res = pp_run_query($query);

@@ -53,7 +53,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if ($max == "") { $max = $_GET["max"]; } //coming in per GET?
 				//reading the number of entries, if not give
 				if ($max == "" and $entity != "" and $page_info["tablename"] != "" ) {
-                    $query = "SELECT max(".$entity["pk"].") AS maxnr FROM ".$entity["tablename"].";";
+                    $query = "SELECT max(".$entity["pk"].") AS maxnr FROM `".$entity["tablename"]."`;";
 					$res = pp_run_query($query);
 					$row = mysql_fetch_array($res, MYSQL_ASSOC);
 					$max = $row["maxnr"];
@@ -70,7 +70,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$entity = getEntity($page);
 			if ($entity['pk'] != "" ) {
 				$page_info = getPageInfo($page);
-                $query = "SELECT count(*) AS cnt FROM ".$entity["tablename"];
+                $query = "SELECT count(*) AS cnt FROM `".$entity["tablename"].'`';
                 if (isSinglePage($page)) $query .= " WHERE pagename = '".$page."'";
                 if ($entity["publish_field"] != "") {
                     if (isSinglePage($page)) $query .= " AND "; else $query .= " WHERE ";
@@ -395,7 +395,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				//we'll select all there is
 				else if ($entity['pk_multiple'] and $params['cmd']!='_search'){
 					if ($params['nr']!="-1") echo('<div class="sys_msg">'.__('selected all entries.').'</div>');
-					$theQuery = "SELECT * FROM ".$entity["tablename"];
+					$theQuery = "SELECT * FROM `".$entity["tablename"]."`";
 				}else {
 					//--------------------- preparing  --------------------------
 					
@@ -412,14 +412,14 @@ require_once("PolyPagerLib_HTMLForms.php");
 						if (in_array($f['name'],array_keys($ref_fields))) {
 							$ref = utf8_explode('||',$ref_fields[$f['name']]);
 							// using subselect so that we get NULL when the refencing field IS NULL
-							$a[0] .= '(SELECT name FROM '.$ref[0].' WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
+							$a[0] .= '(SELECT name FROM `'.$ref[0].'` WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
 							$a[0] .= ' AS '.$f['name'].",";
 						}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
 					}
 					
 					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
 					
-					$a[0] .= " FROM ".$entity["tablename"].",";
+					$a[0] .= " FROM `".$entity["tablename"]."`,";
 					foreach($references as $r) {
 						$a[0] .= $r['fk']['ref_table']." as ".$r['fk']['ref_table']."_".$r['fk']['field'].",";
 					}
@@ -808,7 +808,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 						for($x=0;$x<count($rt);$x++) { 
 							// get the values we need
 							if ($rt[$x]['table_name'] != ""){
-								$q = "SELECT ".getPKName($rt[$x]['table_name'])." as pk, ".$rt[$x]['title_field']." as tf, ".$rt[$x]['fk']['field']." as f FROM ".$rt[$x]['table_name'];
+								$q = "SELECT ".getPKName($rt[$x]['table_name'])." as pk, ".$rt[$x]['title_field']." as tf, ".$rt[$x]['fk']['field']." as f FROM `".$rt[$x]['table_name']."`";
 								//singlepages can operate on the page level whith all data being in one table...
 								if (isSinglepage($rt[$x]['fk']['page'])) $q .= " WHERE pagename = '".$rt[$x]['fk']['page']."'";
 								$fk_result = pp_run_query($q);
@@ -865,7 +865,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                     // for comments, display the title of the entrys that got commented
                     if ($params["page"]=='_sys_comments') {
                         $tmp_entity = getEntity($row["pagename"]);
-                        $query = "SELECT ".$tmp_entity["title_field"]." AS title, ".$tmp_entity["pk"]." AS pk FROM ".$tmp_entity["tablename"]." WHERE ".$tmp_entity["pk"]." = ".$row["pageid"];
+                        $query = "SELECT ".$tmp_entity["title_field"]." AS title, ".$tmp_entity["pk"]." AS pk FROM `".$tmp_entity["tablename"]."` WHERE ".$tmp_entity["pk"]." = ".$row["pageid"];
                         $tmp_result = pp_run_query($query);
                         $tmp_row = mysql_fetch_array($tmp_result, MYSQL_ASSOC);
                         $heading = '<a href="?'.urlencode($row["pagename"]).'&amp;nr='.$tmp_row["pk"].'">'.$tmp_row["title"].'</a>';
@@ -1071,7 +1071,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 							} else {
 								$page = $pagename;
 							}
-                            $q = getEditQuery('delete', $row[$entity['pk']]);
+                            $q = getEditQuery('delete', $row[$entity['pk']]); // queries for URL (only happens in Admin area, not public!)
                             echo($indent.'		<input type="checkbox" name="batch_'.$page.'_'.$row[$entity['pk']].'" value="'.urlencode($q[0]).'"  />'."\n");
                             
 							//make title no longer than 14 words
@@ -1259,7 +1259,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 
         foreach ($can as $c) { 
             if ($c[1] <= 2){
-                $query = 'SELECT '.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM '.$c[2][1]['fk']['ref_table'];
+                $query = 'SELECT '.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM `'.$c[2][1]['fk']['ref_table'].'`';
                 $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
                 $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];

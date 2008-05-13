@@ -129,7 +129,7 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	}
 	
 	// set a title if we show one entry
-	if ($res != "" and in_array($params['page'],array_keys($res)) and mysql_num_rows($res[$params['page']]) == 1) {	
+	if ($res != "" and count($res) > 0 and in_array($params['page'],array_keys($res)) and mysql_num_rows($res[$params['page']]) == 1) {	
 		//writing header with a title when we find a good one
 		$row = mysql_fetch_array($res[$params['page']], MYSQL_ASSOC);	//get first one
 		$title = getTitle($entity,$row);

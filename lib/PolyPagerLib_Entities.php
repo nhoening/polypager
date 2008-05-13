@@ -402,7 +402,7 @@ function getEntity($page_name) {
                 //get valuelist for group field if none is set
                 $page_info = getPageInfo($param_group);
                 if ($page_info["group_field"] != "" and $page_info["group_field"] == $f['name']){
-                    $q = "SELECT ".$page_info["group_field"]." FROM ".$page_info["tablename"]." GROUP BY ".$page_info["group_field"];
+                    $q = "SELECT ".$page_info["group_field"]." FROM `".$page_info["tablename"]."` GROUP BY ".$page_info["group_field"];
                     echo($q);
                     $res = pp_run_query($q);
                     $group_vals = array();
@@ -566,7 +566,7 @@ function getEntity($page_name) {
                     //get valuelist for group field if none is set
                     $f = getEntityField($entity['group']['field'],$entity);
                     if ($entity["group"] != "" and $f['valuelist'] == ""){
-                        $q = "SELECT ".$entity['group']['field']." FROM ".$entity['tablename']." GROUP BY ".$entity["group"]['field'];
+                        $q = "SELECT ".$entity['group']['field']." FROM `".$entity['tablename']."` GROUP BY ".$entity["group"]['field'];
                         $res = pp_run_query($q);
                         $group_vals = array();
                         while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
@@ -593,7 +593,7 @@ function getEntity($page_name) {
 						$entity['consistency_fields'] .= ','.$rt['fk']['ref_field'];
 					// get the values we need
 					if ($rt['table_name'] != ""){
-						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM ".$rt['table_name'];
+						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM `".$rt['table_name'].'`';
 						//singlepages can operate on the page level whith all data being in one table...
 						if ($rt['fk']['ref_page'] != '' and isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
 						$result = pp_run_query($q);

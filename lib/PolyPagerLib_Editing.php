@@ -252,6 +252,7 @@ function getEditQuery($command, $theID) {
 	$queries = array(); # and add it to this array we'll return
 	
 
+    /*
 	// resolve foreign keys that the user entered (the constraints in the db are 
 	// the dbs thing)
 	if ($command == "edit" || $command == "delete"){
@@ -275,7 +276,7 @@ function getEditQuery($command, $theID) {
 					$referencing_table = $referencing_page_info['tablename'];
 					if ($fk['ref_field'] == $referencing_entity['pk']) $fk['ref_field'] = "nr";
 					// find affected entries in referencing table
-					$tmp_query = "SELECT * FROM ".$referencing_table." WHERE ".$fk['field']." = ".$params[$fk['ref_field']];
+					$tmp_query = "SELECT * FROM `".$referencing_table."` WHERE ".$fk['field']." = ".$params[$fk['ref_field']];
 					
 					$result = pp_run_query($tmp_query);
 					while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
@@ -299,13 +300,13 @@ function getEditQuery($command, $theID) {
 				$params = $params_backup;
 			}
 		}
-	}
+	}*/
     
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
 		$queryA = array();
-		$queryA[0] = "INSERT INTO ".$page_info["tablename"]." (";
+		$queryA[0] = "INSERT INTO `".$page_info["tablename"]."` (";
 		$x = 1;
 
 		foreach($entity["fields"] as $f) {
@@ -343,7 +344,7 @@ function getEditQuery($command, $theID) {
 
 	//------------------- edit ------------------------------------
 	else if ($command == "edit") {			// UPDATE Query
-		$query = "UPDATE ".$page_info["tablename"]." SET";
+		$query = "UPDATE `".$page_info["tablename"]."` SET";
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
                 $query .= " ".nameEqValueEscaped($f["data_type"], $f["name"], $params["values"][$f['name']]).',';
@@ -358,16 +359,16 @@ function getEditQuery($command, $theID) {
 
 	//------------------- delete ----------------------------------
 	else if ($command == "delete") {	// DELETE Query
-		$query .= "DELETE FROM ".$page_info["tablename"];
+		$query .= "DELETE FROM `".$page_info["tablename"];
         if ($entity["pk"] != "")
-            $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
+            $query .= "` WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 	}
 	//---------------end delete -----------------------------------
 	//------------------- show ----------------------------------------
 	else if ($command == "show") {		// SELECT Query
-		$query .= "SELECT * FROM ".$page_info["tablename"];
+		$query .= "SELECT * FROM `".$page_info["tablename"];
         if ($entity["pk"] != "")
-            $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
+            $query .= "` WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
 	}
 	//---------------end show -----------------------------------------
 	
@@ -393,7 +394,7 @@ function getRelationalQueries(){
                 $ent = getEntity($c[2][0]['fk']['table']);
                 $fk_field = getEntityField($c[2][0]['fk']['field'], $ent);
                 $ref_field = getEntityField($c[2][1]['fk']['field'], $ent);
-                if($command != "entry") $queries[] = "DELETE FROM ".$c[0]." WHERE ".nameEqValueEscaped($fk_field['data_type'], $c[2][0]['fk']['field'], $fk_val);
+                if($command != "entry") $queries[] = "DELETE FROM `".$c[0]."` WHERE ".nameEqValueEscaped($fk_field['data_type'], $c[2][0]['fk']['field'], $fk_val);
 
                 if ($params['values'][$c[0]] != "" and $command != "delete") {
                     $fkrefs = explode(',', $params['values'][$c[0]]);
