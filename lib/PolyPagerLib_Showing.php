@@ -1261,7 +1261,7 @@ require_once("PolyPagerLib_HTMLForms.php");
             if ($c[1] <= 2){
                 $query = 'SELECT '.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM `'.$c[2][1]['fk']['ref_table'].'`';
                 $query .= ' WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
-                $query .= ' FROM '.$c[2][0]['fk']['table'].','.$c[2][0]['fk']['ref_table'];
+                $query .= ' FROM `'.$c[2][0]['fk']['table'].'`,'.$c[2][0]['fk']['ref_table'];
                 $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
                 $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$id.';';
                 //run Query
