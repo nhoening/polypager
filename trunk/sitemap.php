@@ -66,7 +66,7 @@ foreach ($pages as $p) {
         if ($entity['date_field']["editlabel"]!="") $query .= ", ".$entity['date_field']["editlabel"]." AS theDate2 ";
         $res = pp_run_query($query."  FROM " . $entity['tablename']);
     }else if (isSinglepage($p)){
-        $res = pp_run_query("SELECT id AS theID, heading AS theTitle, input_date AS theDate1, edited_date AS theDate2, publish AS pub FROM ".$entity['tablename']." WHERE pagename='".$p."'");
+        $res = pp_run_query("SELECT id AS theID, heading AS theTitle, input_date AS theDate1, edited_date AS theDate2, publish AS pub FROM `".$entity['tablename']."` WHERE pagename='".$p."'");
     }
 
     //now put'em out

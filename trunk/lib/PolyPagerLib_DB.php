@@ -268,7 +268,7 @@ function addFields($entity, $name, $not_for_field_list = "") {
 		}
 		//if we can't use it, do it the old way, with less information, sadly
 		if ($query == "") 
-			$query = "SHOW COLUMNS FROM ".$entity["tablename"];
+			$query = "SHOW COLUMNS FROM `".$entity["tablename"]."`";
         
 		$res = pp_run_query($query);
 		$i = 0;
@@ -382,7 +382,7 @@ function getRelationCandidatesFor($tablename){
     $rf = getReferencingTableData($entity);
     // make sure we know what the 1st field is
     foreach ($rf as $t) {
-        $res = pp_run_query('SHOW COLUMNS FROM '.$t['table_name']);
+        $res = pp_run_query('SHOW COLUMNS FROM `'.$t['table_name'].'`');
         $row = mysql_fetch_array($res, MYSQL_ASSOC);
         if ($row['Field'] == $t['fk']['field']) $linking_tables[] = $t['table_name'];
     }
@@ -451,7 +451,7 @@ function getForeignKeys(){
 		for($x = 0; $x < $num_tables; $x++){
 			$table = mysql_tablename($tables, $x);
 		
-			$res = pp_run_query("SHOW CREATE TABLE ".$table.";");
+			$res = pp_run_query("SHOW CREATE TABLE `".$table."`;");
 			$row = mysql_fetch_array($res, MYSQL_ASSOC);
 			$create_query = $row['Create Table'];
 			

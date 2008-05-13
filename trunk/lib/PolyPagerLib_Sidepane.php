@@ -106,7 +106,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
             if (!$comments) {   // get text from original page for feeds
                 $field = guessTextField($entity);
                 if ($field == "") $field = $the_page["title_field"];
-                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
+                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
     
                 if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
                     //no title? take sthg from content...
@@ -119,7 +119,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
             } else {
                 $field = $the_page["title_field"];
                 if ($field=="") $field = guessTextField($entity);
-                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM ".$the_page["tablename"]." WHERE id = ".$row['theID'].";");
+                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
                 if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
                     $row['theText'] = getFirstWords($row2['tfield'],10);
             }

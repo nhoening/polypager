@@ -307,7 +307,7 @@ function getBaseUrl(){
     return $_SERVER['HTTP_HOST'].'/'.$path_from_doc_root;
 }
 
-/*writes a PolyPager standard help link (which is an icon, with hover-over text) */
+/* writes a PolyPager standard help link (which is an icon, with hover-over text) */
 function writeHelpLink($indent, $helptext) {
 	echo($indent.'<a class="help" onmouseover="popup(\''.$helptext.'\')" onmouseout="kill()" title="" onfocus="this.blur()" >&nbsp;&nbsp;&nbsp;&nbsp;</a>'."\n");
 }
