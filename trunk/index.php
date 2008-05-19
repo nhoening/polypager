@@ -186,7 +186,7 @@ function writeData($ind=5) {
 			
             
             $num = mysql_num_rows($res[$params['page']]);
-            if ($num > 0 and ($num < getMaxCount($params["page"] ))) {
+            if ($params['cmd'] != '_search' && $num > 0 and ($num < getMaxCount($params["page"] ))) {
                 echo('<div class="sys_msg">'.__('You are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&amp;step=all">'.__('See all there are.').'</a></div>');
             }
             
