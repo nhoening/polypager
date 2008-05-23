@@ -349,45 +349,41 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_fields") {
 				$entity["tablename"] = "_sys_fields";
 
-				$entity = addFields($entity,$entity["tablename"]);
+				$entity = addFields($entity, $entity["tablename"]);
 				
                 // for showing sys_fields, we pass a group parameter with the page
                 // and then this helps to build the query
 				$group = array("field"=>"pagename", "order"=>"DESC");
 				$entity["group"] = $group;
                 
+                // once an entry is created, don't change its name
+                if ($params["cmd"] != 'new') $entity["disabled_fields"] .= ',name';
                 
                 $param_group = urldecode($_GET["group"]);
                 if ($param_group == '')  $param_group = urldecode($_POST["group"]);
                 $fields = getListOfNonExistingFields($param_group, false);
 
-				if (count($fields) > 0) {
-					// when field options of simple pages are edited by 
-					// the users, I prefer to not show'em all
-					if ($params['page']=='_sys_fields' && isSinglePage($param_group)){
-						$flist = implode(',', $fields);
-						$flist = utf8_str_replace('input_date','',$flist); 
-						$flist = utf8_str_replace('edited_date','',$flist); 
-						$flist = utf8_str_replace('the_group','',$flist);
-						$flist = utf8_str_replace('publish','',$flist);
-						$flist = utf8_str_replace('in_submenu','',$flist);
-						$flist = utf8_str_replace('pagename','',$flist); 
-						while (ereg(',,',$flist)) $flist = utf8_str_replace(',,',',',$flist);
-						//now commas at start or end have to go
-						$flist = preg_replace('@^,@', '', $flist);
-						$flist = preg_replace('@,$@', '', $flist);
-						setEntityFieldValue("name", "valuelist", $flist);
-					}else setEntityFieldValue("name", "valuelist", implode(',', $fields));
-				} else {
-					$entity["disabled_fields"] .= ',name';
-					setEntityFieldValue("name", "valuelist", __('there is no table specified for this page yet'));
-				}
-				setEntityFieldValue("pagename", "valuelist", implode(',', getPageNames()));
-                setEntityFieldValue("pagename", "valuelist_from_db", true); //user cannot add any
+                // when field options of simple pages are edited by 
+                // the users, I prefer to not show'em all
+                if ($params['page'] == '_sys_fields' && isSinglePage($param_group)){
+                    $flist = implode(',', $fields);
+                    $flist = utf8_str_replace('input_date','',$flist); 
+                    $flist = utf8_str_replace('edited_date','',$flist); 
+                    $flist = utf8_str_replace('the_group','',$flist);
+                    $flist = utf8_str_replace('publish','',$flist);
+                    $flist = utf8_str_replace('in_submenu','',$flist);
+                    $flist = utf8_str_replace('pagename','',$flist); 
+                    while (ereg(',,',$flist)) $flist = utf8_str_replace(',,',',',$flist);
+                    //now commas at start or end have to go
+                    $flist = preg_replace('@^,@', '', $flist);
+                    $flist = preg_replace('@,$@', '', $flist);
+                    setEntityFieldValue("name", "valuelist", $flist);
+                }else setEntityFieldValue("name", "valuelist", implode(',', $fields));
+                
 				setEntityFieldValue("validation", "valuelist", 'no validation,number,any_text,email');	//not really ready yet
-				setEntityFieldValue("foreign_key_to", "valuelist", ','.implode(',', getPageNames()));
-				setEntityFieldValue("on_update", "valuelist", "SET NULL,NO ACTION,CASCADE,RESTRICT");
-				setEntityFieldValue("on_delete", "valuelist", "RESTRICT,CASCADE,NO ACTION,SET NULL");
+				//setEntityFieldValue("foreign_key_to", "valuelist", ','.implode(',', getPageNames()));
+				//setEntityFieldValue("on_update", "valuelist", "SET NULL,NO ACTION,CASCADE,RESTRICT");
+				//setEntityFieldValue("on_delete", "valuelist", "RESTRICT,CASCADE,NO ACTION,SET NULL");
 				$entity["title_field"] = "name";
 				
 				$entity["disabled_fields"] .= ",pagename";
@@ -404,7 +400,6 @@ function getEntity($page_name) {
                 $page_info = getPageInfo($param_group);
                 if ($page_info["group_field"] != "" and $page_info["group_field"] == $f['name']){
                     $q = "SELECT ".$page_info["group_field"]." FROM `".$page_info["tablename"]."` GROUP BY ".$page_info["group_field"];
-                    echo($q);
                     $res = pp_run_query($q);
                     $group_vals = array();
                     while ($row = mysql_fetch_array($res, MYSQL_ASSOC))

@@ -544,8 +544,6 @@
 			//if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"].'_all';
 			//$params["nr"] = "";	//we want no special entry, but all
             if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"];
-            //echo($params["cmd"]);
-			//$params['page'] = $params['group'];
 			$queries = getQuery(false);
             
 			// send show quer(y|ies) to DBMS now
