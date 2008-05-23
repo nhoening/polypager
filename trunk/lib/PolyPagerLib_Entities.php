@@ -359,7 +359,8 @@ function getEntity($page_name) {
                 
                 $param_group = urldecode($_GET["group"]);
                 if ($param_group == '')  $param_group = urldecode($_POST["group"]);
-				$fields = getListOfNonExistingFields($param_group);
+                $fields = getListOfNonExistingFields($param_group, false);
+
 				if (count($fields) > 0) {
 					// when field options of simple pages are edited by 
 					// the users, I prefer to not show'em all
@@ -414,7 +415,7 @@ function getEntity($page_name) {
                 }
                     
 				
-				$entity["hidden_form_fields"] = "foreign_key_to,on_update,on_delete";//this feature is not clearly defined as from 0.9.7
+				$entity["hidden_form_fields"] = "id,foreign_key_to,on_update,on_delete";//this feature is not clearly defined as from 0.9.7
 				
 				//help texts
 				setEntityFieldValue("validation", "help", __('you can chose a validation method that is checked on the content of this field when you submit a form.'));
@@ -671,7 +672,7 @@ function getEntityField($fname, $entity) {
 }
 
 /*gets an array with names of fields of the named entity*/
-function getListOfFields($entity_name) {
+function getListOfFields($entity_name, $with_pk=true) {
 	if ($entity_name != "") {
 		global $entity;
 		$actual_entity = $entity;	//save it
@@ -679,16 +680,15 @@ function getListOfFields($entity_name) {
 	} else $entity = getEntity("");
 	$fields = array();
 	foreach($entity["fields"] as $f){
-		$fields[] = $f["name"];
+		if ($with_pk || ($entity["pk"] != $f["name"])) $fields[] = $f["name"];
 	}
-	$fields[] = $entity["pk"];
 	if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
 	return $fields;
 }
 
 /* gets an array with names of fields of the actual 
  * entity with the named data types (a comma separated list)*/
-function getListOfFieldsByDataType($entity_name, $data_types) {
+function getListOfFieldsByDataType($entity_name, $data_types, $with_pk=true) {
 	$types = utf8_explode(',', $data_types);
 	if ($entity_name != "") {
 		global $entity;
@@ -699,11 +699,8 @@ function getListOfFieldsByDataType($entity_name, $data_types) {
 	foreach($types as $t) {
 		foreach($entity["fields"] as $f) {
 			if ($f["data_type"] == $t) {
-				$dfields[] = $f["name"];
+				if ($with_pk || ($entity["pk"] != $f["name"]))$dfields[] = $f["name"];
 			}
-		}
-		if ($entity["pk_type"] == $t) {
-			$dfields[] = $entity["pk"];
 		}
 	}
 	
@@ -711,32 +708,33 @@ function getListOfFieldsByDataType($entity_name, $data_types) {
 	return $dfields;
 }
 
-/*gets an array with names of date fields of the named entity*/
-function getListOfValueListFields($entity_name) {
+/*gets an array with names of valuelist fields of the named entity*/
+function getListOfValueListFields($entity_name, $with_pk=true) {
 	if ($entity_name != "") {
 		global $entity;
 		$actual_entity = $entity;	//save it
 		$entity = getEntity($entity_name);
 	} else $entity = getEntity("");
 	$dfields = array();
-	for($i=0; $i<count($entity["fields"]); $i++) {
-		if ($entity["fields"][$i]["valuelist"] != '') {
-			$dfields[count($dfields)] = $entity["fields"][$i]["name"];
+	foreach($entity["fields"] as $f) {
+		if ($f["valuelist"] != '') {
+			if ($with_pk || ($entity["pk"] != $f["name"])) $dfields[] = $f["name"];
 		}
 	}
 	if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!
 	return $dfields;
 }
 
-function getListOfNonExistingFields($entity_name){
+/* return a list of fields of that entity that do not already exist in a _sys_fields */
+function getListOfNonExistingFields($entity_name, $with_pk=true){
     if ($entity_name != "") {
 		global $entity;
 		$actual_entity = $entity;	//save it
 		$entity = getEntity($entity_name);
 	} else $entity = getEntity("");
-    $query = "SELECT name from _sys_fields WHERE pagename = '".$entity['tablename']."'";
+    $query = "SELECT name from _sys_fields WHERE pagename = '".$entity['pagename']."'";
     $result = pp_run_query($query);
-    $all = getListOfFields($entity_name);
+    $all = getListOfFields($entity_name, $with_pk);
     $existing = array();
     while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
         $existing[] = $row['name'];
