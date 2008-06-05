@@ -1189,8 +1189,12 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if($entity["date_field"]["editlabel"] != "") { //show last editing date
 					if ($row[$entity["date_field"]["editlabel"]] != NULL) {
 						$ed = format_date($row[$entity["date_field"]["editlabel"]]);
-						if ($ed != __('no date set yet')) 
-							echo($indent.'		    <span class="last_edited_label">'.__('last edited:').' '.$ed.'</span>'."\n");
+                        $f = getEntityField($entity["date_field"]["editlabel"], $entity);
+                        
+						if ($ed != __('no date set yet')) {
+                            if ($f['label'] != "") $n = $f['label']; else $n = $f['name'];
+							echo($indent.'		    <span class="last_edited">'.$n.' '.$ed.'</span>'."\n");
+                        }
 					}
 				}
 			}
