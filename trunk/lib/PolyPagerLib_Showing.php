@@ -406,7 +406,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                     
 					$a = array();
 					$a[0] = "SELECT "; 
-					$a[0] .= $entity["tablename"].'.'.$entity['pk'].",";
+					//$a[0] .= "`".$entity["tablename"].'.'.$entity['pk']."`,";
 					foreach($entity['fields'] as $f){
 						// prefer title from referenced values over referencing ones!
 						if (in_array($f['name'],array_keys($ref_fields))) {
@@ -414,7 +414,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 							// using subselect so that we get NULL when the refencing field IS NULL
 							$a[0] .= '(SELECT name FROM `'.$ref[0].'` WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
 							$a[0] .= ' AS '.$f['name'].",";
-						}else $a[0] .= $entity["tablename"].'.'.$f['name'].",";
+						}else $a[0] .= "`".$entity["tablename"].'`.`'.$f['name']."`,";
 					}
 					
 					$a[0] = preg_replace('@,$@', '', $a[0]); // get rid of comma
@@ -453,15 +453,15 @@ require_once("PolyPagerLib_HTMLForms.php");
 						
 						//normal query for "show"
 						if (isNumericType($entity["pk_type"])) {
-                            $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." >= $prev AND ".$entity["tablename"].'.'.$entity["pk"]." <= ".$next." ";
+                            $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` >= $prev AND `".$entity["tablename"].'`.`'.$entity["pk"]."` <= ".$next." ";
                             $said_where = true;
                         }else if ($params['nr'] != "") {
-                            $a[1] = " WHERE ".$entity["tablename"].'.'.$entity["pk"]." = ".$params["nr"];
+                            $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` = ".$params["nr"];
                             $said_where = true;
                         }
 						//show a group rather than id range
 						if ($params["group"] != "" and $params["group"] != "_sys_all") {
-							$a[1] = " WHERE ".$entity["tablename"].'.'.$entity["group"]["field"]." = '".$params["group"]."'";
+							$a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` = '".$params["group"]."'";
                             $said_where = false;
 						}
 					}
@@ -488,7 +488,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                                     //remember: BLOB fields are case-sensitive! you should take text for those
                                     $a[] = " (";
                                     foreach($kws as $k)
-                                        $a[] = " ".$table_field." LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
+                                        $a[] = " `".$table_field."` LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
                                     // replace last AND with OR
                                     $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
                                     $a[] = " ) OR";
@@ -512,13 +512,13 @@ require_once("PolyPagerLib_HTMLForms.php");
                                 //if december, increment year for enddate, else only the month
 								if ($month == "") {
 									$nextYear = $year + 1;
-									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-01-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$nextYear-01-01' ";
+									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= '$year-01-01' AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < '$nextYear-01-01' ";
 								} else if ($month == "12") {
 									$nextYear = $year + 1;
-									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$nextYear-01-01' ";
+									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= '$year-$month-01' AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < '$nextYear-01-01' ";
 								} else {
 									$nextMonth = $month + 1;
-									$a[] = " ".$entity["tablename"].'.'.$entity["date_field"]["name"]." >= '$year-$month-01' AND ".$entity["tablename"].'.'.$entity["date_field"]["name"]." < '$year-$nextMonth-01' ";
+									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= '$year-$month-01' AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < '$year-$nextMonth-01' ";
 								}
 							}
 						}
@@ -530,7 +530,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 							if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") {
 								if ($said_where) $a[] = " AND ";
                                 else $a[] = " WHERE ";
-								$a[] = $f["name"]." = '".$params["search"][$f["name"]]."'";
+								$a[] = "`".$f["name"]."` = '".$params["search"][$f["name"]]."'";
 								
 								//if the field is the group field, we knew that is a request - save it for later!
 								if ($f["name"] == $entity["group"]["field"]) $params["group"] = $params["search"][$f["name"]];
@@ -544,7 +544,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 					if($only_published and $entity["publish_field"] != "") {	//publish - Flag
 						if ($params['search']!="" or $params['page']!='_search') $a[] = " AND ";
 						else $a[] = " WHERE ";
-						$a[] = $entity["tablename"].'.'.$entity["publish_field"]." = 1";
+						$a[] = "`".$entity["tablename"].'`.`'.$entity["publish_field"]."` = 1";
 					}
 	
 					//link tables referenced by foreign keys
@@ -564,9 +564,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$b = array();
 					$b[0] = $theQuery;
 					if ($entity["group"] == "") $b[1] = " ORDER BY ";
-					else $b[1] = " ORDER BY ".$entity["tablename"].'.'.$entity["group"]["field"]." ".$entity["group"]["order"].", ";
-					if ($entity["order_by"] == "") $b[2] = $entity["tablename"].'.'.$entity["pk"]." DESC;";
-					else $b[2] = $entity["tablename"].'.'.$entity["order_by"]." ".$entity["order_order"].";";
+					else $b[1] = " ORDER BY `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` ".$entity["group"]["order"].", ";
+					if ($entity["order_by"] == "") $b[2] = "`".$entity["tablename"].'`.`'.$entity["pk"]."` DESC;";
+					else $b[2] = "`".$entity["tablename"].'`.`'.$entity["order_by"]."` ".$entity["order_order"].";";
 					
 					
 					$theQuery = implode('',$b);
@@ -1272,7 +1272,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $res = pp_run_query($query);
                 if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  continue;
                 
-                echo($indent.'<div class="related"><h4>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h4>'."\n");
+                echo($indent.'<div id="related_'.$c[2][1]['fk']['ref_table'].'" class="related"><h4>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h4>'."\n");
                 echo($indent.'  <ul>'."\n");
                 while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
                     echo($indent.'      <li><a href="?'.$c[2][1]['likely_page'].'&amp;nr='.$row[$c[2][1]['fk']['field']].'">'.$row['Title']."</a></li>\n");
