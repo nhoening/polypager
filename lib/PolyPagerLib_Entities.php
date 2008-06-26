@@ -194,7 +194,7 @@ function getEntity($page_name) {
 					$entity["disabled_fields"] .= ',publish_field,date_field,time_field,edited_field,title_field,order_by,group_field';
 				}
 				
-				$entity["hidden_form_fields"] .= ',hide_comments';
+				$entity["hidden_form_fields"] .= 'id,hide_comments';
 				
 				setEntityFieldValue("menue_index", "validation", 'number');
 				setEntityFieldValue("name", "validation", 'any_text');
