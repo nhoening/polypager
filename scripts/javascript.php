@@ -205,13 +205,14 @@ function checkValues(pageName) {
 		}
 	}
 	<? $mpages = getPageNames();
-	$mpages[count($mpages)] = '_sys_singlepages';
-	$mpages[count($mpages)] = '_sys_multipages';
-	$mpages[count($mpages)] = '_sys_comments';
+	$mpages[] = '_sys_singlepages';
+	$mpages[] = '_sys_multipages';
+	$mpages[] = '_sys_comments';
 	foreach($mpages as $p) { ?>
 		if (pageName=="<?=$p?>") {
 			//alert('I AM HERE for page ' + pageName);
 			<? $act_entity = getEntity($p);
+
 			$fields = $act_entity["fields"];
 			if ($fields != "") {
 				foreach($fields as $f) {

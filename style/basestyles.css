@@ -91,3 +91,7 @@ a.help{
 #commentform {
     border: 1px solid #ccc;
 }
+#commentform textarea{
+    width: 450px;
+    height: 200px;
+}
