@@ -115,8 +115,11 @@ function scandir_n($dir = './', $sort = 0, $only_pics = false, $only_dirs = fals
 function filterSQL($v) {
 	//we do this only for strings and only if magic quotes do not do this
 	//already (see http://www.dynamicwebpages.de/php/ref.info.php#ini.magic-quotes-gpc)
-	if (gettype($v) == "string" and get_magic_quotes_gpc() != 1) {
-		return addslashes($v);
+	if (gettype($v) == "string"){
+        if (get_magic_quotes_gpc() == 1) {
+            $v = stripslashes($v);
+        }
+		return mysql_real_escape_string($v);
 	}
 	else return $v;
 }
