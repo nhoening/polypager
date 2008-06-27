@@ -1332,7 +1332,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$params["cmd"] = "new";
         $swap_page = $params["page"];
 		$params["page"] = "_sys_comments";	//we can do this because comments come last
-		writeHTMLForm("", ".", false, true, $ind, "commentform");	//no dataset needed
+		writeHTMLForm("", ".", 0, true, $ind, "commentform");	//no dataset needed
         $params["page"] = $swap_page;
 	}
 	
@@ -1351,9 +1351,10 @@ require_once("PolyPagerLib_HTMLForms.php");
         // check 2: Entering comments too fast lets me think it has been done by a machine
 		if ($time < 1000 and $time != '') 
 			return __('wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.');
-		$stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');
+		$stripped_comment = strip_tags($comment, '');
 		if ($comment != $stripped_comment) 
-			return __('Your text contains tags that are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;. Your comment has not been saved.');
+			return __('Your text contains HTML tags. Those are not allowed. Your comment has not been saved.'); 
+            //You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;. .');
 		// check 3: was there a reCAPTCHA response?
         $php_version = explode('.', phpversion());
         $sys_info = getSysInfo();

@@ -232,12 +232,12 @@ function writeData($ind=4) {
 						$sys_msg_text[] = __('This table uses a primary key combined from multiple fields. This is not supported by PolyPager!');
 				}
 				// now write all entries we have 
-				writeHTMLForm($row, "edit.php", true, true, $nind,"edit_form");
+				writeHTMLForm($row, "edit.php", 1, true, $nind,"edit_form");
 				$iwrote = true;
 			}
 		} else {
 			// if we had none, maybe we want an empty form
-			writeHTMLForm("", "edit.php", true, true, $nind, "edit_form");
+			writeHTMLForm("", "edit.php", 1, true, $nind, "edit_form");
 			$iwrote = true;
 		}
 

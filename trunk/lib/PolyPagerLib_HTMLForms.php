@@ -20,17 +20,17 @@
 */
 
 /* function index:
- * writeInputElement($tabindex, $type, $size, $name, $class, $value, $full_editor, $dis)
+ * writeInputElement($tabindex, $type, $size, $name, $class, $value, $editor, $dis)
  * writeFiller($spec, $fields, $value, $ind=10)
  * writeOptionList($tabindex, $name, $class, $value, $valuelist)
  * proposeFeeding($tabindex, $value)
- * writeHTMLForm($row, $action_target, $full_editor, $show, $id)
+ * writeHTMLForm($row, $action_target, $editor, $show, $id)
  */
 
 //we could be called from two places - so include both possibilities and no one gets hurt
 //set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'plugins'.FILE_SEPARATOR.'FCKeditor'.FILE_SEPARATOR);
 
-require_once('plugins' . FILE_SEPARATOR . 'FCKeditor' . FILE_SEPARATOR . "fckeditor.php");
+require_once('plugins' . FILE_SEPARATOR . 'fckeditor' . FILE_SEPARATOR . "fckeditor.php");
 require_once("plugins"  . FILE_SEPARATOR .  "recaptchalib.php");
 
 $filler_needed = array();
@@ -46,10 +46,10 @@ $relational_filler_needed = array();
 	$name: Name of the Input Element
 	$class: CSS class of the Input Element
 	$value: to be shown in the Input Element
-	$full_editor: true when full editor should be used, false otherwise
+	$editor: 0 for no editor, 1 for normal, 2 for small set
 	$dis: true when field should be disabled
 */
-function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full_editor, $dis, $ind=9) {
+function writeInputElement($tabindex, $type, $size, $name, $class, $value, $editor, $dis, $ind=9) {
 	global $params;
     global $filler_needed;
 	$indent = translateIndent($ind);
@@ -59,13 +59,13 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	if(isTextAreaType($type)) $inputType = "textarea";
 
 	echo($indent);
-	if ($inputType != "textarea") echo('<'.$inputType.' id="_formfield_'.$name.'_input" tabindex="'.$tabindex.'"');
+	if ($inputType != "textarea" or $editor == 0) echo('<'.$inputType.' id="_formfield_'.$name.'_input" tabindex="'.$tabindex.'"');
 	
 	//now all inner stuff (attributes, value...)
-    
-	if ($inputType == "textarea")	{
+
+	if ($inputType == "textarea" and $editor > 0)	{
 		$oFCKeditor = new FCKeditor('_formfield_'.$name);
-		if (!$full_editor) $oFCKeditor->ToolbarSet = 'Basic';
+		if ($editor == 2) $oFCKeditor->ToolbarSet = 'Basic';
         else $oFCKeditor->ToolbarSet = 'PolyPager';
 		$path = getPathFromDocRoot();
 		
@@ -109,7 +109,10 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
 	//now the closing tag
 	if ($dis) echo(' disabled="disabled" ');
 	if ($inputType != "textarea") echo('/>'."\n");
-	
+	if ($inputType == "textarea" and $editor == 0){
+        echo($value.'</textarea>');
+    } 
+    
     //calendar fields
     if (isDateType($type)){
         echo('<button id="_datefield_setter'.'_formfield_'.$name.'_input">...</button>');
@@ -122,6 +125,8 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $full
         $n = $name; if($field['label'] != '') $n = $field['label'];
         writeFiller('', '_formfield_'.$name, array(explode(',', $value), array()), array($fillafromb[1], array()), ++$ind);
     }
+    
+
 }
 
 /*
@@ -291,7 +296,7 @@ function writeRelationalTableInputs($ind, $entity){
 /* writes out an HTML Form for singlepages, multipages and other stuff
 that is described in $entity. It can fill the form with data from $row
 */
-function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id='', $enctype='application/x-www-form-urlencoded') {
+function writeHTMLForm($row, $action_target, $editor, $show, $ind=4, $id='', $enctype='application/x-www-form-urlencoded') {
 	$indent = translateIndent($ind);
 	$nind = $ind + 1;
 	global $params;
@@ -445,7 +450,7 @@ function writeHTMLForm($row, $action_target, $full_editor, $show, $ind=4, $id=''
 			if ($f['valuelist'] == "") {
 				echo($indent.'			<td class="data"');
 				if(isTextAreaType($f['data_type'])) echo(' colspan="2" ');
-				echo('>'."\n");writeInputElement($index, $f['data_type'], $f['size'], $f['name'], $f['class'], $val, $full_editor, $dis, $nind+3);
+				echo('>'."\n");writeInputElement($index, $f['data_type'], $f['size'], $f['name'], $f['class'], $val, $editor, $dis, $nind+3);
 			} else {
 				echo($indent.'			<td class="data">'."\n");
 				writeOptionList($index, $f['name'], $f['class'], $val, $f['valuelist'], $dis, $alert, $nind+3);
