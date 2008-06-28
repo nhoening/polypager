@@ -69,7 +69,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $edit
         else $oFCKeditor->ToolbarSet = 'PolyPager';
 		$path = getPathFromDocRoot();
 		
-		$oFCKeditor->BasePath = utf8_str_replace("\\", '/', $path).'plugins/FCKeditor/';
+		$oFCKeditor->BasePath = utf8_str_replace("\\", '/', $path).'plugins/fckeditor/';
 		$oFCKeditor->Value = $value;
 		$oFCKeditor->Width  = '100%' ;
 		$oFCKeditor->Height = '300' ;
