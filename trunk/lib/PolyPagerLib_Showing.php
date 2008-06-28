@@ -110,6 +110,15 @@ require_once("PolyPagerLib_HTMLForms.php");
 					have a grouping field which then is used for this.
 					The group param will be passed on to the next call! Only hitting a
 					"Show all" - link or selecting another group will put an end that.
+                    
+          Security:
+             concerning SQL injection: Every parameter that is used in
+             queries should be escaped via filterSQL().
+             Furthermore, the following parameters are secured against
+             reading attacks like the UNION SELECT injection:
+             - nr, feed: checked to be numeric only
+             - page: needs to resemble a page in the database, otherwise we abort
+             - group can be used in queries but always as a string
 	*/
 	function getShowParameters() {
 		global $_POST;
@@ -123,6 +132,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		}
 		
         global $params;
+        global $error_msg_text;
 		if ($params == "") $params = array();
 		
 		//------------------------ topic (for admin list)
@@ -134,7 +144,6 @@ require_once("PolyPagerLib_HTMLForms.php");
         global $path_to_root_dir;
         $sys_info = getSysInfo();
         if (count(getPageNames()) == 0 and !$sys_info['no_tables'] and !includedByAdminScript()){
-            global $error_msg_text;
             $error_msg_text[] = __('There are no pages yet. If you are the admin of this site, you can add your first page <a href="admin/?page=_sys_pages&amp;topic=pages">here</a>.');
         }else{
             $params["page"] = urldecode($_POST["page"]);
@@ -180,14 +189,15 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$entity = getEntity($params["page"]);
 			
 			//-------------------------nr param
-			$params["nr"] = $_POST['nr'];	//starting point
-			if ($params["nr"] == "") $params["nr"] = $_GET['nr'];  //coming in per GET?
+			$params["nr"] = filterSQL($_POST['nr']);	//starting point
+			if ($params["nr"] == "") $params["nr"] = filterSQL($_GET['nr']);  //coming in per GET?
 			//pages with countable Primary Key need a max nr
 			if (isNumericType($entity['pk_type'])){ 
 				$params["max"] = getMaxNr($params["page"]);
 				if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
 			}
-	
+            if ($params['nr'] != "" and !is_numeric($params['nr'])) $error_msg_text[] = __('The nr param is not numeric!');
+            
 			//-------------------------step param
 			$default_step = $entity["step"];				//show this much on a page, could be a number or "all"
 			if ($default_step == "") $default_step = "all";
@@ -253,6 +263,7 @@ require_once("PolyPagerLib_HTMLForms.php");
             $params["topic"] = "content";
             $params["from"] = "admin";
         }
+        
 		return $params;
 	}
 	
@@ -472,7 +483,6 @@ require_once("PolyPagerLib_HTMLForms.php");
                         $keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
                         if ($said_where) $a[] = " AND ";
                         else $a[] = " WHERE ";
-                        //$a[1] = " WHERE ";
                         if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
                             echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
                             continue; //show nothing

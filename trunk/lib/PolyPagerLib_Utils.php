@@ -124,6 +124,15 @@ function filterSQL($v) {
 	else return $v;
 }
 
+/* get a param, from POST or GET,
+    perform SQLfiltering, and numerical check if wanted */
+function getParam($name, $check_numerical=false){
+    $p = $_GET[$name];
+    if ($p == "") { $p = $_POST[$name]; } //coming in per POST?
+    $p= filterSQL($p);
+    return $p;
+}
+
 
 /* formats a date string in, for example, "22 Sep 2006"
 */

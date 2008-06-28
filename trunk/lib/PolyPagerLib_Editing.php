@@ -78,6 +78,16 @@ state  |succ.-state     | auto status |with   |with   | options
  show  | edit, delete   | no          | yes   | no    |  ...
  edit  | show           | yes         | yes   | yes   |  id: actual/next
  delete| show           | yes         | yes   | no    |  state: new
+ 
+ 
+ Security:
+ concerning SQL injection: Every parameter that is used in
+ queries should be escaped via filterSQL().
+ Furthermore, the following parameters are secured against
+ reading attacks like the UNION SELECT injection:
+ - nr, feed: checked to be numeric only
+ - page: needs to resemble a page in the database, otherwise we abort
+ - group can be used in queries but always as a string
 */
 function getEditParameters() {
 	global $_POST;
@@ -91,6 +101,7 @@ function getEditParameters() {
 	}
     
     global $params;
+    global $error_msg_text;
     if ($params == "") $params = array();
     
 	//------------------------- page check ----------------------------
@@ -103,6 +114,7 @@ function getEditParameters() {
 		$params["page"] = urldecode($query_array[0]);
 		//if "page=" is given we can handle this, too
 		if (utf8_strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
+        $params['page'] = filterSQL($params['page']);
 	}
     
 	if ($params["page"] != "" and isAKnownPage($params["page"])){
@@ -122,22 +134,27 @@ function getEditParameters() {
 		//-------------------------from param
 		$params["from"] = $_GET["from"];
 		if ($params["from"] == "") { $params["from"] = $_POST["from"]; } //coming in per POST?
-	
+	    $params['from'] = filterSQL($params['from']);
+        
 		//-------------------------group param
 		$params["group"] = urldecode($_GET["group"]);
 		if ($params["group"] == '') { $params["group"] = urldecode($_POST["group"]); } //coming in per POST?
+        $params['group'] = filterSQL($params['group']);
+        //check for allowed values: group field and also page names
+        
         
 		//-------------------------topic (for admin list)
 		$params["topic"] = $_POST["topic"];      
 		if ($params["topic"] == "") {$params["topic"] = $_GET["topic"];}
         if ($params["topic"] == "") {$params["topic"] = "content";}
-		
+		$params['topic'] = filterSQL($params['topic']);
+        
 		//-------------------------feed (from checkbox)
 		$params["feed"] = $_POST['_formfield_feedbox'];
 		if ($params["feed"] == "") {$params["feed"] = $_GET["_formfield_feedbox"];}
 		if($params["feed"] == "on"){$params["feed"] = "1";}
 		else{$params["feed"] = "0";}
-		
+		 if ($params["feed"]!="" and !is_numeric($params['feed'])) $error_msg_text[] = __('The feed param contains wrong data!');
         
 		//-----------checking Parameters ---------------------------------
 		if ($params["cmd"] != "") {
@@ -213,6 +230,7 @@ function getEditParameters() {
 					or ($params["page"] == "_sys_intros" and $params["cmd"] == "entry"))
 					and $entity["pk"] != "") {
 				$params["nr"] = $_GET['nr'];if ($params["nr"] == "") $params["nr"] = $_POST['nr'];	//can come in both ways
+                if ($params["nr"]!="" and  !is_numeric($params['nr'])) $error_msg_text[] = __('The nr param is not numeric!');
 				if ($params["nr"] == "" and $params["cmd"] == "show") $params["cmd"] = "entry";	//assume new one
 			}
 	

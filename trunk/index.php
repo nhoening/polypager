@@ -116,13 +116,14 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	$res = array();
 	foreach(array_keys($queries) as $qkey){
 		$res[$qkey] = mysql_query($queries[$qkey], $link);
+        
 		$error_nr = mysql_errno($link);
 		if ($error_nr != 0) {
 			$fehler_text = mysql_error($link);
 			$error_msg_text[] = __('DB-Error:').' '.$fehler_text;
 		}
 	}
-	
+
 	if (isMultipage($params["page"]) and (eregi('int',$entity['pk-type']) and $params["max"] == "")) { //no other way... db is empty
 		$sys_msg_text[] = __('There is no entry in the database yet...');
 		$sys_msg_text[] = '<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>';
