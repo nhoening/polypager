@@ -374,7 +374,7 @@ function writeHTMLForm($row, $action_target, $editor, $show, $ind=4, $id='', $en
 	echo($indent.'		<input type="hidden" name="_formfield_time_needed" value=""/>'."\n");
 	$index = 1;
     
-    if ($params["page"] == "_sys_comments" and $sys_info["use_captchas"] == 1 and includedByAdminScript()){
+    if ($params["page"] == "_sys_comments" and $sys_info["use_captchas"] == 1 and !includedByAdminScript()){
         echo recaptcha_get_html($sys_info['public_captcha_key'], null);
     }
 	// sort according to formgroups
