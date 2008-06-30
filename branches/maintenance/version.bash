@@ -5,7 +5,7 @@
 #       -pass version
 
 if [ "$1" == "" ]; then
-	echo usage: ./dist.bash {version} or bash dist.bash {version}
+	echo usage: ./version.bash {version} 
 else
 	cd ../../
 	svn copy trunk tags/$1

@@ -340,7 +340,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$entity = getEntity($p);
             
 			if ($entity['pk'] == "") {
-                if ($entity != "" and $entity['tablename'] != '' and $params['cmd']!='_search') {
+                if ($entity != "" and $entity['tablename'] != '') {
                     global $sys_msg_text;
                     $sys_msg_text[] = $entity['tablename'].':'.__('This table has no primary key!');
                 }
@@ -494,11 +494,11 @@ require_once("PolyPagerLib_HTMLForms.php");
                             foreach($entity["fields"] as $f) {
                                 if (isTextType($f["data_type"])){
                                     $found_a_textfield = true;
-                                    $table_field = '`'.$entity["tablename"].'`.`'.$f['name'].'`';
+                                    $table_field = $entity["tablename"].'.'.$f['name'];
                                     //remember: BLOB fields are case-sensitive! you should take text for those
                                     $a[] = " (";
                                     foreach($kws as $k)
-                                        $a[] = " ".$table_field." LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
+                                        $a[] = " `".$table_field."` LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
                                     // replace last AND with OR
                                     $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
                                     $a[] = " ) OR";

@@ -1,0 +1,36 @@
+
+@import url("../../maps/classic_iefix.css");
+
+/*holds hack for IE hover and focus support
+  strangely, this seems to need the path FROM THE DIRECTORY that the
+  HTML(PHP) LIVES IN, therefore / or admin ... */
+body { behavior:url(cssfocusandhover.htc) !important; }
+
+/* ----------------------------------------------- */
+
+#data, #data_admin, #data_gallery {
+	margin-top: 60px;
+}
+
+/*
+#main_menu {
+	position: absolute !important; top:115px; left:10px !important;
+	width: 799px !important;
+}
+
+#main_menu li ul { 
+	position: absolute !important; top: 17px !important; left: 62px !important;
+}
+*/
+#main_menu {
+	position: absolute !important; top:115px; left:10px !important;
+}
+
+
+.sub_menu { 
+    position: absolute !important; top: 16px !important; left:-35px !important; 
+}
+
+#main_menu li a:hover {
+	color: #fff;
+}
