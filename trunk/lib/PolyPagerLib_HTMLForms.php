@@ -110,7 +110,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $edit
 	if ($dis) echo(' disabled="disabled" ');
 	if ($inputType != "textarea") echo('/>'."\n");
 	if ($inputType == "textarea" and $editor == 0){
-        echo($value.'</textarea>');
+        echo('>'.$value.'</textarea>');
     } 
     
     //calendar fields
