@@ -271,7 +271,7 @@ function writeRelationalTableInputs($ind, $entity){
             $res = pp_run_query($query);
             $already_show_vals = array();
             $already_save_vals = array();
-            while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            foreach($res as $row){
                 $already_show_vals[] = $row['Title'];
                 $already_save_vals[] = $row[$c[2][1]['fk']['field']];
             }
@@ -282,7 +282,7 @@ function writeRelationalTableInputs($ind, $entity){
             $res = pp_run_query($query);
             $poss_show_vals = array();
             $poss_save_vals = array();
-            while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            foreach($res as $row){
                 $poss_show_vals[] = $row['Title'];
                 $poss_save_vals[] = $row['VAL'];
             }
@@ -547,12 +547,12 @@ function writeHTMLForm($row, $action_target, $editor, $show, $ind=4, $id='', $en
         $comments = getComments();
         
 		if ($comments == "") $comment_count = 0;
-		else $comment_count = mysql_num_rows($comments);
+		else $comment_count = count($comments);
         $comment_help = __('view the comments on this entry.');
         
         $q = "Select pk from _sys_feed WHERE pagename = '".$params['page']."' and id = '".$params['nr']."'";
         $res = pp_run_query($q);
-        $row = mysql_fetch_array($res, MYSQL_ASSOC);
+        $row = $res[0];
         $feed_help = __('view the feed for this entry.');
 
         echo($indent.'		<div class="sys_msg_admin">'."\n");

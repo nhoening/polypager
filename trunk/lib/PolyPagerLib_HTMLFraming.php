@@ -124,7 +124,7 @@
 		$res = mysql_query($query, getDBLink());
 		$error_nr = mysql_errno(getDBLink());
 		if ($error_nr == 0) {
-			$row = mysql_fetch_array($res, MYSQL_ASSOC);
+			$row = $res[0];
 			if ($row["intro"] != "") {
 				echo($indent.'	<span id="impressum">'.$row["intro"].'</span>'."\n");
 			}
@@ -155,11 +155,11 @@
 		$query = "SELECT id, pagename, heading, publish, in_submenu, order_index from _sys_sections
 					WHERE publish = 1
 					GROUP BY pagename, heading ORDER BY order_index ASC";
-		pp_run_query($query);
+		$res = pp_run_query($query);
 		
 		$sections = array(); //build a 2-dimensional array with 
 							 //key:page value:heading and order_index
-		while($res and $row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+        foreach($res as $row) {
 			if ($sections[$row["pagename"]] == "") {	//add new array
 				$tmp = array("heading" => $row["heading"], 
 								"order_index" => $row["order_index"]);

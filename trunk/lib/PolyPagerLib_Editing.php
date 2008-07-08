@@ -267,59 +267,9 @@ function getEditQuery($command, $theID) {
 	if ($theID == "") $theID = $params["nr"];
     if ($theID == "") $theID = $params["values"][$entity["pk"]];
 	$query = "";        # we'll build in this string
-	$queries = array(); # and add it to this array we'll return
-	
+    $theParams = array();  #... add params here
+	$queries = array(); # ... and add it to this array we'll return
 
-    /*
-	// resolve foreign keys that the user entered (the constraints in the db are 
-	// the dbs thing)
-	if ($command == "edit" || $command == "delete"){
-		//look in foreign keys:
-		$fks = getForeignKeys();
-		foreach($fks as $fk){
-			//if not automatic (FK is in database) and ref_page = this page:
-			if ($fk['in_db'] == '0' && $fk['ref_page'] == $params['page']) {
-				$params_backup = $params;
-				//get action for current cmd
-				$action = ($command=='edit')?'on_update':'on_delete';
-				
-				//according to http://dev.mysql.com/doc/refman/5.0/en/innodb-foreign-key-constraints.html,
-				//RESTRICT and NO ACTION both reject deletion in the parent table!
-				if ($fk[$action] == 'RESTRICT' || $fk[$action] == 'NO ACTION'){ 
-				  echo('<div class="sys_msg">operation RESTRICTED according to foreign key '.$fk['name'].'</div>');
-				  return 'ff';
-				}else {	// we really need to work :-(
-					$referencing_page_info = getPageInfo($fk['ref_page']);
-					$referencing_entity = getEntity($fk['ref_page']);
-					$referencing_table = $referencing_page_info['tablename'];
-					if ($fk['ref_field'] == $referencing_entity['pk']) $fk['ref_field'] = "nr";
-					// find affected entries in referencing table
-					$tmp_query = "SELECT * FROM `".$referencing_table."` WHERE ".$fk['field']." = ".$params[$fk['ref_field']];
-					
-					$result = pp_run_query($tmp_query);
-					while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
-						// if we update and the field hasn't changed, let's not do anything
-						if (!($command == 'edit' && 
-								$params_backup['values'][$fk['ref_field']] == $params_backup['values']['old_formfield_'.$fk['ref_field']])){
-							$params = array(); //make a new one
-							$params['values'] = array();
-							if ($fk[$action] == 'CASCADE'){
-								$params['values'][$fk['field']] = $params_backup['values'][$fk['ref_field']];
-							}else if ($fk[$action] == 'SET NULL'){
-								$params['values'][$fk['field']] = null;
-							}
-							//add Query with recursicve call
-							$tmp = getEditQuery($command,$row[getPKName($referencing_table)]);
-							if ($tmp == ""); return;	//error
-							$queries = array_merge($tmp,$queries);
-						}
-					}
-				}
-				$params = $params_backup;
-			}
-		}
-	}*/
-    
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
@@ -340,15 +290,11 @@ function getEditQuery($command, $theID) {
 		$x = count($queryA);
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
-				if (isTextType($f["data_type"]) or isDateType($f["data_type"]) or $f["data_type"] == 'time')
-                    $val = "'".$params["values"][$f["name"]]."'";
-                else $val = $params["values"][$f["name"]];
+                $theParams[] = array(getMySQLiType($f["data_type"]), $params["values"][$f["name"]]);
                 //for MySQL >= 5, convert to UTF-8
-                $client_api = explode('.', mysql_get_server_info()); 
-                if ($client_api[0] >= 5){
-                    $queryA[$x] = " convert(".$val." using utf8),";
-                }
-                else $queryA[$x] = " ".$val.",";
+                $client_api = explode('.', mysqli_get_server_info(getDBLink())); 
+                if ($client_api[0] >= 5) $queryA[$x] = " convert(? using utf8),";
+                else $queryA[$x] = " ?,";
 				$x++;
 			}
 		}
@@ -365,7 +311,8 @@ function getEditQuery($command, $theID) {
 		$query = "UPDATE `".$page_info["tablename"]."` SET";
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
-                $query .= " ".nameEqValueEscaped($f["data_type"], $f["name"], $params["values"][$f['name']]).',';
+                $query .= ' '.$f["name"]." =  ?, ";
+                $theParams[] = array(getMySQLiType($f["data_type"]), $params["values"][$f['name']]);
 			}
 		}
 		$query = utf8_substr($query, 0, utf8_strlen($query)-1);
@@ -379,20 +326,22 @@ function getEditQuery($command, $theID) {
 	else if ($command == "delete") {	// DELETE Query
 		$query .= "DELETE FROM `".$page_info["tablename"];
         if ($entity["pk"] != "")
-            $query .= "` WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
+            $query .= "` WHERE ".$entity["pk"]." = ?";
+            $theParams[] = array(getMySQLiType($entity["pk_type"]), $theID);
 	}
 	//---------------end delete -----------------------------------
 	//------------------- show ----------------------------------------
 	else if ($command == "show") {		// SELECT Query
 		$query .= "SELECT * FROM `".$page_info["tablename"];
         if ($entity["pk"] != "")
-            $query .= "` WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
+            $query .= "` WHERE ".$entity["pk"]." = ?";
+            $theParams[] = array(getMySQLiType($entity["pk_type"]), $theID);
 	}
 	//---------------end show -----------------------------------------
 	
 	$query .= ';';
-	$queries[] = $query;
-	//print_r($queries);
+	$queries[] = array($query, $theParams);
+	//echo("Edit Queries:");print_r($queries);
 	return $queries;
 }
 
@@ -441,24 +390,27 @@ function getRelationalQueries(){
     //make the feed for the entry public if the entry is published
     $p = 1;
     if ($entity["publish_field"]!="" and $params["values"][$entity["publish_field"]] == '0') $p = 0;
-    $query = "UPDATE _sys_feed SET public = ".$p." WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";";
-    $res = pp_run_query($query);
+    $query = "UPDATE _sys_feed SET public = ".$p." WHERE pagename = ? AND id = ?;";
+    $res = pp_run_query(array($query, array(array('s',$params["page"]), array('i',$params["nr"]))));
     
     if($params["feed"] == '1') {
         
         //delete all possible entries with the same pagename/id from the feed list
-        if($params["cmd"] != "entry") $res = pp_run_query("DELETE FROM _sys_feed WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"].";");
-
+        if($params["cmd"] != "entry"){ 
+            $query = "DELETE FROM _sys_feed WHERE pagename = ? AND id = ?;";
+            $res = pp_run_query(array($query, array(array('s',$params["page"]), array('i',$params["nr"]))));
+        }
         if($params["cmd"] != "delete") {	//new one comes in
             //find out how much is still in there
             $res = pp_run_query("SELECT COUNT(*) AS nr FROM _sys_feed;");
-            if($row = mysql_fetch_array($res, MYSQL_ASSOC))	$count = $row['nr'];
+            $count = $res[0]['nr'];
             
             //if bigger than max_entries, delete oldest
             if ($count > ($max_entries-1)){
                 $res = pp_run_query("SELECT MIN(edited_date) AS maxed FROM _sys_feed;");
-                $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                $res = pp_run_query("DELETE FROM _sys_feed WHERE edited_date = '".$row['maxed']."';");
+                $row = $res[0];
+                $query = "DELETE FROM _sys_feed WHERE edited_date = ?;";
+                $res = pp_run_query(array($query, array(array('s',$row['maxed']))));
             }
             //insert the new one
             $title = "";
@@ -468,9 +420,14 @@ function getRelationalQueries(){
             
             //we know if the entry is new or was updated
             if ($params["cmd"] == "edit") $title = '['.__('update').'] '.$title;
+            $theParams = array();
             $query = "INSERT INTO _sys_feed (edited_date, title, pagename, id, public) VALUES ";
-            $query = $query."('".buildDateTimeString()."','".$title."','".$params["page"]."',".$params["nr"].",".$p.");";
-            $res = pp_run_query($query);
+            $query = $query."('".buildDateTimeString()."',?,?,?,?);";
+            $theParams[] = array('s',$title);
+            $theParams[] = array('s',$params["page"]);
+            $theParams[] = array('i',$params["nr"]);
+            $theParams[] = array('i',$p);
+            $res = pp_run_query(array($query, $theParams));
         }
     }
  }

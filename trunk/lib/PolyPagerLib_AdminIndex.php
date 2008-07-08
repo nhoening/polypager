@@ -50,7 +50,7 @@
 	}
 	
     function getMySQLCharsetter() {
-        $client_api = utf8_explode('.', mysql_get_server_info()); 
+        $client_api = utf8_explode('.', mysqli_get_server_info()); 
 		if ($client_api[0] >= 5) return " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
         else return "";
     }
@@ -86,18 +86,18 @@
                       `public_captcha_key` varchar(50) NOT NULL default '',
                       `private_captcha_key` varchar(50) NOT NULL default ''
                     ) ENGINE=MyISAM $charsetter;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = mysql_errno($link);
-		$fehler_text = mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = mysqli_errno($link);
+		$fehler_text = mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		$query = 'SELECT * FROM _sys_sys';
         $res = pp_run_query($query);
-        if(mysql_num_rows($res) == 0) { //fill in one row if its not there already for some reason
+        if(count($res) == 0) { //fill in one row if its not there already for some reason
             $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
                                 '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 0, 'gallery', 99, '0','','') ;";
-            $res = mysql_query($query, $link);
-            $fehler_nr = mysql_errno($link);
-            $fehler_text = mysql_error($link);
+            $res = pp_run_query($query);
+            $fehler_nr = mysqli_errno($link);
+            $fehler_text = mysqli_error($link);
             if ($debug) { echo('<br/><span class="debug">Insert Sys_Sys is: '.$query.'<br /></span>'); }
         }
         
@@ -118,9 +118,9 @@
                       KEY `the_group` (`the_group`),
                       KEY `input_date` (`input_date`)
                     ) ENGINE=MyISAM $charsetter;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_intros` (
@@ -128,9 +128,9 @@
 					  `intro` text NOT NULL,
 					  PRIMARY KEY  (`tablename`)
 					) TYPE=MyISAM $charsetter;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
 		$query = "CREATE TABLE `_sys_feed` (
@@ -143,9 +143,9 @@
 					  PRIMARY KEY  (`pk`),
 					  KEY `edited_date` (`edited_date`)
 					) TYPE=MyISAM $charsetter ;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_comments` (
@@ -162,9 +162,9 @@
 					  KEY `pagename` (`pagename`,`pageid`),
 					  KEY `is_spam` (`is_spam`)
 					)  TYPE=MyISAM $charsetter ; ";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 		
 		
@@ -183,9 +183,9 @@
                       PRIMARY KEY  (`id`),
                       UNIQUE KEY `name` (`name`)
 					) ENGINE=MyISAM $charsetter;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 
 		$query = "CREATE TABLE IF NOT EXISTS `_sys_multipages` (
@@ -219,9 +219,9 @@
 					  UNIQUE KEY `name_2` (`name`),
 					  KEY `name` (`name`,`tablename`,`group_field`)
 					) ENGINE=MyISAM $charsetter;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 
 		$query = "CREATE TABLE `_sys_fields` (
@@ -239,9 +239,9 @@
                       `on_delete` varchar(20) NOT NULL,
                       PRIMARY KEY  (`id`)
                     ) ENGINE=MyISAM $charsetter ;";
-		$res = mysql_query($query, $link);
-		$fehler_nr = $fehler_nr.mysql_errno($link);
-		$fehler_text = $fehler_text.mysql_error($link);
+		$res = pp_run_query($query);
+		$fehler_nr = $fehler_nr.mysqli_errno($link);
+		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
 
 
@@ -271,9 +271,9 @@
 			$query = "INSERT INTO `_sys_singlepages` (`name`, `in_menue`, `menue_index`, 
 				`commentable`, `hide_options`, `hide_search`, `hide_toc`, `grouplist`) 
 				VALUES ('".$page_name."', 1, 1, 1, 1, 1, 1, '');";
-			$res = mysql_query($query, $link);
-			$fehler_nr = $fehler_nr.mysql_errno($link);
-			$fehler_text = $fehler_text.mysql_error($link);
+			$res = pp_run_query($query);
+			$fehler_nr = $fehler_nr.mysqli_errno($link);
+			$fehler_text = $fehler_text.mysqli_error($link);
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
 			//one entry to allow comments on
 			$query = "INSERT INTO `_sys_sections` (`input_date`, `edited_date`, 
@@ -281,9 +281,9 @@
 			`order_index`, `the_group`) 
 			VALUES ('".buildDateString(getdate())." ".buildTimeString(localtime(time() , 1))."', '".buildDateString(getdate())." ".buildTimeString(localtime())."', 
 			'".$page_name."', '".$page_name."', 'this is the entry that gets commented. Write your own greeting formula here, but do not delete it.', 1, 0, 0, '');";
-			$res = mysql_query($query, $link);
-			$fehler_nr = $fehler_nr.mysql_errno($link);
-			$fehler_text = $fehler_text.mysql_error($link);
+			$res = pp_run_query($query);
+			$fehler_nr = $fehler_nr.mysqli_errno($link);
+			$fehler_text = $fehler_text.mysqli_error($link);
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
 		}
 		else if($template_name == "blog") {
@@ -298,16 +298,16 @@
 						  PRIMARY KEY  (`id`),
 						  KEY `publish` (`publish`)
 						) ENGINE=MyISAM $charsetter;";
-			$res = mysql_query($query, $link);
-			$fehler_nr = $fehler_nr.mysql_errno($link);
-			$fehler_text = $fehler_text.mysql_error($link);
+			$res = pp_run_query($query);
+			$fehler_nr = $fehler_nr.mysqli_errno($link);
+			$fehler_text = $fehler_text.mysqli_error($link);
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `hide_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
 					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."', 1, 0, 1, 1, 1, 1, 'id,', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
-				$res = mysql_query($query, $link);
-				$fehler_nr = $fehler_nr.mysql_errno($link);
-				$fehler_text = $fehler_text.mysql_error($link);
+				$res = pp_run_query($query);
+				$fehler_nr = $fehler_nr.mysqli_errno($link);
+				$fehler_text = $fehler_text.mysqli_error($link);
 			}
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
 		}
@@ -323,18 +323,18 @@
 						  KEY `topic` (`topic`),
 						  KEY `inputdate` (`inputdate`)
 						) ENGINE=MyISAM $charsetter;";
-			$res = mysql_query($query, $link);
-			$fehler_nr = $fehler_nr.mysql_errno($link);
-			$fehler_text = $fehler_text.mysql_error($link);
+			$res = pp_run_query($query);
+			$fehler_nr = $fehler_nr.mysqli_errno($link);
+			$fehler_text = $fehler_text.mysqli_error($link);
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
 			
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `hide_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
 				VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, 'id,', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
-				$res = mysql_query($query, $link);
-				$fehler_nr = $fehler_nr.mysql_errno($link);
-				$fehler_text = $fehler_text.mysql_error($link);
+				$res = pp_run_query($query);
+				$fehler_nr = $fehler_nr.mysqli_errno($link);
+				$fehler_text = $fehler_text.mysqli_error($link);
 			}
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
 		}
@@ -550,10 +550,11 @@
 			$res = array();
 			$fehler_text = "";
 			foreach(array_keys($queries) as $qkey){
-				$res[$qkey] = mysql_query($queries[$qkey], $link);
-				$error_nr = mysql_errno($link);
+				$res[$qkey] = pp_run_query($queries[$qkey]);
+				$error_nr = mysqli_errno($link);
+                
 				if ($error_nr != 0) {
-					$fehler_text = mysql_error($link);
+					$fehler_text = mysqli_error($link);
 					$error_msg_text[] = __('DB-Error:').' '.$fehler_text;
 				}
 			}
@@ -576,7 +577,7 @@
 					
 					//------------------------ getting and showing data   --------------
 					echo($indent.'	<div class="show">'."\n");
-					writeEntries($res,true, $nind, false);
+					writeEntries($res, true, $nind, false);
 					echo($indent.'	</div>'."\n");  //end of class "show"
 					//--------------------- end getting and showing data  --------------
 			

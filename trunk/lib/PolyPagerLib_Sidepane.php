@@ -99,7 +99,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
     $feeds = array();
         
 	//enrich with text from the tables themselves
-    while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+    foreach($res as $row){
         $the_page = getPageInfo($row['thePage']);
         if ($the_page["name"] != "" && !($the_page['only_admin_access'] == '1' and $restricted > 1)) {
             $entity = getEntity($row['thePage']);
@@ -108,7 +108,8 @@ function getFeed($amount, $comments = false, $restricted = 3) {
                 if ($field == "") $field = $the_page["title_field"];
                 $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
     
-                if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) {
+                if(count($res2) > 0) {
+                    $row2 = $res2[0];
                     //no title? take sthg from content...
                     if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
                         $row['theText'] = getFirstWords($row2['tfield'],6);
@@ -120,8 +121,10 @@ function getFeed($amount, $comments = false, $restricted = 3) {
                 $field = $the_page["title_field"];
                 if ($field=="") $field = guessTextField($entity);
                 $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
-                if($row2 = mysql_fetch_array($res2, MYSQL_ASSOC)) 
+                 if(count($res2) > 0) {
+                    $row2 = $res2[0];
                     $row['theText'] = getFirstWords($row2['tfield'],10);
+                 }
             }
             $feeds[] = $row;
         }
@@ -176,13 +179,13 @@ function writeIntroDiv($ind=4) {
 	}
 	
 	$tmp_query = "SELECT intro FROM _sys_intros WHERE tablename = '".$page."';";
-	$res = mysql_query($tmp_query, getDBLink());
-	$error_nr = mysql_errno(getDBLink());
+	$res = pp_run_query($tmp_query);
+	$error_nr = mysqli_errno(getDBLink());
 	if ($error_nr != 0) {
-		//$fehler_text = mysql_error(getDBLink());
+		//$fehler_text = mysqli_error(getDBLink());
 		//echo('<div class="sys_msg">DB-Error: '.$fehler_text.'</div>'."\n");
 	} else {
-		$row = mysql_fetch_array($res, MYSQL_ASSOC);
+		$row = $res[0];
 		if ($row['intro'] != "") {
 			echo($indent.'<div id="intro">'."\n");
 			echo($indent.'	<div class="description">'.__('about this page').'</div>'."\n");

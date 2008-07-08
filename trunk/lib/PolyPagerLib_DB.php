@@ -1,31 +1,39 @@
 <?php
 
+require_once("plugins"  . FILE_SEPARATOR .  "codesense_mysqli.php");
+
 /* this code provides the code to setup the MySQL database
 	it builds a connection (a link) to the db (once only) and returns it.
 */
 if (!function_exists("getDBLink")){ // for upgrades from <= 1.0rc4 to >= 1.0rc5
 $the_db_link = "";
 function getDBLink() {
-	global $the_db_link;
+	global $db_obj;
 	global $host;
 	global $db;
 	global $user;
 	global $pass;
 
-	if ($the_db_link == "") {
+	if ($db_obj == "") {
         $text = "Welcome to PolyPager.<br/>Seeing this page proofs that PolyPager is working at the address you typed in. <br/> However, the database is not connectable. <br/>Maybe it is not configured yet or the configuration does not fit. <br/>If you are the administrator of this page, please consult PolyPager_Config.php";
 
         // build connection to DBMS
-        $the_db_link = mysql_connect($host, $user, $pass) or die($text);
+        //$the_db_link = mysqli_connect($host, $user, $pass, $db) or die($text);
+        $db_obj = CodeSense_mysqli::CreateNew($user, $pass, $db, $host);
         
-        // now to the DB
-        mysql_select_db($db, $the_db_link) or die ($text);
-        mysql_query('SET CHARACTER SET utf8');
-        mysql_query("SET SESSION collation_connection ='utf8_general_ci'");
-        mysql_query("SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
+        /* check connection */
+        if (mysqli_connect_errno()) {
+            printf("Connect failed: %s\n", mysqli_connect_error());
+            exit();
+        }
 
+        // now to the DB
+        // mysqli_select_db($db, $the_db_link) or die ($text);
+        $db_obj->ExecuteSQL('SET CHARACTER SET utf8');
+        $db_obj->ExecuteSQL("SET SESSION collation_connection ='utf8_general_ci'");
+        $db_obj->ExecuteSQL("SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
 	}
-	return $the_db_link;
+	return $db_obj;
 }
 
 function getDBName() {
@@ -35,21 +43,38 @@ function getDBName() {
 }
 
 
-/*
- * run the query and append error msg to the buffer (if given) 
- */
-function pp_run_query($query){
+/* call with a query OR an array of the query together with an array of params*/
+function pp_run_query($query_set){
 	global $debug;
-	$res = mysql_query($query, getDBLink());
-	$error_nr = mysql_errno(getDBLink());
+    $d = getDBLink();
+    if (!is_array($query_set)) {
+        if (in_array(substr($query_set,0,6),array("UPDATE", "INSERT", "DELETE"))) {
+            $res = $d->ExecuteSQL($query_set);
+        }else  $res = $d->FetchAll($query_set);
+    }else{
+        $format_str=''; $params=array($query_set[0]);
+        foreach ($query_set[1] as $p) $format_str .= $p[0];
+        if ($format_str != "") $params[] = $format_str;
+        foreach ($query_set[1] as $p) $params[] = $p[1];
+        if (in_array(substr($query_set[0],0,6), array("UPDATE", "INSERT", "DELETE"))) $func='ExecuteSQL'; else $func='FetchAll';
+        $res = call_user_func_array(array($d, $func), $params);
+    }
+	return $res;
+}
+
+/* Run queries that can't be / don't need to be prepared*/
+function pp_run_query_unprepared($query){
+	global $debug;
+    $res = mysqli_query(getDBLink(), $query);
+    
+	$error_nr = mysqli_errno(getDBLink());
 	if ($error_nr != 0) {
-		$error_buffer .= '|'.mysql_error(getDBLink()).'|';
+		$error_buffer .= '|'.mysqli_error(getDBLink()).'|';
 	}
 	if($debug and $error_buffer != "") echo('<div class="debug">got error(s):|'.$error_buffer.'| when running the query "'.$query.'"</div>');
 	
 	return $res;
 }
-
 
 /* returns wether this MySQL type is numeric one */
 function isNumericType($type) {
@@ -80,7 +105,15 @@ function isTextAreaType($type) {
         or $type=="tinytext" or $type=="text" or $type=="mediumtext" or $type=="longtext");
 }
 
+function getMySQLiType($t){
+    $type = 's';
+	if (isNumericType($t)) $type = 'd';
+    if ($t == 'bool') $type = 'i';
+    if ($t == 'blob') $type = 'b';
+    return $type;                
+}
 
+                
 /*
 	Returns an array with "table_name", "title_field", "likely_page" and "fk"
 	for every table that is referenced by this entity via a foreign key "fk"
@@ -119,8 +152,8 @@ function getReferencedTableData($entity){
                 $pk_field = getPKName($referenced_table);
                 $pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referenced_table."'";
                 $result = pp_run_query($pq);
-                $row = mysql_fetch_array($result, MYSQL_ASSOC);
-                if (mysql_num_rows($result)>1) 
+                $row = $result[0];
+                if (count($result)>1) 
                     $title_field = $pk_field; //no chance of a good choice :-(
                 else { // we have the one page for this table!
                     $title_field = $row['title_field'];
@@ -164,8 +197,8 @@ function getReferencingTableData($entity){
 				$pk_field = getPKName($referencing_table);
 				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referencing_table."'";
 				$result = pp_run_query($pq);
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
-				if (mysql_num_rows($result)>1) 
+				$row = $result[0];
+				if (count($result)>1) 
 					$title_field = $pk_field; //no chance of a good choice :-(
 				else { // we have the one page for this table!
 					$title_field = $row['title_field'];
@@ -244,13 +277,13 @@ function addFields($entity, $name, $not_for_field_list = "") {
 		// -- first, we see what we find in the database's metadata
 		
 		//test for Information_schema.columns (SQL-92 standard)
-		$client_api = explode('.', mysql_get_server_info()); 
+		$client_api = explode('.', mysqli_get_server_info(getDBLink())); 
 		if ($client_api[0] >= 5){
 			//test for existence of/access to INFORMATION_SCHEMA database
 			$info_schema_accessible = false;
-			$db_list = mysql_list_dbs(getDBLink());
-			while ($row = mysql_fetch_object($db_list)) {
-				if ($row->Database == "information_schema") $info_schema_accessible = true;
+			$db_list = pp_run_query('Show databases;');
+			foreach($db_list as $row){
+				if ($row["Database"] == "information_schema") $info_schema_accessible = true;
 			}
 			if ($info_schema_accessible) // information_schema exists
 				//we align the columns that we'd also find in the "SHOW COLUMNS"-
@@ -272,7 +305,7 @@ function addFields($entity, $name, $not_for_field_list = "") {
         
 		$res = pp_run_query($query);
 		$i = 0;
-		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
+		foreach($res as $row){
             
 			//primary key
 			if ($row['Key']=='PRI') {
@@ -338,7 +371,7 @@ function addFields($entity, $name, $not_for_field_list = "") {
         if ($page_info != ""){
             $query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
             $res = pp_run_query($query);
-            while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            foreach($res as $row){
                 for($i=0;$i<count($fields);$i++){
                     
                     if ($fields[$i]["name"] == $row["name"]) {
@@ -383,8 +416,7 @@ function getRelationCandidatesFor($tablename){
     // make sure we know what the 1st field is
     foreach ($rf as $t) {
         $res = pp_run_query('SHOW COLUMNS FROM `'.$t['table_name'].'`');
-        $row = mysql_fetch_array($res, MYSQL_ASSOC);
-        if ($row['Field'] == $t['fk']['field']) $linking_tables[] = $t['table_name'];
+        if ($res[0]['Field'] == $t['fk']['field']) $linking_tables[] = $t['table_name'];
     }
     
     $rel_candidates = array();
@@ -443,16 +475,12 @@ function getForeignKeys(){
 	global $db,$fks;
 
 	if ($fks == "" or count($fks)==0){
-        $tables = mysql_list_tables($db, getDBLink());
-        $num_tables = mysql_num_rows($tables);
+        $tables = pp_run_query("SHOW TABLES");
     
 		$fk = array();
-		
-		for($x = 0; $x < $num_tables; $x++){
-			$table = mysql_tablename($tables, $x);
-		
-			$res = pp_run_query("SHOW CREATE TABLE `".$table."`;");
-			$row = mysql_fetch_array($res, MYSQL_ASSOC);
+		foreach($tables[0] as $table){
+			$res = pp_run_query_unprepared("SHOW CREATE TABLE `".$table."`;");
+			$row = mysqli_fetch_array($res, MYSQLI_ASSOC);
 			$create_query = $row['Create Table'];
 			
 			$crlf = "||";
@@ -537,7 +565,7 @@ function getForeignKeys(){
 		// Now look in the _sys_fields data for manually specified foreign keys
 		/*$query = "SELECT pagename, name, foreign_key_to, on_update, on_delete FROM _sys_fields WHERE foreign_key_to != ''";
 		$res = pp_run_query($query);
-		while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
+		foreach($res as $row){
 			$fk = array();
 			$is_multi = isMultiPage($row['pagename']);
 	
@@ -597,7 +625,7 @@ function SQL2HTML($query, $title="") {
         $i++;
         }
         $sRetVal .= "</tr>";
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+       foreach($result as $line){
         $sRetVal .= "\t<tr>\n";
         foreach ($line as $col_value) {
         $sRetVal .= "\t\t<td>$col_value</td>\n";

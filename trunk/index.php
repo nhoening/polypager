@@ -81,12 +81,12 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 			if ($debug) { echo('<div class="debug">Query is: '.$query.'</div>'); }
 	
 			//now run db manipulation queries
-			$res = mysql_query($query, $link);
-			$fehler_nr = mysql_errno($link);
+			$res = pp_run_query($query, $link);
+			$fehler_nr = mysqli_errno($link);
 	
 			if ($fehler_nr != 0) {
 				$i_manipulated = false;
-				$error_msg_text[] = __('A database-error ocurred:').' '.mysql_error($link);
+				$error_msg_text[] = __('A database-error ocurred:').' '.mysqli_error($link);
 			} else {
 				$sys_msg_text[] = sprintf(__('The %s-command was successful'), $params["cmd"]);
 				if ($debug) { echo('<div class="debug">I used this query: '.$query.'.</div>'."\n");}
@@ -115,11 +115,11 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	// send show quer(y|ies) to DBMS now
 	$res = array();
 	foreach(array_keys($queries) as $qkey){
-		$res[$qkey] = mysql_query($queries[$qkey], $link);
+		$res[$qkey] = pp_run_query($queries[$qkey]);
         
-		$error_nr = mysql_errno($link);
+		$error_nr = mysqli_errno($link);
 		if ($error_nr != 0) {
-			$fehler_text = mysql_error($link);
+			$fehler_text = mysqli_error($link);
 			$error_msg_text[] = __('DB-Error:').' '.$fehler_text;
 		}
 	}
@@ -130,13 +130,12 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	}
 	
 	// set a title if we show one entry
-	if ($res != "" and count($res) > 0 and in_array($params['page'],array_keys($res)) and mysql_num_rows($res[$params['page']]) == 1) {	
+	if ($res != "" and count($res) > 0 and in_array($params['page'], array_keys($res)) and count($res[$params['page']]) == 1) {	
 		//writing header with a title when we find a good one
-		$row = mysql_fetch_array($res[$params['page']], MYSQL_ASSOC);	//get first one
+		$row = $res[$params['page']][0];	//get first one
 		$title = getTitle($entity,$row);
 		//mark our knowledge in "step" param
 		$params["step"] = "1";
-		mysql_data_seek($res[$params['page']], 0);	//move to initial position again
 	} else {
 		$title = $params["page"];
         if ($params["page"] == "_search") $title = __('Search');
@@ -175,7 +174,7 @@ function writeData($ind=5) {
 			
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
             
-			if (mysql_num_rows($res[$params["page"]])) writeToc($res, false, $nind);
+			if (count($res[$params["page"]])) writeToc($res, false, $nind);
             
             $showid = "";
             
@@ -186,7 +185,7 @@ function writeData($ind=5) {
 			writeEntries($res, false, $nind, false);
 			
             
-            $num = mysql_num_rows($res[$params['page']]);
+            $num = count($res[$params['page']]);
             if ($params['cmd'] != '_search' && $num > 0 and ($num < getMaxCount($params["page"] ))) {
                 echo('<div class="sys_msg">'.__('You are seeing a selection of all entries on this page. '). '<a href="?'.$params["page"].'&amp;step=all">'.__('See all there are.').'</a></div>');
             }
