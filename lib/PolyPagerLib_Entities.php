@@ -164,8 +164,9 @@ function getEntity($page_name) {
 				}else if ($params["nr"] != "") {
 					$query = "SELECT tablename FROM _sys_multipages WHERE id = ".$params["nr"];
 					$res = mysql_query($query, getDBLink());
-					if($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
-						$the_table = $row["tablename"];
+					if(count($res) > 0) {
+                        $row = $res[0];
+                        $the_table = $row["tablename"];
 					}
 				//third, if we don't know the table yet (maybe a new page?),
 				//take the first one that comes with getTables();
@@ -402,8 +403,7 @@ function getEntity($page_name) {
                     $q = "SELECT ".$page_info["group_field"]." FROM `".$page_info["tablename"]."` GROUP BY ".$page_info["group_field"];
                     $res = pp_run_query($q);
                     $group_vals = array();
-                    while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
-                        $group_vals[] = $row[$page_info["group_field"]];
+                    foreach($res as $row) $group_vals[] = $row[$page_info["group_field"]];
                     global $params;
                     if ($params['cmd'] == "new" and $params["values"] = "")  $params['values'] = array();
                     $params['values']['valuelist'] = implode(',', $group_vals);
@@ -565,7 +565,7 @@ function getEntity($page_name) {
                         $q = "SELECT ".$entity['group']['field']." FROM `".$entity['tablename']."` GROUP BY ".$entity["group"]['field'];
                         $res = pp_run_query($q);
                         $group_vals = array();
-                        while ($row = mysql_fetch_array($res, MYSQL_ASSOC))
+                        foreach($res as $row)
                             $group_vals[] = $row[$entity['group']['field']];
                         setEntityFieldValue($entity['group']['field'], 'valuelist', implode(',',$group_vals));
                     }
@@ -596,7 +596,7 @@ function getEntity($page_name) {
 						
 						$tmp = array();
 						$used_ids = array();
-						while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+						foreach($result as $row){
 							if (!in_array($row['pk'],$used_ids)){
 								$tmp[] = $row['pk'].':'.$row['tf'];
 								$used_ids[] = $row['pk'];
@@ -731,7 +731,7 @@ function getListOfNonExistingFields($entity_name, $with_pk=true){
     $result = pp_run_query($query);
     $all = getListOfFields($entity_name, $with_pk);
     $existing = array();
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+    foreach($result as $row){
         $existing[] = $row['name'];
     }
     if ($entity_name != "") $entity = $actual_entity;	//set $entity back to what it was!

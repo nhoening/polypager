@@ -115,11 +115,12 @@ function scandir_n($dir = './', $sort = 0, $only_pics = false, $only_dirs = fals
 function filterSQL($v) {
 	//we do this only for strings and only if magic quotes do not do this
 	//already (see http://www.dynamicwebpages.de/php/ref.info.php#ini.magic-quotes-gpc)
-	if (gettype($v) == "string"){
+	return $v;
+    if (gettype($v) == "string"){
         if (get_magic_quotes_gpc() == 1) {
             $v = stripslashes($v);
         }
-		return mysql_real_escape_string($v);
+		return mysqli_real_escape_string(getDBLink(), $v);
 	}
 	else return $v;
 }
@@ -356,7 +357,6 @@ function cmpByOrderIndexAsc($a, $b) {
 /*returns a (translated) text. this is not the
 	GNU gettext module, but it could be used by replacing this method*/
 function __($text) {
-	//global $_SERVER;
 	$sys = getSysInfo();
 	$lang = $sys["lang"];
 	//set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT'].getPathFromDocRoot().'locales'.FILE_SEPARATOR.$lang);
@@ -384,9 +384,9 @@ function getSinglepages() {
 		//echo("getting singlepages");
 		$singlepages = array();
 		$query = "SELECT * FROM _sys_singlepages";
-		$res = mysql_query($query, getDBLink());
+		$res = pp_run_query($query);
 		$i = 0;
-		while ($res and $row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+        foreach($res as $row){
 			$page = array();
 			$page["id"] = $row["id"];
 			$page["name"] = $row["name"];
@@ -421,9 +421,10 @@ function getMultipages() {
 	if ($multipages == "") {
 		$multipages = array();
 		$query = "SELECT * FROM _sys_multipages";
-		$res = mysql_query($query, getDBLink());
+		$res = pp_run_query($query);
 		$i = 0;
-		while ($res and $row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+		//foreach($res as $row){
+        foreach($res as $row){
 			$page = array();
 			$page["id"] = $row["id"];
 			$page["name"] = $row["name"];
@@ -513,12 +514,12 @@ function getSysInfo() {
 	global $params;
 	if ($sys_info == "") {
 		$query = "SELECT * FROM _sys_sys";
-		$res = mysql_query($query, getDBLink());
-		if ($res) $sys_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
+		$res = pp_run_query($query);
+		if ($res) $sys_info = $res[0]; //we expect only one
 	}
-	$fehler_nr = mysql_errno(getDBLink());
+	$fehler_nr = mysqli_errno(getDBLink());
 	if ($fehler_nr!==0) {
-		$fehler_text=mysql_error(getDBLink());
+		$fehler_text=mysqli_error(getDBLink());
 		//if we didn't find the table and there is no create-command, then 
 		//there doesn't seem to be content in the db...
 		if ($_GET['cmd']!='create' and eregi("doesn't exist", $fehler_text) and $params["cmd"] != 'create') {
@@ -553,16 +554,15 @@ function getTables() {
 	global $non_sys_tables;
 	if ($non_sys_tables == "") {
 		$non_sys_tables = array();
-		$tables = mysql_list_tables(getDBName(), getDBLink());
-		$amount = mysql_num_rows($tables);
-		for($x = 0; $x < $amount; $x++){
-		  $table_name = mysql_tablename($tables, $x);
+		$tables = pp_run_query_unprepared('SHOW TABLES');
+		while($row = mysqli_fetch_array($tables)){
+		  $table_name = $row[0];
 		  if(utf8_substr($table_name,0,5) != "_sys_") $non_sys_tables[$x] = $table_name;
 		}
 	}
 	return $non_sys_tables;
 }
-
+                                                                                                                                                                                   
 /* get page meta-info for the actual page (single/multipage info)
 */
 $page_info = "";
@@ -581,15 +581,16 @@ function getPageInfo($page_name) {
                 else { //no page? maybe a table. try the first page for this table
                     $pq = "SELECT name FROM _sys_multipages WHERE tablename = '".$page_name."'";
                     $res = pp_run_query($pq);
-                    if($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                    if (count($res)>0){
+                        $row = $res[0];
                         $page_name = $row["name"];
                         $query = "SELECT * FROM _sys_multipages";
                     }
                 }
                 if ($query != "") {
                     $query = $query." WHERE name = '".$page_name."'";
-                    $res = mysql_query($query, getDBLink());
-                    $page_info = mysql_fetch_array($res, MYSQL_ASSOC); //we expect only one
+                    $res = pp_run_query($query);
+                    $page_info = $res[0]; //we expect only one
                 }
                 //adding this if page info is used for queries
                 if(isSinglePage($page_name)) {

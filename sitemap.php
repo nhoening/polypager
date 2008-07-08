@@ -70,7 +70,7 @@ foreach ($pages as $p) {
     }
 
     //now put'em out
-	while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+	foreach($res as $row){
         if ($entity["publish_field"] == "" or ($entity["publish_field"] != "" and $row["pub"] == '1')){
             echo('	<url>'."\n");
             echo('		<loc>http://'.$url.'?'.urlencode($p).'&amp;nr='.$row["theID"].'</loc>'."\n");

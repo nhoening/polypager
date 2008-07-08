@@ -55,7 +55,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				if ($max == "" and $entity != "" and $page_info["tablename"] != "" ) {
                     $query = "SELECT max(".$entity["pk"].") AS maxnr FROM `".$entity["tablename"]."`;";
 					$res = pp_run_query($query);
-					$row = mysql_fetch_array($res, MYSQL_ASSOC);
+					$row = $res[0];
 					$max = $row["maxnr"];
 				}
 			}
@@ -77,7 +77,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                     $query .= $entity["publish_field"]." != 0";
                 }
                 $res = pp_run_query($query);
-                $row = mysql_fetch_array($res, MYSQL_ASSOC);
+                $row = $res[0];
                 $cnt = $row["cnt"];
 			}
 		}
@@ -338,7 +338,8 @@ require_once("PolyPagerLib_HTMLForms.php");
             $pagename = $p;
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
-            
+            $theParams = array(); // e.g. array of array('i', $nr)
+                
 			if ($entity['pk'] == "") {
                 if ($entity != "" and $entity['tablename'] != '' and $params['cmd']!='_search') {
                     global $sys_msg_text;
@@ -362,20 +363,23 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $pg = $_GET['group'];
                 if ($pg == '' or !isAKnownPage($pg)) $pg = $params['page'];
 				$theQuery = "SELECT * FROM _sys_comments
-							WHERE pagename = '".$pg."'";
-				if ($params['nr'] != "") $theQuery .= " AND pageid = ".$params["nr"];
+				    WHERE pagename = ?";
+                $theParams[] = array('s', $pg);
+                if ($params['nr'] != "") {
+                    $theQuery .= " AND pageid = ?"; $theParams[] = array('i', $params["nr"]); 
+                }
 				$theQuery .= " AND is_spam = 0 ORDER BY insert_date ASC";
 			}
             
 			
 			// feeds
-			else if (utf8_strpos($params["cmd"], "_sys_feed") > 0) {
+			/*else if (utf8_strpos($params["cmd"], "_sys_feed") > 0) {
 				$entity = getEntity("_sys_feed");
-				$theQuery = "SELECT * FROM _sys_feed 
-                            WHERE pagename = '".$_GET['group'].
-							"' AND id = ".$params["nr"]."
-							ORDER BY edited_date DESC";
-			}
+                $theQuery = "SELECT * FROM _sys_feed 
+                            WHERE pagename = ? AND id = ? ORDER BY edited_date DESC";
+                $theParams[] = array('s', $_GET['group');
+                $theParams[] = array('i', $params["nr"]);
+			}*/
 			
 			// pages - always select all of them (user doesn't have to see the distinction)
 			else if ((utf8_strpos($params["cmd"], "_sys_multipages") > 0)
@@ -391,7 +395,8 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $edit_params = getEditParameters();
                 $theQuery = "SELECT ";
                 foreach ($entity["fields"] as $f){
-                    $theQuery .= "'".$edit_params["values"][$f["name"]]."' AS ".$f["name"].",";
+                    $theQuery .= "? AS ".$f["name"].",";
+                    $theParams[] = array('s', $edit_params["values"][$f["name"]]);
                 }
                 $theQuery = substr_replace($theQuery,'',-1,1);
             }
@@ -417,7 +422,6 @@ require_once("PolyPagerLib_HTMLForms.php");
                     
 					$a = array();
 					$a[0] = "SELECT "; 
-					//$a[0] .= "`".$entity["tablename"].'.'.$entity['pk']."`,";
 					foreach($entity['fields'] as $f){
 						// prefer title from referenced values over referencing ones!
 						if (in_array($f['name'],array_keys($ref_fields))) {
@@ -442,10 +446,14 @@ require_once("PolyPagerLib_HTMLForms.php");
                     
                     if (isSinglepage($pagename)) {
 						$a[1] = "WHERE _sys_sections.pagename = '$pagename'";
-						if ($params["nr"] != "") $a[1] = $a[1]." AND _sys_sections.id = ".$params["nr"];
+						if ($params["nr"] != "") {
+                            $a[1] = $a[1]." AND _sys_sections.id = ?";
+                            $theParams[] = array('i', $params["nr"]);
+                        }
 						if ($params["group"] != "" and $params["group"] != "_sys_all"){
 							//"standard" entries are -per definition- always shown!
-							$a[1] = $a[1]." AND (_sys_sections.the_group = '".$params["group"]."' OR _sys_sections.the_group = 'standard')";
+							$a[1] = $a[1]." AND (_sys_sections.the_group = ? OR _sys_sections.the_group = 'standard')";
+                            $theParams[] = array('s', $params["group"]);
 						}
                         $said_where = true;
 					}
@@ -464,15 +472,19 @@ require_once("PolyPagerLib_HTMLForms.php");
 						
 						//normal query for "show"
 						if (isNumericType($entity["pk_type"])) {
-                            $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` >= $prev AND `".$entity["tablename"].'`.`'.$entity["pk"]."` <= ".$next." ";
+                            $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` >=  ? AND `".$entity["tablename"].'`.`'.$entity["pk"]."` <= ? ";
+                            $theParams[] = array('i', $prev);
+                            $theParams[] = array('i', $next);
                             $said_where = true;
                         }else if ($params['nr'] != "") {
-                            $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` = ".$params["nr"];
+                            $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` = ?";
+                            $theParams[] = array('i', $params["nr"]);
                             $said_where = true;
                         }
 						//show a group rather than id range
 						if ($params["group"] != "" and $params["group"] != "_sys_all") {
-							$a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` = '".$params["group"]."'";
+							$a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` = ?";
+                            $theParams[] = array('s', $params["group"]);
                             $said_where = false;
 						}
 					}
@@ -483,31 +495,30 @@ require_once("PolyPagerLib_HTMLForms.php");
                         $keyword_lower = utf8_strtolower($params["search"]["kw"]);	 //lower/upper-case should not matter in our keyword search!
                         if ($said_where) $a[] = " AND ";
                         else $a[] = " WHERE ";
-                        if (eregi('delete ',$keyword_lower) or eregi('alter ',$keyword_lower) or eregi('update ',$keyword_lower)) { 	//no critical sql code allowed
-                            echo('<div class="sys_msg">'.__('please do not use SQL Code here in your keyword search...').'</div>'."\n");
-                            continue; //show nothing
-                        } else {
-                            $a[] = " (";
-                            // get all keywords
-                            $kws = getSearchKeywords();
-                            $found_a_textfield = false;
-                            foreach($entity["fields"] as $f) {
-                                if (isTextType($f["data_type"])){
-                                    $found_a_textfield = true;
-                                    $table_field = '`'.$entity["tablename"].'`.`'.$f['name'].'`';
-                                    //remember: BLOB fields are case-sensitive! you should take text for those
-                                    $a[] = " (";
-                                    foreach($kws as $k)
-                                        $a[] = " ".$table_field." LIKE '%".utf8_str_replace('.','\.', $k)."%' AND ";
-                                    // replace last AND with OR
-                                    $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
-                                    $a[] = " ) OR";
+
+                        $a[] = " (";
+                        // get all keywords
+                        $kws = getSearchKeywords();
+                        $found_a_textfield = false;
+                        foreach($entity["fields"] as $f) {
+                            if (isTextType($f["data_type"])){
+                                $found_a_textfield = true;
+                                $table_field = '`'.$entity["tablename"].'`.`'.$f['name'].'`';
+                                //remember: BLOB fields are case-sensitive! you should take text for those
+                                $a[] = " (";
+                                foreach($kws as $k){
+                                    $a[] = " ".$table_field." LIKE ? AND ";
+                                    $theParams[] = array('s', '%'.utf8_str_replace('.','\.', $k).'%');
                                 }
+                                // replace last AND with OR
+                                $a[count($a)-1] = utf8_str_replace(' AND ','',$a[count($a)-1]);
+                                $a[] = " ) OR";
                             }
-                            if ($found_a_textfield) $a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
-                            else continue;  //no text fields? no query for this table needed
-                            $a[] = ")";
-						}
+                        }
+                        if ($found_a_textfield) $a[count($a)-1] = substr_replace($a[count($a)-1],'',-2,2);	//the last OR has to go
+                        else continue;  //no text fields? no query for this table needed
+                        $a[] = ")";
+						
 					}
 
 					// The other search possibilities work only per page
@@ -522,13 +533,19 @@ require_once("PolyPagerLib_HTMLForms.php");
                                 //if december, increment year for enddate, else only the month
 								if ($month == "") {
 									$nextYear = $year + 1;
-									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= '$year-01-01' AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < '$nextYear-01-01' ";
+									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
+                                    $theParams[] = array('s', $year.'-01-01');
+                                    $theParams[] = array('s', $nextYear.'-01-01');
 								} else if ($month == "12") {
 									$nextYear = $year + 1;
-									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= '$year-$month-01' AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < '$nextYear-01-01' ";
+									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
+                                    $theParams[] = array('s', $year.'-$month-01');
+                                    $theParams[] = array('s', $nextYear.'-01-01');
 								} else {
 									$nextMonth = $month + 1;
-									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= '$year-$month-01' AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < '$year-$nextMonth-01' ";
+									$a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
+                                    $theParams[] = array('s', $year.'-$month-01');
+                                    $theParams[] = array('s', $year.'-$nextMonth-01');
 								}
 							}
 						}
@@ -540,7 +557,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 							if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") {
 								if ($said_where) $a[] = " AND ";
                                 else $a[] = " WHERE ";
-								$a[] = "`".$f["name"]."` = '".$params["search"][$f["name"]]."'";
+								$a[] = "`".$f["name"]."` = ?";
+                                $theParams[] = array('s', $params["search"][$f["name"]]);
 								
 								//if the field is the group field, we knew that is a request - save it for later!
 								if ($f["name"] == $entity["group"]["field"]) $params["group"] = $params["search"][$f["name"]];
@@ -582,9 +600,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$theQuery = implode('',$b);
 				}
 			}
-			$queries[$p] = $theQuery;
+			$queries[$p] = array($theQuery, $theParams);
 		}
-        //print_r($queries);
+        //echo('Queries:');print_r($queries);
 		return $queries;
 	}
 	
@@ -799,9 +817,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 		global $error_msg_text;
         
 		if (!$as_toc) writeSearchInfo();
-	
+        
 		foreach (array_keys($results) as $respage){
 			$res = $results[$respage];
+            
 			$entity = getEntity($respage);
 			//all that grouping stuff...
 			if ($entity["group"] != "" or $as_toc) {
@@ -823,7 +842,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 								if (isSinglepage($rt[$x]['fk']['page'])) $q .= " WHERE pagename = '".$rt[$x]['fk']['page']."'";
 								$fk_result = pp_run_query($q);
 								$fk_rows = array();
-								while($fk_row = mysql_fetch_array($fk_result, MYSQL_ASSOC)) {
+								foreach($fk_result as $fk_row) {
 									$fk_row['fk_page'] = $rt[$x]['likely_page']; //we'll need this to point there
 									$fk_rows[] = $fk_row;
 								}
@@ -843,7 +862,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			}
 			
 			
-			while($row = mysql_fetch_array($res, MYSQL_ASSOC))  {
+			foreach($res as $row){
                 
                 // ---- filter out text search results that only are found in tags ----
                 $kws = getSearchKeywords();
@@ -877,7 +896,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                         $tmp_entity = getEntity($row["pagename"]);
                         $query = "SELECT ".$tmp_entity["title_field"]." AS title, ".$tmp_entity["pk"]." AS pk FROM `".$tmp_entity["tablename"]."` WHERE ".$tmp_entity["pk"]." = ".$row["pageid"];
                         $tmp_result = pp_run_query($query);
-                        $tmp_row = mysql_fetch_array($tmp_result, MYSQL_ASSOC);
+                        $tmp_row = $tmp_result[0];
                         $heading = '<a href="?'.urlencode($row["pagename"]).'&amp;nr='.$tmp_row["pk"].'">'.$tmp_row["title"].'</a>';
                     }
 					if ($before_first_entry == true) {
@@ -896,7 +915,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$group_field_save = $row[$entity["group"]["field"]];
 				}
                 
-                if($listview and mysql_num_rows($res) > 1 ) echo('<form action="." method="post">'."\n");
+                if($listview and count($res) > 1 ) echo('<form action="." method="post">'."\n");
                 
                 if ($before_first_entry == true) $before_first_entry = false; //indicates we indeed had data
                         
@@ -921,7 +940,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 			}
 			
-            if($listview and mysql_num_rows($res) > 0) {
+            if($listview and count($res) > 0) {
                 echo('<input name="page" type="hidden" value="'.$params['page'].'"/>'."\n");
                 echo('<input name="topic" type="hidden" value="content"/>'."\n");
                 echo('with selected: <input name="cmd" type="submit" value="delete" onclick="return checkDelete(true);"/>'."\n");
@@ -936,8 +955,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			if ($params['page'] != '_search' and $before_first_entry == true and !$as_toc) {
 				echo($indent.'<div class="sys_msg">'.__('No fitting entry in the database was found...').'</div>'."\n");
 			}
-			//reset result set
-			if (mysql_num_rows($res) > 0)mysql_data_seek($res,0);
+			//reset result set - not needed for new style of mysqli results (arrays)
+			//if (mysqli_num_rows($res) > 0) mysqli_data_seek($res,0);
 		}
 		
 	}
@@ -1209,12 +1228,12 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 			}
 			
+            // show comment links when more than one entry is shown
 			if ($page_info["commentable"] == "1") {
-				
 				$params["nr"] = $row[$entity["pk"]];
 				$comments = getComments();
 				if ($comments == "") $comment_count = 0;
-				else $comment_count = mysql_num_rows($comments);
+				else $comment_count = count($comments);
 				if ($params["step"] != 1) {
 					if($comment_count > 0) {
 						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
@@ -1280,11 +1299,11 @@ require_once("PolyPagerLib_HTMLForms.php");
                 $query .= ' AND '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$id.';';
                 //run Query
                 $res = pp_run_query($query);
-                if (mysql_errno(getDBLink()) != 0 or mysql_num_rows($res) == 0)  continue;
+                if (mysqli_errno(getDBLink()) != 0 or count($res) == 0)  continue;
                 
                 echo($indent.'<div id="related_'.$c[2][1]['fk']['ref_table'].'" class="related"><h4>'.__('Related ').$c[2][1]['fk']['ref_table'].':</h4>'."\n");
                 echo($indent.'  <ul>'."\n");
-                while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                foreach($res as $row){
                     echo($indent.'      <li><a href="?'.$c[2][1]['likely_page'].'&amp;nr='.$row[$c[2][1]['fk']['field']].'">'.$row['Title']."</a></li>\n");
                 }
                 echo($indent.'  </ul>'."\n");
@@ -1302,8 +1321,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 		$params["cmd"] = $params["cmd"]." _sys_comments"; 
 		$query = getQuery(true);
 		//run Query
-		$res = mysql_query($query[$params["page"]], getDBLink());
-		if (mysql_errno(getDBLink()) == 0) {
+		$res = pp_run_query($query[$params["page"]], getDBLink());
+		if (mysqli_errno(getDBLink()) == 0) {
 			return $res;
 		} else return "";
 	}
@@ -1319,7 +1338,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		//use comments as page while writing them
 		$params["page"] = "_sys_comments";	
 		//write the results
-		while($row = mysql_fetch_array($comments, MYSQL_ASSOC)) {
+		foreach($comments as $row){
 			writeEntry($row, '_sys_comments', false, ++$ind);
 		}
 		

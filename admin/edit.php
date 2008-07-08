@@ -62,13 +62,14 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			if ($queries != "") {
 				foreach($queries as $q) {
 					if ($q!=""){
-						$res = mysql_query($q, getDBLink());
-						$fehler_nr .= mysql_errno(getDBLink());
-						$mysqlerror .= mysql_error(getDBLink());
+						$res = pp_run_query($q);
+						$fehler_nr .= mysqli_errno(getDBLink());
+						$mysqlerror .= mysqli_error(getDBLink());
 					}
                     if($params["cmd"] == "entry") {
 					    //later, we should show the highest number (that is the one we just inserted)
-                        $newID = mysql_insert_id();
+                        $db_obj = getDBLink();
+                        $newID = $db_obj->last_inserted_id;
                         $params['values'][$entity['pk']] = $newID;
                     }
 				}
@@ -96,7 +97,6 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 					$params["nr"] = $newID;
 				}
 				$query = $queries[0];
-				
 				//now that we have the new ID, we can feed it
 				handleFeed($params);
                 
@@ -215,16 +215,15 @@ function writeData($ind=4) {
 		
 		//now, finally, get data from db for filling forms if we need any
 		if ($params["cmd"] != "new") {
-			$res = mysql_query($query, getDBLink());
-			
-			$fehler_nr = mysql_errno(getDBLink());
-				if($debug) { echo($indent.'<div class="debug">Query is: '.$query.'</div>'); }
+			$res = pp_run_query($query);
+			$fehler_nr = mysqli_errno(getDBLink());
+			if($debug) { echo($indent.'<div class="debug">Query is: '.$query.'</div>'); }
 			if ($fehler_nr != 0) {
-				$fehler_text = mysql_error(getDBLink());
+				$fehler_text = mysqli_error(getDBLink());
 				$sys_msg_text[] = '<div class="sys_msg_admin">'.__('DB-Error:').' '.$fehler_text;
 			}
 
-			while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+			foreach($res as $row){
 				//check for unsupported primary keys in the table used for this page
 				if($page_info['tablename']=='_sys_multipages'){
 					$table_entity = getEntity($row['tablename']);
