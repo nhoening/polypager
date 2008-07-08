@@ -602,7 +602,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			}
 			$queries[$p] = array($theQuery, $theParams);
 		}
-        //echo('Queries:');print_r($queries);
+        //echo('Show-Queries:');print_r($queries);
 		return $queries;
 	}
 	

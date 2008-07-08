@@ -86,7 +86,7 @@ $title = "Admin Area";
 
 $sys_info = getSysInfo();
 if ($sys_info['admin_name'] == "" or $sys_info['admin_pass'] == ""){
-    $sys_msg_text[] = __('Your administrator-name or the administrator-password is empty. You should consider going to the ').'<a href="edit.php?_sys_sys&from=admin">'.__('system property section').'</a>'.__(' and secure your system!');
+    $sys_msg_text[] = __('Your administrator-password is empty. You should consider going to the ').'<a href="passwd.php">'.__('password setting page').'</a>'.__(' and secure your system!');
 }
     
 

@@ -155,8 +155,10 @@
 		$query = "SELECT id, pagename, heading, publish, in_submenu, order_index from _sys_sections
 					WHERE publish = 1
 					GROUP BY pagename, heading ORDER BY order_index ASC";
-		$res = pp_run_query($query);
-		
+        try{
+            $res = pp_run_query($query);
+		}catch(Exception $e){}
+        
 		$sections = array(); //build a 2-dimensional array with 
 							 //key:page value:heading and order_index
         foreach($res as $row) {

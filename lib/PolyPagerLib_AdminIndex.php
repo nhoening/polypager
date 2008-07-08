@@ -34,7 +34,7 @@
 	}
 	
 	/* --------------- show all options  ------------ */
-	function showAdminOptions($indent){
+	function showAdminOptions($indent='                        '){
         $the_url = "..";
     
 		echo($indent.'<div id="admin_options">'."\n");
@@ -50,7 +50,7 @@
 	}
 	
     function getMySQLCharsetter() {
-        $client_api = utf8_explode('.', mysqli_get_server_info()); 
+        $client_api = utf8_explode('.', mysqli_get_server_info(getDBLink())); 
 		if ($client_api[0] >= 5) return " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
         else return "";
     }
@@ -84,9 +84,10 @@
                       `gallery_index` smallint(6) NOT NULL default '99',
                       `use_captchas` tinyint(1) NOT NULL default '0',
                       `public_captcha_key` varchar(50) NOT NULL default '',
-                      `private_captcha_key` varchar(50) NOT NULL default ''
+                      `private_captcha_key` varchar(50) NOT NULL default '',
+                      `salt` varchar(120) NOT NULL default ''
                     ) ENGINE=MyISAM $charsetter;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = mysqli_errno($link);
 		$fehler_text = mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -94,8 +95,8 @@
         $res = pp_run_query($query);
         if(count($res) == 0) { //fill in one row if its not there already for some reason
             $query = "INSERT INTO `_sys_sys` VALUES ('The title of your new page', '', 
-                                '', '', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 0, 'gallery', 99, '0','','') ;";
-            $res = pp_run_query($query);
+                                '', 'admin', '', 12, 0, '', 'en', 'polly', 0, 0, 0, 0, 'gallery', 99, '0','','','".buildDateString(getdate()).buildTimeString(localtime(time(), 1))."') ;";
+            $res = pp_run_query_unprepared($query);
             $fehler_nr = mysqli_errno($link);
             $fehler_text = mysqli_error($link);
             if ($debug) { echo('<br/><span class="debug">Insert Sys_Sys is: '.$query.'<br /></span>'); }
@@ -118,7 +119,7 @@
                       KEY `the_group` (`the_group`),
                       KEY `input_date` (`input_date`)
                     ) ENGINE=MyISAM $charsetter;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -128,7 +129,7 @@
 					  `intro` text NOT NULL,
 					  PRIMARY KEY  (`tablename`)
 					) TYPE=MyISAM $charsetter;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -143,7 +144,7 @@
 					  PRIMARY KEY  (`pk`),
 					  KEY `edited_date` (`edited_date`)
 					) TYPE=MyISAM $charsetter ;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -162,7 +163,7 @@
 					  KEY `pagename` (`pagename`,`pageid`),
 					  KEY `is_spam` (`is_spam`)
 					)  TYPE=MyISAM $charsetter ; ";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -183,7 +184,7 @@
                       PRIMARY KEY  (`id`),
                       UNIQUE KEY `name` (`name`)
 					) ENGINE=MyISAM $charsetter;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -219,7 +220,7 @@
 					  UNIQUE KEY `name_2` (`name`),
 					  KEY `name` (`name`,`tablename`,`group_field`)
 					) ENGINE=MyISAM $charsetter;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -239,7 +240,7 @@
                       `on_delete` varchar(20) NOT NULL,
                       PRIMARY KEY  (`id`)
                     ) ENGINE=MyISAM $charsetter ;";
-		$res = pp_run_query($query);
+		$res = pp_run_query_unprepared($query);
 		$fehler_nr = $fehler_nr.mysqli_errno($link);
 		$fehler_text = $fehler_text.mysqli_error($link);
 		if ($debug) { echo('<br/><span class="debug">Create Sys Query is: '.$query.'<br /></span>'); }
@@ -270,8 +271,9 @@
 		else if($template_name == "guestbook") {
 			$query = "INSERT INTO `_sys_singlepages` (`name`, `in_menue`, `menue_index`, 
 				`commentable`, `hide_options`, `hide_search`, `hide_toc`, `grouplist`) 
-				VALUES ('".$page_name."', 1, 1, 1, 1, 1, 1, '');";
-			$res = pp_run_query($query);
+				VALUES (?, 1, 1, 1, 1, 1, 1, '');";
+			$sqlparams = array( array('s', $page_name));
+            pp_run_query(array($query, $sqlparams));
 			$fehler_nr = $fehler_nr.mysqli_errno($link);
 			$fehler_text = $fehler_text.mysqli_error($link);
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
@@ -279,7 +281,7 @@
 			$query = "INSERT INTO `_sys_sections` (`input_date`, `edited_date`, 
 			`pagename`, `heading`, `bla`, `publish`, `in_submenu`, 
 			`order_index`, `the_group`) 
-			VALUES ('".buildDateString(getdate())." ".buildTimeString(localtime(time() , 1))."', '".buildDateString(getdate())." ".buildTimeString(localtime())."', 
+			VALUES ('".buildDateString(getdate())." ".buildTimeString(localtime(time() , 1))."', '".buildDateString(getdate())." ".buildTimeString(localtime(time(), 1))."', 
 			'".$page_name."', '".$page_name."', 'this is the entry that gets commented. Write your own greeting formula here, but do not delete it.', 1, 0, 0, '');";
 			$res = pp_run_query($query);
 			$fehler_nr = $fehler_nr.mysqli_errno($link);
@@ -298,14 +300,15 @@
 						  PRIMARY KEY  (`id`),
 						  KEY `publish` (`publish`)
 						) ENGINE=MyISAM $charsetter;";
-			$res = pp_run_query($query);
+            pp_run_query_unprepared($query);
 			$fehler_nr = $fehler_nr.mysqli_errno($link);
 			$fehler_text = $fehler_text.mysqli_error($link);
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `hide_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-					VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."', 1, 0, 1, 1, 1, 1, 'id,', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
-				$res = pp_run_query($query);
+					VALUES (?, ?, 1, 0, 1, 1, 1, 1, 'id,', 'inputdate', 'DESC', 'publish', '', 'ASC', 'inputdate', 'lastedited', 'title', '7', 1, 1, 0, 1, 0);";
+				$sqlparams = array(array('s', $page_name), array('s', buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)));
+                pp_run_query(array($query, $sqlparams));
 				$fehler_nr = $fehler_nr.mysqli_errno($link);
 				$fehler_text = $fehler_text.mysqli_error($link);
 			}
@@ -323,7 +326,7 @@
 						  KEY `topic` (`topic`),
 						  KEY `inputdate` (`inputdate`)
 						) ENGINE=MyISAM $charsetter;";
-			$res = pp_run_query($query);
+			pp_run_query_unprepared($query);
 			$fehler_nr = $fehler_nr.mysqli_errno($link);
 			$fehler_text = $fehler_text.mysqli_error($link);
 			if ($debug) { echo('<br/><span class="debug">Create Template Query is: '.$query.'<br /></span>'); }
@@ -331,8 +334,9 @@
 			//now page data (if we created our table as planned)
 			if($fehler_text == "") {
 				$query = "INSERT INTO `_sys_multipages` (`name`, `tablename`, `in_menue`, `menue_index`, `hide_options`, `hide_search`, `hide_toc`, `hide_labels`, `hidden_fields`, `order_by`, `order_order`, `publish_field`, `group_field`, `group_order`, `date_field`, `edited_field`, `title_field`, `step`, `commentable`, `search_month`, `search_year`, `search_keyword`, `search_range`) 
-				VALUES ('".$page_name."', '".buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)."', 1, 0, 1, 1, 0, 0, 'id,', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
-				$res = pp_run_query($query);
+				VALUES (?, ?, 1, 0, 1, 1, 0, 0, 'id,', 'inputdate', 'ASC', '', '', 'ASC', 'inputdate', '', 'question', 'all', 0, 0, 0, 1, 0);";
+                $sqlparams = array(array('s', $page_name), array('s', buildValidMySQLTableNameFrom(utf8_tohtml($page_name)."_".$shuffpp)));
+                pp_run_query(array($query, $sqlparams));
 				$fehler_nr = $fehler_nr.mysqli_errno($link);
 				$fehler_text = $fehler_text.mysqli_error($link);
 			}
@@ -362,8 +366,9 @@
         $sys_info = getSysInfo();
         
         if ($params["cmd"] == "entry" and utf8_strpos($params["page"], "pages") and count(getPageNames()) == 0) {
-            $query = "UPDATE _sys_sys SET start_page = '".$params['values']["name"]."'";
-            pp_run_query($query);
+            $query = "UPDATE _sys_sys SET start_page = ?";
+            $sqlparams = array(array('s', $params["values"]["name"]));
+            pp_run_query(array($query, $sqlparams));
         }
         
         // change of a page name
@@ -372,77 +377,91 @@
 			if ($params["page"] == '_sys_singlepages'){
 					//update sections
 					if ($params["cmd"] == "delete"){
-						$query = "DELETE FROM _sys_sections WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+						$query = "DELETE FROM _sys_sections WHERE pagename = ?";
+                        $sqlparams = array(array('s', $params["values"]["old_formfield_name"]));
+                        pp_run_query(array($query, $sqlparams));
 					}
                     if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
-						$query = "UPDATE _sys_sections SET pagename = '".$params["values"]["name"]."'".
-							" WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+					    $query = "UPDATE _sys_sections SET pagename = ? WHERE pagename = ?";
+                        $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
+                        pp_run_query(array($query, $sqlparams));
 					}
-                    pp_run_query($query);
 			}
 			if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
                 //update start page
                 $sys_info = getSysInfo();
                 if ($params["values"]["old_formfield_name"] == $sys_info["start_page"]){
-                    $query = "UPDATE _sys_sys SET start_page = '".$params["values"]["name"]."'";
-                    pp_run_query($query);
+                    $query = "UPDATE _sys_sys SET start_page = ?";
+                    $sqlparams = array(array('s', $params["values"]["name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
                 
                 //update comments
                 if ($params["cmd"] == "delete") {
                     $query = "DELETE FROM _sys_comments WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                    $sqlparams = array(array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
                 if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]){
-                    $query = "UPDATE _sys_comments SET pagename = '".$params["values"]["name"]."'".
-                        " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "UPDATE _sys_comments SET pagename = ? WHERE pagename = ?";
+                    $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
-                pp_run_query($query);
                 
                 //update feed list
                 if ($params["cmd"] == "delete") {
-                    $query = "DELETE FROM _sys_feed WHERE pagename = '".$params["values"]["old_formfield_name"]."';";
+                    $query = "DELETE FROM _sys_feed WHERE pagename = ?";
+                    $sqlparams = array(array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
                 if ($params["cmd"] == "edit" && ($params["values"]["name"] != $params["values"]["old_formfield_name"])) {
-                    $query = "UPDATE _sys_feed SET pagename = '".$params["values"]["name"]."'".
-                        " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "UPDATE _sys_feed SET pagename = ? WHERE pagename = ?";
+                    $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
-                pp_run_query($query);
                 
                 //update field list
                 if ($params["cmd"] == "delete") {
-                    $query = "DELETE FROM _sys_fields WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "DELETE FROM _sys_fields WHERE pagename = ?";
+                    $sqlparams = array(array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
                 if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
-                    $query = "UPDATE _sys_fields SET pagename = '".$params["values"]["name"]."'".
-                        " WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "UPDATE _sys_fields SET pagename = ? WHERE pagename = ?";
+                    $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
-                pp_run_query($query);
+                
                 
                 //update foreign keys
                 if ($params["cmd"] == "delete") {
-                    $query = "UPDATE _sys_fields SET foreign_key_to = '' WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "UPDATE _sys_fields SET foreign_key_to = '' WHERE foreign_key_to = ?";
+                    $sqlparams = array(array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
                 if ($params["cmd"] == "edit" && $params["values"]["name"] != $params["values"]["old_formfield_name"]) {
-                    $query = "UPDATE _sys_fields SET foreign_key_to = '".$params["values"]["name"]."'".
-                        " WHERE foreign_key_to = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "UPDATE _sys_fields SET foreign_key_to = ? WHERE foreign_key_to = ?";
+                    $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
+                    pp_run_query(array($query, $sqlparams));
                 }
-                pp_run_query($query);
+                
 			}
 		}
         
         // change of a title field
         $title_field = $entity['title_field'];
         if (($params["cmd"] == "edit" or $params["cmd"] == "delete")
-		and $params["values"]["old_formfield_$title_field"] != "") {
+		    and $params["values"]["old_formfield_$title_field"] != "") {
 			//update feed list
             if ($params["cmd"] == "delete") {
-                $query = "DELETE FROM _sys_feed WHERE pagename = '".$params['page']."' and title = '".$params["values"]["old_formfield_$title_field"]."';";
+                $query = "DELETE FROM _sys_feed WHERE pagename = ? and title = ?;";
+                $sqlparams = array(array('s', $params['page']), array('s', $params["values"]["old_formfield_$title_field"]));
             }
             if ($params["cmd"] == "edit" && $params["values"][$title_field] != $params["values"]["old_formfield_$title_field"]) {
-                $query = "UPDATE _sys_feed SET title = '".$params["values"][$title_field]."'".
-                    " WHERE pagename = '".$params["page"]."' AND id = ".$params["nr"];
+                $query = "UPDATE _sys_feed SET title = ? WHERE pagename = ? AND id = ?";
+                 $sqlparams = array(array('s', $params["values"][$title_field]),array('s', $params['page']), array('i', $params["nr"]));
             }
-            pp_run_query($query);
+            pp_run_query(array($query, $sqlparams));
         }
 	}
 	
@@ -508,7 +527,7 @@
 		if ($params["page"] != "" and $params["topic"] == "content") {
 			$link_text = __('Here you can edit an introduction text for this page. (It will only be seen if the skin template uses writeIntroDiv())');
 			//if (isMultipage($params["page"])) 
-				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr='.urlencode($params["page"]).'&page='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
+				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&_formfield_tablename='.urlencode($params["page"]).'&page='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
 			$link_text = __('Here you can insert a new entry for this page.');
 			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.urlencode($params["page"]).'&cmd=new&from=list&topic='.$topic.'">'.__('new entry').'</a>'."\n");
 		//now for fields

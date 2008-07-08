@@ -124,6 +124,8 @@ function getEntity($page_name) {
 				setEntityFieldValue("public_captcha_key", "formgroup", 'captcha');
 				setEntityFieldValue("private_captcha_key", "formgroup", 'captcha');
                 
+                $entity["hidden_form_fields"] .= 'admin_pass,salt';
+                
 				global $run_as_demo;
 				if ($run_as_demo) {
 					$entity["hidden_form_fields"] .= ',admin_name,admin_pass';
