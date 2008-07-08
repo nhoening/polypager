@@ -37,10 +37,8 @@
 	
 	$sys_info = getSysInfo();
 	
-	//first of all: if user and pass are still empty then let's just not care:
-	if(
-		!($sys_info["admin_name"] == "" and $sys_info["admin_pass"] == "")	
-	) {
+	//first of all: if  password is still empty then let's just not care:
+	if($sys_info["admin_pass"] != "" ) {
 		
 		//when not cgi mode (e.g. apache), then authenticate old style
 		//here is a list of what else we could find: http://de3.php.net/php_sapi_name
@@ -49,7 +47,7 @@
 			$sys_info = getSysInfo();
 			if (!isset($_SERVER['PHP_AUTH_USER'])) {
 			   auth_user();
-			} else if ($_SERVER['PHP_AUTH_USER'] != $sys_info["admin_name"] || $_SERVER['PHP_AUTH_PW'] != $sys_info["admin_pass"]) {
+			} else if ($_SERVER['PHP_AUTH_USER'] != $sys_info["admin_name"] || sha1($sys_info["salt"].$_SERVER['PHP_AUTH_PW']) != $sys_info["admin_pass"]) {
 			   auth_user();
 			}
 			//then do nothing - if everything worked, the page will display

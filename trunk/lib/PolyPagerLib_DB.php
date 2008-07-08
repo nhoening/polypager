@@ -46,17 +46,19 @@ function getDBName() {
 /* call with a query OR an array of the query together with an array of params*/
 function pp_run_query($query_set){
 	global $debug;
+    $sql_exeq_words = array("CREATE", "UPDATE", "INSERT", "DELETE");
     $d = getDBLink();
     if (!is_array($query_set)) {
-        if (in_array(substr($query_set,0,6),array("UPDATE", "INSERT", "DELETE"))) {
+        if (in_array(substr($query_set,0,6), $sql_exeq_words)) {
             $res = $d->ExecuteSQL($query_set);
         }else  $res = $d->FetchAll($query_set);
     }else{
-        $format_str=''; $params=array($query_set[0]);
+        $format_str=''; 
+        $params = array($query_set[0]);
         foreach ($query_set[1] as $p) $format_str .= $p[0];
         if ($format_str != "") $params[] = $format_str;
         foreach ($query_set[1] as $p) $params[] = $p[1];
-        if (in_array(substr($query_set[0],0,6), array("UPDATE", "INSERT", "DELETE"))) $func='ExecuteSQL'; else $func='FetchAll';
+        if (in_array(substr($query_set[0],0,6), $sql_exeq_words)) $func='ExecuteSQL'; else $func='FetchAll';
         $res = call_user_func_array(array($d, $func), $params);
     }
 	return $res;

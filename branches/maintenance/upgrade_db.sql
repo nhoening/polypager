@@ -6,7 +6,10 @@
 --BUT: please execute them chronologically, one version after the
 --other
 
--- 1.0
+-- 1.0rc7
+ALTER TABLE `_sys_sys` ADD `salt` VARCHAR( 120 ) NOT NULL DEFAULT 'polypager_default_salt' COMMENT 'salt for password encryption';
+
+-- 1.0rc6
 
 ALTER TABLE `_sys_sections` CHANGE `pagename` `pagename` VARCHAR( 120 )  NOT NULL ;
 ALTER TABLE `_sys_multipages` CHANGE `name` `name` VARCHAR( 120 ) NOT NULL ;

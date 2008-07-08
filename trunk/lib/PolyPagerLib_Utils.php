@@ -194,7 +194,7 @@ function buildDateString($date_array) {
 
 /*
  * returns a string like this: '8:32:45' from an array
- * like those gotten from localtime()
+ * like those gotten from localtime(time(), 1)
  */
 function buildTimeString($time_array) {
 	return $time_array["tm_hour"].':'.$time_array["tm_min"].':'.$time_array["tm_sec"];	
@@ -384,7 +384,10 @@ function getSinglepages() {
 		//echo("getting singlepages");
 		$singlepages = array();
 		$query = "SELECT * FROM _sys_singlepages";
-		$res = pp_run_query($query);
+        $res = array();
+        try{
+            $res = pp_run_query($query);
+        }catch(Exception $e){}
 		$i = 0;
         foreach($res as $row){
 			$page = array();
@@ -421,7 +424,10 @@ function getMultipages() {
 	if ($multipages == "") {
 		$multipages = array();
 		$query = "SELECT * FROM _sys_multipages";
-		$res = pp_run_query($query);
+        $res = array();
+        try{
+            $res = pp_run_query($query);
+        }catch(Exception $e){}
 		$i = 0;
 		//foreach($res as $row){
         foreach($res as $row){
@@ -514,7 +520,9 @@ function getSysInfo() {
 	global $params;
 	if ($sys_info == "") {
 		$query = "SELECT * FROM _sys_sys";
-		$res = pp_run_query($query);
+        try{
+            $res = pp_run_query($query);
+        }catch(Exception $e){}
 		if ($res) $sys_info = $res[0]; //we expect only one
 	}
 	$fehler_nr = mysqli_errno(getDBLink());
@@ -684,7 +692,6 @@ function getFirstWords($html_str, $number){
 	$result = "";
 	$text = strip_tags($html_str);
 	$text_arr = utf8_explode(' ', $text);
-	//print_r($text_arr);
 	$m_number = min($number, count($text_arr));
 	for($i=0; $i<$m_number; $i++) {
 		if ($text_arr[$i] != "") $result = $result.' '.$text_arr[$i];

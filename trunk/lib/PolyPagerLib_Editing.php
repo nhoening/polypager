@@ -174,7 +174,7 @@ function getEditParameters() {
 						if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
 						else{$values[$f["name"]] = "0";}
 					}
-					if(in_array($f["name"],$consistency_fields)) {
+					if(in_array($f["name"], $consistency_fields)) {
 						$values['old_formfield_'.$f["name"]] = filterSQL($_POST['old_formfield_'.$f["name"]]);
 						if (!isset($values['old_formfield_'.$f["name"]])) $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
 					}
@@ -276,7 +276,6 @@ function getEditQuery($command, $theID) {
 		$queryA = array();
 		$queryA[0] = "INSERT INTO `".$page_info["tablename"]."` (";
 		$x = 1;
-
 		foreach($entity["fields"] as $f) {
 			// add it if it is set or we don't have an ID or the ID comes within the ID param (for non-int IDs)
 			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
@@ -311,7 +310,7 @@ function getEditQuery($command, $theID) {
 		$query = "UPDATE `".$page_info["tablename"]."` SET";
 		foreach($entity["fields"] as $f) {
 			if (isset($params["values"][$f["name"]]) and !$f['auto']) {
-                $query .= ' '.$f["name"]." =  ?, ";
+                $query .= ' '.$f["name"]." =  ?,";
                 $theParams[] = array(getMySQLiType($f["data_type"]), $params["values"][$f['name']]);
 			}
 		}
@@ -333,9 +332,10 @@ function getEditQuery($command, $theID) {
 	//------------------- show ----------------------------------------
 	else if ($command == "show") {		// SELECT Query
 		$query .= "SELECT * FROM `".$page_info["tablename"];
-        if ($entity["pk"] != "")
+        if ($entity["pk"] != "") {
             $query .= "` WHERE ".$entity["pk"]." = ?";
             $theParams[] = array(getMySQLiType($entity["pk_type"]), $theID);
+        }
 	}
 	//---------------end show -----------------------------------------
 	

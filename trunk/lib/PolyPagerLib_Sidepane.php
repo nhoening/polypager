@@ -179,7 +179,9 @@ function writeIntroDiv($ind=4) {
 	}
 	
 	$tmp_query = "SELECT intro FROM _sys_intros WHERE tablename = '".$page."';";
-	$res = pp_run_query($tmp_query);
+	try{
+        $res = pp_run_query($tmp_query);
+    }catch(Exception $e){}
 	$error_nr = mysqli_errno(getDBLink());
 	if ($error_nr != 0) {
 		//$fehler_text = mysqli_error(getDBLink());

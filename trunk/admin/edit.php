@@ -61,7 +61,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			//now run db manipulation quer(y|ies) - we might get a few because of foreign keys
 			if ($queries != "") {
 				foreach($queries as $q) {
-					if ($q!=""){
+					if ($q != ""){
 						$res = pp_run_query($q);
 						$fehler_nr .= mysqli_errno(getDBLink());
 						$mysqlerror .= mysqli_error(getDBLink());
@@ -196,7 +196,10 @@ function writeData($ind=4) {
 		else echo($indent.'	<h1>'.__('Editing impressum').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_sys") {
 		echo($indent.'	<h1>'.__('Editing system properties').'</h1>'."\n");
-		//link to write impressum
+		//link to change password
+		$link_text = __('Here you can (re)set your password.');
+		echo($indent.'		&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="passwd.php">'.__('set password').'</a>&nbsp;|&nbsp;'."\n");
+        //link to write impressum
 		$link_text = __('Here you can edit the impressum.');
 		echo($indent.'		&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr=_sys_impressum&page='.$params['page'].'from=list&topic='.$params["topic"].'">'.__('edit impressum').'</a>&nbsp;|&nbsp;'."\n");
 	} else if ($params["page"] == "_sys_multipages" and $params["cmd"] != "new") {
@@ -210,14 +213,13 @@ function writeData($ind=4) {
 	} else echo($indent.'	<h1>'.__($title).'</h1>'."\n");
 
 	$iwrote = false; //negative assumption about writeHMLForm
-	if ($i_manipulated) {	//else we don't need to procede
+	if ($i_manipulated) { 	//else we don't need to procede
 		
 		
 		//now, finally, get data from db for filling forms if we need any
 		if ($params["cmd"] != "new") {
 			$res = pp_run_query($query);
 			$fehler_nr = mysqli_errno(getDBLink());
-			if($debug) { echo($indent.'<div class="debug">Query is: '.$query.'</div>'); }
 			if ($fehler_nr != 0) {
 				$fehler_text = mysqli_error(getDBLink());
 				$sys_msg_text[] = '<div class="sys_msg_admin">'.__('DB-Error:').' '.$fehler_text;
@@ -250,7 +252,7 @@ function writeData($ind=4) {
 				//when we have a number, we should enter a new entry using that!
 				if ($params["nr"] == "") $the_cmd = "new";
 				else $the_cmd = "entry";
-				echo($indent.'	<a href="edit.php?'.urlencode($params["page"]).'&nr='.urlencode($params["nr"]).'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
+				echo($indent.'	<a href="edit.php?'.urlencode($params["page"]).'&_formfield_tablename='.urlencode($params["values"]["tablename"]).'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
 			}
 		}
 	}
