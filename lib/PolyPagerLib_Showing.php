@@ -940,6 +940,11 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 			}
 			
+            //even more grouping stuff...
+			if ($entity["group"] != "" or $as_toc) {	//write end of last group div
+				echo($indent.'</'.$html_type.'>'."\n");
+			}
+            
             if($listview and count($res) > 0) {
                 echo('<input name="page" type="hidden" value="'.$params['page'].'"/>'."\n");
                 echo('<input name="topic" type="hidden" value="content"/>'."\n");
@@ -947,10 +952,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                 echo('</form>'."\n");
             }
             
-			//even more grouping stuff...
-			if ($entity["group"] != "" or $as_toc) {	//write end of last group div
-				echo($indent.'</'.$html_type.'>'."\n");
-			}
+			
 			//if there was no data, give a hint
 			if ($params['page'] != '_search' and $before_first_entry == true and !$as_toc) {
 				echo($indent.'<div class="sys_msg">'.__('No fitting entry in the database was found...').'</div>'."\n");
