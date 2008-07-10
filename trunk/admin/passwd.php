@@ -22,7 +22,7 @@ function writeData(){
     
     clearMsgStack();
     
-    echo('<h1>Set Password');
+    echo('<h1>'.__('Set Password'));
     writeHelpLink(' ', __('To reset your password, you need to retype your old password (if you had already one). Then, please type in your new password twice. If you forgot your old password, it should be reset to be empty in the database. Then you can set a new password here.'));
     
     echo('</h1>'."\n");
@@ -52,9 +52,9 @@ function writeData(){
         
     echo('<form id="passwd_form" action="'.$PHPSELF.'" method="post"><table>'."\n");
     echo('  <tr><td></td><td><input type="hidden" name="page" value="_sys_sys"/></td></tr>'."\n");
-    if ($res[0]['admin_pass']  != '') echo('  <tr><td><label for="old_pass">Old Password:</label></td><td><input type="password" name="old_pass" value=""/></td></tr>'."\n");
-    echo('  <tr><td><label for="new_pass1">New Password:</label></td><td><input type="password" name="new_pass1" value=""/></td></tr>'."\n");
-    echo('  <tr><td><label for="new_pass2">Again:</label></td><td><input type="password" name="new_pass2" value=""/></td></tr>'."\n");
+    if ($res[0]['admin_pass']  != '') echo('  <tr><td><label for="old_pass">'.__('Old Password').':</label></td><td><input type="password" name="old_pass" value=""/></td></tr>'."\n");
+    echo('  <tr><td><label for="new_pass1">'.__('New Password').':</label></td><td><input type="password" name="new_pass1" value=""/></td></tr>'."\n");
+    echo('  <tr><td><label for="new_pass2">'.__('Again').':</label></td><td><input type="password" name="new_pass2" value=""/></td></tr>'."\n");
     echo('  <tr><td></td><td><input type="submit" name="cmd" value="save"/>'."\n");
     echo('</table></form>'."\n");
     

@@ -133,8 +133,12 @@ function getTranslation_de($text) {
 'Here you can edit an entry. You find an HTML Form where you can type in values.&lt;br/&gt;Hit the Save-Button to save your changes to the database.&lt;br/&gt;You can also delete existing entries with the Delete-Button.&lt;br/&gt;&lt;br/&gt; %s'
 	=> 'Hier k&ouml;nnen Sie einen Beitrag bearbeiten. Sie sehen ein HTML Formular, in das Sie Ihre Daten eingeben k&ouml;nnen&lt;br/&gt;Bet&auml;tigen Sie den Speichern-Button um Ihre Eingaben in der Datenbank zu speichern.&lt;br/&gt;Sie k&ouml;nnen auch den L&ouml;schen-Button bet&auml;tigen, um einen bestehenden Eintrag wieder aus der Datenbank zu l&ouml;schen.&lt;br/&gt; %s',
 'How'	=> 'Wie',
-'edit password' => 'Passwort setzen',
-'Here you can (re)set your password.'
+'set password' => 'Passwort setzen',
+'Set Password' => 'Passwort setzen',
+'Old Password' => 'Altes Passwort',
+'New Password' => 'Neues Passwort',
+'Again' => 'Nochmal',
+'Here you can (re)set your password.' =>
 	'Hier k&ouml;nnen Sie das Passwort (neu) setzen.',
 'edit impressum' => 'Impressum editieren',
 'Here you can edit the impressum.' => 
