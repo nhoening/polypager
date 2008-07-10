@@ -456,12 +456,13 @@
             if ($params["cmd"] == "delete") {
                 $query = "DELETE FROM _sys_feed WHERE pagename = ? and title = ?;";
                 $sqlparams = array(array('s', $params['page']), array('s', $params["values"]["old_formfield_$title_field"]));
+                pp_run_query(array($query, $sqlparams));
             }
             if ($params["cmd"] == "edit" && $params["values"][$title_field] != $params["values"]["old_formfield_$title_field"]) {
                 $query = "UPDATE _sys_feed SET title = ? WHERE pagename = ? AND id = ?";
                  $sqlparams = array(array('s', $params["values"][$title_field]),array('s', $params['page']), array('i', $params["nr"]));
+                 pp_run_query(array($query, $sqlparams));
             }
-            pp_run_query(array($query, $sqlparams));
         }
 	}
 	
