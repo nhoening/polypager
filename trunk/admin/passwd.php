@@ -22,7 +22,10 @@ function writeData(){
     
     clearMsgStack();
     
-    echo('<h1>Set Password</h1>');
+    echo('<h1>Set Password');
+    writeHelpLink(' ', __('To reset your password, you need to retype your old password (if you had already one). Then, please type in your new password twice. If you forgot your old password, it should be reset to be empty in the database. Then you can set a new password here.'));
+    
+    echo('</h1>'."\n");
     
     $res = pp_run_query('SELECT admin_pass, salt from _sys_sys;');
     

@@ -78,6 +78,11 @@ function getTranslation_de($text) {
 'hide templates' => 'verstecke Schablonen',
 'show templates' => 'zeige Schablonen',
 
+/* paswd.php */
+'To reset your password, you need to retype your old password (if you had already one). Then, please type in your new password twice. If you forgot your old password, it should be reset to be empty in the database. Then you can set a new password here.'
+  => 'Um das Passwort (zur&uuml;ck) zu setzen, geben Sie bitte das alte Passwort ein (falls es bereits eines gab) und nennen Sie Ihr neues Passwort zweimal. Wenn Sie das alte Passwort vergessen haben, sollte es in der Datenbank auf einen leeren String zur&uuml;ckgesetzt werden. Dann k&ouml;nnen Sie es hier neu setzen.',
+
+
 /* PolyPagerLib_Adminindex.php */
 'Admininstration view of page' => 'Administrationsansicht der Seite',
 'get list' => 'zeige Liste',
