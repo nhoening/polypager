@@ -10,7 +10,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . '..'.FILE_SEPARATOR);
 require_once("lib" . FILE_SEPARATOR . "PolyPagerLib_Utils.php");
 require_once("lib" . FILE_SEPARATOR . "PolyPagerLib_HTMLFraming.php");
 require_once("lib" . FILE_SEPARATOR . "PolyPagerLib_Showing.php");
-require_once("lib" . FILE_SEPARATOR . "PolyPagerLib_Adminindex.php");
+require_once("lib" . FILE_SEPARATOR . "PolyPagerLib_AdminIndex.php");
 
 $path_to_root_dir = "..";
 $area = "_admin"; 
