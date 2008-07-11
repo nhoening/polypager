@@ -104,10 +104,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			}
             // reset lazy data after possible database operations - so all we show is fresh
 			resetLazyData();
-			if ($query == "") {
-                $queries = getEditQuery($params["cmd"], "");
-                $query = $queries[0];
-            }
+            
 		}
 	// ---------------------------------------
 }else{
@@ -115,6 +112,11 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 	$error_msg_text[] = __('There is no known page specified.');
 }
 
+if ($query == "") {
+    $queries = getEditQuery($params["cmd"], "");
+    $query = $queries[0];
+}
+            
 if ($params["nr"] == "") $params["nr"] = $newID;
 $path_to_root_dir = "..";
 
