@@ -201,7 +201,7 @@ function writeData($ind=4) {
 		echo($indent.'		&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="passwd.php">'.__('set password').'</a>&nbsp;|&nbsp;'."\n");
         //link to write impressum
 		$link_text = __('Here you can edit the impressum.');
-		echo($indent.'		&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&nr=_sys_impressum&page='.$params['page'].'from=list&topic='.$params["topic"].'">'.__('edit impressum').'</a>&nbsp;|&nbsp;'."\n");
+		echo($indent.'		&nbsp;|&nbsp;<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&_formfield_tablename=_sys_impressum&page='.$params['page'].'from=list&topic='.$params["topic"].'">'.__('edit impressum').'</a>&nbsp;|&nbsp;'."\n");
 	} else if ($params["page"] == "_sys_multipages" and $params["cmd"] != "new") {
 		echo($indent.'	<h1>'.__('Editing a multipage').'</h1>'."\n");
 	} else if ($params["page"] == "_sys_multipages" and $params["cmd"] == "new") {

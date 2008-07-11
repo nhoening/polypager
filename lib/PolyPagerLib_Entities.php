@@ -104,6 +104,7 @@ function getEntity($page_name) {
 				$entity['formgroups']['admin'] = array(0,'hide');
 				setEntityFieldValue("admin_name", "formgroup", 'admin');
 				setEntityFieldValue("admin_pass", "formgroup", 'admin');
+                setEntityFieldValue("salt", "formgroup", 'admin');
 				$entity['formgroups']['gallery'] = array(2,'hide');
 				setEntityFieldValue("link_to_gallery_in_menu", "formgroup", 'gallery');
 				setEntityFieldValue("gallery_name", "formgroup", 'gallery');
@@ -345,7 +346,7 @@ function getEntity($page_name) {
 			else if ($page_name == "_sys_intros") {
 				$entity["tablename"] = "_sys_intros";
 				$entity["one_entry_only"] = "1";	//keep it one
-
+                $entity["hidden_form_fields"] = "tablename";
 				$entity = addFields($entity,$entity["tablename"]);
 			}
 			//	table for fields
