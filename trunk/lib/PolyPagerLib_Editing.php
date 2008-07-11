@@ -154,7 +154,6 @@ function getEditParameters() {
 		if ($params["feed"] == "") {$params["feed"] = $_GET["_formfield_feedbox"];}
 		if($params["feed"] == "on"){$params["feed"] = "1";}
 		else{$params["feed"] = "0";}
-		 if ($params["feed"]!="" and !is_numeric($params['feed'])) $error_msg_text[] = __('The feed param contains wrong data!');
         
 		//-----------checking Parameters ---------------------------------
 		if ($params["cmd"] != "") {
@@ -230,7 +229,6 @@ function getEditParameters() {
 					or ($params["page"] == "_sys_intros" and $params["cmd"] == "entry"))
 					and $entity["pk"] != "") {
 				$params["nr"] = $_GET['nr'];if ($params["nr"] == "") $params["nr"] = $_POST['nr'];	//can come in both ways
-                if ($params["nr"]!="" and  !is_numeric($params['nr'])) $error_msg_text[] = __('The nr param is not numeric!');
 				if ($params["nr"] == "" and $params["cmd"] == "show") $params["cmd"] = "entry";	//assume new one
 			}
 	
@@ -269,7 +267,7 @@ function getEditQuery($command, $theID) {
 	$query = "";        # we'll build in this string
     $theParams = array();  #... add params here
 	$queries = array(); # ... and add it to this array we'll return
-
+    
 	//------------------- insert ----------------------------------
 	if ($command == "entry") {			// INSERT Query
 		//insert a new recordset
