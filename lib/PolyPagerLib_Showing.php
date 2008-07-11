@@ -196,7 +196,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 				$params["max"] = getMaxNr($params["page"]);
 				if ($params["nr"] == "" and isMultipage($params["page"])) { $params["nr"] = $params["max"]; }	//no preferation: start with highest entry
 			}
-            if ($params['nr'] != "" and !is_numeric($params['nr'])) $error_msg_text[] = __('The nr param is not numeric!');
             
 			//-------------------------step param
 			$default_step = $entity["step"];				//show this much on a page, could be a number or "all"

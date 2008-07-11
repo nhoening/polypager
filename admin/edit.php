@@ -49,7 +49,7 @@ $entity = getEntity($params["page"]);
 if ($params["page"] != "" and isAKnownPage($params["page"])){
 	// -------------------- maybe we need a data manipulation FIRST
 	// -------------------- afterwards we'll select data to show
-		$i_manipulated = true;	//positive assumption
+		$i_manipulated = true;	// positive assumption
         
 		if ($params["cmd"] == "entry" or $params["cmd"] == "edit" or $params["cmd"] == "delete") {
 	
@@ -70,6 +70,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 					    //later, we should show the highest number (that is the one we just inserted)
                         $db_obj = getDBLink();
                         $newID = $db_obj->last_inserted_id;
+                        if ($params['page'] == '_sys_intros') $newID = $params['values']['tablename']; //quickhack
                         $params['values'][$entity['pk']] = $newID;
                     }
 				}
@@ -83,7 +84,7 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 				
 				ensureConsistency($params);
 				
-                // get relational queries for the (maybe new) entry
+                // execute relational queries for the (maybe new) entry
                 $rel_queries = getRelationalQueries();
                 if ($rel_queries != "")
 				    foreach($rel_queries as $q)
@@ -103,9 +104,10 @@ if ($params["page"] != "" and isAKnownPage($params["page"])){
 			}
             // reset lazy data after possible database operations - so all we show is fresh
 			resetLazyData();
-		} else {
-			$queries = getEditQuery($params["cmd"], "");
-			$query = $queries[0];
+			if ($query == "") {
+                $queries = getEditQuery($params["cmd"], "");
+                $query = $queries[0];
+            }
 		}
 	// ---------------------------------------
 }else{
@@ -125,16 +127,12 @@ function writeData($ind=4) {
 	global $debug;
 	global $query;
 	global $i_manipulated;
-	
+    
     echo($indent.'<h1>Admin Area</h1>'."\n");
     
     if (clearMsgStack()) return;
     
     showAdminOptions($indent.'	');
-    
-	if($debug) {
-		echo('<div class="debug">cmd is '.$params["cmd"].'</div>');
-	}
 	
     //show the list instead of an empty form
     if ($params['cmd'] == 'delete') {
@@ -249,10 +247,11 @@ function writeData($ind=4) {
 				//makes no sense anymore, search is off or invisible on the pages
 				//echo('				<a href="../?'.$params["page"].'#search">'.__('search for what you are looking for').'</a>'."\n");
 			} else {
-				//when we have a number, we should enter a new entry using that!
-				if ($params["nr"] == "") $the_cmd = "new";
-				else $the_cmd = "entry";
-				echo($indent.'	<a href="edit.php?'.urlencode($params["page"]).'&_formfield_tablename='.urlencode($params["values"]["tablename"]).'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
+				//when we already have an entry, we change the command
+				//if ($params["nr"] == "") $the_cmd = "new";
+				//$the_cmd = "entry";
+                //print_r($params["values"]);
+				//echo($indent.'	<a href="edit.php?'.urlencode($params["page"]).'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
 			}
 		}
 	}

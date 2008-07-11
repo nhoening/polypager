@@ -527,8 +527,12 @@
 		//Links, first for contents
 		if ($params["page"] != "" and $params["topic"] == "content") {
 			$link_text = __('Here you can edit an introduction text for this page. (It will only be seen if the skin template uses writeIntroDiv())');
-			//if (isMultipage($params["page"])) 
-				echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&_formfield_tablename='.urlencode($params["page"]).'&page='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
+            $q = "SELECT count(*) as count FROM _sys_intros WHERE tablename = ?";
+            $p = array('s', $params["page"]);
+            $r = pp_run_query(array($q,array($p)));
+            if ($r['count']>0) $the_cmd = 'edit';
+            else $the_cmd = 'entry';
+			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?_sys_intros&cmd='.$the_cmd.'&_formfield_tablename='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
 			$link_text = __('Here you can insert a new entry for this page.');
 			echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="edit.php?'.urlencode($params["page"]).'&cmd=new&from=list&topic='.$topic.'">'.__('new entry').'</a>'."\n");
 		//now for fields
