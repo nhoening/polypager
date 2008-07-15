@@ -168,7 +168,11 @@ function getEditParameters() {
                     }
 					if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
                     if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
-					//Booleans umwandeln
+                    // correct for automatically added slashes (we have prepared statements now...)
+                     if (get_magic_quotes_gpc() == 1) {
+                        $values[$f["name"]] = stripslashes($values[$f["name"]]);
+                    }
+					// change Booleans 
 					if ($f["data_type"] == "bool") {
 						if($values[$f["name"]] == "on"){$values[$f["name"]] = "1";}
 						else{$values[$f["name"]] = "0";}
@@ -244,7 +248,7 @@ function getEditParameters() {
         if (!isset($params["values"][$entity["pk"]])) {
                 $params["values"][$entity["pk"]] = $params["nr"];
         }
-    
+        
 		//$opt = $_POST[opt];	//indicates what to show next
 		//-----------------end Checking Parameters -----------------------
 	}
@@ -314,7 +318,9 @@ function getEditQuery($command, $theID) {
 		}
 		$query = utf8_substr($query, 0, utf8_strlen($query)-1);
 		if ($entity["pk"] != "") {
-            $query .= " WHERE ".nameEqValueEscaped($entity["pk_type"], $entity["pk"], $theID);
+            $query .= " WHERE ? = ?";
+            $theParams[] = array(getMySQLiType($entity["pk_type"]), $entity["pk"]);
+            $theParams[] = array(getMySQLiType($entity["pk_type"]), $theID);
 		}
 	}
 	//---------------end edit -------------------------------------
