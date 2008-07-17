@@ -111,20 +111,6 @@ function scandir_n($dir = './', $sort = 0, $only_pics = false, $only_dirs = fals
 	return $files;
 }
 
-/* returns the SQL-filtered string */
-function filterSQL($v) {
-    return $v; // new: don't do it, for we have prepared statements now
-	//we do this only for strings and only if magic quotes do not do this
-	//already (see http://www.dynamicwebpages.de/php/ref.info.php#ini.magic-quotes-gpc)
-    /*if (gettype($v) == "string"){
-        if (get_magic_quotes_gpc() == 1) {
-            $v = stripslashes($v);
-        }
-		return mysqli_real_escape_string(getDBLink(), $v);
-	}
-	else return $v;*/
-}
-
 /* get a param, from POST or GET,
     perform SQLfiltering, and numerical check if wanted */
 function getParam($name, $check_numerical=false){

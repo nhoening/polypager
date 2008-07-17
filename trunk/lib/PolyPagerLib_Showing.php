@@ -111,14 +111,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 					The group param will be passed on to the next call! Only hitting a
 					"Show all" - link or selecting another group will put an end that.
                     
-          Security:
-             concerning SQL injection: Every parameter that is used in
-             queries should be escaped via filterSQL().
-             Furthermore, the following parameters are secured against
-             reading attacks like the UNION SELECT injection:
-             - nr, feed: checked to be numeric only
-             - page: needs to resemble a page in the database, otherwise we abort
-             - group can be used in queries but always as a string
 	*/
 	function getShowParameters() {
 		global $_POST;
@@ -189,8 +181,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 			$entity = getEntity($params["page"]);
 			
 			//-------------------------nr param
-			$params["nr"] = filterSQL($_POST['nr']);	//starting point
-			if ($params["nr"] == "") $params["nr"] = filterSQL($_GET['nr']);  //coming in per GET?
+			$params["nr"] = $_POST['nr'];	//starting point
+			if ($params["nr"] == "") $params["nr"] = $_GET['nr'];  //coming in per GET?
 			//pages with countable Primary Key need a max nr
 			if (isNumericType($entity['pk_type'])){ 
 				$params["max"] = getMaxNr($params["page"]);
