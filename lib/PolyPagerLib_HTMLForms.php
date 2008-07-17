@@ -57,7 +57,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $edit
 	//write Opening Tag and JS Calls
 	$inputType = "input";
 	if(isTextAreaType($type)) $inputType = "textarea";
-
+    
 	echo($indent);
 	if ($inputType != "textarea" or $editor == 0) echo('<'.$inputType.' id="_formfield_'.$name.'_input" tabindex="'.$tabindex.'"');
 	

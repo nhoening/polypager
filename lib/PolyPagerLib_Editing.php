@@ -79,15 +79,6 @@ state  |succ.-state     | auto status |with   |with   | options
  edit  | show           | yes         | yes   | yes   |  id: actual/next
  delete| show           | yes         | yes   | no    |  state: new
  
- 
- Security:
- concerning SQL injection: Every parameter that is used in
- queries should be escaped via filterSQL().
- Furthermore, the following parameters are secured against
- reading attacks like the UNION SELECT injection:
- - nr, feed: checked to be numeric only
- - page: needs to resemble a page in the database, otherwise we abort
- - group can be used in queries but always as a string
 */
 function getEditParameters() {
 	global $_POST;
@@ -114,7 +105,7 @@ function getEditParameters() {
 		$params["page"] = urldecode($query_array[0]);
 		//if "page=" is given we can handle this, too
 		if (utf8_strpos($query_array[0], "page=") !== false) $params["page"] = urldecode($_GET["page"]);
-        $params['page'] = filterSQL($params['page']);
+        $params['page'] = $params['page'];
 	}
     
 	if ($params["page"] != "" and isAKnownPage($params["page"])){
@@ -134,12 +125,12 @@ function getEditParameters() {
 		//-------------------------from param
 		$params["from"] = $_GET["from"];
 		if ($params["from"] == "") { $params["from"] = $_POST["from"]; } //coming in per POST?
-	    $params['from'] = filterSQL($params['from']);
+	    $params['from'] = $params['from'];
         
 		//-------------------------group param
 		$params["group"] = urldecode($_GET["group"]);
 		if ($params["group"] == '') { $params["group"] = urldecode($_POST["group"]); } //coming in per POST?
-        $params['group'] = filterSQL($params['group']);
+        $params['group'] = $params['group'];
         //check for allowed values: group field and also page names
         
         
@@ -147,7 +138,7 @@ function getEditParameters() {
 		$params["topic"] = $_POST["topic"];      
 		if ($params["topic"] == "") {$params["topic"] = $_GET["topic"];}
         if ($params["topic"] == "") {$params["topic"] = "content";}
-		$params['topic'] = filterSQL($params['topic']);
+		$params['topic'] = $params['topic'];
         
 		//-------------------------feed (from checkbox)
 		$params["feed"] = $_POST['_formfield_feedbox'];
@@ -163,13 +154,13 @@ function getEditParameters() {
 				$values = array();
 				foreach($entity["fields"] as $f) {
                     if ($f['valuelist'] != ""){ //try possible new entry first
-                        $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"].'_new']);
-                        if (!isset($values[$f["name"]]) or $values[$f["name"]]=="") $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"].'_new']);
+                        $values[$f["name"]] = $_POST['_formfield_'.$f["name"].'_new'];
+                        if (!isset($values[$f["name"]]) or $values[$f["name"]]=="") $values[$f["name"]] = $_GET['_formfield_'.$f["name"].'_new'];
                     }
-					if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_POST['_formfield_'.$f["name"]]);
-                    if (!isset($values[$f["name"]])) $values[$f["name"]] = filterSQL($_GET['_formfield_'.$f["name"]]);
+					if (!isset($values[$f["name"]])) $values[$f["name"]] = $_POST['_formfield_'.$f["name"]];
+                    if (!isset($values[$f["name"]])) $values[$f["name"]] = $_GET['_formfield_'.$f["name"]];
                     // correct for automatically added slashes (we have prepared statements now...)
-                     if (get_magic_quotes_gpc() == 1) {
+                    if (get_magic_quotes_gpc() == 1) {
                         $values[$f["name"]] = stripslashes($values[$f["name"]]);
                     }
 					// change Booleans 
@@ -178,8 +169,8 @@ function getEditParameters() {
 						else{$values[$f["name"]] = "0";}
 					}
 					if(in_array($f["name"], $consistency_fields)) {
-						$values['old_formfield_'.$f["name"]] = filterSQL($_POST['old_formfield_'.$f["name"]]);
-						if (!isset($values['old_formfield_'.$f["name"]])) $values['old_formfield_'.$f["name"]] = filterSQL($_GET['old_formfield_'.$f["name"]]);
+						$values['old_formfield_'.$f["name"]] = $_POST['old_formfield_'.$f["name"]];
+						if (!isset($values['old_formfield_'.$f["name"]])) $values['old_formfield_'.$f["name"]] = $_GET['old_formfield_'.$f["name"]];
 					}
 				}
 				if(isSinglepage($params["page"])) {
@@ -248,7 +239,6 @@ function getEditParameters() {
         if (!isset($params["values"][$entity["pk"]])) {
                 $params["values"][$entity["pk"]] = $params["nr"];
         }
-        
 		//$opt = $_POST[opt];	//indicates what to show next
 		//-----------------end Checking Parameters -----------------------
 	}
@@ -318,8 +308,7 @@ function getEditQuery($command, $theID) {
 		}
 		$query = utf8_substr($query, 0, utf8_strlen($query)-1);
 		if ($entity["pk"] != "") {
-            $query .= " WHERE ? = ?";
-            $theParams[] = array(getMySQLiType($entity["pk_type"]), $entity["pk"]);
+            $query .= " WHERE ".$entity["pk"]." = ?";
             $theParams[] = array(getMySQLiType($entity["pk_type"]), $theID);
 		}
 	}

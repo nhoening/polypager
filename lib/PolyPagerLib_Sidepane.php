@@ -52,7 +52,7 @@ function cmpDate($a, $b) {
 function getFeed($amount, $comments = false, $restricted = 3) {
 	// get requested page descriptions
 	$p = $_GET['p']; if($p=='') $p = $_POST['p'];
-	$p = utf8_explode(',',$p);
+	$p = utf8_explode(',', $p);
 	// get requested entry number
     if ($comments) {
         $nr = $_GET['nr']; 
@@ -60,6 +60,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
     }
     
     $sys = getSysInfo();
+    $theParams = array();
     // when all access is restricted and we don't want to see restricted, show nothing
     if ($sys['whole_site_admin_access'] and $restricted == 3){
         $query = "SELECT * FROM _sys_sys WHERE 1=2";
@@ -70,16 +71,18 @@ function getFeed($amount, $comments = false, $restricted = 3) {
         if($p[0] != '') {
             if (!$comments) $where .= " AND (";
             else $where = " WHERE (";
-            for($i=0;$i<count($p);$i++) {
+            for($i=0; $i<count($p); $i++) {
                 $page = $p[$i];
-                $where .= " pagename = '".urldecode(filterSQL($page))."'";
+                $where .= " pagename = ?";
+                $theParams[] = array('s', urldecode($page));
                 if($i+1 < count($p)) $where .= ' OR'; 
             }
             $where .= ")";
         }
         
         if ($comments and $nr!=""){
-            $where .= " AND pageid = ".$nr;
+            $where .= " AND pageid = ?";
+            $theParams[] = array('i', $nr);
         }
     
         
@@ -90,12 +93,12 @@ function getFeed($amount, $comments = false, $restricted = 3) {
                                 "comment AS theContent, id as CommentID,".
                                 "pagename AS thePage FROM _sys_comments";
         $query .= $where;
-        $query .= " ORDER BY theDate DESC LIMIT ".$sys["feed_amount"];
-        
+        $query .= " ORDER BY theDate DESC LIMIT ?";
+        $theParams[] = array('i', $sys["feed_amount"]);
         
     }
 	
-    $res = pp_run_query($query);
+    $res = pp_run_query(array($query, $theParams));
     $feeds = array();
         
 	//enrich with text from the tables themselves
