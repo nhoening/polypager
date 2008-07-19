@@ -1,0 +1,97 @@
+/*these styles are needed for basic functioning of the application*/
+
+#pup {
+	position                : absolute;
+	width                   : 375px;
+	padding                 : 5px;
+	font-size               : 11pt;
+	color                   : #fff;
+	background-image        : url(pics/bg-pup.png);
+	font-family             : "courier new", tahoma, verdana, arial, sans-serif;
+	font-weight             : bold;
+	text-align              : left;
+	border                  : 2px solid #333;
+	z-index                 : 200; /* aaaalways on top*/
+}
+
+a.help{
+	text-decoration: none !important;
+	background: transparent url(pics/help.gif) top left no-repeat;
+}
+
+.search_toggle a {
+	text-decoration: none;
+	width: 100%;
+	background: transparent url(pics/no.gif) top right no-repeat;
+}
+
+/* */
+.list_entry{
+	margin-top:20px;
+    line-height:23px !important;
+	min-height:23px !important;
+	width: 470px;
+}
+.adop{
+	float: left;
+	width: 100px;
+}
+.adop a img{
+	border: 0;
+}
+
+
+.comment_prefix {padding: 5px;}
+
+/*should be overwritten if it doesn't fit your skin, but better than nothing*/
+.high{
+	font-weight: 900;
+}
+
+#feedbox, .filler {
+	border: 1px solid grey;
+	padding-left: 3px;
+	margin-right: 3px; 
+	background-color:#bcb;
+	color: #434;
+}
+
+.filling {
+    border: 1px solid grey;
+    color: #434;
+    background-color:#bcb; 
+    max-height:9em;
+    overflow: auto;
+}
+
+.filler{
+	padding: 3px;
+	margin-bottom: 7px;
+    border:none !important;
+}
+.filler a{
+	color: blue;
+    text-decoration: underline;
+}
+
+.filled{
+    border: 1px solid grey;
+    min-height: 19px;
+    background-color: #eee;
+    color: blue;
+    margin: 0px 2px 0px 2px;
+}
+.filled a{
+	color: blue;
+    text-decoration: underline;
+}
+
+#nogarbageplease_ {visibility:hidden;} /*not visible for humans, only for (dumb) spam machines*/
+
+#commentform {
+    border: 1px solid #ccc;
+}
+#commentform textarea{
+    width: 450px;
+    height: 200px;
+}
