@@ -63,7 +63,8 @@ function getFeed($amount, $comments = false, $restricted = 3) {
     $theParams = array();
     // when all access is restricted and we don't want to see restricted, show nothing
     if ($sys['whole_site_admin_access'] and $restricted == 3){
-        $query = "SELECT * FROM _sys_sys WHERE 1=2";
+        $query = "SELECT * FROM _sys_sys WHERE 1=?";
+        $theParams[] = array('i', 2);
     } else {
     
         //make a filter with what was requested
@@ -100,7 +101,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
 	
     $res = pp_run_query(array($query, $theParams));
     $feeds = array();
-        
+    
 	//enrich with text from the tables themselves
     foreach($res as $row){
         $the_page = getPageInfo($row['thePage']);
@@ -109,10 +110,10 @@ function getFeed($amount, $comments = false, $restricted = 3) {
             if (!$comments) {   // get text from original page for feeds
                 $field = guessTextField($entity);
                 if ($field == "") $field = $the_page["title_field"];
-                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
-    
-                if(count($res2) > 0) {
-                    $row2 = $res2[0];
+                $res2 = pp_run_query_old("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID']);
+                if(mysql_num_rows($res2) > 0) {
+                    
+                    $row2 = mysql_fetch_assoc($res2);
                     //no title? take sthg from content...
                     if($row['theText'] == "" or $row['theText'] == '['.__('update').'] '){
                         $row['theText'] = getFirstWords($row2['tfield'],6);
@@ -123,9 +124,9 @@ function getFeed($amount, $comments = false, $restricted = 3) {
             } else {
                 $field = $the_page["title_field"];
                 if ($field=="") $field = guessTextField($entity);
-                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
-                 if(count($res2) > 0) {
-                    $row2 = $res2[0];
+                $res2 = pp_run_query_old("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID'].";");
+                 if(mysql_num_rows($res2) > 0) {
+                    $row2 = mysql_fetch_assoc($res2);
                     $row['theText'] = getFirstWords($row2['tfield'],10);
                  }
             }

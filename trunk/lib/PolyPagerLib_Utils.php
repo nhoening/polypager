@@ -549,9 +549,10 @@ function getTables() {
 	if ($non_sys_tables == "") {
 		$non_sys_tables = array();
 		$tables = pp_run_query_unprepared('SHOW TABLES');
+        
 		while($row = mysqli_fetch_array($tables)){
 		  $table_name = $row[0];
-		  if(utf8_substr($table_name,0,5) != "_sys_") $non_sys_tables[$x] = $table_name;
+		  if(utf8_substr($table_name,0,5) != "_sys_") $non_sys_tables[] = $table_name;
 		}
 	}
 	return $non_sys_tables;
