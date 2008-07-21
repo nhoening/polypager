@@ -990,8 +990,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		
 		if (!$list_view) {	//write an anchor
 			$name = getTitle($entity,$row);
-			//text that doesn't come from a text area still must be escaped
-			if ($entity["title_field"] != "") echo($indent.'	<a class="target" id="'.buildValidIDFrom($name).'"></a>'."\n");
+			if ($entity["title_field"] != "") echo($indent.'	<a class="target" name="'.buildValidIDFrom($name).'"></a>'."\n");
 		}
 		
 		$briefly = false;	//turns true when some fields are not shown
