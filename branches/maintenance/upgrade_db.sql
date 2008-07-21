@@ -2,8 +2,8 @@
 --to the database of PolyPager for every version. A new install of
 --PolyPager won't need any of these, it's just for upgrading!
 --So if you, for example, upgrade from 0.9.0 to the newest, you
---need to execute all the lines from here down to "upgrade 0.9.0".
---BUT: please execute them chronologically, one version after the
+--need to execute all the lines "upgrade 0.9.0" up to the latest.
+--Please ensure you upgrade chronologically, one version after the
 --other
 
 -- 1.0rc7
@@ -27,7 +27,7 @@ ADD `public_captcha_key` VARCHAR( 50 ) NOT NULL COMMENT 'provided by recaptcha.o
 ADD `private_captcha_key` VARCHAR( 50 ) NOT NULL COMMENT 'provided by recaptcha.org';
 
 -- 1.0rc2
-ALTER TABLE `_sys_feed` ADD `public` TINYINT( 1 ) NOT NULL DEFAULT '1' COMMENT 'tells wether the feed should be seen';
+ALTER TABLE `_sys_feed` ADD `public` TINYINT( 1 ) NOT NULL DEFAULT '1' COMMENT 'tells whether the feed should be seen';
 ALTER TABLE `_sys_sys` DROP `encoding`;
 
 -- 1.0rc1
@@ -139,3 +139,4 @@ ALTER TABLE `_sys_sys` ADD `submenus_always_on` TINYINT( 1 ) NOT NULL DEFAULT '0
 ALTER TABLE `_sys_sections` ADD `the_group` VARCHAR( 120 ) NOT NULL ;
 ALTER TABLE `_sys_sections` ADD INDEX ( `the_group` ) ;
 ALTER TABLE `_sys_singlepages` ADD `grouplist` VARCHAR( 255 ) NOT NULL ;
+
