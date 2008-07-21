@@ -364,27 +364,28 @@ function getEntity($page_name) {
                 
                 // once an entry is created, don't change its name
                 if ($_GET["cmd"] != 'new' and $_POST["cmd"] != 'new') $entity["disabled_fields"] .= ',name';
-                
-                $param_group = urldecode($_GET["group"]);
-                if ($param_group == '')  $param_group = urldecode($_POST["group"]);
-                $fields = getListOfNonExistingFields($param_group, false);
-
-                // when field options of simple pages are edited by 
-                // the users, I prefer to not show'em all
-                if ($params['page'] == '_sys_fields' && isSinglePage($param_group)){
-                    $flist = implode(',', $fields);
-                    $flist = utf8_str_replace('input_date','',$flist); 
-                    $flist = utf8_str_replace('edited_date','',$flist); 
-                    $flist = utf8_str_replace('the_group','',$flist);
-                    $flist = utf8_str_replace('publish','',$flist);
-                    $flist = utf8_str_replace('in_submenu','',$flist);
-                    $flist = utf8_str_replace('pagename','',$flist); 
-                    while (ereg(',,',$flist)) $flist = utf8_str_replace(',,',',',$flist);
-                    //now commas at start or end have to go
-                    $flist = preg_replace('@^,@', '', $flist);
-                    $flist = preg_replace('@,$@', '', $flist);
-                    setEntityFieldValue("name", "valuelist", $flist);
-                }else setEntityFieldValue("name", "valuelist", implode(',', $fields));
+                else {
+                    $param_group = urldecode($_GET["group"]);
+                    if ($param_group == '')  $param_group = urldecode($_POST["group"]);
+                    $fields = getListOfNonExistingFields($param_group, false);
+    
+                    // when field options of simple pages are edited by 
+                    // the users, I prefer to not show'em all
+                    if ($params['page'] == '_sys_fields' && isSinglePage($param_group)){
+                        $flist = implode(',', $fields);
+                        $flist = utf8_str_replace('input_date','',$flist); 
+                        $flist = utf8_str_replace('edited_date','',$flist); 
+                        $flist = utf8_str_replace('the_group','',$flist);
+                        $flist = utf8_str_replace('publish','',$flist);
+                        $flist = utf8_str_replace('in_submenu','',$flist);
+                        $flist = utf8_str_replace('pagename','',$flist); 
+                        while (ereg(',,',$flist)) $flist = utf8_str_replace(',,',',',$flist);
+                        //now commas at start or end have to go
+                        $flist = preg_replace('@^,@', '', $flist);
+                        $flist = preg_replace('@,$@', '', $flist);
+                        setEntityFieldValue("name", "valuelist", $flist);
+                    }else setEntityFieldValue("name", "valuelist", implode(',', $fields));
+                }
                 
 				setEntityFieldValue("validation", "valuelist", 'no validation,number,any_text,email');	//not really ready yet
 				//setEntityFieldValue("foreign_key_to", "valuelist", ','.implode(',', getPageNames()));
