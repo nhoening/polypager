@@ -110,7 +110,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
             if (!$comments) {   // get text from original page for feeds
                 $field = guessTextField($entity);
                 if ($field == "") $field = $the_page["title_field"];
-                $res2 = pp_run_query_old("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID']);
+                $res2 = pp_run_query("SELECT ".$field." AS tfield FROM `".$the_page["tablename"]."` WHERE id = ".$row['theID']);
                 if(mysql_num_rows($res2) > 0) {
                     
                     $row2 = mysql_fetch_assoc($res2);
