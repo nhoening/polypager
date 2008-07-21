@@ -363,7 +363,7 @@ function getEntity($page_name) {
 				$entity["group"] = $group;
                 
                 // once an entry is created, don't change its name
-                if ($params["cmd"] != 'new') $entity["disabled_fields"] .= ',name';
+                if ($_GET["cmd"] != 'new' and $_POST["cmd"] != 'new') $entity["disabled_fields"] .= ',name';
                 
                 $param_group = urldecode($_GET["group"]);
                 if ($param_group == '')  $param_group = urldecode($_POST["group"]);
