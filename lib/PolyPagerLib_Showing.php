@@ -1238,7 +1238,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 					}
                     
 				} else {
-					
+                    $href='javascript:document.edit_form._formfield_name_input.focus();';
+					echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                 }
 			}
 			
@@ -1251,9 +1252,6 @@ require_once("PolyPagerLib_HTMLForms.php");
 			//show comments
 			$nind = $ind + 1;
 			if ($page_info["commentable"] == "1" and $params["step"] == 1) {
-                
-                $href='javascript:document.edit_form._formfield_name_input.focus();';
-                echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                 echo($indent.'  <span class="comment_rss">'."\n");
                 echo($indent.'      <a href="rss.php?p='.$pagename.'&amp;nr='.$params["nr"].'&amp;channel=comments">follow comments per RSS</a>'."\n");
                 $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can follow the discussion without always coming here to check for new comments.";
