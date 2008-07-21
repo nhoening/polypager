@@ -473,8 +473,9 @@ require_once("PolyPagerLib_HTMLForms.php");
                             $said_where = true;
                         }
 						//show a group rather than id range
-						else if ($params["group"] != "" and $params["group"] != "_sys_all") {
+						if ($params["group"] != "" and $params["group"] != "_sys_all") {
 							$a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` = ?";
+                            $theParams = array(); // overwrite other params we had
                             $theParams[] = array('s', $params["group"]);
                             $said_where = false;
 						}

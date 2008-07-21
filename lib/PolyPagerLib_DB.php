@@ -89,6 +89,7 @@ function pp_run_query_old($query){
 		$error_buffer .= '|'.mysql_error($the_db_link).'|';
 	}
 	if($debug and $error_buffer != "") echo('<div class="debug">got error(s):|'.$error_buffer.'| when running the query "'.$query.'"</div>');
+    mysql_close($the_db_link); 
 	return $res;
 }
 
