@@ -121,8 +121,8 @@
 		$indent = translateIndent($ind);
 		echo($indent.'<div id="footer">'."\n");
 		$query = "SELECT * FROM _sys_intros WHERE tablename='_sys_impressum'";
-		$res = mysql_query($query, getDBLink());
-		$error_nr = mysql_errno(getDBLink());
+		$res = pp_run_query($query);
+		$error_nr = mysqli_errno(getDBLink());
 		if ($error_nr == 0) {
 			$row = $res[0];
 			if ($row["intro"] != "") {

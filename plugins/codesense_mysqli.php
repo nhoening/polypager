@@ -102,7 +102,6 @@
     {
       $vars = array();
       $bindparams = array();
-
       $query = $this->prepare($sql);
       if (isset($paramtypes))
       {
@@ -116,7 +115,6 @@
       }
       $query->execute();
       $fields = $this->LoadFieldInfo($query);
-
       foreach ($fields as $field)
       {
         $fieldname = $field->name;
@@ -126,7 +124,7 @@
       
       if (!call_user_func_array(array($query, 'bind_result'), $bindparams))
         die("bind_result failed");
-      
+
       $result = array();
       while ($query->fetch())
       {

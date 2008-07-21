@@ -145,6 +145,7 @@ function getEntity($page_name) {
 				setEntityFieldValue("group_order", "valuelist", "ASC,DESC");
 				// no tables: no user input
 				$tables = getTables();
+                
 				if (count($tables) > 0) {
 					setEntityFieldValue("tablename", "valuelist", ','.implode(',', $tables));
 				} else {
@@ -166,7 +167,7 @@ function getEntity($page_name) {
 				//with that, get the table name
 				}else if ($params["nr"] != "") {
 					$query = "SELECT tablename FROM _sys_multipages WHERE id = ".$params["nr"];
-					$res = mysql_query($query, getDBLink());
+					$res = pp_run_query($query);
 					if(count($res) > 0) {
                         $row = $res[0];
                         $the_table = $row["tablename"];
@@ -198,7 +199,7 @@ function getEntity($page_name) {
 					$entity["disabled_fields"] .= ',publish_field,date_field,time_field,edited_field,title_field,order_by,group_field';
 				}
 				
-				$entity["hidden_form_fields"] .= 'id,hide_comments';
+				$entity["hidden_form_fields"] = 'id,hide_comments';
 				
 				setEntityFieldValue("menue_index", "validation", 'number');
 				setEntityFieldValue("name", "validation", 'any_text');
@@ -207,6 +208,7 @@ function getEntity($page_name) {
 				//formgroups
 				$entity['formgroups'] = array();
 				$entity['formgroups']['name/table'] = array(0,'show');
+                setEntityFieldValue("id", "formgroup", 'name/table');
 				setEntityFieldValue("name", "formgroup", 'name/table');
 				setEntityFieldValue("tablename", "formgroup", 'name/table');
 				$entity['formgroups']['menu'] = array(1,'show');

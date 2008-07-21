@@ -6,7 +6,7 @@ require_once("plugins"  . FILE_SEPARATOR .  "codesense_mysqli.php");
 	it builds a connection (a link) to the db (once only) and returns it.
 */
 if (!function_exists("getDBLink")){ // for upgrades from <= 1.0rc4 to >= 1.0rc5
-$the_db_link = "";
+$db_obj = "";
 function getDBLink() {
 	global $db_obj;
 	global $host;
@@ -18,7 +18,6 @@ function getDBLink() {
         $text = "Welcome to PolyPager.<br/>Seeing this page proofs that PolyPager is working at the address you typed in. <br/> However, the database is not connectable. <br/>Maybe it is not configured yet or the configuration does not fit. <br/>If you are the administrator of this page, please consult PolyPager_Config.php";
 
         // build connection to DBMS
-        //$the_db_link = mysqli_connect($host, $user, $pass, $db) or die($text);
         $db_obj = CodeSense_mysqli::CreateNew($user, $pass, $db, $host);
         
         /* check connection */
@@ -28,7 +27,6 @@ function getDBLink() {
         }
 
         // now to the DB
-        // mysqli_select_db($db, $the_db_link) or die ($text);
         $db_obj->ExecuteSQL('SET CHARACTER SET utf8');
         $db_obj->ExecuteSQL("SET SESSION collation_connection ='utf8_general_ci'");
         $db_obj->ExecuteSQL("SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
@@ -51,9 +49,11 @@ function pp_run_query($query_set){
     if (!is_array($query_set)) {
         if (in_array(substr($query_set,0,6), $sql_exeq_words)) {
             $res = $d->ExecuteSQL($query_set);
-        }else  $res = $d->FetchAll($query_set);
+        }else  {
+            $res = $d->FetchAll($query_set, null);
+        }
     }else{
-        $format_str=''; 
+        $format_str = ''; 
         $params = array($query_set[0]);
         foreach ($query_set[1] as $p) $format_str .= $p[0];
         if ($format_str != "") $params[] = $format_str;
@@ -73,8 +73,22 @@ function pp_run_query_unprepared($query){
 	if ($error_nr != 0) {
 		$error_buffer .= '|'.mysqli_error(getDBLink()).'|';
 	}
-	if($debug and $error_buffer != "") echo('<div class="debug">got error(s):|'.$error_buffer.'| when running the query "'.$query.'"</div>');
+	if($error_buffer != "") echo('<div class="debug">got error(s):|'.$error_buffer.'| when running the query "'.$query.'"</div>');
 	
+	return $res;
+}
+
+/* old way of getting data - returns not just an array, but a mysql result set */
+function pp_run_query_old($query){
+	global $debug, $host, $db, $user, $pass;
+    $the_db_link = mysql_connect($host, $user, $pass, $db) or die('pp_run_query_old: no link to db possible');
+    mysql_select_db($db, $the_db_link) or die ('pp_run_query_old: no db select possible');
+    $res = mysql_query($query, $the_db_link);
+	$error_nr = mysql_errno($the_db_link);
+	if ($error_nr != 0) {
+		$error_buffer .= '|'.mysql_error($the_db_link).'|';
+	}
+	if($debug and $error_buffer != "") echo('<div class="debug">got error(s):|'.$error_buffer.'| when running the query "'.$query.'"</div>');
 	return $res;
 }
 

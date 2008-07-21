@@ -304,7 +304,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 		         if anything else than page content is to be shown (i.e.comments,
 				 pages themselves,...), add
 				 what you want to $params["cmd"] !!
-		$only_published: (boolean) true if only published entries
+		$only_published: (boolean) true if only published entries should be shown
 	*/
 	function getQuery($only_published) {
 		global $params;
@@ -322,10 +322,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 				return array();
 			}	
 			// search on every page
-			$pagelist = implode(',',getPageNames());
+			$pagelist = implode('||',getPageNames());
 		}
 		
-		foreach (utf8_explode(',',$pagelist) as $p){
+		foreach (utf8_explode('||',$pagelist) as $p){
             $pagename = $p;
             $page_info = getPageInfo($p);
 			$entity = getEntity($p);
@@ -473,7 +473,7 @@ require_once("PolyPagerLib_HTMLForms.php");
                             $said_where = true;
                         }
 						//show a group rather than id range
-						if ($params["group"] != "" and $params["group"] != "_sys_all") {
+						else if ($params["group"] != "" and $params["group"] != "_sys_all") {
 							$a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` = ?";
                             $theParams[] = array('s', $params["group"]);
                             $said_where = false;
