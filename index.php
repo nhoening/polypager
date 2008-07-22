@@ -174,7 +174,7 @@ function writeData($ind=5) {
 			
 			if ($params['page'] != '_search') writeSearchForm(false, $nind);
             
-			if (count($res[$params["page"]])) writeToc($res, false, $nind);
+			if (count($res[$params["page"]]) > 1) writeToc($res, false, $nind);
             
             $showid = "";
             
