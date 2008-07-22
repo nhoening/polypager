@@ -231,13 +231,16 @@ function getReferencingTableData($entity){
 }
 
 
+function getTableFields($table){
+	return pp_run_query('SHOW FIELDS FROM `'.$table.'`');
+}
+
 /* looks up the name of the pk field*/
 function getPKName($table){
-	$field_list = mysql_list_fields(getDBName(), $table, getDBLink());
-	for($i=0; $i<mysql_num_fields($field_list); $i++) {
-		//pk
-		if (eregi('primary_key',mysql_field_flags($field_list, $i))) {
-			return mysql_field_name($field_list, $i);
+	$field_list = getTableFields($table);
+	foreach ($field_list as $f) { 
+		if ($f['Key' == 'PRI']) {
+			return $f['Field'];
 		}
 	}
 	return "";
@@ -245,12 +248,10 @@ function getPKName($table){
 
 /* looks up the type of the pk field*/
 function getPKType($table){
-	$field_list = mysql_list_fields(getDBName(), $table, getDBLink());
-	for($i=0; $i<mysql_num_fields($field_list); $i++) {
-		//pk
-		if (eregi('primary_key',mysql_field_flags($field_list, $i))) {
-			$db_field = mysql_fetch_field($field_list, $i);
-			return $db_field->type;
+	$field_list = getTableFields($table);
+	foreach ($field_list as $f) {
+		if ($f['Key' == 'PRI']) {
+			return $f['Type'];
 		}
 	}
 	return "";
@@ -493,13 +494,15 @@ function getForeignKeys(){
 
 	if ($fks == "" or count($fks)==0){
         $tables = pp_run_query("SHOW TABLES");
-    
+        
 		$fk = array();
-		foreach($tables[0] as $table){
+		foreach($tables as $t) {
+            $table = $t['Tables_in_'.getDBName()];
 			$res = pp_run_query_unprepared("SHOW CREATE TABLE `".$table."`;");
 			$row = mysqli_fetch_array($res, MYSQLI_ASSOC);
+            
 			$create_query = $row['Create Table'];
-			
+            
 			$crlf = "||";
 			// Convert end of line chars to one that we want (note that MySQL doesn't return query it will accept in all cases)
 			if (utf8_strpos($create_query, "(\r\n ")) {
@@ -579,27 +582,6 @@ function getForeignKeys(){
 			} // end if any fks at all
 		} // end for all tables
 		
-		// Now look in the _sys_fields data for manually specified foreign keys
-		/*$query = "SELECT pagename, name, foreign_key_to, on_update, on_delete FROM _sys_fields WHERE foreign_key_to != ''";
-		$res = pp_run_query($query);
-		foreach($res as $row){
-			$fk = array();
-			$is_multi = isMultiPage($row['pagename']);
-	
-			$fk["page"] = $row['pagename'];
-			$fk["field"] = $row["name"];
-			$fk["ref_page"] = $row['foreign_key_to'];
-			if ($is_multi){		//refer automatically to the pk-field
-				$page_info = getPageInfo($row['foreign_key_to']);
-				$fk["ref_field"] = $page_info["pk"];	
-			} else {
-				$fk["ref_field"] = 'id';
-			}
-			$fk["on_update"] = $row["on_update"];
-			$fk["on_delete"] = $row["on_delete"];
-			$fk["in_db"] = 0;
-			$fks['page_'.$fk["ref_page"].'_'.$fk["field"]]  = $fk;
-		}*/
 	}
 	//return an array so that foreach loops on this will work
 	if ($fks=="") return array();

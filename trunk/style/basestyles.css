@@ -62,6 +62,7 @@ a.help{
     background-color:#bcb; 
     max-height:9em;
     overflow: auto;
+    margin-bottom: 5px;
 }
 
 .filler{

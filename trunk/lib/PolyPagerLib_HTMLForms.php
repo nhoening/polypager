@@ -277,8 +277,6 @@ function writeRelationalTableInputs($ind, $entity){
             }
             //now get possible values
             $query = 'SELECT '.$c[2][1]['title_field'].' AS Title, '.$c[2][1]['fk']['ref_field'].' AS VAL FROM `' .$c[2][1]['fk']['ref_table'].'` ORDER BY '.$c[2][1]['title_field'];
-            
-            
             $res = pp_run_query($query);
             $poss_show_vals = array();
             $poss_save_vals = array();
