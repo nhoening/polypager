@@ -21,17 +21,6 @@ FCKConfig.StylesXmlPath = '<?echo('http://'.$_SERVER['HTTP_HOST'].utf8_str_repla
 
 //FCKConfig.Plugins.Add('fckEmbedMovies') ;
 
-FCKConfig.ToolbarSets["Default"] = [
-	['Source','DocProps','-','Save','NewPage','Preview','-','Templates',
-	'Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck',	'Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat','Smiley','SpecialChar','PageBreak'],
-	//['EmbedMovies'],
-	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
-	['OrderedList','UnorderedList','-','Outdent','Indent'],
-	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull','-'],
-	['Link','Unlink','Anchor','Image','Flash','Table','Rule'],
-	['Style','FontFormat','FontName','FontSize'],['TextColor','BGColor'],['About']
-] ;
-
 FCKConfig.ToolbarSets["Basic"] = [
 	['Bold','Italic','-','OrderedList','UnorderedList']
 ] ;
@@ -43,12 +32,9 @@ FCKConfig.ToolbarSets["PolyPager"] = [
 
 
 
-FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Connector=connectors/php/connector.php' ;
-FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=connectors/php/connector.php' ;
-FCKConfig.FlashBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Flash&Connector=connectors/php/connector.php' ;
-FCKConfig.LinkUploadURL = FCKConfig.BasePath + 'filemanager/upload/php/upload.php' ;
-FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/upload/php/upload.php?Type=Image' ;
-FCKConfig.FlashUploadURL = FCKConfig.BasePath + 'filemanager/upload/php/upload.php?Type=Flash' ;
-
-var _FileBrowserLanguage        = 'php' ;
-var _QuickUploadLanguage        = 'php' ;
+//FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Connector=connectors/php/connector.php' ;
+//FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=connectors/php/connector.php' ;
+//FCKConfig.FlashBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Flash&Connector=connectors/php/connector.php' ;
+//FCKConfig.LinkUploadURL = FCKConfig.BasePath + 'filemanager/upload/php/upload.php' ;
+//FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/upload/php/upload.php?Type=Image' ;
+//FCKConfig.FlashUploadURL = FCKConfig.BasePath + 'filemanager/upload/php/upload.php?Type=Flash' ;
