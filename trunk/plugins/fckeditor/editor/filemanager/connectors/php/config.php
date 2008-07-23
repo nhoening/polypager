@@ -39,7 +39,7 @@ $Config['Enabled'] = true ;
 
 $path_from_document_root = getPathFromDocRoot();
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = $path_from_document_root.'user/File/'  ;
+$Config['UserFilesPath'] = $path_from_document_root.'user/'  ;
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Useful if you are using a virtual directory, symbolic
@@ -132,29 +132,29 @@ $denied = array('php','php3','php5','phtml','asp','aspx','ascx','jsp','cfm','cfc
 
 $Config['AllowedExtensions']['File']	= array('7z', 'aiff', 'asf', 'avi', 'bmp', 'csv', 'doc', 'fla', 'flv', 'gif', 'gz', 'gzip', 'jpeg', 'jpg', 'mid', 'mov', 'mp3', 'mp4', 'mpc', 'mpeg', 'mpg', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pxd', 'qt', 'ram', 'rar', 'rm', 'rmi', 'rmvb', 'rtf', 'sdc', 'sitd', 'swf', 'sxc', 'sxw', 'tar', 'tgz', 'tif', 'tiff', 'txt', 'vsd', 'wav', 'wma', 'wmv', 'xls', 'xml', 'zip') ;
 $Config['DeniedExtensions']['File']		= array($denied) ;
-$Config['FileTypesPath']['File']		= $Config['UserFilesPath'] . 'file/' ;
-$Config['FileTypesAbsolutePath']['File']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'file/' ;
+$Config['FileTypesPath']['File']		= $Config['UserFilesPath'] . 'File/' ;
+$Config['FileTypesAbsolutePath']['File']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'File/' ;
 $Config['QuickUploadPath']['File']		= $Config['UserFilesPath'] ;
 $Config['QuickUploadAbsolutePath']['File']= $Config['UserFilesAbsolutePath'] ;
 
 $Config['AllowedExtensions']['Image']	= array('bmp','gif','jpeg','jpg','png') ;
 $Config['DeniedExtensions']['Image']	= array($denied) ;
-$Config['FileTypesPath']['Image']		= $Config['UserFilesPath'] . 'image/' ;
-$Config['FileTypesAbsolutePath']['Image']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'image/' ;
-$Config['QuickUploadPath']['Image']		= $Config['UserFilesPath'] ;
-$Config['QuickUploadAbsolutePath']['Image']= $Config['UserFilesAbsolutePath'] ;
+$Config['FileTypesPath']['Image']		= $Config['UserFilesPath'] . 'Image/' ;
+$Config['FileTypesAbsolutePath']['Image']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'Image/' ;
+$Config['QuickUploadPath']['Image']		= $C$Config['FileTypesPath']['Image'] ;
+$Config['QuickUploadAbsolutePath']['Image']= $Config['FileTypesAbsolutePath']['Image'] ;
 
 $Config['AllowedExtensions']['Flash']	= array('swf','flv') ;
 $Config['DeniedExtensions']['Flash']	= array($denied) ;
-$Config['FileTypesPath']['Flash']		= $Config['UserFilesPath'] . 'flash/' ;
-$Config['FileTypesAbsolutePath']['Flash']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'flash/' ;
+$Config['FileTypesPath']['Flash']		= $Config['UserFilesPath'] . 'Flash/' ;
+$Config['FileTypesAbsolutePath']['Flash']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'Flash/' ;
 $Config['QuickUploadPath']['Flash']		= $Config['UserFilesPath'] ;
 $Config['QuickUploadAbsolutePath']['Flash']= $Config['UserFilesAbsolutePath'] ;
 
 $Config['AllowedExtensions']['Media']	= array('aiff', 'asf', 'avi', 'bmp', 'fla', 'flv', 'gif', 'jpeg', 'jpg', 'mid', 'mov', 'mp3', 'mp4', 'mpc', 'mpeg', 'mpg', 'png', 'qt', 'ram', 'rm', 'rmi', 'rmvb', 'swf', 'tif', 'tiff', 'wav', 'wma', 'wmv') ;
 $Config['DeniedExtensions']['Media']	= array($denied) ;
-$Config['FileTypesPath']['Media']		= $Config['UserFilesPath'] . 'media/' ;
-$Config['FileTypesAbsolutePath']['Media']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'media/' ;
+$Config['FileTypesPath']['Media']		= $Config['UserFilesPath'] . 'Media/' ;
+$Config['FileTypesAbsolutePath']['Media']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'Media/' ;
 $Config['QuickUploadPath']['Media']		= $Config['UserFilesPath'] ;
 $Config['QuickUploadAbsolutePath']['Media']= $Config['UserFilesAbsolutePath'] ;
 
