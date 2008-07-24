@@ -825,12 +825,12 @@ require_once("PolyPagerLib_HTMLForms.php");
 					// foreign keys linking here? show them in the tree
 					$rt = getReferencingTableData($entity);
 					// first we collect the data that might be linking here
-					if (count($rt)>0){
-						for($x=0;$x<count($rt);$x++) { 
+					if (count($rt) > 0){
+						for($x=0; $x<count($rt); $x++) { 
 							// get the values we need
-							if ($rt[$x]['table_name'] != ""){
+							if ($rt[$x]['table_name'] != "" and getPKName($rt[$x]['table_name']) != ""){
 								$q = "SELECT ".getPKName($rt[$x]['table_name'])." as pk, ".$rt[$x]['title_field']." as tf, ".$rt[$x]['fk']['field']." as f FROM `".$rt[$x]['table_name']."`";
-								//singlepages can operate on the page level whith all data being in one table...
+                                //singlepages can operate on the page level whith all data being in one table...
 								if (isSinglepage($rt[$x]['fk']['page'])) $q .= " WHERE pagename = '".$rt[$x]['fk']['page']."'";
 								$fk_result = pp_run_query($q);
 								$fk_rows = array();
