@@ -211,8 +211,8 @@ function getReferencingTableData($entity){
 				$likely_page = $fk['page'];
 			}
 			else {	// more likely are multipages
-				$pk_field = getPKName($referencing_table);
-				$pq = "SELECT name,title_field FROM _sys_multipages WHERE tablename = '".$referencing_table."'";
+				$pk_field = getPKName($referencing_table); 
+				$pq = "SELECT name, title_field FROM _sys_multipages WHERE tablename = '".$referencing_table."'";
 				$result = pp_run_query($pq);
 				$row = $result[0];
 				if (count($result)>1) 
@@ -225,7 +225,7 @@ function getReferencingTableData($entity){
 			}
 		}
 		if ($referencing_table != "")
-			$tables[] = array('fk'=>$fk,'table_name'=>$referencing_table, 'likely_page' => $likely_page ,'title_field' => $title_field);
+			$tables[] = array('fk'=>$fk,'table_name'=>$referencing_table, 'likely_page' => $likely_page, 'title_field' => $title_field);
 	}
 	return $tables;
 }
