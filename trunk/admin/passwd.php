@@ -52,7 +52,7 @@ function writeData(){
         
     echo('<form id="passwd_form" action="'.$PHPSELF.'" method="post"><table>'."\n");
     echo('  <tr><td></td><td><input type="hidden" name="page" value="_sys_sys"/></td></tr>'."\n");
-    if ($res[0]['admin_pass']  != '') echo('  <tr><td><label for="old_pass">'.__('Old Password').':</label></td><td><input type="password" name="old_pass" value=""/></td></tr>'."\n");
+    if ($res[0]['admin_pass']  != '' or $_POST['new_pass1'] != "") echo('  <tr><td><label for="old_pass">'.__('Old Password').':</label></td><td><input type="password" name="old_pass" value=""/></td></tr>'."\n");
     echo('  <tr><td><label for="new_pass1">'.__('New Password').':</label></td><td><input type="password" name="new_pass1" value=""/></td></tr>'."\n");
     echo('  <tr><td><label for="new_pass2">'.__('Again').':</label></td><td><input type="password" name="new_pass2" value=""/></td></tr>'."\n");
     echo('  <tr><td></td><td><input type="submit" name="cmd" value="save"/>'."\n");

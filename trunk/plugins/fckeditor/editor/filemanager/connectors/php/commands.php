@@ -60,8 +60,8 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	$aFolders	= array() ;
 	$aFiles		= array() ;
 
-	$oCurrentFolder = opendir( $sServerDir ) ;
-
+    $oCurrentFolder = opendir( $sServerDir ) ;
+    
 	while ( $sFile = readdir( $oCurrentFolder ) )
 	{
 		if ( $sFile != '.' && $sFile != '..' )
