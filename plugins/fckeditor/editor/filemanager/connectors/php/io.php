@@ -180,7 +180,9 @@ function Server_MapPath( $path )
 	if ( function_exists( 'apache_lookup_uri' ) )
 	{
 		$info = apache_lookup_uri( $path ) ;
-		return $info->filename . $info->path_info ;
+        // another nic hotpatch
+        $tmp = $info->filename . $info->path_info ;
+        return str_replace( 'index.php', '', $tmp ) ;
 	}
 
 	// This isn't correct but for the moment there's no other solution
