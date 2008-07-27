@@ -204,6 +204,7 @@ function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js
 	}
 	echo($indent.'<select id="'.$name.'_input" tabindex="'.$tabindex.'" name="'.$name.'" '.$disabled.' '.$js.' class="'.$class.'">'."\n");
 	$list_arr = utf8_explode(",", $valuelist);
+
 	//in the database, enum and set values must be enclosed by '' - away with that 
 	if ($type == "enum" or $type == "set") 
 		$value = $value = trim($value,'\'');
