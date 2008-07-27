@@ -415,10 +415,10 @@ require_once("PolyPagerLib_HTMLForms.php");
 					$a[0] = "SELECT "; 
 					foreach($entity['fields'] as $f){
 						// prefer title from referenced values over referencing ones!
-						if (in_array($f['name'],array_keys($ref_fields))) {
+						if (in_array($f['name'], array_keys($ref_fields))) {
 							$ref = utf8_explode('||',$ref_fields[$f['name']]);
 							// using subselect so that we get NULL when the refencing field IS NULL
-							$a[0] .= '(SELECT name FROM `'.$ref[0].'` WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
+							$a[0] .= '(SELECT '.$ref[2].' FROM `'.$ref[0].'` WHERE '.$ref[2].' = '.$entity['tablename'].'.'.$f['name'].')';
 							$a[0] .= ' AS '.$f['name'].",";
 						}else $a[0] .= "`".$entity["tablename"].'`.`'.$f['name']."`,";
 					}
