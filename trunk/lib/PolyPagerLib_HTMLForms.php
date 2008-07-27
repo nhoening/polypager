@@ -261,14 +261,16 @@ function writeRelationalTableInputs($ind, $entity){
     foreach ($can as $c) {
         if ($c[1] <= 2){ 
             // get values of rows in relational table with this key as first entry
-            $id_field = getEntityField($c[2][0]['fk']['field'], $entity);
-            $query = 'SELECT '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM `'.$c[2][1]['fk']['ref_table'].'` WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
-            $query .= ' FROM `'.$c[2][0]['fk']['table'].'`,`'.$c[2][0]['fk']['ref_table'].'`';
-            $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
-            $query .= ' AND '.$c[2][0]['fk']['table'].'.'.nameEqValueEscaped($id_field['data_type'], $c[2][0]['fk']['field'], $params['nr']);
-            $query .= ' ORDER BY Title';
-            
-            $res = pp_run_query($query);
+            if ($params['nr'] == "") $res = array();
+            else{
+                $id_field = getEntityField($c[2][0]['fk']['field'], $entity);
+                $query = 'SELECT '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].', (SELECT '.$c[2][1]['title_field'].' FROM `'.$c[2][1]['fk']['ref_table'].'` WHERE '.$c[2][1]['fk']['ref_field'].' = '.$c[2][1]['fk']['table'].'.'.$c[2][1]['fk']['field'].') AS Title';
+                $query .= ' FROM `'.$c[2][0]['fk']['table'].'`,`'.$c[2][0]['fk']['ref_table'].'`';
+                $query .= ' WHERE '.$c[2][0]['fk']['table'].'.'.$c[2][0]['fk']['field'].' = '.$c[2][0]['fk']['ref_table'].'.'.$c[2][0]['fk']['ref_field'];
+                $query .= ' AND '.$c[2][0]['fk']['table'].'.'.nameEqValueEscaped($id_field['data_type'], $c[2][0]['fk']['field'], $params['nr']);
+                $query .= ' ORDER BY Title';
+                $res = pp_run_query($query);
+            }
             $already_show_vals = array();
             $already_save_vals = array();
             foreach($res as $row){
