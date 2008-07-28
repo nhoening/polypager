@@ -400,8 +400,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 				//checking for multiple-fields primary keys - since they are not supported,
 				//we'll select all there is
-				else if ($entity['pk_multiple'] and $params['cmd']!='_search'){
-					if ($params['nr']!="-1") echo('<div class="sys_msg">'.__('selected all entries.').'</div>');
+				else if ($entity['pk_multiple'] and $params['cmd'] != '_search'){
+					if ($params['nr'] != "-1") echo('<div class="sys_msg">'.__('selected all entries.').'</div>'."\n");
 					$theQuery = "SELECT * FROM `".$entity["tablename"]."`";
 				}else {
 					//--------------------- preparing  --------------------------

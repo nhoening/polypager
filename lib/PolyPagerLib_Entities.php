@@ -396,12 +396,11 @@ function getEntity($page_name) {
 				$entity["disabled_fields"] .= ",pagename";
 				//enum or set fields have a valuelist in the db: make it impossible to change
 				$f = getEntityField($_GET["name"], $entity);
-				$t = __('here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.');
-				if($f['data_type']=="enum" or $f['data_type']=="set"){
+				$t = __('Here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. (If your values have commas in them, protect the values with | signs, like this: |Smith, John|)');
+				if($f['data_type'] == "enum" or $f['data_type'] == "set"){
 					$entity["disabled_fields"] .= ',valuelist';
 					$t = __('[This field is disabled because the database specifies these values]').$t;
-					setEntityFieldValue("valuelist", "help", $t);
-				}
+				} setEntityFieldValue("valuelist", "help", $t);
                 
                 //get valuelist for group field if none is set
                 $page_info = getPageInfo($param_group);
@@ -598,17 +597,18 @@ function getEntity($page_name) {
 						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM `".$rt['table_name'].'`';
 						//singlepages can operate on the page level whith all data being in one table...
 						if ($rt['fk']['ref_page'] != '' and isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
-						$result = pp_run_query($q);
+                        $q .= " ORDER BY tf";
+                        $result = pp_run_query($q);
 						
 						$tmp = array();
 						$used_ids = array();
 						foreach($result as $row){
-							if (!in_array($row['pk'],$used_ids)){
-								$tmp[] = $row['pk'].':'.$row['tf'];
+							if (!in_array($row['pk'], $used_ids)){
+								$tmp[] = '|'.$row['pk'].':'.$row['tf'].'|'; //protect possible values containing commas with | (internal convention for valuelists)
 								$used_ids[] = $row['pk'];
 							}
 						}
-						setEntityFieldValue($rt['fk']['field'], "valuelist", implode(',',$tmp));
+						setEntityFieldValue($rt['fk']['field'], "valuelist", implode(',', $tmp));
 					}
 				}
 			}
