@@ -253,8 +253,8 @@ function getTranslation_de($text) {
 'there is no table in the database yet'
 => 'es gibt noch keine (nicht-System-)Tabellen in der Datenbank.',
 'the name of the page.' => 'der Name der Seite',
-'here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form.'
-=> 'Sie k&ouml;nnen hier erlaubte Werte f&uuml;r das Feld angeben (mit eine Komma-separierten Liste). Dann k&ouml;nnen Sie im Formular immer gem&uuml;tlich aus dieser Liste ausw&auml;hlen.',
+'Here you can specify allowed values for this field (via a comma-separated list). By doing so, you can choose from this list conveniently when editing the form. (If your values have commas in them, protect the values with | signs, like this: |Smith, John|)'
+=> 'Sie k&ouml;nnen hier erlaubte Werte f&uuml;r das Feld angeben (mit eine Komma-separierten Liste). Dann k&ouml;nnen Sie im Formular immer gem&uuml;tlich aus dieser Liste ausw&auml;hlen. (Sollten Ihre Werte Kommas enthalten, k&ouml;nnen Sie den Wert mit |-Zeichen besch&uuml;tzen, z.B. |Schmidt, Lieschen|)',
 '[This field is disabled because the database specifies these values]'
 =>'[Dieses Feld is nicht editierbar, da die diese Werte in der Datenbank angegeben sind]',
 'you can chose a validation method that is checked on the content of this field when you submit a form.'

@@ -199,26 +199,30 @@ function writeFiller($entity_name, $fieldname, $values, $possible_values, $ind=1
 function writeOptionList($tabindex, $name, $class, $value, $valuelist, $dis, $js, $ind=9) {
     $name = '_formfield_'.$name;
 	$indent = translateIndent($ind);
-	if ($dis)	{
-		$disabled = ' disabled="disabled" ';
-	}
+	if ($dis) $disabled = ' disabled="disabled" ';
 	echo($indent.'<select id="'.$name.'_input" tabindex="'.$tabindex.'" name="'.$name.'" '.$disabled.' '.$js.' class="'.$class.'">'."\n");
-	$list_arr = utf8_explode(",", $valuelist);
+	
+    // valuelist entries are separated by '
+    // and each entry can be protected by enclosing it in |
+    if (ltrim($valuelist, '|') == $valuelist and rtrim($valuelist, '|') == $valuelist) $list_arr = utf8_explode(",", $valuelist);
+    else $list_arr = utf8_explode("|,|", $valuelist);
 
-	//in the database, enum and set values must be enclosed by '' - away with that 
-	if ($type == "enum" or $type == "set") 
-		$value = $value = trim($value,'\'');
-		for($x=0;$x < count($list_arr);$x++) $list_arr[$x] = trim($list_arr[$x],'\'');
-	for($x=0;$x < count($list_arr);$x++){
-		if (ereg(':',$list_arr[$x])) {	//key/value can come in valuelist
-			$tmp = utf8_explode(':',$list_arr[$x]);
-			$key = chop($tmp[0]);
-			$val = chop($tmp[1]);
+	// in the database, enum and set values must be enclosed by '' - away with that 
+	if ($type == "enum" or $type == "set") { 
+		$value = trim($value, '\'');
+		for($x=0; $x < count($list_arr); $x++) $list_arr[$x] = trim($list_arr[$x],'\'');
+    }
+	for($x=0; $x < count($list_arr); $x++){
+        $list_arr[$x] = trim($list_arr[$x], '|');
+		if (ereg(':', $list_arr[$x])) { 	//key/value can come in valuelist
+			$tmp = utf8_explode(':', $list_arr[$x]);
+			$key = trim($tmp[0]);
+			$val = trim($tmp[1]);
 		} else{
 			$key = $list_arr[$x]; $val = $list_arr[$x];
 		}
 		echo($indent.'	<option value="'.$key.'"'); 
-		if($value == $val){echo(' selected="true"');} 
+		if($value == $key) echo(' selected="true"'); 
 		echo('>'.$val.'</option> '."\n");
 	}
 	echo($indent.'</select>'."\n");
