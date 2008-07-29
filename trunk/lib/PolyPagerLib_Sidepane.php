@@ -81,7 +81,7 @@ function getFeed($amount, $comments = false, $restricted = 3) {
             $where .= ")";
         }
         
-        if ($comments and $nr!=""){
+        if ($comments and $nr != ""){
             $where .= " AND pageid = ?";
             $theParams[] = array('i', $nr);
         }
@@ -94,15 +94,15 @@ function getFeed($amount, $comments = false, $restricted = 3) {
                                 "comment AS theContent, id as CommentID,".
                                 "pagename AS thePage FROM _sys_comments";
         $query .= $where;
-        $query .= " ORDER BY theDate DESC LIMIT ?";
-        $theParams[] = array('i', $sys["feed_amount"]);
-        
+        $query .= " ORDER BY theDate DESC LIMIT ".$sys["feed_amount"];
     }
-	
-    $res = pp_run_query(array($query, $theParams));
+
+    if (count($theParams) > 0)
+        $res = pp_run_query(array($query, $theParams));
+    else $res = pp_run_query($query);
     $feeds = array();
     
-	//enrich with text from the tables themselves
+    //enrich with text from the tables themselves
     foreach($res as $row){
         $the_page = getPageInfo($row['thePage']);
         if ($the_page["name"] != "" && !($the_page['only_admin_access'] == '1' and $restricted > 1)) {
