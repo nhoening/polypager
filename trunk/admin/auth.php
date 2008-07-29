@@ -73,7 +73,7 @@
 					$passwort = $_POST['password'];
 					
 					// Benutzername und Passwort werden ueberprueft
-					if ($username == $sys_info["admin_name"] && $passwort == $sys_info["admin_pass"]) {
+					if ($username == $sys_info["admin_name"] && sha1($sys_info['salt'].$passwort) == $sys_info["admin_pass"]) {
 						$_SESSION['authenticated'] = true;
 						
 						// Weiterleitung zur geschuetzten Startseite
