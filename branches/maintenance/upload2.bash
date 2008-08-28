@@ -1,10 +1,13 @@
 #!/bin/bash
 
 # upload all exported stuff to a server.
-# This script needs to log you in, so as first argument pass the username, as second the servername
-# as further arguments, provide a path to the target directory on the server 
-# (as list like: a b c) from the root dir. 
-# For example: bash upload2.bash user_name server_name dir1 dir2
+if [ "$1" == ""  ]; then
+    echo 'This script needs to log you in, so as first argument pass the username, as second the servername'
+    echo 'as further arguments, provide a path to the target directory on the server '
+    echo '(as list like: a b c) from the root dir.' 
+    echo 'For example: bash upload2.bash user_name server_name dir1 dir2'
+    exit
+fi
 
 # go to the polypager directory (contains export)
 cd ../..
