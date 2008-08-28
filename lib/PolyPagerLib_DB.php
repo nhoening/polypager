@@ -126,7 +126,7 @@ function getMySQLiType($t){
     $type = 's';
 	if (isNumericType($t)) $type = 'd';
     if ($t == 'bool') $type = 'i';
-    if ($t == 'blob') $type = 'b';
+    //if ($t == 'blob') $type = 'b'; // with this, we have problems saving blob fields (they won't be saved)
     return $type;                
 }
 
