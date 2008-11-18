@@ -460,7 +460,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 						}
 						if ($prev <= 0) $prev = 0;
 						$date_field = $entity["date_field"];
-						
+
 						//normal query for "show"
 						if (isNumericType($entity["pk_type"])) {
                             $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` >=  ? AND `".$entity["tablename"].'`.`'.$entity["pk"]."` <= ? ";
@@ -549,8 +549,8 @@ require_once("PolyPagerLib_HTMLForms.php");
 							if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") {
 								if ($said_where) $a[] = " AND ";
                                 else $a[] = " WHERE ";
-								$a[] = "`".$f["name"]."` = ?";
-                                $theParams[] = array('s', $params["search"][$f["name"]]);
+								$a[] = "`".$entity["tablename"]."`.`".$f["name"]."` = ?";
+                                $theParams[] = array(getMySQLiType($f["data_type"]), $params["search"][$f["name"]]);
 								
 								//if the field is the group field, we knew that is a request - save it for later!
 								if ($f["name"] == $entity["group"]["field"]) $params["group"] = $params["search"][$f["name"]];
@@ -594,7 +594,7 @@ require_once("PolyPagerLib_HTMLForms.php");
 			}
 			$queries[$p] = array($theQuery, $theParams);
 		}
-        //echo('Show-Queries:');print_r($queries);
+        //echo('Show-Queries:') ;print_r($queries);
 		return $queries;
 	}
 	
@@ -749,11 +749,27 @@ require_once("PolyPagerLib_HTMLForms.php");
 					echo('                     				<!--'.$f['name'].'search-->'."\n");
 					echo($indent.'		<div class="search_option">'."\n");
 					echo($indent.'			<span class="search_toggle"><a id="search_'.$f['name'].'_link" href="javascript:toggle_ability(\'search_'.$f['name'].'\');">&nbsp;&nbsp;&nbsp;&nbsp;</a></span>'."\n");
-					echo($indent.'			'.$f["name"].': <select class="search_'.$f['name'].'" disabled="disabled" name="'.$f['name'].'">'."\n");	//input
-					$vals = utf8_explode(',', $f["valuelist"]);
+                    $label = $f["label"]; if ($label == "") $label = $f["name"];
+					echo($indent.'			'.$label.': <select class="search_'.$f['name'].'" disabled="disabled" name="'.$f['name'].'">'."\n");	//input
+                    
+                    
+                     $vals = array();
+                    // if the valuelist starts and ends with "|", we need to strip apart the keys from the titles
+                    if (strpos($f["valuelist"],"|") == 0 and substr($f["valuelist"],strlen($f["valuelist"])-1,1)== "|"){
+                        $tmp_vals = utf8_explode('|,|', $f["valuelist"]);
+                        foreach ($tmp_vals as $v) {
+                            $v = trim($v,"|");
+                            if (preg_match('/^.+\:/', $v, $idm) and preg_match('/\:.+$/', $v, $valm)) {
+                                $vals[] = array(trim($idm[0],':'), trim($valm[0],':'));
+                            } else $vals[] = array($v,$v);
+                        }
+                    } else {
+                        $tmp_vals = utf8_explode(',', $f["valuelist"]);
+                         foreach ($tmp_vals as $v)  $vals[] = array($v,$v);
+                    }
 					foreach ($vals as $v) {
-						if ($v != $params["search"][$f["name"]]) echo('<option>'.$v.'</option>'."\n");
-						else echo($indent.'			<option selected="selected">'.$v.'</option>'."\n");
+						if ($v[1] != $params["search"][$f["name"]]) echo('<option value="'.$v[0].'">'.$v[1].'</option>'."\n");
+						else echo($indent.'			<option value="'.$v[0].' selected="selected">'.$v[1].'</option>'."\n");
 					}
 					echo($indent.'			</select>'."\n");
 					echo($indent.'		</div>'."\n");
@@ -811,8 +827,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 		if (!$as_toc) writeSearchInfo();
         
 		foreach (array_keys($results) as $respage){
-			$res = $results[$respage];
             
+			$res = $results[$respage];
+  
 			$entity = getEntity($respage);
 			//all that grouping stuff...
 			if ($entity["group"] != "" or $as_toc) {
@@ -849,13 +866,12 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
 				//this is only done by default before the first entry
 				echo($indent.'<'.$html_type.' class="group">'."\n");
-			}else {
+			} else {
 				$before_first_entry = true; //we dont want an error message then
 			}
 			
 			
 			foreach($res as $row){
-                
                 // ---- filter out text search results that only are found in tags ----
                 $kws = getSearchKeywords();
                 if ($params["search"] != "") {
@@ -865,10 +881,9 @@ require_once("PolyPagerLib_HTMLForms.php");
                     if ($entity["search"]["month"] == '1' and eregi('-'.$params["search"]["m"].'-', $row[$entity["date_field"]["name"]])) $good_hit = true;
                     
                     foreach ($entity["fields"] as $f) {
-                        // valuelisted fields
-                        if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") {
-                            if ($params["search"][$f["name"]] == $row[$f["name"]])  $good_hit = true;
-                        }
+                        
+                        // valuelisted fields: they shouln't contain markup and when we searched for them, it's fine
+                        if ($params["search"][$f["name"]] != "" and $f["valuelist"] != "") $good_hit = true;
                         // now include non-markup text hits
                         if ($params["search"]["kw"]!="" and isTextType($f["data_type"])) {
                             foreach($kws as $kw)
@@ -909,11 +924,11 @@ require_once("PolyPagerLib_HTMLForms.php");
                 
                 if($listview and count($res) > 1 ) echo('<form action="." method="post">'."\n");
                 
-                if ($before_first_entry == true) $before_first_entry = false; //indicates we indeed had data
+                $before_first_entry = false; //indicates we indeed had data
                         
 				//this is what we want to do basically...
 				if ($as_toc) {	//we need only titles here
-					$name = getTitle($entity,$row);
+					$name = getTitle($entity, $row);
 					$name = preserveMarkup($name);
 					echo($indent.'	<li class="link"><a href="#'.buildValidIDFrom($name).'">'.$name.'</a></li>'."\n");
 					// show referencing table stuff

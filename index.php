@@ -116,7 +116,6 @@ if (!$known_page or ($show_params["page"] != '_sys_comments' and isASysPage($sho
 	$res = array();
 	foreach(array_keys($queries) as $qkey){
 		$res[$qkey] = pp_run_query($queries[$qkey]);
-        
 		$error_nr = mysqli_errno($link);
 		if ($error_nr != 0) {
 			$fehler_text = mysqli_error($link);
