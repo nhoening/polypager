@@ -398,7 +398,7 @@
                 
                 //update comments
                 if ($params["cmd"] == "delete") {
-                    $query = "DELETE FROM _sys_comments WHERE pagename = '".$params["values"]["old_formfield_name"]."'";
+                    $query = "DELETE FROM _sys_comments WHERE pagename = ?";
                     $sqlparams = array(array('s', $params["values"]["old_formfield_name"]));
                     pp_run_query(array($query, $sqlparams));
                 }
