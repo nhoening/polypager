@@ -120,13 +120,16 @@
 	function writeFooter($ind=3) {
 		$indent = translateIndent($ind);
 		echo($indent.'<div id="footer">'."\n");
-		$query = "SELECT * FROM _sys_intros WHERE tablename='_sys_impressum'";
-		$res = pp_run_query($query);
-		$error_nr = mysqli_errno(getDBLink());
-		if ($error_nr == 0) {
-			$row = $res[0];
-			if ($row["intro"] != "") {
-				echo($indent.'	<span id="impressum">'.$row["intro"].'</span>'."\n");
+		$sys_info = getSysInfo();
+		if(!$sys_info['no_tables']) {
+			$query = "SELECT * FROM _sys_intros WHERE tablename='_sys_impressum'";
+			$res = pp_run_query($query);
+			$error_nr = mysqli_errno(getDBLink());
+			if ($error_nr == 0) {
+				$row = $res[0];
+				if ($row["intro"] != "") {
+					echo($indent.'	<span id="impressum">'.$row["intro"].'</span>'."\n");
+				}
 			}
 		}
 		echo($indent.'</div>'."\n");
