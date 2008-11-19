@@ -992,7 +992,7 @@ require_once("PolyPagerLib_HTMLForms.php");
         }
 		
 		//we'll use this to forward that we had a group request
-		if ($params["group"] != "") $group_forward = 'group='.urlencode($row[$entity["group"]["field"]]);
+		if ($params["group"] != "") $group_forward = 'group='.urlencode($params["group"]);
 		
         if ($params["page"]=="_sys_comments" and $params["cmd"]=="preview") echo($indent.'<div id="comments">');
         

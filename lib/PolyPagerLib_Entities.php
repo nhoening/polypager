@@ -393,6 +393,8 @@ function getEntity($page_name) {
 				//setEntityFieldValue("on_delete", "valuelist", "RESTRICT,CASCADE,NO ACTION,SET NULL");
 				$entity["title_field"] = "name";
 				
+                $entity["order_by"] = 'order_index';
+                
 				$entity["disabled_fields"] .= ",pagename";
 				//enum or set fields have a valuelist in the db: make it impossible to change
 				$f = getEntityField($_GET["name"], $entity);
