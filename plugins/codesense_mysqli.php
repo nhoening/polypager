@@ -42,7 +42,6 @@
         $paramcount = func_num_args();
         for ($i = 2; $i < $paramcount; $i++)
           $params[] = func_get_arg($i);
-        
         if (!call_user_func_array(array($query, 'bind_param'), $params))
           die("Bind parameters failed");
       }

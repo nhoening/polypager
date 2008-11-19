@@ -586,6 +586,13 @@ function getEntity($page_name) {
 				$entity = addFields($entity,$page_name);
 			}
 			
+            // guess title field if not set
+            if ($entity["title_field"] == "") $entity["title_field"] = guessTextField($entity, false);
+            // because: if titles change, I always want to know (if they are no blob)
+            $f = getEntityField($entity["title_field"], $entity);
+            if (!isTextareaType($f['data_type']))
+                $entity["consistency_fields"] .= ','.$entity["title_field"];
+                
 			//fk stuff - preselect valuelists
 			if (isMultipage($page_name) || isSinglepage($page_name)){
 				$ref_tables = getReferencedTableData($entity);
@@ -595,11 +602,13 @@ function getEntity($page_name) {
 					if ($rt['fk']['ref_page'] == $page_name)
 						$entity['consistency_fields'] .= ','.$rt['fk']['ref_field'];
 					// get the values we need
-					if ($rt['table_name'] != ""){
-						$q = "SELECT ".$rt['fk']['ref_field']." as pk, ".$rt['title_field']." as tf FROM `".$rt['table_name'].'`';
+					if ($rt['table_name'] != "") {
+						$q = "SELECT ".$rt['fk']['ref_field']." as pk";
+                        if ($rt["title_field"] != "") $q .= ", ".$rt['title_field']." as tf ";
+                        $q .= " FROM `".$rt['table_name'].'`';
 						//singlepages can operate on the page level whith all data being in one table...
 						if ($rt['fk']['ref_page'] != '' and isSinglepage($rt['fk']['ref_page'])) $q .= " WHERE pagename = '".$rt['fk']['ref_page']."'";
-                        $q .= " ORDER BY tf";
+                        if ($rt["title_field"] != "") $q .= " ORDER BY tf";
                         $result = pp_run_query($q);
 						
 						$tmp = array();
@@ -616,12 +625,7 @@ function getEntity($page_name) {
 			}
 			
             
-            // guess title field if not set
-            if ($entity["title_field"] == "") $entity["title_field"] = guessTextField($entity,false);
-            // because: if titles change, I always want to know (if they are no blob)
-            $f = getEntityField($entity["title_field"], $entity);
-            if (!isTextareaType($f['data_type']))
-                $entity["consistency_fields"] .= ','.$entity["title_field"];
+           
             
             $old_entities[] = $entity;
 		}
