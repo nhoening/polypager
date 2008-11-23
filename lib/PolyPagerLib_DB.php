@@ -43,7 +43,7 @@ function getDBName() {
 
 /* call with a query OR an array of the query together with an array of params*/
 function pp_run_query($query_set){
-	global $debug;
+    global $debug;
     $sql_exeq_words = array("CREATE", "UPDATE", "INSERT", "DELETE");
     $d = getDBLink();
     if (!is_array($query_set)) {
@@ -335,23 +335,26 @@ function addFields($entity, $name, $not_for_field_list = "") {
 			}
             
             
-			if (!eregi($row['Field'],$not_for_field_list)){ 
+			if (!eregi($row['Field'], $not_for_field_list)){ 
 				//determine length - use only "Type" due to http://polypager.nicolashoening.de/?bugs&nr=318
 				//$len = $row['CHARACTER_MAXIMUM_LENGTH'];
 				//if ($len == "" or $len == "NULL") $len = $row['NUMERIC_PRECISION'];
 				//those fields are not there when we said SHOW COLUMNS, so...
 				//if ($len == "" or $len == "NULL") {
-                    $hits = array();
-					eregi('[0-9]+',$row['Type'],$hits);
-					$len = $hits[0];
+				$hits = array();
+				eregi('[0-9]+',$row['Type'],$hits);
+				$len = $hits[0];
 				//}
 				//support sets or enums, 
 				//but we save the valuelist - PolyPager can handle those
-				if (eregi('^set\(',$row['Type']) or eregi('^enum\(',$row['Type'])){
+				if (eregi('^set\(', $row['Type']) or eregi('^enum\(', $row['Type'])){
 					$type = preg_replace('@\((\'.+\'\,?)+(\'.+\')\)$@', '', $row['Type']);
-					eregi('\((\'.+\'\,)+(\'.+\')\)$',$row['Type'],$hits);
-					$valuelist = implode(',',array_slice($hits,1));
-					$valuelist = str_replace(",,", ",",$valuelist);
+					eregi('\((\'.*\')\)', $row['Type'], $hits);
+					$hlist = explode(',', $hits[1]);
+					$valuelist = array(); //remove '' on outsets
+					foreach ($hlist as $l) $valuelist[] = trim($l,"'");
+					$valuelist = implode(',', $valuelist);
+					$valuelist = str_replace(",,", ",", $valuelist);
 				}else{
 					$type = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
 					$valuelist = "";
@@ -608,23 +611,23 @@ function escapeValue($data_type, $value){
 }
 
 /* Returns a really simple HTML table from a SQL statement */
-function SQL2HTML($query, $title="") {
+function SQL2HTML($query, $title="Table Summary") {
    
     if (!$result = pp_run_query($query)) {
         $sRetVal = mysql_error();
     } else {
-        if ($title == "") $title = mysql_field_table($result,0);
-        $sRetVal = "<table border=1>\n";
-        $sRetVal .= "<tr><th colspan=" . mysql_num_fields($result) . ">";
+        $sRetVal = "<table border='1'>\n";
+        $sRetVal .= "<tr><th colspan='" . count($result[0]) . "'>";
         $sRetVal .= $title . "</th></tr>";
         $sRetVal .= "<tr>";
         $i=0;
-        while ($i < mysql_num_fields($result)) {
-        $sRetVal .= "<th>" . mysql_field_name($result, $i) . "</th>";
-        $i++;
+        //while ($i < count($result[0])) {
+	foreach (array_keys($result[0]) as $key){
+	    $sRetVal .= "<th>" . $key . "</th>";
+	    $i++;
         }
         $sRetVal .= "</tr>";
-       foreach($result as $line){
+        foreach($result as $line){
         $sRetVal .= "\t<tr>\n";
         foreach ($line as $col_value) {
         $sRetVal .= "\t\t<td>$col_value</td>\n";
@@ -632,7 +635,6 @@ function SQL2HTML($query, $title="") {
         $sRetVal .= "\t</tr>\n";
         }
         $sRetVal .= "</table>\n";
-        mysql_free_result($result);
     }
 
     return ($sRetVal);

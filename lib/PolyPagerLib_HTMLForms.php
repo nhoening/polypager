@@ -529,7 +529,7 @@ function writeHTMLForm($row, $action_target, $editor, $show, $ind=4, $id='', $en
     
     // for date fields: add javascript for calendar (popup)
     foreach($entity['fields'] as $f){
-        if (isDateType($f['data_type']) and !eregi($f['name'],$entity["hidden_form_fields"])){
+        if (isDateType($f['data_type']) and !eregi($f['name'], $entity["hidden_form_fields"])){
             echo($indent.'	<script type="text/javascript">'."\n");
             echo($indent.'	Calendar.setup('."\n");
             echo($indent.'	{'."\n");
