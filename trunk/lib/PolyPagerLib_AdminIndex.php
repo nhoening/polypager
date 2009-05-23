@@ -234,7 +234,7 @@
                       `valuelist` varchar(255) NOT NULL default '',
                       `validation` varchar(60) NOT NULL default '',
                       `not_brief` tinyint(1) NOT NULL default '0',
-                      `embed_in` varchar(140) NOT NULL,
+                      `embed_in` varchar(600) NOT NULL,
                       `foreign_key_to` varchar(200) NOT NULL,
                       `on_update` varchar(20) NOT NULL,
                       `on_delete` varchar(20) NOT NULL,
