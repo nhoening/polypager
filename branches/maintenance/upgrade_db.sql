@@ -6,6 +6,9 @@
 --Please ensure you upgrade chronologically, one version after the
 --other
 
+-- 1.0rc12
+ALTER TABLE `_sys_fields` CHANGE `embed_in` `embed_in` VARCHAR( 600 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL 
+
 -- 1.0rc7
 ALTER TABLE `_sys_sys` ADD `salt` VARCHAR( 120 ) NOT NULL DEFAULT 'polypager_default_salt' COMMENT 'salt for password encryption';
 
