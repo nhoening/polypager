@@ -194,7 +194,6 @@ function writeIntroDiv($ind=4) {
 		$row = $res[0];
 		if ($row['intro'] != "") {
 			echo($indent.'<div id="intro">'."\n");
-			echo($indent.'	<div class="description">'.__('about this page').'</div>'."\n");
 			echo($indent.'	<div class="entry">'.$row['intro']."</div>\n");
 			echo($indent.'</div>'."\n");
 		}
