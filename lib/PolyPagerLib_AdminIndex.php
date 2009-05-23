@@ -493,7 +493,7 @@
             $pages =  getPageNames();
 			if (count($pages) > 1) {
                 echo($indent.'			<option value="">--'.__('select page').'--</option>'."\n");
-            }else{
+            }else if ($params['page'] == ''){
                 $params['page'] = $pages[0]; //for the only option: pretend it was selected
             }
 			foreach ($pages as $p) {
@@ -560,16 +560,15 @@
 		}
 		
 		echo($indent.'</form>'."\n");
-		
+	
 		if ($params["page"] != "") {
-			writeSearchForm(false, $nind);
+            writeSearchForm(false, $nind);
 			//build Query
 			//this helps getQuery know what we want
 			//if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"].'_all';
 			//$params["nr"] = "";	//we want no special entry, but all
             if(isASysPage($params["page"]))	$params["cmd"] = $params["cmd"]." ".$params["page"];
 			$queries = getQuery(false);
-            
 			// send show quer(y|ies) to DBMS now
 			$res = array();
 			$fehler_text = "";
