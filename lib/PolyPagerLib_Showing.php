@@ -1234,31 +1234,29 @@ require_once("PolyPagerLib_HTMLForms.php");
                         }
 					}
 				}
-			}
-			
-            // show comment links when more than one entry is shown
-			if ($page_info["commentable"] == "1") {
-				$params["nr"] = $row[$entity["pk"]];
-				$comments = getComments();
-				if ($comments == "") $comment_count = 0;
-				else $comment_count = count($comments);
-				if ($params["step"] != 1) {
-					if($comment_count > 0) {
-						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
-						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('comments').'('.$comment_count.')</a></span>'."\n");
-					} else {
-						$href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
-						echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
-					}
-                    
-				} else {
-                    $href='javascript:document.edit_form._formfield_name_input.focus();';
-					echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
+                
+                // show comment links when more than one entry is shown
+                if ($page_info["commentable"] == "1") {
+                    $params["nr"] = $row[$entity["pk"]];
+                    $comments = getComments();
+                    if ($comments == "") $comment_count = 0;
+                    else $comment_count = count($comments);
+                    if ($params["step"] != 1) {
+                        if($comment_count > 0) {
+                            $href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
+                            echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('comments').'('.$comment_count.')</a></span>'."\n");
+                        } else {
+                            $href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
+                            echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
+                        }
+                        
+                    } else {
+                        $href='javascript:document.edit_form._formfield_name_input.focus();';
+                        echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
+                    }
                 }
-			}
 			
-			//closing tags
-			if ($page_info["hide_options"] == "0" ) {
+			    //closing tags
 				echo($indent.'	    </span>'."\n");
 				echo($indent.'    </div>'."\n");	//end option div
 			}
