@@ -4,7 +4,7 @@
 // useTemplate($path_to_root_dir);
 
 if ( !defined('FILE_SEPARATOR') ) {
-	define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
+     define('FILE_SEPARATOR', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? "\\" : '/');
 }
 
 require_once("lib" . FILE_SEPARATOR . "PolyPagerLib_Utils.php");
