@@ -1235,35 +1235,35 @@ require_once("PolyPagerLib_HTMLForms.php");
 					}
 				}
                 
-                // show comment links when more than one entry is shown
-                if ($page_info["commentable"] == "1") {
-                    $params["nr"] = $row[$entity["pk"]];
+                    // show comment links when more than one entry is shown
                     $comments = getComments();
                     if ($comments == "") $comment_count = 0;
                     else $comment_count = count($comments);
-                    if ($params["step"] != 1) {
-                        if($comment_count > 0) {
-                            $href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
-                            echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('comments').'('.$comment_count.')</a></span>'."\n");
+                    if ($page_info["commentable"] == "1") {
+                        $params["nr"] = $row[$entity["pk"]];
+                        if ($params["step"] != 1) {
+                            if($comment_count > 0) {
+                                $href = '?'.$pagename.'&amp;nr='.$params["nr"].'#comments_anchor';
+                                echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('comments').'('.$comment_count.')</a></span>'."\n");
+                            } else {
+                                $href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
+                                echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
+                            }
+                            
                         } else {
-                            $href = '?'.$pagename.'&amp;nr='.$params["nr"].'#commentform_anchor';
-                            echo($indent.'	    <span class="comment_link"><a href="'.$href.'">'.__('add a comment').'</a></span>'."\n");
+                            $href='javascript:document.edit_form._formfield_name_input.focus();';
+                            echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                         }
-                        
-                    } else {
-                        $href='javascript:document.edit_form._formfield_name_input.focus();';
-                        echo($indent.'	<span class="comment_link"><a id="comment_link" href="'.$href.'">'.__('add a comment').'</a></span>&nbsp;&nbsp;'."\n");
                     }
+                            
+                    //closing tags
+                    echo($indent.'	    </span>'."\n");
+                    echo($indent.'    </div>'."\n");	//end option div
                 }
 			
-			    //closing tags
-				echo($indent.'	    </span>'."\n");
-				echo($indent.'    </div>'."\n");	//end option div
-			}
-			
-			//show comments
-			$nind = $ind + 1;
-			if ($page_info["commentable"] == "1" and $params["step"] == 1) {
+                //show comments
+                $nind = $ind + 1;
+                if (($page_info["commentable"] == "1" or $comment_count > 0) and $params["step"] == 1) {
                 echo($indent.'  <span class="comment_rss">'."\n");
                 echo($indent.'      <a href="rss.php?p='.$pagename.'&amp;nr='.$params["nr"].'&amp;channel=comments">follow comments per RSS</a>'."\n");
                 $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can follow the discussion without always coming here to check for new comments.";
@@ -1277,9 +1277,9 @@ require_once("PolyPagerLib_HTMLForms.php");
 				}
                 
 				writeCommentForm($nind);
-                echo($indent.'</div>'."\n");
-			}
+                    echo($indent.'</div>'."\n");
 		}
+	    }
         echo($indent."</div>"."\n");
 	}
 	
