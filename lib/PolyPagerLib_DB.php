@@ -395,104 +395,104 @@ FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$entity["tablename"]."' AN
             //determine length - use only "Type" due to http://polypager.nicolashoening.de/?bugs&nr=318
             //$len = $row['CHARACTER_MAXIMUM_LENGTH'];
             //if ($len == "" or $len == "NULL") {
-                $len = $row['NUMERIC_PRECISION'];
-            }
+            //    $len = $row['NUMERIC_PRECISION'];
+            //}
             //those fields are not there when we said SHOW COLUMNS, so...
             //if ($len == "" or $len == "NULL") {
-                $hits = array();
-                eregi('[0-9]+',$row['Type'],$hits);
-                $len = $hits[0];
-                //}
-                //support sets or enums,
-                //but we save the valuelist - PolyPager can handle those
-                if (eregi('^set\(', $row['Type']) or eregi('^enum\(', $row['Type'])) {
-                    $type = preg_replace('@\((\'.+\'\,?)+(\'.+\')\)$@', '', $row['Type']);
-                    eregi('\((\'.*\')\)', $row['Type'], $hits);
-                    $hlist = explode(',', $hits[1]);
-                    $valuelist = array();
-                    //remove '' on outsets
-                    foreach($hlist as $l) $valuelist[] = trim($l,"'");
-                    $valuelist = implode(',', $valuelist);
-                    $valuelist = str_replace(",,", ",", $valuelist);
-                } else {
-                    $type = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
-                    $valuelist = "";
-                }
-                $field = array("name"=>$row['Field'],
-                "data_type"=>$type,
-                "size"=>$len,
-                "order_index"=>''.$i,
-                "help"=>$row['COLUMN_COMMENT'],
-                "default"=>$row['Default'],
-                "valuelist"=>$valuelist);
-                
-                //if default is CURRENT_TIMESTAMP, then retrieve it
-                if ($type="timestamp" and $row['Default']=="CURRENT_TIMESTAMP") {
-                    $field['default'] = date("Y-m-d H:i:s");
-                }
-                
-                if ($row['Extra'] == 'auto_increment') {
-                    $entity['hidden_form_fields'].=','.$row['Field'];
-                    $field['auto'] = 1;
-                } else {
-                    $field['auto'] = 0;
-                }
-                
-                //IMPORTANT: In MySQL we code a boolean as int(1) !!!
-                if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) {
-                    $field["data_type"] = "bool";
-                }
-                
-                //set some defaults
-                $field['formgroup'] = "";
-                
-                $fields[count($fields)] = $field;
-                
-                $i++;
+            $hits = array();
+            eregi('[0-9]+',$row['Type'],$hits);
+            $len = $hits[0];
+            //}
+            //support sets or enums,
+            //but we save the valuelist - PolyPager can handle those
+            if (eregi('^set\(', $row['Type']) or eregi('^enum\(', $row['Type'])) {
+                $type = preg_replace('@\((\'.+\'\,?)+(\'.+\')\)$@', '', $row['Type']);
+                eregi('\((\'.*\')\)', $row['Type'], $hits);
+                $hlist = explode(',', $hits[1]);
+                $valuelist = array();
+                //remove '' on outsets
+                foreach($hlist as $l) $valuelist[] = trim($l,"'");
+                $valuelist = implode(',', $valuelist);
+                $valuelist = str_replace(",,", ",", $valuelist);
+            } else {
+                $type = preg_replace('@\([0-9]+\,?[0-9]*\)$@', '', $row['Type']);
+                $valuelist = "";
+            }
+            $field = array("name"=>$row['Field'],
+            "data_type"=>$type,
+            "size"=>$len,
+            "order_index"=>''.$i,
+            "help"=>$row['COLUMN_COMMENT'],
+            "default"=>$row['Default'],
+            "valuelist"=>$valuelist);
+            
+            //if default is CURRENT_TIMESTAMP, then retrieve it
+            if ($type="timestamp" and $row['Default']=="CURRENT_TIMESTAMP") {
+                $field['default'] = date("Y-m-d H:i:s");
             }
             
+            if ($row['Extra'] == 'auto_increment') {
+                $entity['hidden_form_fields'].=','.$row['Field'];
+                $field['auto'] = 1;
+            } else {
+                $field['auto'] = 0;
+            }
+            
+            //IMPORTANT: In MySQL we code a boolean as int(1) !!!
+            if (($row['Type'] == "int(1)" or $row['Type'] == "tinyint(1)")) {
+                $field["data_type"] = "bool";
+            }
+            
+            //set some defaults
+            $field['formgroup'] = "";
+            
+            $fields[count($fields)] = $field;
+            
+            $i++;
         }
-        
-        // -- now we enrich with data from the _sys_fields table
-        if ($page_info != "") {
-            $query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
-            $res = pp_run_query($query);
-            foreach($res as $row){
-                for ($i=0; $i<count($fields); $i++) {
-                    
-                    if ($fields[$i]["name"] == $row["name"]) {
-                        $fields[$i]["label"] = $row["label"];
-                        $fields[$i]["validation"] = $row["validation"];
-                        if ($fields[$i]["valuelist"] == "") {
-                            //if from db (set/enum-type), it shouldn't be overwritten
-                            $fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
-                        }
-                        $fields[$i]["not_brief"] = $row["not_brief"];
-                        $fields[$i]["order_index"] = $row["order_index"];
-                        $fields[$i]["embed_in"] = $row["embed_in"];
+            
+    }
+    
+    // -- now we enrich with data from the _sys_fields table
+    if ($page_info != "") {
+        $query = "SELECT * FROM _sys_fields WHERE pagename = '".$page_info["name"]."'";
+        $res = pp_run_query($query);
+        foreach($res as $row){
+            for ($i=0; $i<count($fields); $i++) {
+                
+                if ($fields[$i]["name"] == $row["name"]) {
+                    $fields[$i]["label"] = $row["label"];
+                    $fields[$i]["validation"] = $row["validation"];
+                    if ($fields[$i]["valuelist"] == "") {
+                        //if from db (set/enum-type), it shouldn't be overwritten
+                        $fields[$i]["valuelist"] = stripCSVList($row["valuelist"]);
                     }
-                    if (eregi('int',$fields[$i]["data_type"]) and $fields[$i]["size"] != 1) {
-                        $fields[$i]["validation"] = 'number';
-                    }
+                    $fields[$i]["not_brief"] = $row["not_brief"];
+                    $fields[$i]["order_index"] = $row["order_index"];
+                    $fields[$i]["embed_in"] = $row["embed_in"];
+                }
+                if (eregi('int',$fields[$i]["data_type"]) and $fields[$i]["size"] != 1) {
+                    $fields[$i]["validation"] = 'number';
                 }
             }
         }
-        
-        // group field : valuelist stuff
-        for ($i=0; $i<count($fields); $i++) {
-            // remember from where the values come
-            if ($fields[$i]["valuelist"] != "") {
-                $fields[$i]['valuelist_from_db'] = true;
-            } else {
-                $fields[$i]['valuelist_from_db'] = false;
-            }
-        }
-        
-        uasort($fields,"cmpByOrderIndexAsc");
-        $entity["fields"] = $fields;
-        
-        return $entity;
     }
+    
+    // group field : valuelist stuff
+    for ($i=0; $i<count($fields); $i++) {
+        // remember from where the values come
+        if ($fields[$i]["valuelist"] != "") {
+            $fields[$i]['valuelist_from_db'] = true;
+        } else {
+            $fields[$i]['valuelist_from_db'] = false;
+        }
+    }
+    
+    uasort($fields,"cmpByOrderIndexAsc");
+    $entity["fields"] = $fields;
+    
+    return $entity;
+}
     
     /*  get names of purely relational tables (and the number of their fields)
 that need to be filled from this table

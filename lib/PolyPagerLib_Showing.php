@@ -475,14 +475,13 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
             //if we have a multipage without a table specified, there is nothing we can do
             if (isMultipage($pagename) and !isASysPage($pagename) and $page_info["tablename"] == "") {
                 echo('<div class="sys_msg">'.__('this complex page has no table specified. Cannot select any data.').'</div>');
-                $theQuery = 'SELECT * FROM _sys_sys WHERE 1=2';
-                //just a valid joke
+                $theQuery = 'SELECT * FROM _sys_sys WHERE 1=2'; //just a valid joke
             }
             //checking for multiple-fields primary keys - since they are not supported,
             //we'll select all there is
             else if ($entity['pk_multiple'] and $params['cmd'] != '_search') {
                 if ($params['nr'] != "-1") {
-                    echo('<div class="sys_msg">'.__('selected all entries.').'</div>'placeholder82"\n");
+                    echo('<div class="sys_msg">'.__('selected all entries.').'</div>'."\n");
                 }
                 $theQuery = "SELECT * FROM `".$entity["tablename"]."`";
             } else {
@@ -1147,7 +1146,7 @@ params:
 * $indent - the number of indents to put before
 * $list_view - true when only the title field is shown
 */
-function writeEntry($row, $pagename, $list_view, $ind=5)
+function writeEntry($row, $pagename, $list_view, $ind=5) 
 {
     $indent = translateIndent($ind);
     global $params, $debug;
@@ -1204,7 +1203,7 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
             if ($title == '') {
                 $title = getFirstWords($row[guessTextField($entity)], 5);
             }
-            foreach(getSearchKeywords() as $k){
+            foreach(getSearchKeywords() as $k) {
                 $title = eregi_replace(escape_regex($k),'<span class="high">'.escape_regex($k).'</span>', $title);
             }
             echo('<a href="'.$the_url.'">'.$title.'</a><br/>'."\n");
@@ -1244,12 +1243,12 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
                                     echo("...");
                                     $wrd_cnt = count($hits[$x-1]);
                                     if ($x>0) {
-                                    for ($y=6; }
-                                    $y>0; $y--) echo(' '.$hits[$x-1][$wrd_cnt-$y]);
+                                        for ($y=6; $y>0; $y--) echo(' '.$hits[$x-1][$wrd_cnt-$y]);
+                                    }                                    
                                     echo('<span class="high">'.$k.'</span>');
                                     if($x<$hit_cnt) {
-                                    for ($y=0; }
-                                    $y<6; $y++) echo($hits[$x][$y].' ');
+                                        for ($y=0; $y<6; $y++) echo($hits[$x][$y].' ');
+                                    }
                                     echo('...<br/>'."\n");
                                 }
                             }
@@ -1416,7 +1415,6 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
                         }
                         
                         echo($indent.'        </div>'."\n");
-                        
                         echo($indent.'    </div>'."\n");
                     }
                 }

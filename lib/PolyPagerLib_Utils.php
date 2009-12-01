@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 PolyPager - a lean, mean web publishing system
 Copyright (C) 2006 Nicolas Hoening
@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA' 
 /*this is the place where you can turn logging on or off
 (it is so because almost every script uses this library)
 */
-$debug = false ;
+$debug = false;
 
 /*
 * the PolyPager version
@@ -156,16 +156,16 @@ function format_date($timestamp)
 function getDateFormat($type)
 {
     switch ($type) {
-    case 'date':
-        return '%Y-%m-%d';
-    case 'datetime':
-        return '%Y-%m-%d %I:%M:%S';
-    case 'time':
-    case 'timestamp':
-        return '%I:%M:%S';
-    case 'year':
-        return '%Y';
-        default: return '';
+        case 'date':
+            return '%Y-%m-%d';
+        case 'datetime':
+            return '%Y-%m-%d %I:%M:%S';
+        case 'time':
+        case 'timestamp':
+            return '%I:%M:%S';
+        case 'year':
+            return '%Y';
+            default: return '';
     }
 }
 
@@ -296,7 +296,7 @@ function useTemplate($path_to_root_dir)
     if (file_exists($template_filepath)) {
         @include($template_filepath);
     } else if (file_exists($template_dirpath)) {
-        //if ($area == '_admin') {
+        if ($area == '_admin') {
             $sys_msg_text[] = 'The template.php file in the '.$skin.'-directory couldn\'t be found';
         }
         // we fall silently back to the template file
@@ -352,7 +352,8 @@ function getPathFromDocRoot()
 function includedByAdminScript() {
     global $path_to_root_dir;
     if((eregi('index\.php', $_SERVER['SCRIPT_NAME']) and $path_to_root_dir == "..")
-    or(eregi('edit\.php', $_SERVER['SCRIPT_NAME']))) return true;
+       or(eregi('edit\.php', $_SERVER['SCRIPT_NAME']))) 
+        return true;
     else {
         return false;
     }
@@ -372,11 +373,7 @@ function getBaseUrl()
 /* writes a PolyPager standard help link (which is an icon, with hover-over text) */
 function writeHelpLink($indent, $helptext)
 {
-    echo($indent.'<a class="help" onmouseover="popup(\''.$helptext.'\')" onmouseout="kill()" title="" onfocus="this.blur()" >&nbsp;
-    &nbsp;
-    &nbsp;
-    &nbsp;
-    </a>'."\n");
+    echo($indent.'<a class="help" onmouseover="popup(\''.$helptext.'\')" onmouseout="kill()" title="" onfocus="this.blur()" >&nbsp;&nbsp;&nbsp;&nbsp;</a>'."\n");
 }
 
 /*  compares two names
@@ -788,15 +785,14 @@ function guessTextField($entity, $prefer_long_text=true)
     }
     //now others
     if ($the_field == "") {
-    for ($i=0; }
-    $i<count($entity["fields"]); $i++) {
-        $dt = $entity["fields"][$i]["data_type"];
-        if (($prefer_long_text and isTextType($dt)) or(!$prefer_long_text and isTextAreaType($dt))) {
-            $the_field = $entity["fields"][$i]["name"];
-            break;
+        for ($i=0; $i<count($entity["fields"]); $i++) {
+            $dt = $entity["fields"][$i]["data_type"];
+            if (($prefer_long_text and isTextType($dt)) or(!$prefer_long_text and isTextAreaType($dt))) {
+                $the_field = $entity["fields"][$i]["name"];
+                break;
+            }
         }
     }
-    
     return $the_field;
 }
 
@@ -890,4 +886,3 @@ function translateIndent($number)
 }
 
 ?>
-
