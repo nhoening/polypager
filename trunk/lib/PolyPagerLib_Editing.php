@@ -242,8 +242,7 @@ function getEditParameters()
             
             
             // fields for relational tables
-            $can = getRelationCandidatesFor ($entity['tablename']) {
-            ; }
+            $can = getRelationCandidatesFor($entity['tablename']);
             foreach($can as $c) {
                 if ($c[1] <= 2) {
                 $params["values"][$c[0]] = $_POST['_formfield_'.$c[0]]; }
@@ -412,8 +411,7 @@ function getRelationalQueries()
     if ($params['cmd'] == "edit" || $params['cmd'] == "entry" || $params['cmd'] == "delete") {
         // make entries into relational tables if data comes for that
         // important: the first of the two keys determines what we replace
-        $can = getRelationCandidatesFor ($entity['tablename']) {
-        ; }
+        $can = getRelationCandidatesFor($entity['tablename']);
         foreach($can as $c) {
             if ($c[1] <= 2) {
                 $fk_val = $params['values'][$c[2][0]['fk']['ref_field']]; $ent = getEntity($c[2][0]['fk']['table']);
@@ -502,4 +500,3 @@ function handleFeed()
     }
 }
 ?>
-

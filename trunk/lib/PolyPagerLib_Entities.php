@@ -832,4 +832,3 @@ function getListOfNonExistingFields($entity_name, $with_pk=true)
     return arrays_exor($all, $existing);
 }
 ?>
-

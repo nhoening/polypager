@@ -96,8 +96,7 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $edit
         }
         if ($size > 36) {
             //if ($value == "") {
-                echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'"');
-            }
+            //echo(' size="36" maxlength="'.$size.'" name="'.$name.'" type="'.$t.'"');
             //else
             echo(' size="36" maxlength="'.$size.'" name="'.'_formfield_'.$name.'" type="'.$t.'" value="'.$value.'"');
         } else {
@@ -158,8 +157,6 @@ function writeInputElement($tabindex, $type, $size, $name, $class, $value, $edit
         }
         writeFiller('', '_formfield_'.$name, array(explode(',', $value), array()), array($fillafromb[1], array()), ++$ind);
     }
-    
-    
 }
 
 /*
@@ -329,8 +326,7 @@ function writeRelationalTableInputs($ind, $entity)
 {
     global $params;
     $indent = translateIndent($ind);
-    $can = getRelationCandidatesFor ($entity['tablename']) {
-    ; }
+    $can = getRelationCandidatesFor($entity['tablename']);
     foreach($can as $c) {
         if ($c[1] <= 2) {
             // get values of rows in relational table with this key as first entry
@@ -412,8 +408,7 @@ function writeHTMLForm($row, $action_target, $editor, $show, $ind=4, $id='', $en
         foreach($entity["fillafromb"] as $f)  if (in_array($f[0], getListOfFields($params['page']))) $filler_needed[] = $f[0];
     }
     $entity = getEntity($params["page"]);
-    $can = getRelationCandidatesFor($entity['tablename']) {
-    ; }
+    $can = getRelationCandidatesFor($entity['tablename']);
     foreach($can as $c) $relational_filler_needed[] = $c[0]; echo($indent.'<script language="JavaScript" type="text/javascript">'."\n");
     echo($indent.' function transferFilled()'."\n");
     echo($indent.' {'."\n");
@@ -692,31 +687,21 @@ function writeHTMLForm($row, $action_target, $editor, $show, $ind=4, $id='', $en
         
         echo($indent.'		<div class="sys_msg_admin">'."\n");
         if ($comment_count > 0) {
-            echo($indent.'			<a onmouseover="popup(\''.$comment_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="index.php?_sys_comments&amp;
-        }
-        group='.$params['page'].'&amp;nr='.$params['nr'].'">'.__('comments').'('.$comment_count.')</a>'."\n");
-        else {
+            echo($indent.'			<a onmouseover="popup(\''.$comment_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="index.php?_sys_comments&amp;group='.$params['page'].'&amp;nr='.$params['nr'].'">'.__('comments').'('.$comment_count.')</a>'."\n");
+        } else {
             echo($indent.'			'.__('This Entry has not received any comments yet.')."\n");
         }
         if ($row['pk'] != '') {
-            echo($indent.'			&nbsp;
-        }
-        |&nbsp;
-        <a onmouseover="popup(\''.$feed_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()"  href="edit.php?_sys_feed&amp;
-        group='.$params['page'].'&amp;nr='.$row['pk'].'">'.__('feed').'</a>'."\n");
-        else {
+            echo($indent.'			&nbsp;|&nbsp;<a onmouseover="popup(\''.$feed_help.'\')" onmouseout="kill()" title="" onfocus="this.blur()"  href="edit.php?_sys_feed&amp;group='.$params['page'].'&amp;nr='.$row['pk'].'">'.__('feed').'</a>'."\n");
+        } else {
             echo($indent.'			&nbsp;|&nbsp;'.__('This Entry has not been fed yet.')."\n");
         }
         echo($indent.'		</div>'."\n");
     }
     // are tables/pages linking to this entity via foreign keys?
     /*$references = getReferencingTableData($entity);
-foreach($references as $r){
-echo('<div class="sys_msg">there is sthg linking here: table "'.$r['table_name'].'", page is "'.$r['likely_page'].'"</div>');
-}*/
-}
-//end function writeHTMLForm()
-
-
+    foreach($references as $r){
+        echo('<div class="sys_msg">there is sthg linking here: table "'.$r['table_name'].'", page is "'.$r['likely_page'].'"</div>');
+    }*/
+}//end function writeHTMLForm()
 ?>
-

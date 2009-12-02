@@ -240,4 +240,3 @@ function writeIntroDiv($ind=4)
 }
 
 ?>
-
