@@ -746,4 +746,3 @@ function SQL2HTML($query, $title="Table Summary")
 
 
 ?>
-

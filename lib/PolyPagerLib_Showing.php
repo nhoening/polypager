@@ -1442,6 +1442,15 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
     }
     
     if (!$list_view and $params["cmd"]!="_sys_comments" and !($params['page']=='_search' or $params["cmd"] == "_search")) {
+
+        // find out how many comments we might show
+        $comments = getComments();
+        if ($comments == "") {
+            $comment_count = 0;
+        } else {
+            $comment_count = count($comments);
+        }
+
         if ($page_info["hide_options"] == 0 ) {
             echo($indent.'    <div class="options">'."\n");
             echo($indent.'        <span class="edit">'."\n");
@@ -1470,12 +1479,6 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
             }
             
             // show comment links when more than one entry is shown
-            $comments = getComments();
-            if ($comments == "") {
-                $comment_count = 0;
-            } else {
-                $comment_count = count($comments);
-            }
             if ($page_info["commentable"] == "1") {
                 $params["nr"] = $row[$entity["pk"]];
                 if ($params["step"] != 1) {
@@ -1507,13 +1510,10 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
             $helptext = "This Link gives you an RSS feed that tracks all comments on this entry. That way you can follow the discussion without always coming here to check for new comments.";
             writeHelpLink($indent."     ",$helptext);
             echo($indent.'  </span>'."\n");
-            
             echo($indent.'<div id="comments"><a class="target" name="comments_anchor"></a>'."\n");
-            
             if ($comment_count > 0) {
                 writeComments($comments, $nind);
             }
-            
             writeCommentForm($nind);
             echo($indent.'</div>'."\n");
         }
@@ -1603,7 +1603,7 @@ function writeCommentForm($ind) {
     $params["cmd"] = "new";
     $swap_page = $params["page"];
     $params["page"] = "_sys_comments";    //we can do this because comments come last
-    writeHTMLForm("", ".", 0, true, $ind, "commentform");    //no dataset needed
+    writeHTMLForm("", ".", 2, true, $ind, "commentform");    //no dataset needed
     $params["page"] = $swap_page;
 }
 
@@ -1622,10 +1622,10 @@ function checkComment($comment, $time, $nogarbageplease) {
     // check 2: Entering comments too fast lets me think it has been done by a machine
     if ($time < 1000 and $time != '') 
         return __('wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.');
-    $stripped_comment = strip_tags($comment, '');
+    $stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');
     if ($comment != $stripped_comment) 
-        return __('Your text contains HTML tags. Those are not allowed. Your comment has not been saved.'); 
-    //You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;. .');
+        return __('Your text contains HTML tags. Those are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt; Your comment has not been saved.'); 
+        //. .');
     // check 3: was there a reCAPTCHA response?
     $php_version = explode('.', phpversion());
     $sys_info = getSysInfo();
