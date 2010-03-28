@@ -20,9 +20,9 @@ document.write('<div id="pup" style="visibility:hidden;display:inline;"></div>')
 var skin = null		// this is the style of our popup we'll modify
 
 var minMarginToBorder = 15;	// set how much minimal space there should be to
-							// the next border (horizontally)
+                                // the next border (horizontally)
 var popwidth = 0;   // this is how wide your popup is, we'll read it
-							// from the stylesheet later, so keep this as-is
+                    // from the stylesheet later, so keep this as-is
 
 // initialize the capture pointer
 if(nav) document.captureEvents(Event.MOUSEMOVE);
@@ -32,24 +32,23 @@ if(nav || iex) document.onmousemove = get_mouse;
 
 // assign style object when not already known
 function assignSkin() {
-	if(nav) skin = document.pup;
-	if(iex) skin = document.getElementById('pup').style;
-	if(n_6) skin = document.getElementById("pup").style;
+    if(nav) skin = document.pup;
+    if(iex) skin = document.getElementById('pup').style;
+    if(n_6) skin = document.getElementById("pup").style;
 }
   
 //getting the popwidth - we'll get this only once, too! 
 //Then it will always have the stylesheet value
 function assignPopWidth(){
-  	if (iex && !op) popwidth = parseInt(document.getElementById("pup").currentStyle.width);
-	if (op)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById('pup'),null).width);
-	if (n_6)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById("pup"),null).getPropertyValue('width'));
-	//skin.display = "none";	//turn "inline" off now, it widens the page horizontally when the parked popup is positioned
+    if (iex && !op) popwidth = parseInt(document.getElementById("pup").currentStyle.width);
+    if (op)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById('pup'),null).width);
+    if (n_6)  popwidth = parseInt(document.defaultView.getComputedStyle(document.getElementById("pup"),null).getPropertyValue('width'));
+    //skin.display = "none";	//turn "inline" off now, it widens the page horizontally when the parked popup is positioned
 }
 
 // set dynamic coords when the mouse moves
 function get_mouse(e)
-{
-    
+{   
   var x,y;
   var scroll_x_y = getScrollXY();
   
@@ -65,10 +64,8 @@ function get_mouse(e)
   if (popwidth == 0) assignPopWidth();
   if (null === skin) assignSkin();
   
-  
   x += 10; // important: if the popup is where the mouse is, the hoverOver/hoverOut events flicker
-  
-  
+    
   var x_y = nudge(x,y); // avoids edge overflow
   if (isNaN(x_y[0])) x_y[0] = 0;
   if (isNaN(x_y[1])) x_y[1] = 0;
@@ -76,11 +73,11 @@ function get_mouse(e)
   //now set coordinates for our popup - n_6 wants "px", the others not
   //remember: the popup is still hidden
   if(nav || iex) {
-	  skin.left = x_y[0];
-	  skin.top = x_y[1];
+    skin.left = x_y[0];
+    skin.top = x_y[1];
   }else if(n_6){
-	  skin.left = x_y[0] + "px";
-	  skin.top = x_y[1] + "px";
+    skin.left = x_y[0] + "px";
+    skin.top = x_y[1] + "px";
   }
 }
 
@@ -124,30 +121,27 @@ function popup(msg)
   if (null === skin) assignSkin();
   
   if (null !== skin) { // maybe the browser isn't ready
-	  if(old) {	//display plain message box for old browsers
-		alert(msg);
-		return;
-	  }
-	  
-	  if (!isNaN(popwidth)) { // fallback behaviour (for sthg that has been observed in IE7)
-		if(iex || nav)  skin.width = popwidth;
-		if(n_6)  skin.width = popwidth + "px";
-	  } else {
-		if(iex || nav)  skin.width = 300;
-		if(n_6)  skin.width = 300 + "px";
-	  }
-					
-	  //write the message in
-	  if(nav) { 
-		skin.document.open();
-		skin.document.write(msg);
-		skin.document.close();
-	  }
-	  document.getElementById("pup").innerHTML = msg;
-	  
-	  //make the popup visible
-	  skin.visibility ="visible";
-	  skin.display = "inline";
+    if(old) {	//display plain message box for old browsers
+      alert(msg);
+      return;
+    }	  
+    if (!isNaN(popwidth)) { // fallback behaviour (for sthg that has been observed in IE7)
+      if(iex || nav)  skin.width = popwidth;
+      if(n_6)  skin.width = popwidth + "px";
+    } else {
+      if(iex || nav)  skin.width = 300;
+      if(n_6)  skin.width = 300 + "px";
+    }					
+    //write the message in
+    if(nav) { 
+        skin.document.open();
+        skin.document.write(msg);
+        skin.document.close();
+    }
+    document.getElementById("pup").innerHTML = msg;	  
+    //make the popup visible
+    skin.visibility ="visible";
+    skin.display = "inline";
   }
 }
 
@@ -156,7 +150,7 @@ function kill()
 {
   if(!old) {
     skin.visibility = "hidden";	//invisible
-	skin.display = "none";	//invisible
+    skin.display = "none";	//invisible
   }
 }
 
@@ -179,13 +173,13 @@ function getScrollXY() {
 }
 
 function getInnerWindowDimensions(){
-	var A;
-	if (window.innerHeight !== undefined) A = [window.innerWidth,window.innerHeight]; // most browsers
-	else{ // IE varieties
-	  var D = (document.documentElement.clientWidth == 0)? document.body: document.documentElement;
-	  A = [D.clientWidth,D.clientHeight];
-	}
-	return A;
+    var A;
+    if (window.innerHeight !== undefined) A = [window.innerWidth,window.innerHeight]; // most browsers
+    else{ // IE varieties
+      var D = (document.documentElement.clientWidth == 0)? document.body: document.documentElement;
+      A = [D.clientWidth,D.clientHeight];
+    }
+    return A;
 }
 
 function max(a,b){
