@@ -291,8 +291,8 @@ onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$param
             } else {
                 //when we already have an entry, we change the command
                 //if ($params["nr"] == "") {
-                    $the_cmd = "new";
-                }
+                //    $the_cmd = "new";
+                //}
                 //$the_cmd = "entry";
                 //print_r($params["values"]);
                 //echo($indent.'	<a href="edit.php?'.urlencode($params["page"]).'&cmd='.$the_cmd.'">'.__('there is nothing here yet - create that entry now').'</a>'."\n");
@@ -307,4 +307,3 @@ onmouseover="popup(\''.sprintf(__('click to insert a new record in [%s]'),$param
 useTemplate($path_to_root_dir);
 
 ?>
-
