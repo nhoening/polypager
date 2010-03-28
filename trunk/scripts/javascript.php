@@ -142,8 +142,7 @@ function showLink(parent_id, tindex, source_id, sindex) {
         if (source_link.getAttribute('class') != null) {
             cl = 'class="' + source_link.getAttribute('class') + '"';
         }
-        target_element.innerHTML = target_element.innerHTML + sep + '<a ' + cl + ' id="' + link_id + '" style="display:inline;
-        " onclick="moveContent(\'' + source_id + '\', ' + sindex + ', \'' + parent_id + '\', ' + tindex + ')">' + String(source_link.innerHTML) + '</a>';
+        target_element.innerHTML = target_element.innerHTML + sep + '<a ' + cl + ' id="' + link_id + '" style="display:inline;" onclick="moveContent(\'' + source_id + '\', ' + sindex + ', \'' + parent_id + '\', ' + tindex + ')">' + String(source_link.innerHTML) + '</a>';
     } else {
         alert('I know about tlink, it is not hidden and I didnt create it: ' + link_id);
     }
@@ -309,4 +308,3 @@ results = results + "The field menue_index contains a non-numeric value!\n\n";
     }
     return true;
 }
-

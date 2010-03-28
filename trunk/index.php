@@ -230,4 +230,3 @@ function writeData($ind=5)
 useTemplate($path_to_root_dir);
 
 ?>
-

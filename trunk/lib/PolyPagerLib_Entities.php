@@ -469,16 +469,13 @@ else if ($page_name == "_sys_comments") {
     $entity["order_order"] = "ASC";
     
     //date_field
-    $date_field = array("name"=>"insert_date",
-    "show"=>"1");
+    $date_field = array("name"=>"insert_date", "show"=>"1");
     $entity["date_field"] = $date_field;
-    $time_field = array("name"=>"insert_time",
-    "show"=>"1",);
+    $time_field = array("name"=>"insert_time", "show"=>"1",);
     $entity["time_field"] = $time_field;
     $entity["title_field"] = "comment";
     
-    $group = array("field"=>"pageid",
-    "order"=>"DESC");
+    $group = array("field"=>"pageid", "order"=>"DESC");
     $entity["group"] = $group;
     
     $entity = addFields($entity,$entity["tablename"]);
