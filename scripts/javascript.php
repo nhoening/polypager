@@ -252,7 +252,6 @@ results = results + "The field menue_index contains a non-numeric value!\n\n";
     foreach($mpages as $p) {
         ?>
         if (pageName=="<?=$p?>") {
-            //alert('I AM HERE for page ' + pageName);
             <? $act_entity = getEntity($p);
             
             $fields = $act_entity["fields"];
