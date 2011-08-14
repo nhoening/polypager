@@ -1,0 +1,63 @@
+@import url('../../maps/classic_iefix.css');
+
+body {
+	margin: 0px 0px !important;
+}
+
+#data, #data_admin, #data_gallery {
+    margin-top: 70px !important;
+    margin-left: 0px !important;
+	margin-right: 0px !important;
+}
+
+#data_admin{
+	margin-top: 70px !important;
+}
+
+#main_menu li{
+	height: 30px;
+}
+
+#sidepane {
+	margin-right:0px !important;
+	width: 200px !important;
+}
+#mainpane {
+	width: 490px !important;
+}
+
+
+
+/*  menue 
+
+#main_menu li.here a:link, #main_menu li.here a:visited, #main_menu li.here a:hover
+{
+    border: 1px solid #84a0b9;
+    background-color: #FF6600;
+    background-image: url(pics/menu_on.gif) !important;
+    color: #333 !important;
+}
+*/
+
+#main_menu li a
+{
+    border: 1px solid #e57c00;
+    background-color: #999;
+    color: #fff;
+    background-image: url(pics/menu_down.gif);
+}
+
+.sub_menu li a
+{
+    border: 1px solid #e57c00 !important;
+    background-color: #fff !important;
+    color: #e57c00 !important;
+    background-image: none !important;
+}
+
+.sub_menu li.here a:link, .sub_menu li.here a:visited {
+    border: 1px solid #e57c00 !important;
+}
+
+
+

@@ -1,0 +1,21 @@
+<?
+
+/*	TO THE DEAR USER:
+    To make PolyPager recognize this configuration file, please copy or rename 
+    it to 'PolyPagerConfig.php'
+    
+	If you find that these variables below are not yet configured, this is a good
+	time to do so.
+    
+	I'm sorry but you'll have to ask your webhoster about these data. 
+    Most of the times you'll have to click through their website to find that info. 
+    If you just set up your account there, it is likely that you have to create 
+    a database there first.
+*/
+
+$host = "localhost"; // most of the times, this is ok
+$db = "";
+$user = "";
+$pass = "";
+
+?>
