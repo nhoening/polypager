@@ -1,9 +1,0 @@
-
-@import url("../../maps/classic_iefix.css");
-
-/*holds hack for IE hover and focus support
-  strangely, this seems to need the path FROM THE DIRECTORY that the
-  HTML(PHP) LIVES IN, therefore / or admin ... */
-body { behavior:url(cssfocusandhover.htc) !important; }
-
-/* ----------------------------------------------- */

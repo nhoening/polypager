@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<Styles>
-    <Style name="Italic" element="em" />
-    <Style name="Code" element="span">
-        <Attribute name="class" value="code" />
-    </Style>
-    <Style name="Blockquote" element="blockquote"/>
-</Styles>
