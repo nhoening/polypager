@@ -6,7 +6,7 @@
 */
 
 // create the popup box - remember to give it some width in your styling 
-document.write('<div id="pup" style="position:abolute; z-index:200;"></div>');
+document.write('<div id="pup" style="position:abolute; display:none; z-index:200;"></div>');
 
 var minMarginToBorder = 15; // set how much minimal space there should be to
                             // the next border (horizontally)
