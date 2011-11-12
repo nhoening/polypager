@@ -373,7 +373,7 @@ function getBaseUrl()
 /* writes a PolyPager standard help link (which is an icon, with hover-over text) */
 function writeHelpLink($indent, $helptext)
 {
-    echo($indent.'<a class="help" onmouseover="popup(\''.$helptext.'\')" onmouseout="kill()" title="" onfocus="this.blur()" >&nbsp;&nbsp;&nbsp;&nbsp;</a>'."\n");
+    echo($indent.'<a class="help" onmouseover="popup(\''.$helptext.'\')" title="">&nbsp;&nbsp;&nbsp;&nbsp;</a>'."\n");
 }
 
 /*  compares two names
