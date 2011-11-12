@@ -176,7 +176,7 @@ function writeFeedDiv($ind=5)
     if ($feed_amount > 0) {
         $res = getFeed($feed_amount, false, 2);
         if ($sys_info['hide_public_popups']==0) {
-            $text = ' onmouseover="popup(\''.__('Below you see a list of the latest entries on this website. This link explains how you can subscribe to them via an RSS-Feed.').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+            $text = ' onmouseover="popup(\''.__('Below you see a list of the latest entries on this website. This link explains how you can subscribe to them via an RSS-Feed.').'\')" title=""';
         } else {
             $text = '';
         }
@@ -186,7 +186,7 @@ function writeFeedDiv($ind=5)
             echo($indent.'  <div class="entry">'."\n");
             $tipText = '['.__('from the page').' '.$row['thePage'].'] '.utf8_str_replace("'","\'", strip_tags(getFirstWords($row['theContent'],20)));
             if ($sys_info['hide_public_popups']==0) {
-                $text = 'onmouseover="popup(\''.$tipText.'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
+                $text = 'onmouseover="popup(\''.$tipText.'\')" title="" ';
             } else {
                 $text = '';
             }
