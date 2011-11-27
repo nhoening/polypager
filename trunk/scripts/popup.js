@@ -1,24 +1,27 @@
 /*
     --------------------------------------------------------------------------
     Code for link-hover text boxes
-    By Nicolas Hoening (http://nicolashoening.de/?twocents&nr=8)
-    usage: <a onmouseover="popup('popup content', width)">a link</a>
+    By Nicolas Honing
+    Usage: <a onmouseover="popup('popup content', width)">a link</a>
      (width is optional - default is in CSS: #pup {width: x;},
       escape " in content with &quot;)
+    Tutorial and support at http://nicolashoening.de?twocents&nr=8
     --------------------------------------------------------------------------
 */
 
 // create the popup box - remember to give it some width in your styling 
 document.write('<div id="pup" style="position:abolute; display:none; z-index:200;"></div>');
 
-var minMargin = 15; // set how much minimal space there should be to
-                            // between the popup and everything else (borders, mouse)
-var ready = false; // we are ready when the mouse event is set up
-var default_width = '200px'; // will be set to width from css in document.ready
+var minMargin = 15; // set how much minimal space there should be (in pixels)
+                    // between the popup and everything else (borders, mouse)
+var ready = false;  // we are ready when the mouse event is set up
+var default_width = 200; // will be set to width from css in document.ready
 
+/* Prepare popup and define the mouseover callback */
 jQuery(document).ready(function(){
     $('#pup').hide();
-    default_width = $('#pup').width();
+    css_width = $('#pup').width();
+    if (css_width != 0) default_width = css_width;
     // set dynamic coords when the mouse moves
     $(document).mousemove(function(e){ 
         var x,y;
@@ -34,11 +37,36 @@ jQuery(document).ready(function(){
         $('#pup').css('top', x_y[1] + 'px');
         $('#pup').css('left', x_y[0] + 'px');
     });
-
     ready = true;
 });
 
-// avoid edge overflow
+/*
+ The actual callback:
+ Write message, show popup w/ custom width if necessary,
+ make sure it disappears on mouseout
+*/
+function popup(msg, width)
+{
+    if (ready) {
+        // use default width if not customized here
+        if (typeof width === "undefined"){
+            width = default_width;
+        }
+        // write content and display
+        $('#pup').html(msg).width(width).show();
+        // make sure popup goes away on mouse out
+        // the event obj needs to be gotten from the virtual 
+        //   caller, since we use onmouseover='popup(msg)' 
+        var t = getTarget(arguments.callee.caller.arguments[0]);
+        $(t).unbind('mouseout').bind('mouseout', 
+            function(e){
+                $('#pup').hide().width(default_width);
+            }
+        );
+    }
+}
+
+/* Avoid edge overflow */
 function nudge(x,y)
 {
     var win = $(window);
@@ -58,25 +86,22 @@ function nudge(x,y)
     return [ x, y ];
 }
 
-function popup(msg, width)
-{
-    if (typeof width === "undefined"){
-        width = default_width;
-    }
-    // write content and display
-    if (ready) {
-        $('#pup').width(width).html(msg).show();
-    }
-    // make sure popup goes away on mouse out
-    $(this).mouseout(function(e){
-        $('#pup').hide().width(default_width);
-    });
-}
-
-
+/* custom max */
 function max(a,b){
     if (a>b) return a;
     else return b;
 }
 
-
+/*
+ Get the target (element) of an event.
+ Inspired by quirksmode
+*/
+function getTarget(e) {
+    var targ;
+    if (!e) var e = window.event;
+    if (e.target) targ = e.target;
+    else if (e.srcElement) targ = e.srcElement;
+    if (targ.nodeType == 3) // defeat Safari bug
+        targ = targ.parentNode;
+    return targ;
+}
