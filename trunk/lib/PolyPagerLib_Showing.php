@@ -1622,10 +1622,9 @@ function checkComment($comment, $time, $nogarbageplease) {
     // check 2: Entering comments too fast lets me think it has been done by a machine
     if ($time < 1000 and $time != '') 
         return __('wow, you sure entered your comment quick. So quick, actually, that I labeled you as a machine and your comment as spam. Your comment has not been saved.');
-    $stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em>');
+    $stripped_comment = strip_tags($comment, '<b><i><ul><ol><li><br><p><strong><em><span>');
     if ($comment != $stripped_comment) 
-        return __('Your text contains HTML tags. Those are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt; Your comment has not been saved.'); 
-        //. .');
+        return __('Your text contains HTML tags. Those are not allowed. You can use one of those: &lt;b&gt;&lt;i&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;br&gt;&lt;p&gt;&lt;strong&gt;&lt;em&gt;&lt;span&gt; Your comment has not been saved.'); 
     // check 3: was there a reCAPTCHA response?
     $php_version = explode('.', phpversion());
     $sys_info = getSysInfo();
