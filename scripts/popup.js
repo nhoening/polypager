@@ -9,9 +9,6 @@
     --------------------------------------------------------------------------
 */
 
-// create the popup box - remember to give it some width in your styling 
-document.write('<div id="pup" style="position:abolute; display:none; z-index:200;"></div>');
-
 var minMargin = 15; // set how much minimal space there should be (in pixels)
                     // between the popup and everything else (borders, mouse)
 var ready = false;  // we are ready when the mouse event is set up
@@ -19,7 +16,7 @@ var default_width = 200; // will be set to width from css in document.ready
 
 /* Prepare popup and define the mouseover callback */
 jQuery(document).ready(function(){
-    $('#pup').hide();
+    $('body').append('<div id="pup" style="position:abolute; display:none; z-index:200;"></div>');
     css_width = $('#pup').width();
     if (css_width != 0) default_width = css_width;
     // set dynamic coords when the mouse moves
