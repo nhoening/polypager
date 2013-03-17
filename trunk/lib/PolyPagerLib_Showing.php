@@ -519,8 +519,6 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                 
                 //let's track if we said "WHERE"
                 $said_where = false;
-                 
-                
                 
                 if (isSinglepage($pagename)) {
                     $a[1] = "WHERE _sys_sections.pagename = '$pagename'";
@@ -535,42 +533,32 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                     }
                     $said_where = true;
                 } else {
-                    
-                    //helper vars
-                    if ($params["step"] != "all") {
-                        $next = $params["nr"] + ($params["step"]-1);
-                        $prev = $params["nr"] - ($params["step"]-1);
-                    } else {
-                        $next = getMaxNr($pagename);
-                        $prev = 0;
-                    }
-                    if ($prev <= 0) {
-                        $prev = 0;
-                    }
-                    $date_field = $entity["date_field"];
-                    
-                    //normal query for "show"
-                    if (isNumericType($entity["pk_type"])) {
-                        $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` >=  ? AND `".$entity["tablename"].'`.`'.$entity["pk"]."` <= ? ";
-                        $theParams[] = array('i', $prev);
-                        $theParams[] = array('i', $next);
-                        $said_where = true;
-                    } else if ($params['nr'] != "") {
+                    $a[1] = '';
+                    $said_where = false;
+
+                    // if we are to show one item
+                    //echo($params['nr'].'|'.$params['step']);
+                    if ($params['nr'] != "" && $params['step'] == 1) {
                         $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["pk"]."` = ?";
                         $theParams[] = array('i', $params["nr"]);
                         $said_where = true;
                     }
+                    
                     //show a group rather than id range
                     if ($params["group"] != "" and $params["group"] != "_sys_all") {
                         $a[1] = " WHERE `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` = ?";
                         $theParams = array();
                         // overwrite other params we had
                         $theParams[] = array('s', $params["group"]);
-                        $said_where = false;
+                        $said_where = true;
                     }
                 }
                 
                 // -- special case search - new query --
+                
+                if ($params["search"] != "") {
+                    $params['step'] = 'all';
+                }
                 //Keyword search works page AND sitewide
                 if (($entity["search"]["keyword"] == '1' or $params['page'] == '_search') and $params["search"]["kw"] != "") {
                     $keyword_lower = utf8_strtolower($params["search"]["kw"]);
@@ -579,6 +567,7 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                         $a[] = " AND ";
                     } else {
                         $a[] = " WHERE ";
+                        $said_where = true;
                     }
                     
                     $a[] = " (";
@@ -609,7 +598,6 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                     }
                     //no text fields? no query for this table needed
                     $a[] = ")";
-                    
                 }
                 
                 // The other search possibilities work only per page
@@ -623,23 +611,22 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                                 $a[] = " AND ";
                             } else {
                                 $a[] = " WHERE ";
+                                $said_where = true;
                             }
+                            $a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
                             //if december, increment year for enddate, else only the month
                             if ($month == "") {
                                 $nextYear = $year + 1;
-                                $a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
                                 $theParams[] = array('s', $year.'-01-01');
                                 $theParams[] = array('s', $nextYear.'-01-01');
                             } else if ($month == "12") {
                                 $nextYear = $year + 1;
-                                $a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
-                                $theParams[] = array('s', $year.'-$month-01');
+                                $theParams[] = array('s', $year.'-'.$month.'-01');
                                 $theParams[] = array('s', $nextYear.'-01-01');
                             } else {
                                 $nextMonth = $month + 1;
-                                $a[] = " `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` >= ? AND `".$entity["tablename"].'`.`'.$entity["date_field"]["name"]."` < ? ";
-                                $theParams[] = array('s', $year.'-$month-01');
-                                $theParams[] = array('s', $year.'-$nextMonth-01');
+                                $theParams[] = array('s', $year.'-'.$month.'-01');
+                                $theParams[] = array('s', $year.'-'.$nextMonth.'-01');
                             }
                         }
                     }
@@ -653,6 +640,7 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                                 $a[] = " AND ";
                             } else {
                                 $a[] = " WHERE ";
+                                $said_where = true;
                             }
                             $a[] = "`".$entity["tablename"]."`.`".$f["name"]."` = ?";
                             $theParams[] = array(getMySQLiType($f["data_type"]), $params["search"][$f["name"]]);
@@ -673,9 +661,11 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                 if ($only_published and $entity["publish_field"] != "") {
                     //publish - Flag
                     if ($params['search']!="" or $params['page']!='_search') {
-                        $a[] = " AND ";
-                    } else {
-                        $a[] = " WHERE ";
+                        if ($said_where) {
+                            $a[] = " AND ";
+                        } else {
+                            $a[] = " WHERE ";
+                        }
                     }
                     $a[] = "`".$entity["tablename"].'`.`'.$entity["publish_field"]."` = 1";
                 }
@@ -702,13 +692,20 @@ SELECT id, name, in_menue FROM _sys_singlepages ORDER BY name";
                     $b[1] = " ORDER BY `".$entity["tablename"].'`.`'.$entity["group"]["field"]."` ".$entity["group"]["order"].", ";
                 }
                 if ($entity["order_by"] == "") {
-                    $b[2] = "`".$entity["tablename"].'`.`'.$entity["pk"]."` DESC;";
+                    $b[2] = "`".$entity["tablename"].'`.`'.$entity["pk"]."` DESC";
                 } else {
-                    $b[2] = "`".$entity["tablename"].'`.`'.$entity["order_by"]."` ".$entity["order_order"].";";
+                    $b[2] = "`".$entity["tablename"].'`.`'.$entity["order_by"]."` ".$entity["order_order"];
                 }
-                
-                
+ 
+                // LIMIT clause
+                if ($params['step'] != 'all') {
+                    $b[3] = ' LIMIT 0, '.$params['step'].';';
+                }
+
+               
                 $theQuery = implode('',$b);
+                //echo($theQuery);
+                //print_r($theParams);
             }
         }
         $queries[$p] = array($theQuery, $theParams);
@@ -764,6 +761,7 @@ function writeSearchForm($show, $ind=4)
         if (!$show) {
             echo($indent.'<div id="search_content_link_nester"><a id="search_content_link" href="javascript:toggleVisibility(\'search_content\',\'search_content_link\', \''.__('show search options').'\', \''.__('hide search options').'\');">'.__('show search options').'</a></div>'."\n");
         }
+        
         //previous / next - links are always visible - not within the form
         if ($entity["search"]["range"] == "1") {
             // links to further entries
@@ -854,10 +852,11 @@ function writeSearchForm($show, $ind=4)
             $datum = getdate();
             $actMonth = $datum['mon'];
             for ($i = 1; $i <= 12; $i++) {
+                $mval = str_pad($i, 2, '0', STR_PAD_LEFT);
                 if (number_format($i) !=  number_format($actMonth)) {
-                    echo('<option value="'.$i.'">'.$months[$i-1].'</option>'."\n");
+                    echo('<option value="'.$mval.'">'.$months[$i-1].'</option>'."\n");
                 } else {
-                    echo($indent.'            <option selected="selected" value="'.$i.'">'.$months[$i-1].'</option>'."\n");
+                    echo($indent.'            <option selected="selected" value="'.$mval.'">'.$months[$i-1].'</option>'."\n");
                 }
             }
             echo($indent.'            </select> '.__('of year').' <select class="search_month" disabled="disabled" name="y">'."\n");
