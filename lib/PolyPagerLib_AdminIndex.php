@@ -426,6 +426,9 @@ function ensureConsistency()
                 $query = "UPDATE _sys_sections SET pagename = ? WHERE pagename = ?";
                 $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
                 pp_run_query(array($query, $sqlparams));
+                $query = "UPDATE _sys_intros SET tablename = ? WHERE tablename = ?";
+                $sqlparams = array(array('s', $params["values"]["name"]), array('s', $params["values"]["old_formfield_name"]));
+                pp_run_query(array($query, $sqlparams));
             }
         }
         if ($params["page"] == '_sys_singlepages' or $params["page"] == '_sys_multipages') {
