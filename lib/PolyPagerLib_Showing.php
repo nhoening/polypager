@@ -800,7 +800,7 @@ function writeSearchForm($show, $ind=4)
                         $newPrev = $prev - $step + 1;
                         $sys_info = getSysInfo();
                         if ($sys_info['hide_public_popups']==0) {
-                            $theText = ' onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$newPrev,$prev).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+                            $theText = ' onmouseover="nhpup.popup(\''.sprintf(__('show entries %s through %s'),$newPrev,$prev).'\')" title="" ';
                         } else {
                             $theText = "";
                         }
@@ -814,7 +814,7 @@ function writeSearchForm($show, $ind=4)
                         $theLink = "?".$params["page"]."&amp;nr=".$next."&amp;step=".$step."&amp;max=".$params["max"]."&amp;group=".$params["group"];
                         $sys_info = getSysInfo();
                         if ($sys_info['hide_public_popups']==0) {
-                            $theText = 'onmouseover="popup(\''.sprintf(__('show entries %s through %s'),$params["nr"],$next).'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+                            $theText = 'onmouseover="nhpup.popup(\''.sprintf(__('show entries %s through %s'),$params["nr"],$next).'\')" title="" ';
                         } else {
                             $theText = "";
                         }
@@ -1318,17 +1318,17 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
                                 $linkText = __('This entry is not viewable to the public');
                                 $pic = "ceye.gif";
                             }
-                            echo($indent.'        <a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()"><img src="../style/pics/'.$pic.'"/></a>'."\n");
+                            echo($indent.'        <a title="" onmouseover="nhpup.popup(\''.$linkText.'\')" ><img src="../style/pics/'.$pic.'"/></a>'."\n");
                             
                             // a link to fields
                         }
                         if ($pagename == "_sys_pages") {
                             $linkText = __('make extra statements about fields of this page (a label, a list of possible values etc.)');
                             $the_href = '?_sys_fields&amp;group='.$content.'&amp;from=list&amp;topic=fields';
-                            echo($indent.'        <a title="" onmouseover="popup(\''.$linkText.'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a>'."\n");
+                            echo($indent.'        <a title="" onmouseover="nhpup.popup(\''.$linkText.'\')" href="'.$the_href.'"><img src="../style/pics/fields.gif"/></a>'."\n");
                         }
                         $the_href = 'edit.php?'.urlencode($page).'&amp;cmd=show&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'&amp;from=list&amp;topic='.$params["topic"].'&name='.$content;
-                        echo($indent.'        <a title="" onmouseover="popup(\''.__('edit this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a>'."\n");
+                        echo($indent.'        <a title="" onmouseover="nhpup.popup(\''.__('edit this entry.').'\')" href="'.$the_href.'"><img src="../style/pics/edit.png"/></a>'."\n");
                         $the_href = 'edit.php?'.urlencode($page).'&amp;cmd=delete&amp;nr='.$row[$entity["pk"]].'&amp;'.$group_forward.'&amp;old_formfield_name='.getTitle($entity,$row).'&amp;from=list&amp;topic='.$params["topic"];
                         //check if we should give the old name for consistency reasons
                         $consistency_fields = utf8_explode(",",$entity["consistency_fields"]);
@@ -1336,7 +1336,7 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
                             $the_href = $the_href.'&amp;old_name='.$row[$f["name"]];
                         }
                         echo($indent.'        <a onclick="return checkDelete();
-                        " title="" onmouseover="popup(\''.__('delete this entry.').'\')" onmouseout="kill()" onfocus="this.blur()" onclick="return checkDelete(false);" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a>'."\n");
+                        " title="" onmouseover="nhpup.popup(\''.__('delete this entry.').'\')" onclick="return checkDelete(false);" href="'.$the_href.'"><img src="../style/pics/no.gif"/></a>'."\n");
                         echo($indent.'    </div>'."\n");
                     }
                     
@@ -1455,7 +1455,7 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
             echo($indent.'        <span class="edit">'."\n");
             $sys_info = getSysInfo();
             if ($sys_info['hide_public_popups']==0) {
-                $text='onmouseover="popup(\''.__('for admins: edit this entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" ';
+                $text='onmouseover="nhpup.popup(\''.__('for admins: edit this entry').'\')" title="" ';
             } else {
                 $text = "";
             }

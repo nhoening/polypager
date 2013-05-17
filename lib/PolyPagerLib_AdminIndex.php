@@ -40,13 +40,13 @@ function showAdminOptions($indent='                        ')
     
     echo($indent.'<div id="admin_options">'."\n");
     $linkText = __('By clicking on this link, you can see (and search for) entries of the page you select. Note that this is the only place you will actually see not published entries/sections.');
-    echo($indent.'	<a href=".?page=&amp;topic=content&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" title="">'.__('content').'</a>&nbsp;|&nbsp;'."\n");
+    echo($indent.'	<a href=".?page=&amp;topic=content&amp;from=admin" onmouseover="nhpup.popup(\''.$linkText.'\')" title="">'.__('content').'</a>&nbsp;|&nbsp;'."\n");
     $linkText = __('By clicking on this link, you can edit system information like the title of the website, the startpage, the language etc.');
-    echo($indent.'	<a href="edit.php?_sys_sys&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" title="">'.__('the system').'</a>&nbsp;|&nbsp;'."\n");
+    echo($indent.'	<a href="edit.php?_sys_sys&amp;from=admin" onmouseover="nhpup.popup(\''.$linkText.'\')" title="">'.__('the system').'</a>&nbsp;|&nbsp;'."\n");
     $linkText = __('By clicking on this link, you will see a file browser where you can upload files and create folders to store what you need. There are directories for different types of files (File, Image, Media, Flash).');
-    echo($indent.'	<a onclick="openWindow(this.href, \'File Manager\', 800, 500, 100, 100, \'yes\'); return false" href="'.$the_url.'/plugins/webadmin.php"  onmouseover="popup(\''.$linkText.'\')" title="">'.__('files').'</a>&nbsp;|&nbsp;'."\n");
+    echo($indent.'	<a onclick="openWindow(this.href, \'File Manager\', 800, 500, 100, 100, \'yes\'); return false" href="'.$the_url.'/plugins/webadmin.php"  onmouseover="nhpup.popup(\''.$linkText.'\')" title="">'.__('files').'</a>&nbsp;|&nbsp;'."\n");
     $linkText = __('By clicking on this link, you can see what pages you have and maybe enter new ones or delete some.');
-    echo($indent.'	<a href=".?page=_sys_pages&amp;topic=pages&amp;from=admin" onmouseover="popup(\''.$linkText.'\')" title="">'.__('pages').'</a>'."\n");
+    echo($indent.'	<a href=".?page=_sys_pages&amp;topic=pages&amp;from=admin" onmouseover="nhpup.popup(\''.$linkText.'\')" title="">'.__('pages').'</a>'."\n");
     echo($indent.'</div>'."\n");
 }
 
@@ -554,11 +554,11 @@ function admin_list($ind=3)
         echo($indent.'		</select>'."\n");
     } else if ($topic == 'pages') {
         $link_text = __('A page template creates a page for you that fulfills some well-known function which is used often on websites. So this might be useful for you. After you created the page, you can still edit its properties or delete it.');
-        $opt_text = $indent.'		<a id="templates_link"  onmouseover="popup(\''.$link_text.'\')" title="" href="javascript:toggleVisibility(\'template_msg\',\'templates_link\', \''.__('show templates').'\', \''.__('hide templates').'\');">'.__('show templates').'</a>&nbsp;|&nbsp;'."\n";
+        $opt_text = $indent.'		<a id="templates_link"  onmouseover="nhpup.popup(\''.$link_text.'\')" title="" href="javascript:toggleVisibility(\'template_msg\',\'templates_link\', \''.__('show templates').'\', \''.__('hide templates').'\');">'.__('show templates').'</a>&nbsp;|&nbsp;'."\n";
         $opt_text .= $indent.'		<span id="template_msg" style="display:none;" class="sys_msg_admin">'."\n";
         $opt_text .= $indent.'		'.__('new page named').' <input type="text" name="page_name" maxlength="30"="60" size="20"/> '."\n";
         $opt_text .= $indent.'		'.__('from template:')."\n";
-        $opt_text .= $indent.'		<a onmouseover="popup(\''.$link_text.'\')" title=""><img src="../style/pics/help.gif"/></a>'."\n";
+        $opt_text .= $indent.'		<a onmouseover="nhpup.popup(\''.$link_text.'\')" title=""><img src="../style/pics/help.gif"/></a>'."\n";
         $opt_text .= $indent.'		<select name="template_name">'."\n";
         $opt_text .= $indent.'			<option value="guestbook">'.__('a simple guestbook').'</option>'."\n";
         $opt_text .= $indent.'			<option value="faq">'.__('an FAQ (Frequently asked questions)').'</option>'."\n";
@@ -586,20 +586,20 @@ function admin_list($ind=3)
         } else {
             $the_cmd = 'entry';
         }
-        echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" title="" href="edit.php?_sys_intros&cmd='.$the_cmd.'&_formfield_tablename='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
+        echo($indent.'		<a onmouseover="nhpup.popup(\''.$link_text.'\')" title="" href="edit.php?_sys_intros&cmd='.$the_cmd.'&_formfield_tablename='.urlencode($params["page"]).'&from=list&topic='.$topic.'">'.__('edit intro').'</a>&nbsp;|&nbsp;'."\n");
         $link_text = __('Here you can insert a new entry for this page.');
-        echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" title="" href="edit.php?'.urlencode($params["page"]).'&cmd=new&from=list&topic='.$topic.'">'.__('new entry').'</a>'."\n");
+        echo($indent.'		<a onmouseover="nhpup.popup(\''.$link_text.'\')" title="" href="edit.php?'.urlencode($params["page"]).'&cmd=new&from=list&topic='.$topic.'">'.__('new entry').'</a>'."\n");
         //now for fields
     } else if ($params["page"] == "_sys_fields") {
         $link_text = __('Here you can make statements about another field.');
         $the_href = 'edit.php?_sys_fields&cmd=new&from=list&group='.urlencode($params["group"]).'&topic='.$topic;
         if ($params["group"] != '' && count(getListOfNonExistingFields($params["group"], false)) > 0)
-        echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" title="" href="'.$the_href.'">'.__('new entry').'</a>'."\n");
+        echo($indent.'		<a onmouseover="nhpup.popup(\''.$link_text.'\')" title="" href="'.$the_href.'">'.__('new entry').'</a>'."\n");
         //now for pages
     } else if(utf8_strpos($params["page"], "pages")) {
         $link_text = __('Here you can insert a new simple page (internally also called singlepage). Its entries will simply have a heading and a content, that is all. PolyPager will store it in a special table and you will not need to put much thought in how the page behaves.');
         $the_href = 'edit.php?_sys_singlepages&cmd=new&from=list&topic='.$topic;
-        echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" title="" href="'.$the_href.'">'.__('new simple page').'</a>&nbsp;|&nbsp;'."\n");
+        echo($indent.'		<a onmouseover="nhpup.popup(\''.$link_text.'\')" title="" href="'.$the_href.'">'.__('new simple page').'</a>&nbsp;|&nbsp;'."\n");
         
         $link_text = __('Here you can insert a new complex page (internally also called multipage). The difference to simple pages is that you can use these ones for tables in the database that you have made (and that have any structure). You will have a lot of options to change the behavior of this page.');
         //link is only active when there are tables for multipages
@@ -610,7 +610,7 @@ function admin_list($ind=3)
             $the_href = '';
             $the_style = 'text-decoration:none;color:black;';
         }
-        echo($indent.'		<a onmouseover="popup(\''.$link_text.'\')" title="" href="'.$the_href.'" style="'.$the_style.'">'.__('new complex page').'</a>'."\n");
+        echo($indent.'		<a onmouseover="nhpup.popup(\''.$link_text.'\')" title="" href="'.$the_href.'" style="'.$the_style.'">'.__('new complex page').'</a>'."\n");
     }
     
     echo($indent.'</form>'."\n");
@@ -646,7 +646,7 @@ function admin_list($ind=3)
                 //no other way... db is empty
                 echo($indent.'	<ul id="menu">'."\n");
                 echo($indent.'		<div class="sys_msg_admin">'.__('There is no entry in the database yet...').'</div>'."\n");
-                echo($indent.'		<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" title="" href="edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
+                echo($indent.'		<div class="admin_link"><a onmouseover="nhpup.popup(\''.__('for admins: make a new entry').'\')" title="" href="edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
                 echo($indent.'	</ul><div class="menuend"></div>'."\n");
             } else {
                 

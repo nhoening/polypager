@@ -64,7 +64,7 @@ function writeHeader($ind=1)
     echo($indent.'	<link rel="Shortcut Icon" href="/favicon.ico" type="image/x-icon"></link>'."\n");
     echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/javascript.php"></script>'."\n");
     echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/plugins/jquery.js"></script>'."\n");
-    echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/popup.js"></script>'."\n");
+    echo($indent.'	<script type="text/javascript" src="'.$path_to_root_dir.'/scripts/nhpup_1.1.js"></script>'."\n");
     
     //backdoor hack to get all picswap colorsets
     if (utf8_strpos($sys_info['skin'],'picswap')>-1) {
@@ -122,7 +122,7 @@ function writeTitle($ind=4)
     global $params;
     $sys_info = getSysInfo();
     if ($sys_info['hide_public_popups']==0) {
-        $text = 'onmouseover="popup(\''.__('Administration Page').'\')" onmouseout="kill()" title="" onfocus="this.blur()"';
+        $text = 'onmouseover="nhpup.popup(\''.__('Administration Page').'\')" title="" ';
     } else {
         $text = '';
     }

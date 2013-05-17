@@ -139,7 +139,7 @@ if (!$known_page or($show_params["page"] != '_sys_comments' and isASysPage($show
     if (isMultipage($params["page"]) and(eregi('int',$entity['pk-type']) and $params["max"] == "")) {
         //no other way... db is empty
         $sys_msg_text[] = __('There is no entry in the database yet...');
-        $sys_msg_text[] = '<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>';
+        $sys_msg_text[] = '<div class="admin_link"><a onmouseover="nhpup.popup(\''.__('for admins: make a new entry').'\')" title="" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>';
     }
     
     // set a title if we show one entry
@@ -179,7 +179,7 @@ function writeData($ind=5)
             //no other way... db is empty
             echo($indent.'<ul id="menu">'."\n");
             echo($indent.'	<div class="sys_msg">'.__('There is no entry in the database yet...').'</div>'."\n");
-            echo($indent.'	<div class="admin_link"><a onmouseover="popup(\''.__('for admins: make a new entry').'\')" onmouseout="kill()" title="" onfocus="this.blur()" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
+            echo($indent.'	<div class="admin_link"><a onmouseover="nhpup.popup(\''.__('for admins: make a new entry').'\')" title="" href="admin/edit.php?'.$params["page"].'&amp;cmd=new">Enter the first one</a></div>'."\n");
             echo($indent.'</ul><ul class="menuend"/>'."\n");
         } else {
             
