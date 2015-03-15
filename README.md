@@ -24,7 +24,7 @@ A list of features:
 * and all I forgot... 
 
 
-INSTALLATION
+Installation
 -----------------------------
 
 All you need to do to install PolyPager is to copy all the files into 
@@ -34,7 +34,7 @@ Then PolyPager will ask for a database and tell you what to do.
 
 
 
-UPDATE
+Update
 -----------------------------
 
 if you update from a previous version, run the SQL in this 
