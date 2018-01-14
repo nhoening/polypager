@@ -1513,7 +1513,9 @@ function writeEntry($row, $pagename, $list_view, $ind=5)
             if ($comment_count > 0) {
                 writeComments($comments, $nind);
             }
-            writeCommentForm($nind);
+            if ($page_info["commentable"] == "1") {
+                writeCommentForm($nind);
+            }
             echo($indent.'</div>'."\n");
         }
     }
